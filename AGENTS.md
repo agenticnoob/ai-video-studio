@@ -19,22 +19,23 @@ These files together explain:
 
 ## Current project stage
 
-`ai-video-studio` already has the first-pass minimal product loop:
+`ai-video-studio` already has the first usable segment-first editing loop:
 - user writes a brief
 - page calls local mock `POST /api/generate`
-- API returns schema-validated `VideoSpec`
-- page hydrates editable state
-- Remotion Player previews the edited result live
+- API returns schema-validated `VideoProject`
+- page hydrates project-level editable state
+- assembled full-video preview renders live
+- user can select a segment, edit its fields, and regenerate only that segment
 
 This means the repo is past the upstream starter-demo stage.
 Do not describe it as an untouched scaffold.
 
 ## Current highest-priority next milestone
 
-Add final local render/export using the current edited `VideoSpec`.
+Add final local render/export using the current edited `VideoProject`.
 
 Keep the next iteration focused on:
-1. trigger render from current edited spec
+1. trigger render from current edited project state
 2. show render state
 3. return stable output path or download entry
 4. keep preview state and render payload aligned
@@ -43,8 +44,11 @@ Keep the next iteration focused on:
 
 - `src/app/page.tsx`
 - `src/app/api/generate/route.ts`
-- `src/lib/mock-spec.ts`
-- `src/lib/video-schema.ts`
+- `src/lib/project-schema.ts`
+- `src/lib/project-generation.ts`
+- `src/remotion/ProjectVideo/ProjectVideo.tsx`
+- `src/components/project/SegmentList.tsx`
+- `src/components/project/SegmentEditor.tsx`
 - `src/remotion/ScriptedVideo/*`
 - `src/remotion/Root.tsx`
 
@@ -68,7 +72,8 @@ docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm
 
 ## Notes for Hermes/Codex/OpenCode
 
-- Keep `VideoSpec` as the contract boundary across generation, editing, preview, and future render/export.
+- Keep `VideoProject` as the top-level page/generation/preview/render boundary for this phase.
+- Keep `VideoSpec` as the per-segment implementation contract for the current scripted template.
 - Prefer small bounded edits.
 - Prefer repo-local artifacts for delegated workers when possible.
 - Browser automation is not the default validation path on this workstation.

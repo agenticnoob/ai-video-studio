@@ -18,7 +18,7 @@ Current base:
 - no host-global npm / pnpm install required
 
 Current implementation status:
-- first-pass minimal workflow is already implemented
+- first usable segment-first editing workflow is already implemented
 - current progress and next-step notes live in `docs/ITERATION_STATUS.md`
 - product requirements live in `docs/PRODUCT_REQUIREMENTS.md`
 - agent/new-task startup notes live in `AGENTS.md`
@@ -90,4 +90,5 @@ docker compose down
 - `.next` cache also lives in a Docker volume.
 - output files are written to `/data/projects/labs/ai-video-studio/out`.
 - the official scaffold created a nested `.git/` repo in this directory.
-- the scaffold skeleton is still the upstream starter UI; the next implementation step is to replace it with a prompt-to-parameters editor.
+- the app is no longer the upstream starter UI; the current studio path already supports brief -> project generation -> full preview -> selected-segment editing -> selected-segment regeneration.
+- the highest-priority next implementation step is final local render/export from the current edited `VideoProject`.
