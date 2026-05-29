@@ -9,10 +9,16 @@ import {
   VIDEO_HEIGHT,
   VIDEO_WIDTH,
 } from "../../types/constants";
+import {
+  getProjectDuration,
+  videoProjectSchema,
+  type VideoProject,
+} from "../lib/project-schema";
 import { getVideoDuration, videoSpecSchema, type VideoSpec } from "../lib/video-schema";
-import { sampleVideo } from "../lib/sample-video";
+import { sampleProject, sampleVideo } from "../lib/sample-video";
 import { Main } from "./MyComp/Main";
 import { NextLogo } from "./MyComp/NextLogo";
+import { ProjectVideo } from "./ProjectVideo/ProjectVideo";
 import { ScriptedVideo } from "./ScriptedVideo/ScriptedVideo";
 
 export const RemotionRoot: FC = () => {
@@ -27,6 +33,25 @@ export const RemotionRoot: FC = () => {
         width={VIDEO_WIDTH}
         height={VIDEO_HEIGHT}
         defaultProps={defaultMyCompProps}
+      />
+      <Composition
+        id="ProjectVideo"
+        component={ProjectVideo}
+        schema={videoProjectSchema}
+        defaultProps={sampleProject}
+        durationInFrames={getProjectDuration(sampleProject)}
+        fps={sampleProject.meta.fps}
+        width={sampleProject.meta.width}
+        height={sampleProject.meta.height}
+        calculateMetadata={({ props }) => {
+          const project = videoProjectSchema.parse(props) as VideoProject;
+          return {
+            durationInFrames: getProjectDuration(project),
+            fps: project.meta.fps,
+            width: project.meta.width,
+            height: project.meta.height,
+          };
+        }}
       />
       <Composition
         id="ScriptedVideo"
