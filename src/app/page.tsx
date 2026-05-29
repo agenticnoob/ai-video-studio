@@ -40,6 +40,7 @@ const Home: NextPage = () => {
   );
   const [revisionPrompt, setRevisionPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isRegeneratingSegment, setIsRegeneratingSegment] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const durationInFrames = useMemo(() => getProjectDuration(project), [project]);
@@ -56,7 +57,7 @@ const Home: NextPage = () => {
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ brief }),
+        body: JSON.stringify({ mode: "project", brief }),
       });
       const data = (await response.json()) as GenerateResponse;
 
@@ -72,6 +73,52 @@ const Home: NextPage = () => {
       setError(caughtError instanceof Error ? caughtError.message : "生成视频项目失败。");
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const regenerateSelectedSegment = async () => {
+    if (!selectedSegmentId) {
+      setError("请选择需要重生成的分段。");
+      return;
+    }
+
+    if (!revisionPrompt.trim()) {
+      setError("请输入分段修改指令。");
+      return;
+    }
+
+    setIsRegeneratingSegment(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mode: "segment",
+          project,
+          segmentId: selectedSegmentId,
+          revisionPrompt,
+        }),
+      });
+      const data = (await response.json()) as GenerateResponse;
+
+      if (!response.ok || !data.project) {
+        throw new Error(data.error ?? "分段重生成失败。");
+      }
+
+      const nextProject = normalizeProject(data.project);
+      setProject(nextProject);
+      setSelectedSegmentId(
+        nextProject.segments.some((segment) => segment.id === selectedSegmentId)
+          ? selectedSegmentId
+          : getInitialSelectedSegmentId(nextProject),
+      );
+      setRevisionPrompt("");
+    } catch (caughtError) {
+      setError(caughtError instanceof Error ? caughtError.message : "分段重生成失败。");
+    } finally {
+      setIsRegeneratingSegment(false);
     }
   };
 
@@ -108,7 +155,7 @@ const Home: NextPage = () => {
 
             <button
               className="mt-4 rounded-geist border border-foreground bg-foreground px-4 py-2 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-60"
-              disabled={isGenerating}
+              disabled={isGenerating || isRegeneratingSegment}
               onClick={generateProject}
               type="button"
             >
@@ -141,8 +188,10 @@ const Home: NextPage = () => {
           <ProjectSummary project={project} />
 
           <SegmentEditor
+            isRegenerating={isRegeneratingSegment}
             revisionPrompt={revisionPrompt}
             segment={selectedSegment}
+            onRegenerateSegment={regenerateSelectedSegment}
             onRevisionPromptChange={setRevisionPrompt}
             onSegmentChange={updateSegment}
           />

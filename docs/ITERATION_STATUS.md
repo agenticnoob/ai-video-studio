@@ -4,31 +4,35 @@ Last updated: 2026-05-29
 
 ## Current stage
 
-`ai-video-studio` is no longer a single-spec demo flow.
+`ai-video-studio` has now reached the first usable segment-first editing loop.
 
-It now has the first segment-first project loop:
+Current working flow:
 1. user writes a brief
 2. page calls local mock `POST /api/generate`
 3. API returns schema-validated `VideoProject`
 4. page hydrates project-level draft state
 5. full-video preview renders the assembled project
-6. user selects a segment and edits it through a structured editing shell
+6. user selects a segment and edits it through the selected-segment shell
+7. user can regenerate only the selected segment from a natural-language revision prompt
 
 ## What is already implemented
 
 ### Product workflow UI
-- `src/app/page.tsx` now uses project-level state instead of single `VideoSpec` state
+- `src/app/page.tsx` uses project-level state instead of single `VideoSpec` state
+- Chinese-first main page copy for the current studio path
 - brief input + generate button
 - loading state + error state
 - primary full-video preview using `ProjectVideo`
 - visible segment list for navigation
 - selected-segment editing shell
 - structured scene/theme editing preserved within the selected segment
-- natural-language segment revision input shell is visible for future regeneration wiring
+- working segment regeneration action from the revision prompt
 
 ### Structured generation boundary
 - `src/app/api/generate/route.ts`
-- accepts a brief payload
+- supports two request modes:
+  - full project generation from brief
+  - selected segment regeneration from current project + segment id + revision prompt
 - returns schema-validated `VideoProject` JSON
 - current implementation is local deterministic mock generation
 - temporary `spec` compatibility field still exists to avoid breaking older consumers during the migration window
@@ -36,6 +40,7 @@ It now has the first segment-first project loop:
 ### Project/domain model
 - `src/lib/project-schema.ts` defines `VideoProject` and segment helpers
 - `src/lib/project-generation.ts` builds normalized segment-based projects
+- `src/lib/project-generation.ts` also supports project-local selected-segment regeneration
 - v1 supports `templateId: "scripted"` only
 
 ### Video runtime wiring
@@ -47,10 +52,10 @@ It now has the first segment-first project loop:
 ## What is intentionally NOT done yet
 
 These are still out of scope or not implemented yet:
-- actual per-segment regeneration API behavior
-- full-project regeneration beyond the initial generate flow
+- full-project regeneration UX beyond the current initial generate flow
 - final local render/export flow
 - render job progress UX for end users
+- stable output path / downloadable artifact UX
 - real LLM/provider-backed generation
 - project persistence / saved drafts / history
 - multi-template product architecture
@@ -66,6 +71,7 @@ The current segment-first project loop passed through the repo Docker workflow:
 Recent milestone verification:
 - Task 3 project-level composition passed `npm run build`
 - Task 4 project-level page migration passed `npm run lint` and `npx tsc --noEmit`
+- Task 5 segment regeneration passed `npm run lint`, `npx tsc --noEmit`, and `npm run build`
 
 ## Important files for next iteration
 
@@ -83,19 +89,20 @@ Recent milestone verification:
 ## Recommended next milestone
 
 Highest-priority next step:
-- add segment-level natural-language regeneration and merge it back into the current project draft
+- add final local render/export from the current edited `VideoProject`
 
 Suggested order:
-1. add a per-segment regeneration route/contract
-2. regenerate only the selected segment from the revision prompt
-3. preserve untouched segments while merging the regenerated segment back into current state
-4. only after regeneration is stable, add final local render/export
+1. trigger full-project render from the current in-browser project state
+2. show render state: idle / rendering / success / failure
+3. return stable output path or downloadable artifact
+4. keep preview-state and render-payload aligned
 
 ## Notes for future Hermes/Codex work
 
-- Keep `VideoProject` as the top-level page/generation/preview boundary for this phase.
+- Keep `VideoProject` as the top-level page/generation/preview/render boundary for this phase.
 - Keep `VideoSpec` as the per-segment implementation contract for the current scripted template.
-- Do not widen scope into multi-template support before segment regeneration and single-template render/export are complete.
+- Do not widen scope into multi-template support before single-template project render/export is complete.
 - Remove the temporary `/api/generate` `spec` compatibility field once no older consumer depends on it.
+- API validation/error copy is still partly English; localize later only if it materially improves the product path.
 - Prefer repo-local artifacts for delegated workers when possible.
 - On this workstation, browser automation is not the default validation path.

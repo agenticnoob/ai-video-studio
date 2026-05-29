@@ -121,12 +121,13 @@ export const buildSegmentFromBriefPart = (
 export const reviseSegmentFromPrompt = (
   segment: VideoSegment,
   revisionPrompt: string,
+  index = 0,
 ): VideoSegment => {
   const revisedBrief = cleanBrief(
     [segment.intent, revisionPrompt].filter(Boolean).join(". "),
   );
 
-  const nextSegment = buildSegmentFromBriefPart(revisedBrief, 0, segment.implementation.meta);
+  const nextSegment = buildSegmentFromBriefPart(revisedBrief, index, segment.implementation.meta);
 
   return videoSegmentSchema.parse({
     ...segment,
@@ -140,6 +141,27 @@ export const reviseSegmentFromPrompt = (
         title: segment.title,
       },
     },
+  });
+};
+
+export const reviseProjectSegmentFromPrompt = (
+  project: VideoProject,
+  segmentId: string,
+  revisionPrompt: string,
+): VideoProject => {
+  const segmentIndex = project.segments.findIndex((segment) => segment.id === segmentId);
+
+  if (segmentIndex < 0) {
+    throw new Error(`Segment "${segmentId}" was not found.`);
+  }
+
+  return normalizeProject({
+    ...project,
+    segments: project.segments.map((segment, index) =>
+      index === segmentIndex
+        ? reviseSegmentFromPrompt(segment, revisionPrompt, index)
+        : segment,
+    ),
   });
 };
 

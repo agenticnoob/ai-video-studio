@@ -4,8 +4,10 @@ import type { VideoSegment } from "../../lib/project-schema";
 import type { VideoScene } from "../../lib/video-schema";
 
 type SegmentEditorProps = {
+  isRegenerating: boolean;
   segment: VideoSegment | null;
   revisionPrompt: string;
+  onRegenerateSegment: () => void;
   onRevisionPromptChange: (value: string) => void;
   onSegmentChange: (segment: VideoSegment) => void;
 };
@@ -49,8 +51,10 @@ const replaceScene = (segment: VideoSegment, index: number, scene: VideoScene): 
 });
 
 export const SegmentEditor: FC<SegmentEditorProps> = ({
+  isRegenerating,
   segment,
   revisionPrompt,
+  onRegenerateSegment,
   onRevisionPromptChange,
   onSegmentChange,
 }) => {
@@ -85,11 +89,12 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
         />
       </label>
       <button
-        className="mt-3 rounded-geist border border-unfocused-border-color px-4 py-2 text-sm font-semibold text-neutral-500"
-        disabled
+        className="mt-3 rounded-geist border border-foreground bg-foreground px-4 py-2 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-60"
+        disabled={!revisionPrompt.trim() || isRegenerating}
+        onClick={onRegenerateSegment}
         type="button"
       >
-        稍后接入分段重生成
+        {isRegenerating ? "正在重生成分段..." : "重生成当前分段"}
       </button>
 
       <div className="mt-6 border-t border-unfocused-border-color pt-5">
