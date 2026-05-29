@@ -10,7 +10,7 @@ type SegmentListProps = {
 
 const formatDuration = (frames: number, fps: number): string => {
   const seconds = Math.round((frames / fps) * 10) / 10;
-  return `${seconds}s`;
+  return `${seconds} 秒`;
 };
 
 export const SegmentList: FC<SegmentListProps> = ({
@@ -21,8 +21,8 @@ export const SegmentList: FC<SegmentListProps> = ({
   return (
     <section className="rounded-geist border border-unfocused-border-color bg-background p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-base font-semibold text-foreground">Segments</h2>
-        <div className="text-sm text-neutral-500">{project.segments.length} total</div>
+        <h2 className="text-base font-semibold text-foreground">分段列表</h2>
+        <div className="text-sm text-neutral-500">共 {project.segments.length} 段</div>
       </div>
 
       <div className="mt-4 space-y-3">
@@ -43,7 +43,7 @@ export const SegmentList: FC<SegmentListProps> = ({
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-xs font-medium uppercase text-neutral-500">
-                    Segment {index + 1}
+                    第 {index + 1} 段
                   </div>
                   <div className="mt-1 text-sm font-semibold text-foreground">{segment.title}</div>
                 </div>

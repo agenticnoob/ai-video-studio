@@ -26,7 +26,7 @@ const inputClassName =
 const sectionClassName = "rounded-geist border border-unfocused-border-color bg-background p-5";
 
 const defaultBrief =
-  "Create a concise product demo video for AI Video Studio. Show how a user writes a brief, receives a segment-based project, tunes selected segments, and previews the full video result.";
+  "为 AI Video Studio 生成一条简洁的产品演示视频：展示用户如何输入创意 brief、获得分段项目、逐段微调，并预览完整成片。";
 
 const getInitialSelectedSegmentId = (project: VideoProject): string | null => {
   return project.segments[0]?.id ?? null;
@@ -61,7 +61,7 @@ const Home: NextPage = () => {
       const data = (await response.json()) as GenerateResponse;
 
       if (!response.ok || !data.project) {
-        throw new Error(data.error ?? "Failed to generate a video project.");
+        throw new Error(data.error ?? "生成视频项目失败。");
       }
 
       const nextProject = normalizeProject(data.project);
@@ -69,7 +69,7 @@ const Home: NextPage = () => {
       setSelectedSegmentId(getInitialSelectedSegmentId(nextProject));
       setRevisionPrompt("");
     } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : "Failed to generate a video project.");
+      setError(caughtError instanceof Error ? caughtError.message : "生成视频项目失败。");
     } finally {
       setIsGenerating(false);
     }
@@ -92,13 +92,13 @@ const Home: NextPage = () => {
         <div className="space-y-6">
           <section className={sectionClassName}>
             <div className="text-xs uppercase tracking-[0.22em] text-neutral-500">AI Video Studio</div>
-            <h1 className="mt-3 text-2xl font-bold text-foreground">Segment-first studio</h1>
+            <h1 className="mt-3 text-2xl font-bold text-foreground">分段优先工作台</h1>
             <p className="mt-3 text-sm leading-6 text-neutral-600">
-              Generate a project from a brief, preview the assembled full video, and refine one segment at a time.
+              从一段 brief 生成视频项目，先预览完整成片，再逐段细化修改。
             </p>
 
             <label className="mt-5 block text-sm font-medium text-foreground">
-              Creative brief
+              创意 brief
               <textarea
                 className={`${inputClassName} min-h-28 resize-y`}
                 value={brief}
@@ -112,7 +112,7 @@ const Home: NextPage = () => {
               onClick={generateProject}
               type="button"
             >
-              {isGenerating ? "Generating project..." : "Generate project"}
+              {isGenerating ? "正在生成项目..." : "生成项目"}
             </button>
 
             {error ? (

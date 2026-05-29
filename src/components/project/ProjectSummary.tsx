@@ -8,7 +8,7 @@ type ProjectSummaryProps = {
 
 const formatDuration = (frames: number, fps: number): string => {
   const seconds = Math.round((frames / fps) * 10) / 10;
-  return `${seconds}s`;
+  return `${seconds} 秒`;
 };
 
 export const ProjectSummary: FC<ProjectSummaryProps> = ({ project }) => {
@@ -32,18 +32,18 @@ export const ProjectSummary: FC<ProjectSummaryProps> = ({ project }) => {
           <div className="mt-1 font-medium text-foreground">{project.meta.fps}</div>
         </div>
         <div>
-          <div className="text-xs uppercase text-neutral-500">Size</div>
+          <div className="text-xs uppercase text-neutral-500">尺寸</div>
           <div className="mt-1 font-medium text-foreground">
             {project.meta.width}x{project.meta.height}
           </div>
         </div>
         <div>
-          <div className="text-xs uppercase text-neutral-500">Segments</div>
+          <div className="text-xs uppercase text-neutral-500">分段数</div>
           <div className="mt-1 font-medium text-foreground">{project.segments.length}</div>
         </div>
         <div>
-          <div className="text-xs uppercase text-neutral-500">Template</div>
-          <div className="mt-1 font-medium text-foreground">Scripted</div>
+          <div className="text-xs uppercase text-neutral-500">模板</div>
+          <div className="mt-1 font-medium text-foreground">脚本型</div>
         </div>
       </div>
     </section>

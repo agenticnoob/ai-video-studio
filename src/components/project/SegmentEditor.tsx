@@ -23,6 +23,21 @@ const parsePositiveInteger = (value: string, fallback: number, min: number, max:
   return Math.max(min, Math.min(max, Math.round(parsed)));
 };
 
+const themeLabelMap = {
+  background: "背景",
+  panel: "面板",
+  primary: "主色",
+  secondary: "辅助色",
+  text: "文字",
+  muted: "弱化文字",
+} as const;
+
+const sceneTypeLabelMap = {
+  title: "标题",
+  bullets: "要点",
+  quote: "引语",
+} as const;
+
 const replaceScene = (segment: VideoSegment, index: number, scene: VideoScene): VideoSegment => ({
   ...segment,
   implementation: {
@@ -42,8 +57,8 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
   if (!segment) {
     return (
       <section className="rounded-geist border border-unfocused-border-color bg-background p-5">
-        <h2 className="text-base font-semibold text-foreground">Selected segment</h2>
-        <p className="mt-3 text-sm text-neutral-600">Select a segment to edit its details.</p>
+        <h2 className="text-base font-semibold text-foreground">当前分段</h2>
+        <p className="mt-3 text-sm text-neutral-600">请选择一个分段后再编辑详情。</p>
       </section>
     );
   }
@@ -52,7 +67,7 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
     <section className="rounded-geist border border-unfocused-border-color bg-background p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold text-foreground">Selected segment</h2>
+          <h2 className="text-base font-semibold text-foreground">当前分段</h2>
           <div className="mt-1 text-xs text-neutral-500">{segment.id}</div>
         </div>
         <div className="rounded-geist border border-unfocused-border-color px-3 py-1 text-xs uppercase text-neutral-500">
@@ -61,10 +76,10 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
       </div>
 
       <label className="mt-4 block text-sm font-medium text-foreground">
-        Natural-language revision
+        自然语言修改指令
         <textarea
           className={`${inputClassName} min-h-24 resize-y`}
-          placeholder="Describe how this segment should change in the next regeneration pass."
+          placeholder="描述这个分段下一次重生成时应如何调整。"
           value={revisionPrompt}
           onChange={(event) => onRevisionPromptChange(event.currentTarget.value)}
         />
@@ -74,13 +89,13 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
         disabled
         type="button"
       >
-        Regenerate segment later
+        稍后接入分段重生成
       </button>
 
       <div className="mt-6 border-t border-unfocused-border-color pt-5">
-        <h3 className="text-sm font-semibold text-foreground">Segment details</h3>
+        <h3 className="text-sm font-semibold text-foreground">分段详情</h3>
         <label className="mt-3 block text-sm font-medium text-foreground">
-          Title
+          标题
           <input
             className={inputClassName}
             value={segment.title}
@@ -100,7 +115,7 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
           />
         </label>
         <label className="mt-3 block text-sm font-medium text-foreground">
-          Intent
+          意图说明
           <textarea
             className={`${inputClassName} min-h-20`}
             value={segment.intent}
@@ -110,11 +125,11 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
       </div>
 
       <div className="mt-6 border-t border-unfocused-border-color pt-5">
-        <h3 className="text-sm font-semibold text-foreground">Theme</h3>
+        <h3 className="text-sm font-semibold text-foreground">主题</h3>
         <div className="mt-3 grid grid-cols-2 gap-3">
           {(["background", "panel", "primary", "secondary", "text", "muted"] as const).map((key) => (
             <label key={key} className="block text-sm font-medium capitalize text-foreground">
-              {key}
+              {themeLabelMap[key]}
               <input
                 className={inputClassName}
                 value={segment.implementation.theme[key]}
@@ -138,8 +153,8 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
 
       <div className="mt-6 border-t border-unfocused-border-color pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="text-sm font-semibold text-foreground">Structured scenes</h3>
-          <div className="text-sm text-neutral-500">{segment.implementation.scenes.length} scenes</div>
+          <h3 className="text-sm font-semibold text-foreground">结构化场景</h3>
+          <div className="text-sm text-neutral-500">{segment.implementation.scenes.length} 个场景</div>
         </div>
 
         <div className="mt-4 space-y-4">
@@ -148,12 +163,12 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <div className="text-sm font-semibold text-foreground">
-                    Scene {index + 1}: {scene.type}
+                    场景 {index + 1}：{sceneTypeLabelMap[scene.type]}
                   </div>
                   <div className="text-xs text-neutral-500">{scene.id}</div>
                 </div>
                 <label className="w-32 text-sm font-medium text-foreground">
-                  Frames
+                  帧数
                   <input
                     className={inputClassName}
                     min={12}
@@ -171,7 +186,7 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
               </div>
 
               <label className="mt-3 block text-sm font-medium text-foreground">
-                Kicker
+                前导文案
                 <input
                   className={inputClassName}
                   value={scene.kicker ?? ""}
@@ -184,7 +199,7 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
               {scene.type === "title" ? (
                 <>
                   <label className="mt-3 block text-sm font-medium text-foreground">
-                    Title
+                    标题
                     <input
                       className={inputClassName}
                       value={scene.title}
@@ -194,7 +209,7 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
                     />
                   </label>
                   <label className="mt-3 block text-sm font-medium text-foreground">
-                    Subtitle
+                    副标题
                     <textarea
                       className={`${inputClassName} min-h-20`}
                       value={scene.subtitle ?? ""}
@@ -209,7 +224,7 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
               {scene.type === "bullets" ? (
                 <>
                   <label className="mt-3 block text-sm font-medium text-foreground">
-                    Title
+                    标题
                     <input
                       className={inputClassName}
                       value={scene.title}
@@ -219,7 +234,7 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
                     />
                   </label>
                   <label className="mt-3 block text-sm font-medium text-foreground">
-                    Bullets
+                    要点列表
                     <textarea
                       className={`${inputClassName} min-h-28`}
                       value={scene.bullets.join("\n")}
@@ -243,7 +258,7 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
               {scene.type === "quote" ? (
                 <>
                   <label className="mt-3 block text-sm font-medium text-foreground">
-                    Quote
+                    引语
                     <textarea
                       className={`${inputClassName} min-h-24`}
                       value={scene.quote}
@@ -253,7 +268,7 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
                     />
                   </label>
                   <label className="mt-3 block text-sm font-medium text-foreground">
-                    Author
+                    作者
                     <input
                       className={inputClassName}
                       value={scene.author ?? ""}
