@@ -17,6 +17,13 @@ export type BriefGeneratorInput = {
   brief: string;
 };
 
+export type BriefSpecOverrides = Partial<
+  Pick<
+    MockGeneratorInput,
+    "title" | "fps" | "width" | "height" | "sceneSeconds" | "background" | "primary" | "secondary" | "callToAction"
+  >
+>;
+
 const clampNumber = (value: number, fallback: number, min: number, max: number) => {
   if (!Number.isFinite(value)) {
     return fallback;
@@ -77,7 +84,7 @@ export const buildMockSpec = (input: MockGeneratorInput): VideoSpec => {
   };
 };
 
-const titleFromBrief = (brief: string) => {
+export const titleFromBrief = (brief: string) => {
   const firstLine = brief
     .split(/\r?\n/)
     .map((line) => line.trim())
@@ -90,19 +97,23 @@ const titleFromBrief = (brief: string) => {
   return firstLine.length > 64 ? `${firstLine.slice(0, 61)}...` : firstLine;
 };
 
-export const buildMockSpecFromBrief = (input: BriefGeneratorInput): VideoSpec => {
+export const buildMockSpecFromBrief = (
+  input: BriefGeneratorInput,
+  overrides: BriefSpecOverrides = {},
+): VideoSpec => {
   const brief = input.brief.trim() || "Create a concise product workflow video for AI Video Studio.";
 
   return buildMockSpec({
     prompt: brief,
-    title: titleFromBrief(brief),
-    fps: 30,
-    width: 1280,
-    height: 720,
-    sceneSeconds: 4,
-    background: "#101820",
-    primary: "#2dd4bf",
-    secondary: "#f59e0b",
-    callToAction: "Tune the structured spec in the studio, then preview the result live.",
+    title: overrides.title ?? titleFromBrief(brief),
+    fps: overrides.fps ?? 30,
+    width: overrides.width ?? 1280,
+    height: overrides.height ?? 720,
+    sceneSeconds: overrides.sceneSeconds ?? 4,
+    background: overrides.background ?? "#101820",
+    primary: overrides.primary ?? "#2dd4bf",
+    secondary: overrides.secondary ?? "#f59e0b",
+    callToAction:
+      overrides.callToAction ?? "Tune the structured spec in the studio, then preview the result live.",
   });
 };

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { buildMockSpecFromBrief } from "../../../lib/mock-spec";
-import { videoSpecSchema } from "../../../lib/video-schema";
+import { buildMockProjectFromBrief } from "../../../lib/project-generation";
+import { videoProjectSchema } from "../../../lib/project-schema";
 
 const generateRequestSchema = z.object({
   brief: z.string().trim().min(1, "Brief is required").max(4000, "Brief is too long"),
@@ -25,11 +25,18 @@ export async function POST(request: Request) {
     );
   }
 
-  const spec = videoSpecSchema.safeParse(buildMockSpecFromBrief(parsedRequest.data));
+  const project = videoProjectSchema.safeParse(buildMockProjectFromBrief(parsedRequest.data));
 
-  if (!spec.success) {
-    return NextResponse.json({ error: "Generated spec failed schema validation." }, { status: 500 });
+  if (!project.success) {
+    return NextResponse.json(
+      { error: "Generated project failed schema validation." },
+      { status: 500 },
+    );
   }
 
-  return NextResponse.json({ spec: spec.data });
+  return NextResponse.json({
+    project: project.data,
+    spec: project.data.segments[0]?.implementation,
+  });
 }
+
