@@ -19,56 +19,65 @@ These files together explain:
 
 ## Current project stage
 
-`ai-video-studio` already has the first usable segment-first editing loop:
+`ai-video-studio` already has a usable single-template, segment-first authoring loop:
 - user writes a brief
 - page calls local mock `POST /api/generate`
 - API returns schema-validated `VideoProject`
 - page hydrates project-level editable state
 - assembled full-video preview renders live
 - user can select a segment, edit its fields, and regenerate only that segment
+- user can locally export the current edited project through `POST /api/render`
+- successful export writes both a stable latest artifact and a unique artifact for that render
 
-This means the repo is past the upstream starter-demo stage.
+This repo is past the upstream starter-demo stage.
 Do not describe it as an untouched scaffold.
 
 ## Current highest-priority next milestone
 
-Add final local render/export using the current edited `VideoProject`.
+Replace the local deterministic generation mock with a real provider-backed generation path while preserving schema validation and the project-level edit loop.
 
 Keep the next iteration focused on:
-1. trigger render from current edited project state
-2. show render state
-3. return stable output path or download entry
-4. keep preview state and render payload aligned
+1. keep `VideoProject` as the generation contract
+2. add provider-backed generation behind the existing request modes
+3. preserve validation and bounded error handling
+4. do not widen into persistence/history or multi-template work unless the task explicitly asks for it
 
 ## Important implementation files
 
 - `src/app/page.tsx`
 - `src/app/api/generate/route.ts`
+- `src/app/api/render/route.ts`
+- `src/app/api/render/latest/route.ts`
+- `src/app/api/render/[renderId]/route.ts`
+- `src/helpers/use-rendering.ts`
+- `src/lib/render-project.ts`
 - `src/lib/project-schema.ts`
 - `src/lib/project-generation.ts`
 - `src/remotion/ProjectVideo/ProjectVideo.tsx`
-- `src/components/project/SegmentList.tsx`
-- `src/components/project/SegmentEditor.tsx`
 - `src/remotion/ScriptedVideo/*`
 - `src/remotion/Root.tsx`
 
 ## Constraints / non-goals for the current product stage
 
 Still not implemented unless the new task explicitly asks for them:
-- real LLM/provider-backed generation
+- real provider-backed generation
 - saved drafts/history/project persistence
 - multi-template product architecture
 - browser automation acceptance
+- end-user render progress UX beyond idle / rendering / success / failure
 
 ## Validation workflow
 
-Prefer Docker-first validation from repo root:
+Prefer repo-local validation from repo root when Docker is not part of the task:
 
 ```bash
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'
+npm install
+npm run lint
+npx tsc --noEmit
+npm run build
 ```
+
+If the task explicitly asks for Docker verification, use the Docker wrappers documented in `README.md`.
 
 ## Notes for Hermes/Codex/OpenCode
 
@@ -77,3 +86,4 @@ docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm
 - Prefer small bounded edits.
 - Prefer repo-local artifacts for delegated workers when possible.
 - Browser automation is not the default validation path on this workstation.
+- `scripts/render.sh` still targets the sample/default composition render path; the current edited-project export path is the page action / `POST /api/render`.
