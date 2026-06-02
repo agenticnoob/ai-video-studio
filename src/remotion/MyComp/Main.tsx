@@ -7,12 +7,11 @@ import {
 } from "remotion";
 import { z } from "zod";
 import { CompositionProps } from "../../../types/constants";
+import { CJK_SANS_FONT_STACK } from "../font-stack";
 import { NextLogo } from "./NextLogo";
 import { Rings } from "./Rings";
 import { TextFade } from "./TextFade";
 
-const FALLBACK_FONT_STACK =
-  'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
 export const Main = ({ title }: z.infer<typeof CompositionProps>) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -55,7 +54,7 @@ export const Main = ({ title }: z.infer<typeof CompositionProps>) => {
           <h1
             className="text-[70px] font-bold"
             style={{
-              fontFamily: FALLBACK_FONT_STACK,
+              fontFamily: CJK_SANS_FONT_STACK,
             }}
           >
             {title}

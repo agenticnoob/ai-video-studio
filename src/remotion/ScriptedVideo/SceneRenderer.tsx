@@ -1,6 +1,7 @@
 import React from "react";
 import { AbsoluteFill, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import type { VideoScene, VideoSpec } from "../../lib/video-schema";
+import { CJK_SANS_FONT_STACK } from "../font-stack";
 
 const panelStyle = (theme: VideoSpec["theme"]): React.CSSProperties => ({
   backgroundColor: theme.panel,
@@ -76,8 +77,7 @@ export const SceneRenderer: React.FC<{
       style={{
         background: `radial-gradient(circle at top, ${theme.primary}22 0%, ${theme.background} 55%)`,
         color: theme.text,
-        fontFamily:
-          'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        fontFamily: CJK_SANS_FONT_STACK,
         justifyContent: "center",
         alignItems: "center",
         padding: 48,

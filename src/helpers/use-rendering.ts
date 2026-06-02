@@ -1,109 +1,142 @@
-import { useCallback, useMemo, useState } from "react";
-import { z } from "zod";
-import { CompositionProps } from "../../types/constants";
-import { getProgress, renderVideo } from "../lambda/api";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { normalizeProject, type VideoProject } from "../lib/project-schema";
 
 export type State =
   | {
-      status: "init";
+      status: "idle";
     }
   | {
-      status: "invoking";
-    }
-  | {
-      renderId: string;
-      bucketName: string;
-      progress: number;
       status: "rendering";
     }
   | {
-      renderId: string | null;
-      status: "error";
-      error: Error;
+      downloadUrl: string;
+      latestDownloadUrl: string;
+      latestOutputPath: string;
+      outputPath: string;
+      renderId: string;
+      sizeInBytes: number;
+      status: "success";
     }
   | {
-      url: string;
-      size: number;
-      status: "done";
+      error: string;
+      status: "failure";
     };
 
-const wait = async (milliSeconds: number) => {
-  await new Promise<void>((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, milliSeconds);
-  });
+type RenderResponse = {
+  downloadUrl?: string;
+  error?: string;
+  latestDownloadUrl?: string;
+  latestOutputPath?: string;
+  outputPath?: string;
+  renderId?: string;
+  sizeInBytes?: number;
 };
 
-export const useRendering = (
-  id: string,
-  inputProps: z.infer<typeof CompositionProps>,
-) => {
+const isRenderSuccessResponse = (
+  response: RenderResponse,
+): response is Required<
+  Pick<
+    RenderResponse,
+    | "downloadUrl"
+    | "latestDownloadUrl"
+    | "latestOutputPath"
+    | "outputPath"
+    | "renderId"
+    | "sizeInBytes"
+  >
+> => {
+  return (
+    typeof response.downloadUrl === "string" &&
+    typeof response.latestDownloadUrl === "string" &&
+    typeof response.latestOutputPath === "string" &&
+    typeof response.outputPath === "string" &&
+    typeof response.renderId === "string" &&
+    typeof response.sizeInBytes === "number"
+  );
+};
+
+export const useRendering = (project: VideoProject) => {
+  const normalizedProject = useMemo(() => normalizeProject(project), [project]);
+  const projectSignature = useMemo(() => JSON.stringify(normalizedProject), [normalizedProject]);
+  const latestProjectSignatureRef = useRef(projectSignature);
+  const activeRenderAbortControllerRef = useRef<AbortController | null>(null);
+  const renderAttemptRef = useRef(0);
   const [state, setState] = useState<State>({
-    status: "init",
+    status: "idle",
   });
 
+  useEffect(() => {
+    latestProjectSignatureRef.current = projectSignature;
+    renderAttemptRef.current += 1;
+    activeRenderAbortControllerRef.current?.abort();
+    activeRenderAbortControllerRef.current = null;
+    setState({ status: "idle" });
+  }, [projectSignature]);
+
   const renderMedia = useCallback(async () => {
-    setState({
-      status: "invoking",
-    });
+    const requestSignature = projectSignature;
+    const renderAttempt = renderAttemptRef.current + 1;
+    const abortController = new AbortController();
+
+    activeRenderAbortControllerRef.current?.abort();
+    activeRenderAbortControllerRef.current = abortController;
+    renderAttemptRef.current = renderAttempt;
+    setState({ status: "rendering" });
+
     try {
-      const { renderId, bucketName } = await renderVideo({ id, inputProps });
-      setState({
-        status: "rendering",
-        progress: 0,
-        renderId: renderId,
-        bucketName: bucketName,
+      const response = await fetch("/api/render", {
+        body: JSON.stringify({ project: normalizedProject }),
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+        signal: abortController.signal,
       });
+      const data = (await response.json()) as RenderResponse;
 
-      let pending = true;
-
-      while (pending) {
-        const result = await getProgress({
-          id: renderId,
-          bucketName: bucketName,
-        });
-        switch (result.type) {
-          case "error": {
-            setState({
-              status: "error",
-              renderId: renderId,
-              error: new Error(result.message),
-            });
-            pending = false;
-            break;
-          }
-          case "done": {
-            setState({
-              size: result.size,
-              url: result.url,
-              status: "done",
-            });
-            pending = false;
-            break;
-          }
-          case "progress": {
-            setState({
-              status: "rendering",
-              bucketName: bucketName,
-              progress: result.progress,
-              renderId: renderId,
-            });
-            await wait(1000);
-          }
-        }
+      if (!response.ok || !isRenderSuccessResponse(data)) {
+        throw new Error(data.error ?? "视频导出失败。\n请检查 render 日志后重试。");
       }
-    } catch (err) {
+
+      if (
+        renderAttemptRef.current !== renderAttempt ||
+        latestProjectSignatureRef.current !== requestSignature
+      ) {
+        return;
+      }
+
       setState({
-        status: "error",
-        error: err as Error,
-        renderId: null,
+        downloadUrl: data.downloadUrl,
+        latestDownloadUrl: data.latestDownloadUrl,
+        latestOutputPath: data.latestOutputPath,
+        outputPath: data.outputPath,
+        renderId: data.renderId,
+        sizeInBytes: data.sizeInBytes,
+        status: "success",
       });
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") {
+        return;
+      }
+
+      if (
+        renderAttemptRef.current !== renderAttempt ||
+        latestProjectSignatureRef.current !== requestSignature
+      ) {
+        return;
+      }
+
+      setState({
+        error: error instanceof Error ? error.message : "视频导出失败。",
+        status: "failure",
+      });
+    } finally {
+      if (activeRenderAbortControllerRef.current === abortController) {
+        activeRenderAbortControllerRef.current = null;
+      }
     }
-  }, [id, inputProps]);
+  }, [normalizedProject, projectSignature]);
 
   const undo = useCallback(() => {
-    setState({ status: "init" });
+    setState({ status: "idle" });
   }, []);
 
   return useMemo(() => {

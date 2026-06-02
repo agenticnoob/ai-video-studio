@@ -3,9 +3,11 @@
 import { Player } from "@remotion/player";
 import type { NextPage } from "next";
 import { useMemo, useState } from "react";
+import { RenderControls } from "../components/RenderControls";
 import { ProjectSummary } from "../components/project/ProjectSummary";
 import { SegmentEditor } from "../components/project/SegmentEditor";
 import { SegmentList } from "../components/project/SegmentList";
+import { useRendering } from "../helpers/use-rendering";
 import {
   getProjectDuration,
   normalizeProject,
@@ -43,11 +45,21 @@ const Home: NextPage = () => {
   const [isRegeneratingSegment, setIsRegeneratingSegment] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const durationInFrames = useMemo(() => getProjectDuration(project), [project]);
-  const selectedSegment = useMemo(
-    () => project.segments.find((segment) => segment.id === selectedSegmentId) ?? null,
-    [project.segments, selectedSegmentId],
+  const normalizedProject = useMemo(() => normalizeProject(project), [project]);
+  const durationInFrames = useMemo(
+    () => getProjectDuration(normalizedProject),
+    [normalizedProject],
   );
+  const selectedSegment = useMemo(
+    () =>
+      normalizedProject.segments.find((segment) => segment.id === selectedSegmentId) ??
+      null,
+    [normalizedProject.segments, selectedSegmentId],
+  );
+  const { renderMedia, state: renderState, undo: resetRenderState } =
+    useRendering(normalizedProject);
+  const isRendering = renderState.status === "rendering";
+  const isMutatingProject = isGenerating || isRegeneratingSegment || isRendering;
 
   const generateProject = async () => {
     setIsGenerating(true);
@@ -96,7 +108,7 @@ const Home: NextPage = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           mode: "segment",
-          project,
+          project: normalizedProject,
           segmentId: selectedSegmentId,
           revisionPrompt,
         }),
@@ -141,7 +153,7 @@ const Home: NextPage = () => {
             <div className="text-xs uppercase tracking-[0.22em] text-neutral-500">AI Video Studio</div>
             <h1 className="mt-3 text-2xl font-bold text-foreground">分段优先工作台</h1>
             <p className="mt-3 text-sm leading-6 text-neutral-600">
-              从一段 brief 生成视频项目，先预览完整成片，再逐段细化修改。
+              从一段 brief 生成视频项目，先预览完整成片，再逐段细化修改，并直接导出当前编辑态成片。
             </p>
 
             <label className="mt-5 block text-sm font-medium text-foreground">
@@ -155,7 +167,7 @@ const Home: NextPage = () => {
 
             <button
               className="mt-4 rounded-geist border border-foreground bg-foreground px-4 py-2 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-60"
-              disabled={isGenerating || isRegeneratingSegment}
+              disabled={isMutatingProject}
               onClick={generateProject}
               type="button"
             >
@@ -174,32 +186,45 @@ const Home: NextPage = () => {
               acknowledgeRemotionLicense
               autoPlay
               component={ProjectVideo}
-              compositionHeight={project.meta.height}
-              compositionWidth={project.meta.width}
+              compositionHeight={normalizedProject.meta.height}
+              compositionWidth={normalizedProject.meta.width}
               controls
               durationInFrames={durationInFrames}
-              fps={project.meta.fps}
-              inputProps={project}
+              fps={normalizedProject.meta.fps}
+              inputProps={normalizedProject}
               loop
               style={{ width: "100%" }}
             />
           </section>
 
-          <ProjectSummary project={project} />
-
-          <SegmentEditor
-            isRegenerating={isRegeneratingSegment}
-            revisionPrompt={revisionPrompt}
-            segment={selectedSegment}
-            onRegenerateSegment={regenerateSelectedSegment}
-            onRevisionPromptChange={setRevisionPrompt}
-            onSegmentChange={updateSegment}
+          <RenderControls
+            disabled={isGenerating || isRegeneratingSegment}
+            onDismissResult={resetRenderState}
+            onRender={renderMedia}
+            state={renderState}
           />
+
+          <ProjectSummary project={normalizedProject} />
+
+          <div className={isRendering ? "pointer-events-none opacity-70" : undefined}>
+            <SegmentEditor
+              isRegenerating={isRegeneratingSegment}
+              revisionPrompt={revisionPrompt}
+              segment={selectedSegment}
+              onRegenerateSegment={regenerateSelectedSegment}
+              onRevisionPromptChange={setRevisionPrompt}
+              onSegmentChange={updateSegment}
+            />
+          </div>
         </div>
 
-        <div className="space-y-6 xl:sticky xl:top-6 xl:self-start">
+        <div
+          className={`space-y-6 xl:sticky xl:top-6 xl:self-start ${
+            isRendering ? "pointer-events-none opacity-70" : ""
+          }`}
+        >
           <SegmentList
-            project={project}
+            project={normalizedProject}
             selectedSegmentId={selectedSegmentId}
             onSelectSegment={(segmentId) => {
               setSelectedSegmentId(segmentId);

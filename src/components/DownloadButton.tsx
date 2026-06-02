@@ -6,13 +6,7 @@ import { Spacing } from "./Spacing";
 const Megabytes: React.FC<{
   sizeInBytes: number;
 }> = ({ sizeInBytes }) => {
-  const megabytes = Intl.NumberFormat("en", {
-    notation: "compact",
-    style: "unit",
-    unit: "byte",
-    unitDisplay: "narrow",
-  }).format(sizeInBytes);
-  return <span className="opacity-60">{megabytes}</span>;
+  return <span className="opacity-60">{(sizeInBytes / (1024 * 1024)).toFixed(2)} MB</span>;
 };
 
 export const DownloadButton: React.FC<{
@@ -20,11 +14,11 @@ export const DownloadButton: React.FC<{
   undo: () => void;
 }> = ({ state, undo }) => {
   if (state.status === "rendering") {
-    return <Button disabled>Download video</Button>;
+    return <Button disabled>正在导出</Button>;
   }
 
-  if (state.status !== "done") {
-    throw new Error("Download button should not be rendered when not done");
+  if (state.status !== "success") {
+    throw new Error("Download button should not be rendered when render is not successful.");
   }
 
   return (
@@ -33,11 +27,11 @@ export const DownloadButton: React.FC<{
         <UndoIcon></UndoIcon>
       </Button>
       <Spacing></Spacing>
-      <a href={state.url}>
+      <a href={state.downloadUrl}>
         <Button>
-          Download video
+          下载视频
           <Spacing></Spacing>
-          <Megabytes sizeInBytes={state.size}></Megabytes>
+          <Megabytes sizeInBytes={state.sizeInBytes}></Megabytes>
         </Button>
       </a>
     </div>
