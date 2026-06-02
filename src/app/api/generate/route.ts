@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import {
-  buildMockProjectFromBrief,
-  reviseProjectSegmentFromPrompt,
-} from "../../../lib/project-generation";
 import { videoProjectSchema } from "../../../lib/project-schema";
+import {
+  MinimaxConfigError,
+} from "../../../lib/minimax/provider";
+import {
+  minimaxGenerateProject,
+  minimaxReviseSegment,
+} from "../../../lib/minimax";
 
 const projectGenerateRequestSchema = z.object({
   mode: z.literal("project"),
@@ -27,6 +30,13 @@ const generateRequestSchema = z.discriminatedUnion("mode", [
   segmentGenerateRequestSchema,
 ]);
 
+// Match design doc §2.2: classify provider errors so route can pick 500 vs 502.
+// 502 = upstream/network/parse problems, 500 = config or contract issues.
+// Tool-calling failure modes (truncation / wrong tool / no tool calls) are
+// 502 — they are upstream/contract issues, never configuration.
+const UPSTREAM_ERROR_PATTERN =
+  /MiniMax request failed|MiniMax returned a non-JSON response|did not include any message content|MiniMax response was not valid JSON|truncated by max_tokens|had no tool_calls|unexpected function|tool_call arguments were empty|tool_call arguments were not valid JSON/;
+
 export async function POST(request: Request) {
   let body: unknown;
 
@@ -45,37 +55,26 @@ export async function POST(request: Request) {
     );
   }
 
-  let generatedProject;
-
   try {
-    generatedProject =
+    const result =
       parsedRequest.data.mode === "project"
-        ? buildMockProjectFromBrief({ brief: parsedRequest.data.brief })
-        : reviseProjectSegmentFromPrompt(
-            parsedRequest.data.project,
-            parsedRequest.data.segmentId,
-            parsedRequest.data.revisionPrompt,
-          );
+        ? await minimaxGenerateProject({ brief: parsedRequest.data.brief })
+        : await minimaxReviseSegment({
+            project: parsedRequest.data.project,
+            segmentId: parsedRequest.data.segmentId,
+            revisionPrompt: parsedRequest.data.revisionPrompt,
+          });
+
+    return NextResponse.json({
+      project: result.project,
+      spec: result.project.segments[0]?.implementation,
+    });
   } catch (error) {
-    return NextResponse.json(
-      {
-        error: error instanceof Error ? error.message : "Generation request could not be completed.",
-      },
-      { status: 400 },
-    );
+    if (error instanceof MinimaxConfigError) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    const message = error instanceof Error ? error.message : "Generation request could not be completed.";
+    const status = UPSTREAM_ERROR_PATTERN.test(message) ? 502 : 500;
+    return NextResponse.json({ error: message }, { status });
   }
-
-  const project = videoProjectSchema.safeParse(generatedProject);
-
-  if (!project.success) {
-    return NextResponse.json(
-      { error: "Generated project failed schema validation." },
-      { status: 500 },
-    );
-  }
-
-  return NextResponse.json({
-    project: project.data,
-    spec: project.data.segments[0]?.implementation,
-  });
 }

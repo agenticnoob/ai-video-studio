@@ -20,6 +20,7 @@ Current base:
 Current implementation status:
 - the segment-first editing workflow is implemented
 - local project render/export is implemented
+- `POST /api/generate` is now provider-backed (MiniMax / minimaxi.com) — see [MiniMax integration](#minimax-integration) below
 - current progress and next-step notes live in `docs/ITERATION_STATUS.md`
 - product requirements live in `docs/PRODUCT_REQUIREMENTS.md`
 - agent/new-task startup notes live in `AGENTS.md`
@@ -123,3 +124,56 @@ Docker verification was not re-run in the latest render/export fix pass.
 - the official scaffold created a nested `.git/` repo in this directory.
 - the app is no longer the upstream starter UI; the current studio path already supports brief -> project generation -> full preview -> selected-segment editing -> selected-segment regeneration -> local export.
 - Docker render images now include Noto CJK fonts for Chinese-first content.
+
+## MiniMax integration
+
+`POST /api/generate` is now backed by [MiniMax](https://api.minimaxi.com/v1) (minimaxi.com) Chat Completions. The `VideoProject` schema contract is unchanged — the provider is responsible for receiving the brief / current project and emitting a schema-validating JSON object.
+
+### Environment variables
+
+Add to `.env.local` (see `.env.example`):
+
+| Variable | Required | Default | Purpose |
+|---|---|---|---|
+| `MINIMAX_API_KEY` | yes | — | Bearer token for `https://api.minimaxi.com/v1/text/chatcompletion_v2`. |
+| `MINIMAX_MODEL` | no | `MiniMax-Text-01` | The `model` field sent on every request. Must be read from `process.env`, never hard-coded. |
+| `MINIMAX_BASE_URL` | no | `https://api.minimaxi.com/v1` | Override only for testing against a self-hosted gateway. |
+
+### What happens if the key is missing
+
+The provider throws `MinimaxConfigError("MINIMAX_API_KEY is not configured. Set it in .env.local to enable real generation.")` on the first call, and `POST /api/generate` translates that into a `500` with the same message in the `error` field. The UI surfaces it as the generation error state — there is no silent fallback to the local mock anymore.
+
+### Failure → HTTP status mapping
+
+| Failure | HTTP |
+|---|---|
+| `MINIMAX_API_KEY` missing or empty | 500 |
+| Network error / upstream non-2xx (4xx, 5xx) | 502 |
+| Upstream returns non-JSON or empty `choices[0].message.content` | 502 |
+| Response is JSON but fails `videoProjectSchema` | 500 |
+| Invalid request body / unknown mode | 400 |
+
+### Minimal local verification
+
+```bash
+cd /data/projects/labs/ai-video-studio
+npm install
+npm run lint
+npx tsc --noEmit
+npm run build
+```
+
+Smoke test the missing-key path (returns 500):
+
+```bash
+cd /data/projects/labs/ai-video-studio
+# ensure .env.local does NOT export MINIMAX_API_KEY
+npm run dev
+# in another terminal
+curl -s -X POST http://127.0.0.1:3000/api/generate \
+  -H 'content-type: application/json' \
+  -d '{"mode":"project","brief":"hello world"}'
+# -> {"error":"MINIMAX_API_KEY is not configured. Set it in .env.local to enable real generation."} (status 500)
+```
+
+Full design notes and prompt templates live in [`docs/providers/minimax.md`](docs/providers/minimax.md).

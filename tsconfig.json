@@ -35,6 +35,8 @@
   ],
   "exclude": [
     "node_modules",
-    "remotion.config.ts"
+    "remotion.config.ts",
+    "scripts-tmp-*.mjs",
+    "scripts-tmp-*.ts"
   ]
 }

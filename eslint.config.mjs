@@ -21,6 +21,9 @@ export default [
       "next-env.d.ts",
       "next.config.js",
       "deploy.mjs",
+      // Throwaway ad-hoc research / verification scripts (see .gitignore).
+      "scripts-tmp-*.mjs",
+      "scripts-tmp-*.ts",
     ],
   },
   // Base JS recommended
