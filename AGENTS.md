@@ -21,7 +21,7 @@ These files together explain:
 
 `ai-video-studio` already has a usable single-template, segment-first authoring loop:
 - user writes a brief
-- page calls local mock `POST /api/generate`
+- page calls `POST /api/generate`
 - API returns schema-validated `VideoProject`
 - page hydrates project-level editable state
 - assembled full-video preview renders live
@@ -34,7 +34,7 @@ Do not describe it as an untouched scaffold.
 
 ## Current highest-priority next milestone
 
-Replace the local deterministic generation mock with a real provider-backed generation path while preserving schema validation and the project-level edit loop.
+Stabilize the existing MiniMax-backed generation path and align docs to current implementation facts.
 
 Keep the next iteration focused on:
 1. keep `VideoProject` as the generation contract
@@ -60,7 +60,6 @@ Keep the next iteration focused on:
 ## Constraints / non-goals for the current product stage
 
 Still not implemented unless the new task explicitly asks for them:
-- real provider-backed generation
 - saved drafts/history/project persistence
 - multi-template product architecture
 - browser automation acceptance

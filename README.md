@@ -28,7 +28,7 @@ Current implementation status:
 ## Current product flow
 
 1. user writes a brief
-2. page calls local mock `POST /api/generate`
+2. page calls `POST /api/generate`
 3. API returns schema-validated `VideoProject`
 4. page renders assembled preview via `ProjectVideo`
 5. user edits a selected segment and can regenerate only that segment
@@ -48,8 +48,8 @@ Current top-level boundaries:
    - segment-first editor
    - full preview panel
    - local render/export actions
-2. `/src/app/api/generate/route.ts`
-   - current local deterministic project/segment generation mock
+- `src/app/api/generate/route.ts`
+   - MiniMax-backed project/segment generation
 3. `/src/app/api/render/*`
    - local Remotion export for the current edited project
 4. `/src/lib/project-schema.ts`
@@ -136,12 +136,12 @@ Add to `.env.local` (see `.env.example`):
 | Variable | Required | Default | Purpose |
 |---|---|---|---|
 | `MINIMAX_API_KEY` | yes | — | Bearer token for `https://api.minimaxi.com/v1/text/chatcompletion_v2`. |
-| `MINIMAX_MODEL` | no | `MiniMax-Text-01` | The `model` field sent on every request. Must be read from `process.env`, never hard-coded. |
+| `MINIMAX_MODEL` | no | `MiniMax-M2.7-highspeed` | The `model` field sent on every request. Must be read from `process.env`, never hard-coded. |
 | `MINIMAX_BASE_URL` | no | `https://api.minimaxi.com/v1` | Override only for testing against a self-hosted gateway. |
 
 ### What happens if the key is missing
 
-The provider throws `MinimaxConfigError("MINIMAX_API_KEY is not configured. Set it in .env.local to enable real generation.")` on the first call, and `POST /api/generate` translates that into a `500` with the same message in the `error` field. The UI surfaces it as the generation error state — there is no silent fallback to the local mock anymore.
+The provider throws `MinimaxConfigError("MINIMAX_API_KEY is not configured. Set it in .env.local to enable real generation.")` on the first call, and `POST /api/generate` translates that into a `500` with the same message in the `error` field. The UI surfaces it as the generation error state — there is no silent mock fallback to the local mock anymore.
 
 ### Failure → HTTP status mapping
 

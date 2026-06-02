@@ -21,11 +21,11 @@
 | 变量名 | 必填 | 默认值 | 用途 |
 |---|---|---|---|
 | `MINIMAX_API_KEY` | 是 | — | MiniMax Chat Completions 的 Bearer token。建议本地写在 `.env.local`，CI 走 secret。 |
-| `MINIMAX_MODEL` | 否 | `MiniMax-Text-01` | 实际下发的 `model` 字段。**禁止硬编码**到代码里；所有读取都走 `process.env.MINIMAX_MODEL`，并提供默认值。 |
+| `MINIMAX_MODEL` | 否 | `MiniMax-M2.7-highspeed` | 实际下发的 `model` 字段。**禁止硬编码**到代码里；所有读取都走 `process.env.MINIMAX_MODEL`，并提供默认值。 |
 | `MINIMAX_BASE_URL` | 否 | `https://api.minimaxi.com/v1` | 远端根地址。所有请求都拼 `${BASE_URL}/text/chatcompletion_v2`。允许在测试或自建网关场景下整体覆盖。 |
 
 ### 1.1 推荐默认值
-- `MINIMAX_MODEL` 推荐：`MiniMax-Text-01`（MiniMax 文档中明确列出的 text model 之一，结构化 JSON 输出兼容性最稳）。如需更高吞吐，可换为 `abab6.5s-chat`；如需更长上下文，可换为 `MiniMax-Text-01` 长上下文版本（`MiniMax-Text-01` 在文档中已支持 1M context）。
+- `MINIMAX_MODEL` 推荐：`MiniMax-M2.7-highspeed`（经过 T1/T2/T3 probe 验证，tool-calling 路径 M2.7-highspeed 性能最优）。如需更高质量可换为 `MiniMax-M2.7`；如需更长上下文可换为 `MiniMax-Text-01` 长上下文版本（`MiniMax-Text-01` 在文档中已支持 1M context）。
 - 这些只是建议；model 字段必须**只**从环境变量读取，禁止在源码中写死具体值。
 
 ### 1.2 缺失/非法配置
@@ -266,7 +266,7 @@ export async function callMiniMaxChat(messages): Promise<string> {
   }
 
   const baseUrl = process.env.MINIMAX_BASE_URL || "https://api.minimaxi.com/v1";
-  const model = process.env.MINIMAX_MODEL || "MiniMax-Text-01";
+  const model = process.env.MINIMAX_MODEL || "MiniMax-M2.7-highspeed";
 
   let res: Response;
   try {

@@ -24,6 +24,8 @@ export default [
       // Throwaway ad-hoc research / verification scripts (see .gitignore).
       "scripts-tmp-*.mjs",
       "scripts-tmp-*.ts",
+      // MiniMax contract validation — standalone node script, not part of the app.
+      "scripts/validate-minimax-contract.mjs",
     ],
   },
   // Base JS recommended

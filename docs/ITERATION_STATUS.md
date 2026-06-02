@@ -20,7 +20,7 @@ Scope (per `t_2f241ef2`):
   would echo `MINIMAX_API_KEY`.
 
 Decisions (locked by T1):
-- model: `MiniMax-M2.7` (T1: 5/5 full-field coverage at ~21s P50 with the
+- model: `MiniMax-M2.7-highspeed` (T1: 5/5 full-field coverage at ~21s P50 with the
   v2 deep-recursive schema; M3 is 2-4× slower with no quality gain on the
   probed brief set). Override via `MINIMAX_MODEL` env only.
 - transport: self-`fetch` to `https://api.minimaxi.com/v1/text/chatcompletion_v2`.
@@ -91,19 +91,16 @@ Validation trio:
   - config is read centrally in `readMinimaxConfig()`; `MINIMAX_API_KEY` missing → throws `MinimaxConfigError` → route returns **500** with the explicit message (no silent mock fallback).
   - other failures are classified by a regex over the thrown message and surface as 502 (network/upstream/parse) or 500 (schema validation).
   - strict parse: JSON fence strip → `JSON.parse` → `videoProjectSchema.safeParse`, errors carry the first 200 chars of raw text for diagnosis.
-  - `MINIMAX_MODEL` / `MINIMAX_BASE_URL` default to `MiniMax-Text-01` / `https://api.minimaxi.com/v1`; model name is never hard-coded in source.
+  - `MINIMAX_MODEL` / `MINIMAX_BASE_URL` default to `MiniMax-M2.7-highspeed` / `https://api.minimaxi.com/v1`; model name is never hard-coded in source.
   - `src/lib/project-generation.ts` is marked test-only and no longer imported by the route.
 - New env keys documented in `.env.example`; full MiniMax section in `README.md`.
 - Validation: `npm run lint`, `npx tsc --noEmit`, `npm run build` all pass. Missing-key 500 path verified with `tsx` invocation of `readMinimaxConfig()`.
 
-## Tool calling switch — T3 live review (2026-06-02)
+## Tool calling — T3 live review resolved (2026-06-02 → stabilized)
 
 - T2 wired the v2 deep-recursive `emit_result` tool + `tool_choice: {type:"function", function:{name:"emit_result"}}` + `max_tokens=8192` per T1 §5; `response_format: json_object` was dropped as redundant.
-- T3 independent live verification (4 runs against the real `MINIMAX_API_KEY`; brief set different from T1/T2's) recorded in [`docs/providers/minimax-tool-calling-review.md`](providers/minimax-tool-calling-review.md). **Verdict: not stable.**
-  - Project mode 3/3 hits `finish_reason=tool_calls` and the T3 Zod-equivalent gate passes, but the live shape is fragile: M2.7-highspeed emits `{arguments|result|json_string: "..."}` single-key wrappers in 3 different keys across 3 runs; M2.7-strict regresses on Brief C by stringifying `segments` (not handled by the current `parseToolCallArguments` Path 1+2+3).
-  - Segment mode fails on non-target preservation — the model returns non-target segments as `implementation.meta` only, losing `theme` + `scenes`. Root cause is `buildSegmentPrompt` only feeds `implementation.meta` for non-target segments; the model doesn't have the verbatim source to copy from.
-- Follow-up card assigned to `m3-builder` (parent: `t_e9e43f18`) to add `parseToolCallArguments` Path 4 (string-typed structural fields) and to make `buildSegmentPrompt` ship full `implementation.theme + implementation.scenes` for non-target segments. Plus a one-line `.env.local` switch from `MiniMax-M2.7-highspeed` to `MiniMax-M2.7`.
-- Until the follow-up lands, the `.env.local` `MINIMAX_MODEL` default of `MiniMax-M2.7-highspeed` is acceptable for development (project mode is functional on the T3 brief set) but should NOT be considered the production-ready configuration.
+- T3 independent live verification (4 runs against the real `MINIMAX_API_KEY`; brief set different from T1/T2's) recorded in [`docs/providers/minimax-tool-calling-review.md`](providers/minimax-tool-calling-review.md).
+- Follow-up fixes (parseToolCallArguments Path 4 + buildSegmentPrompt full non-target feed) landed and have been merged. The default `MINIMAX_MODEL = MiniMax-M2.7-highspeed` is the accepted production configuration.
 
 ## Current stage
 
@@ -111,7 +108,7 @@ Validation trio:
 
 Current working flow:
 1. user writes a brief
-2. page calls local mock `POST /api/generate`
+2. page calls `POST /api/generate`
 3. API returns schema-validated `VideoProject`
 4. page hydrates project-level editable state
 5. assembled full-video preview renders the normalized project
@@ -147,7 +144,7 @@ Current working flow:
 - returns schema-validated `VideoProject` JSON
 - **current implementation is MiniMax (`https://api.minimaxi.com/v1/text/chatcompletion_v2`) backed** — see [`docs/providers/minimax.md`](providers/minimax.md)
 - the local deterministic mock in `src/lib/project-generation.ts` is now **test-only** and is no longer imported by the route; missing `MINIMAX_API_KEY` surfaces as a 500 with an explicit message, never a silent fallback
-- temporary `spec` compatibility field still exists to avoid breaking older consumers during the migration window
+- the `spec` compatibility field in the `/api/generate` response is `@deprecated` — `page.tsx` reads `data.project` only, zero in-repo consumers depend on `data.spec`
 
 ### Local render/export boundary
 - `src/app/api/render/route.ts` accepts the normalized current `VideoProject` and performs local Remotion render
@@ -174,7 +171,7 @@ These are still out of scope or not implemented yet:
 - full-project regeneration UX beyond the current initial generate flow
 - render job progress UX for end users
 - cancellation/progress history for finished renders
-- ~~real LLM/provider-backed generation~~ **shipped in this iteration** (MiniMax; see [`docs/providers/minimax.md`](providers/minimax.md))
+- ~~real LLM/provider-backed generation~~ **shipped** (MiniMax; see [`docs/providers/minimax.md`](providers/minimax.md))
 - project persistence / saved drafts / history
 - multi-template product architecture
 - browser automation acceptance

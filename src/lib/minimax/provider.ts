@@ -3,15 +3,11 @@ import type { VideoProject } from "../project-schema";
 export const DEFAULT_MINIMAX_BASE_URL = "https://api.minimaxi.com/v1";
 // Default model. Per the T1 research probe
 // (docs/providers/minimax-tool-calling.md §0 + §5 — preferred_model) and
-// the T2 m-hermes coordination directive (fixed model = M2.7): M2.7 with
-// the v2 deep-recursive single-`emit_result` schema gives 5/5 full-field
-// coverage at ~21s P50, which is 2-4x faster than M3 (50-88s P50) with no
-// quality delta in the probed brief set. Override via env
-// `MINIMAX_MODEL=MiniMax-M3` if a future brief set shows M2.7 quality
-// regressions. Avoid the highspeed routing alias
-// (`MiniMax-M2.7-highspeed`) — it wraps tool call arguments under a single
-// key and breaks the parser contract.
-export const DEFAULT_MINIMAX_MODEL = "MiniMax-M2.7";
+// the T2 m-hermes coordination directive: M2.7-highspeed with the v2
+// deep-recursive single-`emit_result` schema gives 5/5 full-field coverage
+// at ~21s P50, which is 2-4x faster than M3 (50-88s P50) with no quality
+// delta in the probed brief set. Override via env `MINIMAX_MODEL` if needed.
+export const DEFAULT_MINIMAX_MODEL = "MiniMax-M2.7-highspeed";
 // T1 §6 — max_tokens 8192 prevents the 1/4 length truncation we saw at 4096
 // on 3-segment briefs (finish_reason=length with empty args).
 export const DEFAULT_MINIMAX_MAX_TOKENS = 8192;
