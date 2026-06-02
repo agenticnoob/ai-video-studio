@@ -1,0 +1,15 @@
+export const CJK_SANS_FONT_STACK = [
+  '"Noto Sans CJK SC"',
+  '"Noto Sans SC"',
+  '"Source Han Sans SC"',
+  '"Microsoft YaHei"',
+  '"PingFang SC"',
+  '"Hiragino Sans GB"',
+  '"WenQuanYi Zen Hei"',
+  '"Segoe UI"',
+  'Inter',
+  'system-ui',
+  '-apple-system',
+  'BlinkMacSystemFont',
+  'sans-serif',
+].join(", ");
