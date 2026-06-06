@@ -67,8 +67,8 @@ export const buildMockSpec = (input: MockGeneratorInput): VideoSpec => {
         kicker: "Pipeline",
         title: "From prompt to render",
         bullets: [
-          "用户先选模版，再让系统生成结构化参数。",
-          "网页负责预览与微调，模版负责视觉与动画。",
+          "用户输入 brief 后，系统生成分段项目与结构化参数。",
+          "网页负责预览与微调，分段主模板负责视觉与动画。",
           "最终渲染链路复用 Remotion，本地优先。",
         ],
       },
@@ -77,7 +77,9 @@ export const buildMockSpec = (input: MockGeneratorInput): VideoSpec => {
         type: "quote",
         duration,
         kicker: "Output",
-        quote: input.callToAction || "Review the JSON, tune the template, and render the final video.",
+        quote:
+          input.callToAction ||
+          "Review the structured segment data, tune the draft, and render the final video.",
         author: "Mock generator",
       },
     ],

@@ -1,5 +1,5 @@
 import type { MinimaxChatMessage, MinimaxTool, MinimaxToolChoice } from "./provider";
-import type { VideoProject } from "../project-schema";
+import { SCRIPTED_TEMPLATE_ID, type VideoProject } from "../project-schema";
 import { EMIT_RESULT_TOOL, EMIT_RESULT_TOOL_CHOICE } from "./tool-schema";
 
 /**
@@ -14,17 +14,20 @@ export type MinimaxPrompt = {
   toolChoice: MinimaxToolChoice;
 };
 
-const PROJECT_SYSTEM_PROMPT = `You generate structured "VideoProject" JSON for a single-template video studio.
+const PROJECT_SYSTEM_PROMPT = `You generate structured "VideoProject" JSON for a segment-first video studio.
 
 The output must:
 - be a single JSON object (no markdown fence, no commentary)
 - validate against the exact Zod schemas below — do not omit required fields
 - contain between 1 and 3 segments (1 if brief ≤ 1 sentence, 2 if 2–4 sentences or < 280 chars, 3 if longer)
-- use templateId "scripted" for every segment
+- use one primary template per segment
+- use templateId "${SCRIPTED_TEMPLATE_ID}" for every segment
 - use fps=30, width=1280, height=720 in every implementation.meta
 
-# Scene rules
-Each segment.implementation.scenes is an array of 1+ scenes. Each scene has a
+# Scripted implementation rules
+Because every current segment uses templateId "${SCRIPTED_TEMPLATE_ID}",
+each segment.implementation must be the scripted VideoSpec shape. In that
+shape, implementation.scenes is an array of 1+ scripted scenes. Each scene has a
 discriminated \`type\` ∈ {"title", "bullets", "quote"} with fields:
 
   title:   { id, type:"title",   duration, kicker?, title, subtitle?, voiceover? }
@@ -36,8 +39,8 @@ discriminated \`type\` ∈ {"title", "bullets", "quote"} with fields:
   (e.g. "hook", "pipeline", "output")
 - keep total per-segment duration between 90 and 600 frames
 
-# Theme rules
-Every segment has a theme with all 6 fields:
+# Scripted theme rules
+Every scripted implementation has a theme with all 6 fields:
   background, panel, primary, secondary, text, muted
 Use CSS color literals (hex or rgba). Vary primary/secondary across segments
 so multi-segment projects feel distinct, but keep contrast readable.
@@ -45,7 +48,7 @@ so multi-segment projects feel distinct, but keep contrast readable.
 # Hard constraints
 - Return ONLY the JSON object. Do not prefix with "Here is the JSON:".
 - Do not add fields not in the schemas.
-- Do not return empty scenes arrays.
+- Do not return empty implementation.scenes arrays for scripted segments.
 - If the brief is empty or off-topic, still return a valid 1-segment project
   with a generic AI Video Studio workflow.
 - Return the VideoProject fields (meta, brief, segments) as the TOP-LEVEL keys
@@ -77,7 +80,7 @@ schemas in this conversation. The output must be a single JSON object
 
 # Preservation rules (HARD)
 |- For every segment whose id is NOT "${targetSegmentId}":
-  - copy title, intent, templateId, AND implementation (meta + theme + scenes)
+  - copy title, intent, templateId, AND scripted implementation (meta + theme + scenes)
     verbatim from the input — byte-for-byte, character-for-character
   - in particular: the scenes array (including per-scene id, type, title,
     bullets/quote, duration, kicker, voiceover) and the theme object
@@ -91,17 +94,17 @@ schemas in this conversation. The output must be a single JSON object
     segment is a hard failure (Zod will reject the project).
 - For the segment whose id IS "${targetSegmentId}":
   - you may change title, intent, and implementation
-  - keep templateId = "scripted"
+  - keep templateId = "${SCRIPTED_TEMPLATE_ID}"
   - keep implementation.meta.title === implementation.scenes[0].title etc.
   - if the revision prompt is empty or off-topic, keep the segment as-is
 
 # Revision request for target segment
 ${revisionPrompt}
 
-# Schema reminder
-- meta: { title, fps=30, width=1280, height=720 }
-- theme: { background, panel, primary, secondary, text, muted }
-- scenes: 1+ items, each type ∈ {"title", "bullets", "quote"} with the
+# Scripted implementation schema reminder
+- implementation.meta: { title, fps=30, width=1280, height=720 }
+- implementation.theme: { background, panel, primary, secondary, text, muted }
+- implementation.scenes: 1+ items, each type ∈ {"title", "bullets", "quote"} with the
   matching fields; duration is integer frames at 30fps
 
 Return ONLY the JSON object via the "emit_result" tool call.`;

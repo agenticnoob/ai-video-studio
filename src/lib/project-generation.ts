@@ -7,6 +7,7 @@
 import { buildMockSpecFromBrief, titleFromBrief } from "./mock-spec";
 import {
   normalizeProject,
+  SCRIPTED_TEMPLATE_ID,
   videoSegmentSchema,
   type VideoProject,
   type VideoSegment,
@@ -119,7 +120,7 @@ export const buildSegmentFromBriefPart = (
     id: `segment-${index + 1}`,
     title,
     intent: summarizeIntent(part, title),
-    templateId: "scripted",
+    templateId: SCRIPTED_TEMPLATE_ID,
     implementation,
   });
 };

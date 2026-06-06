@@ -1,4 +1,8 @@
-import { normalizeProject, type VideoProject } from "./project-schema";
+import {
+  normalizeProject,
+  SCRIPTED_TEMPLATE_ID,
+  type VideoProject,
+} from "./project-schema";
 import type { VideoSpec } from "./video-schema";
 
 export const sampleVideo: VideoSpec = {
@@ -56,7 +60,7 @@ export const sampleProject: VideoProject = normalizeProject({
       id: "segment-1",
       title: sampleVideo.meta.title,
       intent: "Introduce the current AI Video Studio workflow in one scripted segment.",
-      templateId: "scripted",
+      templateId: SCRIPTED_TEMPLATE_ID,
       implementation: sampleVideo,
     },
   ],

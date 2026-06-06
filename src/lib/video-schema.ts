@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+// Current implementation schema for the `scripted` segment template.
+// `scenes` is intentionally scoped to this template; future templates should
+// define their own implementation schemas instead of inheriting this shape.
 export const themeSchema = z.object({
   background: z.string().default("#0b1020"),
   panel: z.string().default("rgba(255,255,255,0.08)"),

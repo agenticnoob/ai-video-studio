@@ -9,18 +9,18 @@ services:
     environment:
       HOME: /tmp/hermes-home
       NEXT_TELEMETRY_DISABLED: "1"
-      NPM_CONFIG_CACHE: /npm-cache
+      NPM_CONFIG_CACHE: /tmp/npm-cache
+      NPM_CONFIG_REGISTRY: "https://registry.npmmirror.com"
       CHOKIDAR_USEPOLLING: "1"
       WATCHPACK_POLLING: "true"
     volumes:
       - .:/workspace
       - ai-video-studio-node-modules:/workspace/node_modules
       - ai-video-studio-next-cache:/workspace/.next
-      - ai-video-studio-npm-cache:/npm-cache
     ports:
       - "${APP_PORT:-3000}:3000"
     command: >-
-      bash -lc "mkdir -p /tmp/hermes-home /npm-cache &&
+      bash -lc "mkdir -p /tmp/hermes-home /tmp/npm-cache &&
       [ -d /workspace/node_modules/next ] || npm install &&
       npm run dev -- --hostname 0.0.0.0 --port 3000"
 
@@ -34,18 +34,18 @@ services:
     environment:
       HOME: /tmp/hermes-home
       NEXT_TELEMETRY_DISABLED: "1"
-      NPM_CONFIG_CACHE: /npm-cache
+      NPM_CONFIG_CACHE: /tmp/npm-cache
+      NPM_CONFIG_REGISTRY: "https://registry.npmmirror.com"
       CHOKIDAR_USEPOLLING: "1"
       WATCHPACK_POLLING: "true"
     volumes:
       - .:/workspace
       - ai-video-studio-node-modules:/workspace/node_modules
       - ai-video-studio-next-cache:/workspace/.next
-      - ai-video-studio-npm-cache:/npm-cache
     ports:
       - "${STUDIO_PORT:-3001}:3000"
     command: >-
-      bash -lc "mkdir -p /tmp/hermes-home /npm-cache &&
+      bash -lc "mkdir -p /tmp/hermes-home /tmp/npm-cache &&
       [ -d /workspace/node_modules/next ] || npm install &&
       npm run remotion -- --host 0.0.0.0 --port 3000"
 
@@ -59,19 +59,18 @@ services:
     environment:
       HOME: /tmp/hermes-home
       NEXT_TELEMETRY_DISABLED: "1"
-      NPM_CONFIG_CACHE: /npm-cache
+      NPM_CONFIG_CACHE: /tmp/npm-cache
+      NPM_CONFIG_REGISTRY: "https://registry.npmmirror.com"
     volumes:
       - .:/workspace
       - ai-video-studio-node-modules:/workspace/node_modules
       - ai-video-studio-next-cache:/workspace/.next
-      - ai-video-studio-npm-cache:/npm-cache
       - ./out:/workspace/out
     command: >-
-      bash -lc "mkdir -p /tmp/hermes-home /npm-cache /workspace/out &&
+      bash -lc "mkdir -p /tmp/hermes-home /tmp/npm-cache /workspace/out &&
       [ -d /workspace/node_modules/next ] || npm install &&
       npm run render -- --output out/ai-video.mp4"
 
 volumes:
   ai-video-studio-node-modules:
   ai-video-studio-next-cache:
-  ai-video-studio-npm-cache:

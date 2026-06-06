@@ -42,6 +42,15 @@ Current implementation status:
 
 ## Product direction
 
+Current modeling direction:
+- `VideoProject` is the top-level generation / preview / render boundary
+- `VideoSegment` is the user-facing editing and regeneration unit
+- one segment should have one primary template
+- `templateId` determines the schema of `implementation`
+- `implementation` is template-specific; current `scripted` implementations use `VideoSpec`
+- `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
+- future existing video, image, or color inputs should be modeled as project-level or segment-level `baseLayer` data
+
 Current top-level boundaries:
 1. `/src/app/page.tsx`
    - prompt input

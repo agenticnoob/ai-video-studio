@@ -104,7 +104,16 @@ Validation trio:
 
 ## Current stage
 
-`ai-video-studio` now has a closed local v1 authoring loop for the single-template, segment-first workflow.
+`ai-video-studio` now has a closed local v1 authoring loop for the one-primary-template-per-segment workflow.
+
+Current product direction:
+- `VideoProject` remains the top-level generation / preview / render boundary.
+- `VideoSegment` remains the user-facing editing and regeneration unit.
+- Each segment should have one primary template.
+- `templateId` determines the schema of `implementation`.
+- `implementation` is template-specific; current `scripted` implementations use `VideoSpec`.
+- `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates.
+- Future existing video, image, or color inputs should be modeled as project-level or segment-level `baseLayer` data, not as extra templates inside the segment.
 
 Current working flow:
 1. user writes a brief
@@ -174,6 +183,7 @@ These are still out of scope or not implemented yet:
 - ~~real LLM/provider-backed generation~~ **shipped** (MiniMax; see [`docs/providers/minimax.md`](providers/minimax.md))
 - project persistence / saved drafts / history
 - multi-template product architecture
+- project-level / segment-level baseLayer media compositing
 - browser automation acceptance
 
 ## Validation status
@@ -224,13 +234,16 @@ Suggested next focus, in order:
 1. ~~keep `VideoProject` as the generation contract~~ ✓ kept
 2. ~~add provider integration behind the existing request modes~~ ✓ added (MiniMax)
 3. ~~preserve schema validation + deterministic fallback/error handling~~ ✓ preserved (strict parse, no silent mock fallback)
-4. now widen into persistence/history or multi-template work
+4. keep the next work bounded unless a task explicitly asks for persistence/history or media-layer compositing
 
 ## Notes for future Hermes/Codex work
 
 - Keep `VideoProject` as the top-level page/generation/preview/render boundary for this phase.
 - Keep `VideoSpec` as the per-segment implementation contract for the current scripted template.
-- Do not widen scope into multi-template support before the generation path is no longer mock-only.
+- Keep one primary template per segment; grow segment expressiveness through template-specific implementation fields first.
+- Treat `scenes` as a `scripted` implementation detail, not as a universal product-level concept.
+- Model future video/image/color underlays as project-level or segment-level `baseLayer` data.
+- Do not widen scope into multi-template-per-segment support unless a concrete workflow proves that scene/component composition is insufficient.
 - Remove the temporary `/api/generate` `spec` compatibility field once no older consumer depends on it.
 - Prefer repo-local artifacts for delegated workers when possible.
 - On this workstation, browser automation is not the default validation path.

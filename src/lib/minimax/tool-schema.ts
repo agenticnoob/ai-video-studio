@@ -1,8 +1,9 @@
 import type { MinimaxTool } from "./provider";
 
 /**
- * Single `emit_result` tool — the v2 deep-recursive shape validated against
- * the live MiniMax `MiniMax-M2.7` endpoint in the T1 research probe.
+ * Single `emit_result` tool for the current `scripted` implementation contract —
+ * the v2 deep-recursive shape validated against the live MiniMax `MiniMax-M2.7`
+ * endpoint in the T1 research probe.
  *
  * Rationale (see docs/providers/minimax-tool-calling.md §5.1):
  *  - **Single tool** beats dual-tool routing (model always picks the broader
@@ -20,7 +21,7 @@ export const EMIT_RESULT_TOOL: MinimaxTool = {
   function: {
     name: "emit_result",
     description:
-      "Emit a complete VideoProject. The full discriminated-union schema is inlined; populate every required field literally. Return the full project (for segment mode, return the full project with non-target segments byte-identical to the input).",
+      "Emit a complete VideoProject. The current scripted implementation schema is inlined; populate every required field literally. Return the full project (for segment mode, return the full project with non-target segments byte-identical to the input).",
     parameters: {
       type: "object",
       additionalProperties: false,

@@ -76,7 +76,7 @@
 
 ## 3. mode=project prompt
 
-把 user 的 `brief` 拆成 1–3 个 segment，每个 segment 给出 `title` / `intent` / `implementation`（`implementation` 必须严格符合 `videoSpecSchema`）。
+把 user 的 `brief` 拆成 1–3 个 segment，每个 segment 给出 `title` / `intent` / `templateId` / `implementation`。当前 `templateId` 固定为 `"scripted"`，因此 `implementation` 必须严格符合当前 scripted 模板的 `videoSpecSchema`。这里的 `scenes` 是 scripted 模板专有的内部序列字段，不是所有未来模板的通用字段。
 
 ### 3.1 期望产出形状
 
@@ -109,17 +109,21 @@
 ### 3.2 system prompt 模板（project mode）
 
 ```text
-You generate structured "VideoProject" JSON for a single-template video studio.
+You generate structured "VideoProject" JSON for a segment-first video studio.
 
 The output must:
 - be a single JSON object (no markdown fence, no commentary)
 - validate against the exact Zod schemas below — do not omit required fields
 - contain between 1 and 3 segments (1 if brief ≤ 1 sentence, 2 if 2–4 sentences or < 280 chars, 3 if longer)
+- use one primary template per segment
+- use one primary template per segment
 - use templateId "scripted" for every segment
 - use fps=30, width=1280, height=720 in every implementation.meta
 
-# Scene rules
-Each segment.implementation.scenes is an array of 1+ scenes. Each scene has a
+# Scripted implementation rules
+Because every current segment uses templateId "scripted",
+each segment.implementation must be the scripted VideoSpec shape. In that
+shape, implementation.scenes is an array of 1+ scripted scenes. Each scene has a
 discriminated `type` ∈ {"title", "bullets", "quote"} with fields:
 
   title:   { id, type:"title",   duration, kicker?, title, subtitle?, voiceover? }
@@ -131,8 +135,8 @@ discriminated `type` ∈ {"title", "bullets", "quote"} with fields:
   (e.g. "hook", "pipeline", "output")
 - keep total per-segment duration between 90 and 600 frames
 
-# Theme rules
-Every segment has a theme with all 6 fields:
+# Scripted theme rules
+Every scripted implementation has a theme with all 6 fields:
   background, panel, primary, secondary, text, muted
 Use CSS color literals (hex or rgba). Vary primary/secondary across segments
 so multi-segment projects feel distinct, but keep contrast readable.
@@ -140,7 +144,7 @@ so multi-segment projects feel distinct, but keep contrast readable.
 # Hard constraints
 - Return ONLY the JSON object. Do not prefix with "Here is the JSON:".
 - Do not add fields not in the schemas.
-- Do not return empty scenes arrays.
+- Do not return empty implementation.scenes arrays for scripted segments.
 - If the brief is empty or off-topic, still return a valid 1-segment project
   with a generic AI Video Studio workflow.
 ```
@@ -158,7 +162,7 @@ Return a single JSON object matching the VideoProject contract above.
 
 ## 4. mode=segment prompt
 
-把当前完整 project（**剥掉每个 segment.implementation 里的 scenes 细节，只保留 segment 级元数据**）+ `segmentId` + `revisionPrompt` 喂给 LLM，要求 LLM **只修改该 segment 的 `title` / `intent` / `implementation`**，其它 segment **逐字回放**。
+把当前完整 project（包括每个 segment 的完整 `implementation.meta` / `implementation.theme` / `implementation.scenes`）+ `segmentId` + `revisionPrompt` 喂给 LLM，要求 LLM **只修改该 segment 的 `title` / `intent` / `implementation`**，其它 segment **逐字回放**。
 
 ### 4.1 喂进去的 project 形态
 
@@ -173,8 +177,9 @@ Return a single JSON object matching the VideoProject contract above.
       "intent": "<intent>",
       "templateId": "scripted",
       "implementation": {
-        "meta": { "title", "fps", "width", "height" }
-        // 注意：scenes / theme 不在喂入 payload 里
+        "meta": { "title", "fps", "width", "height" },
+        "theme": { /* 完整 themeSchema */ },
+        "scenes": [ /* 完整 scripted scenes */ ]
       }
     }
     // ... 其余 segment 同形
@@ -182,7 +187,7 @@ Return a single JSON object matching the VideoProject contract above.
 }
 ```
 
-> 关键设计：**喂入时**剥掉 `implementation.scenes` 和 `implementation.theme`，减少 token 消耗，并让 LLM 重新设计；**期望返回**是完整 `VideoProject`，scenes / theme 由 LLM 重新填充。
+> 关键设计：segment mode **必须喂入完整 implementation**，这样模型可以逐字复制非目标 segment。早期只传 `implementation.meta` 会导致非目标 segment 丢失 `theme` / `scenes`，已被后续修正。
 
 ### 4.2 期望产出形状
 
@@ -215,10 +220,10 @@ schemas in this conversation. The output must be a single JSON object
 # Revision request for target segment
 {revisionPrompt}
 
-# Schema reminder
-- meta: { title, fps=30, width=1280, height=720 }
-- theme: { background, panel, primary, secondary, text, muted }
-- scenes: 1+ items, each type ∈ {"title", "bullets", "quote"} with the
+# Scripted implementation schema reminder
+- implementation.meta: { title, fps=30, width=1280, height=720 }
+- implementation.theme: { background, panel, primary, secondary, text, muted }
+- implementation.scenes: 1+ items, each type ∈ {"title", "bullets", "quote"} with the
   matching fields; duration is integer frames at 30fps
 
 Return ONLY the JSON object.
@@ -227,16 +232,16 @@ Return ONLY the JSON object.
 ### 4.4 user prompt 模板（segment mode）
 
 ```text
-Current project (segment-level only, implementation.scenes stripped):
+Current project (full implementation on every segment so non-target segments can be copied verbatim):
 ```json
-{projectWithoutScenes}
+{projectWithFullImplementations}
 ```
 
 Target segmentId: "{targetSegmentId}"
 Revision prompt: "{revisionPrompt}"
 
 Return the full VideoProject JSON with all segments. Preserve other segments
-verbatim and regenerate only the target segment.
+verbatim, including scripted theme + scenes, and regenerate only the target segment.
 ```
 
 ## 5. JSON 解析策略

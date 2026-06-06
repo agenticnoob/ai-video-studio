@@ -19,12 +19,12 @@ Target workflow:
 - the user reviews the whole video, adjusts segment intent or details, and re-generates as needed
 - the user exports the final video
 
-Long-term, a segment may be implemented by:
-- a single template
-- multiple templates combined
-- templates plus existing uploaded video
+Product direction:
+- one segment should be implemented by one primary template
+- one template may contain multiple internal scenes / components
+- existing video, image, or color material should be modeled as a project-level or segment-level base layer
 
-However, the first implementation phase should stay simpler.
+This keeps the user-facing model segment-first while leaving room for richer compositing inside templates.
 
 ## 3. Primary user
 
@@ -90,18 +90,30 @@ The user should mainly think in terms of:
 - how the full video should flow
 
 The system should mainly decide:
-- which template or templates best implement a segment
+- which primary template best implements a segment
 - how to fill template props / structured parameters
 
 ### 5.4 Segment implementation
 
-Long-term model:
-- one segment may contain one or more template instances
-- one segment may later include overlay with uploaded existing video
+Product model:
+- one segment is implemented by one primary template instance
+- `templateId` determines the schema of `implementation`
+- `implementation` is the template-specific parameter payload, not a universal project-level structure
+- a template can be internally composed from multiple React components, renderers, layout primitives, transitions, and media helpers
+- segment complexity should first be expressed through template-specific props and internal components
+- existing video / image / color material should be represented as a `baseLayer` rather than as another template
 
 V1 simplification:
-- one segment is implemented by one template instance
-- this is an implementation shortcut, not the final product truth
+- the only active segment template is currently `scripted`
+- for `templateId: "scripted"`, `implementation` is `VideoSpec`
+- `VideoSpec.scenes` is the scripted template's internal sequence model
+- `scenes` is not a required field for every future template; future templates may have completely different implementation fields
+- multi-template-per-segment orchestration is not part of the near-term product direction
+
+Potential future media model:
+- project-level `baseLayer`: one video, image, or color layer shared by the full generated video
+- segment-level `baseLayer`: one video, image, or color layer used only for that segment
+- template-specific media props: local images, clips, icons, or other assets used inside one template implementation
 
 ## 6. Inputs
 
@@ -128,12 +140,12 @@ Examples:
 
 ### 6.2 Optional future input
 
-The user may later provide an existing video.
+The user may later provide existing media such as a video or image.
 
 Planned future use:
-- treat the uploaded video as base material
+- treat the uploaded media as project-level or segment-level base material
 - add Remotion-generated content on top of it
-- use text description or AI analysis to understand what happens at which time
+- for video input, use text description or AI analysis to understand what happens at which time
 
 This is explicitly a later-phase capability, not required for v1.
 
@@ -222,12 +234,14 @@ V1 is not primarily:
 
 The following are important, but should not define v1.
 
-### 10.1 Existing-video overlay
+### 10.1 Existing-media base layers
 
 Future capability:
-- user uploads an existing video
-- generated content is layered onto that video
-- timing and overlay behavior are coordinated
+- user supplies an existing video, image, or color as a base layer
+- generated content is layered above that base layer
+- project-level base layers apply to the full generated video
+- segment-level base layers apply only to one segment
+- timing and overlay behavior are coordinated for video base layers
 
 Why deferred:
 - significantly increases product and UI complexity
@@ -235,16 +249,19 @@ Why deferred:
 
 ### 10.2 Multi-template implementation inside one segment
 
-Future capability:
-- one segment may combine multiple templates
+Current product decision:
+- do not model one segment as multiple template instances by default
+- prefer one primary template per segment
+- grow expressiveness through template-specific implementation fields, internal components, media props, and base layers
 
 Why deferred:
-- the simpler one-template-per-segment version should be proven first
+- this adds orchestration complexity before the product has proven it needs a segment-internal template timeline
+- many near-term cases are better handled inside a richer template
 
 ### 10.3 Template-to-template overlap / layered composition
 
 Future capability:
-- layered or overlapping animated content across templates
+- layered or overlapping animated content across independently scheduled templates
 
 Why deferred:
 - this likely needs a lightweight time/layer orchestration UI
@@ -303,17 +320,21 @@ Near-term product architecture should evolve from the current single-template mo
 - per-segment implementation data
 - segment-by-segment regeneration
 - full-video assembly and export
+- future project-level / segment-level base layers for existing media
 
 Practical v1 shortcut:
-- keep one template instance per segment initially
-- but preserve the product requirement that a segment is conceptually larger than a template
+- keep one primary template instance per segment
+- allow that template to contain multiple scenes and internal components
+- preserve the product requirement that a segment is the user-facing editing unit
 
 ## 14. Working decisions captured so far
 
 - Start with the simple no-overlay version.
+- Model future video / image / color inputs as base layers, not as extra templates.
 - Do not require a timeline-centric UI in v1.
 - Full-video preview should be primary; segment list should be secondary but always visible.
 - Segment edits should default to local regeneration.
 - Natural-language editing should be primary; structured editing should remain available as a secondary path.
-- Existing-video overlay is a future milestone.
+- Existing-media base layers are a future milestone.
+- One segment should keep one primary template; template internals can grow through template-specific implementation fields/components.
 - AI-generated templates are future discussion, not current scope.

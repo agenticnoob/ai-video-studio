@@ -5,6 +5,7 @@ Status: partially resumed.
 当前补充：
 - 第一轮最小工作流已经落地，当前状态以 `docs/ITERATION_STATUS.md` 为准。
 - 本文件保留“更后续方向”的判断，不再代表当前实现是否已开始。
+- 产品模型已收敛为：一个 segment 对应一个 primary template；`templateId` 决定 `implementation` 的 schema；当前 `scripted` 模板的 `implementation` 是 `VideoSpec`，其中 `scenes` 是 scripted 专有的内部序列字段；已有视频、图片或纯色素材通过 project-level / segment-level `baseLayer` 表达。
 
 此前判断（保留为背景）：
 - 不要一开始就把 `ai-video-studio` 扩成完整 AI 视频产品。
@@ -39,6 +40,8 @@ Reason:
 When implementation resumes, the preferred strategy is:
 - keep `ai-video-studio` as the main repo
 - borrow selected architecture ideas from `vibe-motion-app`
+- keep one primary template per segment unless a concrete future workflow proves that segment-internal template timelines are necessary
+- express richer segment visuals through template-specific implementation fields, internal components, and media/base-layer props first
 
 In short:
 - `ai-video-studio` provides the product shell
@@ -62,10 +65,16 @@ Not to implement yet; only keep as reference.
 
 4. Feature/template modularity
 - future video templates can be isolated as feature modules or plugins
-- this makes it easier to support multiple styles/templates later
+- this makes it easier to support multiple styles/templates across segments later
+- do not turn one segment into multiple template instances by default
 
 5. Render preset / config pattern
 - support saved presets or structured project configs for repeatable renders
+
+6. Base layer compositing
+- future projects may add a project-level `baseLayer` for an existing video, image, or color under the full generated video
+- future segments may add a segment-level `baseLayer` for media that applies only to that segment
+- start with simple background/underlay compositing before introducing timeline or layer editing
 
 ## Suggested future milestones
 
@@ -101,3 +110,5 @@ Until a task explicitly widens scope:
 - do not auto-expand this repo into the full long-term vision in one step
 - treat `docs/ITERATION_STATUS.md` as the source of truth for current implemented progress
 - use this file for longer-term direction and deferred ideas
+- prefer one primary template per segment
+- prefer base layers for existing media overlay/background needs

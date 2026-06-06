@@ -130,7 +130,7 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
       </div>
 
       <div className="mt-6 border-t border-unfocused-border-color pt-5">
-        <h3 className="text-sm font-semibold text-foreground">主题</h3>
+        <h3 className="text-sm font-semibold text-foreground">Scripted 主题</h3>
         <div className="mt-3 grid grid-cols-2 gap-3">
           {(["background", "panel", "primary", "secondary", "text", "muted"] as const).map((key) => (
             <label key={key} className="block text-sm font-medium capitalize text-foreground">
@@ -158,7 +158,7 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
 
       <div className="mt-6 border-t border-unfocused-border-color pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="text-sm font-semibold text-foreground">结构化场景</h3>
+          <h3 className="text-sm font-semibold text-foreground">Scripted 场景</h3>
           <div className="text-sm text-neutral-500">{segment.implementation.scenes.length} 个场景</div>
         </div>
 

@@ -4,13 +4,18 @@ import { getVideoDuration, videoSpecSchema } from "./video-schema";
 
 const videoProjectMetaSchema = videoSpecSchema.shape.meta;
 
+export const SCRIPTED_TEMPLATE_ID = "scripted" as const;
+
+// Current segment union has one implemented variant: `scripted`.
+// `implementation` is template-specific; for this variant it must satisfy
+// `videoSpecSchema`, whose `scenes` field is a scripted-template detail.
 const rawVideoSegmentSchema = z.object({
   id: z.string(),
   title: z.string(),
   intent: z.string(),
   revisionPrompt: z.string().optional(),
   durationInFrames: z.number().int().positive().optional(),
-  templateId: z.literal("scripted").default("scripted"),
+  templateId: z.literal(SCRIPTED_TEMPLATE_ID).default(SCRIPTED_TEMPLATE_ID),
   implementation: videoSpecSchema,
 });
 
@@ -49,7 +54,7 @@ export const normalizeProject = (
   const segments = project.segments.map((segment) =>
     videoSegmentSchema.parse({
       ...segment,
-      templateId: segment.templateId ?? "scripted",
+      templateId: segment.templateId ?? SCRIPTED_TEMPLATE_ID,
       implementation: {
         ...segment.implementation,
         meta: {

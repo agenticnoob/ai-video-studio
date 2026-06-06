@@ -19,7 +19,7 @@ These files together explain:
 
 ## Current project stage
 
-`ai-video-studio` already has a usable single-template, segment-first authoring loop:
+`ai-video-studio` already has a usable one-primary-template-per-segment authoring loop:
 - user writes a brief
 - page calls `POST /api/generate`
 - API returns schema-validated `VideoProject`
@@ -42,6 +42,14 @@ Keep the next iteration focused on:
 3. preserve validation and bounded error handling
 4. do not widen into persistence/history or multi-template work unless the task explicitly asks for it
 
+Current product modeling decision:
+- keep one primary template per `VideoSegment`
+- `templateId` determines the schema of `implementation`
+- `implementation` is template-specific; current `scripted` implementations use `VideoSpec`
+- `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
+- model future existing video/image/color underlays as project-level or segment-level `baseLayer` data
+- do not model one segment as multiple template instances unless a concrete future workflow proves that is necessary
+
 ## Important implementation files
 
 - `src/app/page.tsx`
@@ -62,6 +70,7 @@ Keep the next iteration focused on:
 Still not implemented unless the new task explicitly asks for them:
 - saved drafts/history/project persistence
 - multi-template product architecture
+- project-level / segment-level baseLayer media compositing
 - browser automation acceptance
 - end-user render progress UX beyond idle / rendering / success / failure
 
@@ -82,6 +91,9 @@ If the task explicitly asks for Docker verification, use the Docker wrappers doc
 
 - Keep `VideoProject` as the top-level page/generation/preview/render boundary for this phase.
 - Keep `VideoSpec` as the per-segment implementation contract for the current scripted template.
+- Keep one primary template per segment; grow template internals through template-specific implementation fields before introducing multi-template-per-segment orchestration.
+- Treat `scenes` as a scripted-template implementation detail.
+- Treat future video/image/color overlay or background needs as `baseLayer` modeling work.
 - Prefer small bounded edits.
 - Prefer repo-local artifacts for delegated workers when possible.
 - Browser automation is not the default validation path on this workstation.
