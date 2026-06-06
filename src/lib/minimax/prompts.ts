@@ -5,10 +5,9 @@ import {
   buildTemplatePreservationPrompt,
   buildTemplateRevisionPrompt,
   buildTemplateSelectionPrompt,
-  SCRIPTED_TEMPLATE_ID,
   SPOTLIGHT_TEMPLATE_ID,
+  getTemplateDefinition,
   templateIds,
-  templateDefinitions,
 } from "../template-registry";
 import { EMIT_RESULT_TOOL, EMIT_RESULT_TOOL_CHOICE } from "./tool-schema";
 
@@ -96,7 +95,7 @@ ${buildTemplatePreservationPrompt()}
     the input payload contains them and the output MUST echo them
 - For the segment whose id IS "${targetSegmentId}":
   - you may change title, intent, and implementation
-  - you may choose templateId "${SCRIPTED_TEMPLATE_ID}" or "${SPOTLIGHT_TEMPLATE_ID}"
+  - you may choose templateId from ${templateIds.map((id) => `"${id}"`).join(", ")}
     if the revision request asks for a different presentation style
   - keep implementation.meta.title aligned with segment.title
   - if the revision prompt is empty or off-topic, keep the segment as-is
@@ -119,10 +118,9 @@ const buildSegmentPayloadForRevise = (project: VideoProject): unknown => {
       title: segment.title,
       intent: segment.intent,
       templateId: segment.templateId,
-      implementation:
-        segment.templateId === SCRIPTED_TEMPLATE_ID
-          ? templateDefinitions[SCRIPTED_TEMPLATE_ID].buildRevisionPayload(segment.implementation)
-          : templateDefinitions[SPOTLIGHT_TEMPLATE_ID].buildRevisionPayload(segment.implementation),
+      implementation: getTemplateDefinition(segment.templateId).buildRevisionPayload(
+        segment.implementation as never,
+      ),
     })),
   };
 };

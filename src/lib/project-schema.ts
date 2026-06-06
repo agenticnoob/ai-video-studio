@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   SCRIPTED_TEMPLATE_ID,
   SPOTLIGHT_TEMPLATE_ID,
-  templateDefinitions,
+  getTemplateDefinition,
   videoSegmentSchemaVariants,
 } from "./template-registry";
 import { videoSpecSchema } from "./video-schema";
@@ -15,19 +15,10 @@ export { SCRIPTED_TEMPLATE_ID, SPOTLIGHT_TEMPLATE_ID };
 const rawVideoSegmentSchema = z.discriminatedUnion("templateId", videoSegmentSchemaVariants);
 
 export const videoSegmentSchema = rawVideoSegmentSchema.transform((segment) => {
-  if (segment.templateId === SCRIPTED_TEMPLATE_ID) {
-    return {
-      ...segment,
-      durationInFrames: templateDefinitions[SCRIPTED_TEMPLATE_ID].getDuration(
-        segment.implementation,
-      ),
-    };
-  }
-
   return {
     ...segment,
-    durationInFrames: templateDefinitions[SPOTLIGHT_TEMPLATE_ID].getDuration(
-      segment.implementation,
+    durationInFrames: getTemplateDefinition(segment.templateId).getDuration(
+      segment.implementation as never,
     ),
   };
 });
@@ -42,11 +33,7 @@ export type VideoSegment = z.infer<typeof videoSegmentSchema>;
 export type VideoProject = z.infer<typeof videoProjectSchema>;
 
 export const getSegmentDuration = (segment: VideoSegment): number => {
-  if (segment.templateId === SCRIPTED_TEMPLATE_ID) {
-    return templateDefinitions[SCRIPTED_TEMPLATE_ID].getDuration(segment.implementation);
-  }
-
-  return templateDefinitions[SPOTLIGHT_TEMPLATE_ID].getDuration(segment.implementation);
+  return getTemplateDefinition(segment.templateId).getDuration(segment.implementation as never);
 };
 
 export const getProjectDuration = (project: VideoProject): number => {

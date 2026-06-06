@@ -2,6 +2,36 @@
 
 Last updated: 2026-06-07
 
+## 2026-06-07 continuation — template module architecture
+
+- Refactored the two-template implementation from a monolithic
+  `src/lib/template-registry.ts` into cohesive template modules under
+  `src/templates/`.
+- Added a server-safe template metadata registry:
+  - template ids, labels, Zod segment schemas, MiniMax JSON Schema fragments,
+    duration helpers, prompt snippets, and revision payload builders live in
+    template definitions.
+  - API/generation/schema code can consume template metadata without importing
+    React or Remotion runtime components.
+- Added a separate runtime component registry for client/video rendering:
+  - template-specific Remotion renderers and editor fields are registered in
+    `src/templates/component-registry.tsx`.
+  - template-specific runtime adapters live in each template module
+    (`src/templates/<template>/runtime.tsx`) so casts and renderer/editor
+    wiring stay close to the template implementation.
+  - `SegmentEditor` now renders template-specific fields through the registry
+    instead of hard-coding `scripted` vs `spotlight` branches.
+  - `ProjectVideo` continues to render one primary template per segment, but
+    the concrete renderer is resolved through the runtime registry.
+- Kept the current `VideoProject` contract and one-primary-template-per-segment
+  model unchanged.
+- Added `docs/TEMPLATE_ARCHITECTURE.md` to document the module shape,
+  registries, add-template workflow, and server/runtime import boundaries.
+- Docker-first validation passed:
+  - container `npm run lint`
+  - container `npx tsc --noEmit`
+  - container `npm run build`
+
 ## 2026-06-07 continuation — MiniMax multi-template parser hardening
 
 - Investigated Docker logs after a `POST /api/generate 500`.
