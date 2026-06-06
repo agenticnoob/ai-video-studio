@@ -4,22 +4,9 @@ import { Sequence } from "remotion";
 import {
   getSegmentDuration,
   getSegmentStart,
-  SCRIPTED_TEMPLATE_ID,
   type VideoProject,
-  type VideoSegment,
 } from "../../lib/project-schema";
-import { ScriptedVideo } from "../ScriptedVideo/ScriptedVideo";
-
-const renderSegment = (segment: VideoSegment) => {
-  switch (segment.templateId) {
-    case SCRIPTED_TEMPLATE_ID:
-      return <ScriptedVideo {...segment.implementation} />;
-    default: {
-      const unsupportedTemplateId: never = segment.templateId;
-      throw new Error(`Unsupported templateId: ${unsupportedTemplateId}`);
-    }
-  }
-};
+import { renderRegisteredSegment } from "../template-component-registry";
 
 export const ProjectVideo: React.FC<VideoProject> = (project) => {
   return (
@@ -30,7 +17,7 @@ export const ProjectVideo: React.FC<VideoProject> = (project) => {
           from={getSegmentStart(project, index)}
           durationInFrames={getSegmentDuration(segment)}
         >
-          {renderSegment(segment)}
+          {renderRegisteredSegment(segment)}
         </Sequence>
       ))}
     </>

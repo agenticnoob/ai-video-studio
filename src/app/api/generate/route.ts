@@ -74,6 +74,7 @@ export async function POST(request: Request) {
     }
     const message = error instanceof Error ? error.message : "Generation request could not be completed.";
     const status = UPSTREAM_ERROR_PATTERN.test(message) ? 502 : 500;
+    console.error("Project generation failed", { status, message });
     return NextResponse.json({ error: message }, { status });
   }
 }

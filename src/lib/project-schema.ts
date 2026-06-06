@@ -1,28 +1,36 @@
 import { z } from "zod";
 
-import { getVideoDuration, videoSpecSchema } from "./video-schema";
+import {
+  SCRIPTED_TEMPLATE_ID,
+  SPOTLIGHT_TEMPLATE_ID,
+  templateDefinitions,
+  videoSegmentSchemaVariants,
+} from "./template-registry";
+import { videoSpecSchema } from "./video-schema";
 
 const videoProjectMetaSchema = videoSpecSchema.shape.meta;
 
-export const SCRIPTED_TEMPLATE_ID = "scripted" as const;
+export { SCRIPTED_TEMPLATE_ID, SPOTLIGHT_TEMPLATE_ID };
 
-// Current segment union has one implemented variant: `scripted`.
-// `implementation` is template-specific; for this variant it must satisfy
-// `videoSpecSchema`, whose `scenes` field is a scripted-template detail.
-const rawVideoSegmentSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  intent: z.string(),
-  revisionPrompt: z.string().optional(),
-  durationInFrames: z.number().int().positive().optional(),
-  templateId: z.literal(SCRIPTED_TEMPLATE_ID).default(SCRIPTED_TEMPLATE_ID),
-  implementation: videoSpecSchema,
+const rawVideoSegmentSchema = z.discriminatedUnion("templateId", videoSegmentSchemaVariants);
+
+export const videoSegmentSchema = rawVideoSegmentSchema.transform((segment) => {
+  if (segment.templateId === SCRIPTED_TEMPLATE_ID) {
+    return {
+      ...segment,
+      durationInFrames: templateDefinitions[SCRIPTED_TEMPLATE_ID].getDuration(
+        segment.implementation,
+      ),
+    };
+  }
+
+  return {
+    ...segment,
+    durationInFrames: templateDefinitions[SPOTLIGHT_TEMPLATE_ID].getDuration(
+      segment.implementation,
+    ),
+  };
 });
-
-export const videoSegmentSchema = rawVideoSegmentSchema.transform((segment) => ({
-  ...segment,
-  durationInFrames: getVideoDuration(segment.implementation),
-}));
 
 export const videoProjectSchema = z.object({
   meta: videoProjectMetaSchema,
@@ -34,7 +42,11 @@ export type VideoSegment = z.infer<typeof videoSegmentSchema>;
 export type VideoProject = z.infer<typeof videoProjectSchema>;
 
 export const getSegmentDuration = (segment: VideoSegment): number => {
-  return getVideoDuration(segment.implementation);
+  if (segment.templateId === SCRIPTED_TEMPLATE_ID) {
+    return templateDefinitions[SCRIPTED_TEMPLATE_ID].getDuration(segment.implementation);
+  }
+
+  return templateDefinitions[SPOTLIGHT_TEMPLATE_ID].getDuration(segment.implementation);
 };
 
 export const getProjectDuration = (project: VideoProject): number => {
@@ -51,10 +63,12 @@ export const normalizeProject = (
   project: z.input<typeof videoProjectSchema>,
 ): VideoProject => {
   const meta = videoProjectMetaSchema.parse(project.meta);
-  const segments = project.segments.map((segment) =>
-    videoSegmentSchema.parse({
+  const segments = project.segments.map((segment) => {
+    const templateId = segment.templateId ?? SCRIPTED_TEMPLATE_ID;
+
+    return videoSegmentSchema.parse({
       ...segment,
-      templateId: segment.templateId ?? SCRIPTED_TEMPLATE_ID,
+      templateId,
       implementation: {
         ...segment.implementation,
         meta: {
@@ -65,8 +79,8 @@ export const normalizeProject = (
           height: meta.height,
         },
       },
-    }),
-  );
+    });
+  });
 
   return videoProjectSchema.parse({
     meta,

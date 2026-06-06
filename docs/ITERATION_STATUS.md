@@ -1,6 +1,62 @@
 # Iteration Status
 
-Last updated: 2026-06-06
+Last updated: 2026-06-07
+
+## 2026-06-07 continuation — MiniMax multi-template parser hardening
+
+- Investigated Docker logs after a `POST /api/generate 500`.
+- Confirmed the hydration mismatch warnings in the log are caused by a browser
+  extension adding `trancy-*` attributes to `<html>` and are unrelated to
+  generation.
+- Hardened MiniMax structural-field recovery for the new `spotlight`
+  implementation by adding `callouts` to the parser's stringified structural
+  field allowlist. This covers cases where MiniMax returns spotlight callouts
+  as a JSON string instead of an array.
+- Added bounded `/api/generate` error logging so future Docker logs include
+  the generation failure status and message instead of only showing a bare 500.
+- Docker-first validation passed:
+  - container `npm run lint`
+  - container `npx tsc --noEmit`
+  - container `npm run build`
+  - `git diff --check`
+- Container API smoke passed with a 3-segment mixed-template project:
+  `spotlight + scripted + spotlight`.
+
+## 2026-06-06 continuation — first multi-template generation slice
+
+- Opened the generation/render contract from scripted-only to a two-template
+  segment union:
+  - `scripted`: existing `VideoSpec` implementation with internal `scenes`
+  - `spotlight`: new focused-card implementation for hooks, key messages,
+    recaps, metrics, transitions, and calls to action
+- Refactored the multi-template path into registries instead of scattered
+  hard-coded switches:
+  - `src/lib/template-registry.ts` owns template ids, labels, Zod segment
+    schemas, MiniMax JSON Schema fragments, duration helpers, and prompt
+    snippets.
+  - `src/remotion/template-component-registry.tsx` owns templateId → Remotion
+    component rendering.
+- Added `src/lib/spotlight-schema.ts` and
+  `src/remotion/SpotlightVideo/SpotlightVideo.tsx`.
+- Updated `VideoProject` normalization, duration calculation, and
+  `ProjectVideo` rendering to support `templateId: "scripted" | "spotlight"`
+  while preserving one primary template per segment.
+- Updated the MiniMax prompt and forced `emit_result` tool JSON schema so the
+  provider can choose either template per segment and still return a complete
+  schema-validated `VideoProject`.
+- Updated the segment editor so scripted segments keep scene-level editing,
+  while spotlight segments expose their template-specific fields
+  (`headline`, `subheadline`, `callouts`, `durationInFrames`, theme).
+
+Validation note:
+- `git diff --check` passed.
+- Docker-first validation is the correct path on this workstation. Host
+  `node_modules` may be incomplete or owned by another user and should not be
+  used as the default validation target.
+- Container `npm run lint` passed.
+- Container `npx tsc --noEmit` passed.
+- Container `npm run build` passed (Next.js 16.2.3 Turbopack, 7/7 static
+  pages).
 
 ## 2026-06-06 continuation — docs aligned to current MiniMax implementation
 
@@ -199,8 +255,16 @@ Current working flow:
 
 ### Video runtime wiring
 - `src/remotion/ProjectVideo/ProjectVideo.tsx` sequences project segments into one assembled composition
+- `src/lib/template-registry.ts` registers template ids, labels, schemas,
+  MiniMax schema fragments, duration helpers, prompt snippets, and revision
+  payload builders
+- `src/remotion/template-component-registry.tsx` maps registered `templateId`
+  values to Remotion components
 - `src/remotion/Root.tsx` registers both `ProjectVideo` and legacy `ScriptedVideo`
-- `src/remotion/ScriptedVideo/*` remains the segment implementation path for the current template
+- `src/remotion/ScriptedVideo/*` remains the segment implementation path for
+  the `scripted` template
+- `src/remotion/SpotlightVideo/*` is the segment implementation path for the
+  `spotlight` template
 - preview duration / fps / width / height are derived from the project metadata and segment helpers
 - Remotion text rendering now prefers a CJK-capable sans stack for Chinese-first content
 
@@ -217,17 +281,19 @@ These are still out of scope or not implemented yet:
 - cancellation/progress history for finished renders
 - ~~real LLM/provider-backed generation~~ **shipped** (MiniMax; see [`docs/providers/minimax.md`](providers/minimax.md))
 - project persistence / saved drafts / history
-- multi-template product architecture
+- multi-template-per-segment orchestration
 - project-level / segment-level baseLayer media compositing
 - browser automation acceptance
 
 ## Validation status
 
-Latest repo-local verification after the second render/export fix pass:
-- `npm install`
-- `npm run lint`
-- `npx tsc --noEmit`
-- `npm run build`
+Latest Docker-first validation after the multi-template registry + parser hardening pass:
+- container `npm run lint`
+- container `npx tsc --noEmit`
+- container `npm run build`
+- `git diff --check`
+- container API smoke returned a 3-segment mixed-template project:
+  `spotlight + scripted + spotlight`
 
 Latest Docker dev verification after the LAN-access + studio recovery pass:
 - `docker logs ai-video-studio-web-1` confirmed the prior HMR failure was `allowedDevOrigins` blocking `192.168.50.6`
@@ -251,9 +317,13 @@ Latest Docker dev verification after the LAN-access + studio recovery pass:
 - `src/helpers/use-rendering.ts`
 - `src/lib/render-project.ts`
 - `src/lib/project-schema.ts`
+- `src/lib/template-registry.ts`
+- `src/lib/spotlight-schema.ts`
 - `src/lib/project-generation.ts`
 - `src/remotion/ProjectVideo/ProjectVideo.tsx`
+- `src/remotion/template-component-registry.tsx`
 - `src/remotion/ScriptedVideo/SceneRenderer.tsx`
+- `src/remotion/SpotlightVideo/SpotlightVideo.tsx`
 - `src/components/project/SegmentList.tsx`
 - `src/components/project/SegmentEditor.tsx`
 - `src/components/RenderControls.tsx`
@@ -275,11 +345,14 @@ Suggested next focus, in order:
 
 - Keep `VideoProject` as the top-level page/generation/preview/render boundary for this phase.
 - Keep `VideoSpec` as the per-segment implementation contract for the current scripted template.
+- Keep `SpotlightSpec` as the per-segment implementation contract for the current spotlight template.
 - Keep one primary template per segment; grow segment expressiveness through template-specific implementation fields first.
 - Treat `scenes` as a `scripted` implementation detail, not as a universal product-level concept.
+- Treat `callouts` as a `spotlight` implementation detail, not as a universal
+  product-level concept.
 - Model future video/image/color underlays as project-level or segment-level `baseLayer` data.
 - Do not widen scope into multi-template-per-segment support unless a concrete workflow proves that scene/component composition is insufficient.
 - `/api/generate` now returns `{ project }` only; do not reintroduce the old
   `spec` compatibility field unless a concrete external caller requires it.
-- Prefer repo-local artifacts for delegated workers when possible.
+- Prefer Docker-first artifacts and validation on this workstation.
 - On this workstation, browser automation is not the default validation path.

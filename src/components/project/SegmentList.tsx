@@ -1,6 +1,7 @@
 import type { FC } from "react";
 
 import { getSegmentDuration, type VideoProject } from "../../lib/project-schema";
+import { getTemplateLabel } from "../../lib/template-registry";
 
 type SegmentListProps = {
   project: VideoProject;
@@ -43,7 +44,7 @@ export const SegmentList: FC<SegmentListProps> = ({
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-xs font-medium uppercase text-neutral-500">
-                    第 {index + 1} 段
+                    第 {index + 1} 段 · {getTemplateLabel(segment.templateId)}
                   </div>
                   <div className="mt-1 text-sm font-semibold text-foreground">{segment.title}</div>
                 </div>

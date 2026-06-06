@@ -1,6 +1,7 @@
 import type { FC } from "react";
 
 import { getProjectDuration, type VideoProject } from "../../lib/project-schema";
+import { getTemplateLabel } from "../../lib/template-registry";
 
 type ProjectSummaryProps = {
   project: VideoProject;
@@ -9,6 +10,12 @@ type ProjectSummaryProps = {
 const formatDuration = (frames: number, fps: number): string => {
   const seconds = Math.round((frames / fps) * 10) / 10;
   return `${seconds} 秒`;
+};
+
+const formatTemplateSummary = (project: VideoProject): string => {
+  const templateIds = Array.from(new Set(project.segments.map((segment) => segment.templateId)));
+
+  return templateIds.length === 1 ? getTemplateLabel(templateIds[0]) : `${templateIds.length} 种`;
 };
 
 export const ProjectSummary: FC<ProjectSummaryProps> = ({ project }) => {
@@ -43,7 +50,7 @@ export const ProjectSummary: FC<ProjectSummaryProps> = ({ project }) => {
         </div>
         <div>
           <div className="text-xs uppercase text-neutral-500">模板</div>
-          <div className="mt-1 font-medium text-foreground">脚本型</div>
+          <div className="mt-1 font-medium text-foreground">{formatTemplateSummary(project)}</div>
         </div>
       </div>
     </section>

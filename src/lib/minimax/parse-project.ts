@@ -141,6 +141,7 @@ const unwrapDoubleEncodedStrings = (value: unknown, depth = 0): unknown => {
  *  - `segments` (array) — top-level only
  *  - `theme` (object) — under segment.implementation
  *  - `scenes` (array) — under segment.implementation
+ *  - `callouts` (array) — under spotlight segment.implementation
  *  - `implementation` (object) — under each segment
  *
  * `brief` is NOT in this set: the schema declares `brief: z.string()` and
@@ -153,6 +154,7 @@ const STRINGIFIED_STRUCTURAL_KEYS: ReadonlySet<string> = new Set([
   "segments",
   "theme",
   "scenes",
+  "callouts",
   "implementation",
 ]);
 

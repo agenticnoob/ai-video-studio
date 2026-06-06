@@ -103,11 +103,12 @@ Product model:
 - segment complexity should first be expressed through template-specific props and internal components
 - existing video / image / color material should be represented as a `baseLayer` rather than as another template
 
-V1 simplification:
-- the only active segment template is currently `scripted`
-- for `templateId: "scripted"`, `implementation` is `VideoSpec`
+Current registered templates:
+- `scripted`: `implementation` is `VideoSpec`
+- `spotlight`: `implementation` is `SpotlightSpec`
 - `VideoSpec.scenes` is the scripted template's internal sequence model
-- `scenes` is not a required field for every future template; future templates may have completely different implementation fields
+- `SpotlightSpec.callouts` is the spotlight template's focused-card content model
+- `scenes` is not a required field for every template; future templates may have completely different implementation fields
 - multi-template-per-segment orchestration is not part of the near-term product direction
 
 Potential future media model:

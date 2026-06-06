@@ -21,6 +21,8 @@ Current implementation status:
 - the segment-first editing workflow is implemented
 - local project render/export is implemented
 - `POST /api/generate` is now provider-backed (MiniMax / minimaxi.com) — see [MiniMax integration](#minimax-integration) below
+- generation and rendering support registered segment templates (`scripted`
+  and `spotlight`) while preserving one primary template per segment
 - current progress and next-step notes live in `docs/ITERATION_STATUS.md`
 - product requirements live in `docs/PRODUCT_REQUIREMENTS.md`
 - agent/new-task startup notes live in `AGENTS.md`
@@ -47,7 +49,10 @@ Current modeling direction:
 - `VideoSegment` is the user-facing editing and regeneration unit
 - one segment should have one primary template
 - `templateId` determines the schema of `implementation`
-- `implementation` is template-specific; current `scripted` implementations use `VideoSpec`
+- `implementation` is template-specific; current registered templates are:
+  - `scripted`: `VideoSpec` with internal `scenes`
+  - `spotlight`: `SpotlightSpec` with `headline`, `subheadline`,
+    `callouts`, and `durationInFrames`
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
 - future existing video, image, or color inputs should be modeled as project-level or segment-level `baseLayer` data
 
@@ -63,7 +68,12 @@ Current top-level boundaries:
    - local Remotion export for the current edited project
 4. `/src/lib/project-schema.ts`
    - stable `VideoProject` contract used by generation, preview, and export
-5. `/src/remotion/*`
+5. `/src/lib/template-registry.ts`
+   - registered template ids, labels, schemas, MiniMax schema fragments,
+     duration helpers, and prompt snippets
+6. `/src/remotion/template-component-registry.tsx`
+   - registered `templateId` to Remotion component mapping
+7. `/src/remotion/*`
    - render video from structured props instead of ad-hoc codegen
 
 ## Docker usage
@@ -105,18 +115,16 @@ cd /data/projects/labs/ai-video-studio
 docker compose down
 ```
 
-## Repo-local validation
+## Docker-first validation
 
-Recent repo-local verification path:
+This workstation uses Docker-first validation. Do not rely on host
+`node_modules`.
 ```bash
 cd /data/projects/labs/ai-video-studio
-npm install
-npm run lint
-npx tsc --noEmit
-npm run build
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'
 ```
-
-Docker verification was not re-run in the latest render/export fix pass.
 
 ## Docker files added
 - `Dockerfile`
@@ -128,7 +136,7 @@ Docker verification was not re-run in the latest render/export fix pass.
 - `scripts/render.sh`
 
 ## Notes
-- `node_modules` may live either locally after `npm install` or in the Docker volume path, depending on how you validate.
+- `node_modules` is intended to live in the Docker volume path on this workstation.
 - output files are written under `/data/projects/labs/ai-video-studio/out`.
 - the official scaffold created a nested `.git/` repo in this directory.
 - the app is no longer the upstream starter UI; the current studio path already supports brief -> project generation -> full preview -> selected-segment editing -> selected-segment regeneration -> local export.
@@ -136,7 +144,7 @@ Docker verification was not re-run in the latest render/export fix pass.
 
 ## MiniMax integration
 
-`POST /api/generate` is now backed by [MiniMax](https://api.minimaxi.com/v1) (minimaxi.com) Chat Completions. The `VideoProject` schema contract is unchanged — the provider is responsible for receiving the brief / current project and emitting a schema-validating JSON object.
+`POST /api/generate` is now backed by [MiniMax](https://api.minimaxi.com/v1) (minimaxi.com) Chat Completions. The `VideoProject` schema contract is unchanged — the provider is responsible for receiving the brief / current project and emitting a schema-validating JSON object. Each returned segment must choose one registered `templateId`, and its `implementation` must match that template-specific schema.
 
 ### Environment variables
 
@@ -181,8 +189,7 @@ curl -s -X POST http://127.0.0.1:3000/api/generate \
 # -> {"error":"MINIMAX_API_KEY is not configured. Set it in .env.local to enable real generation."} (status 500)
 ```
 
-Repo-local `npm run lint`, `npx tsc --noEmit`, and `npm run build` remain useful
-for static validation when Docker is not part of the task, but the app runtime
-for this project is Docker-first.
+Run static validation inside Docker on this workstation; host `node_modules`
+is not the default validation target.
 
 Current MiniMax implementation notes live in [`docs/providers/minimax.md`](docs/providers/minimax.md).

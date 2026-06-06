@@ -1,6 +1,11 @@
 import type { FC } from "react";
 
-import type { VideoSegment } from "../../lib/project-schema";
+import {
+  SCRIPTED_TEMPLATE_ID,
+  SPOTLIGHT_TEMPLATE_ID,
+  type VideoSegment,
+} from "../../lib/project-schema";
+import { getTemplateLabel } from "../../lib/template-registry";
 import type { VideoScene } from "../../lib/video-schema";
 
 type SegmentEditorProps = {
@@ -40,7 +45,10 @@ const sceneTypeLabelMap = {
   quote: "引语",
 } as const;
 
-const replaceScene = (segment: VideoSegment, index: number, scene: VideoScene): VideoSegment => ({
+type ScriptedSegment = Extract<VideoSegment, { templateId: typeof SCRIPTED_TEMPLATE_ID }>;
+type SpotlightSegment = Extract<VideoSegment, { templateId: typeof SPOTLIGHT_TEMPLATE_ID }>;
+
+const replaceScene = (segment: ScriptedSegment, index: number, scene: VideoScene): VideoSegment => ({
   ...segment,
   implementation: {
     ...segment.implementation,
@@ -67,6 +75,62 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
     );
   }
 
+  const updateTitle = (title: string) => {
+    if (segment.templateId === SCRIPTED_TEMPLATE_ID) {
+      onSegmentChange({
+        ...segment,
+        title,
+        implementation: {
+          ...segment.implementation,
+          meta: {
+            ...segment.implementation.meta,
+            title,
+          },
+        },
+      });
+      return;
+    }
+
+    onSegmentChange({
+      ...segment,
+      title,
+      implementation: {
+        ...segment.implementation,
+        meta: {
+          ...segment.implementation.meta,
+          title,
+        },
+      },
+    });
+  };
+
+  const updateTheme = (key: keyof typeof themeLabelMap, value: string) => {
+    if (segment.templateId === SCRIPTED_TEMPLATE_ID) {
+      onSegmentChange({
+        ...segment,
+        implementation: {
+          ...segment.implementation,
+          theme: {
+            ...segment.implementation.theme,
+            [key]: value,
+          },
+        },
+      });
+      return;
+    }
+
+    onSegmentChange({
+      ...segment,
+      implementation: {
+        ...segment.implementation,
+        theme: {
+          ...segment.implementation.theme,
+          [key]: value,
+        },
+      },
+    });
+  };
+
   return (
     <section className="rounded-geist border border-unfocused-border-color bg-background p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -75,7 +139,7 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
           <div className="mt-1 text-xs text-neutral-500">{segment.id}</div>
         </div>
         <div className="rounded-geist border border-unfocused-border-color px-3 py-1 text-xs uppercase text-neutral-500">
-          {segment.templateId}
+          {getTemplateLabel(segment.templateId)}
         </div>
       </div>
 
@@ -104,19 +168,7 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
           <input
             className={inputClassName}
             value={segment.title}
-            onChange={(event) =>
-              onSegmentChange({
-                ...segment,
-                title: event.currentTarget.value,
-                implementation: {
-                  ...segment.implementation,
-                  meta: {
-                    ...segment.implementation.meta,
-                    title: event.currentTarget.value,
-                  },
-                },
-              })
-            }
+            onChange={(event) => updateTitle(event.currentTarget.value)}
           />
         </label>
         <label className="mt-3 block text-sm font-medium text-foreground">
@@ -130,7 +182,7 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
       </div>
 
       <div className="mt-6 border-t border-unfocused-border-color pt-5">
-        <h3 className="text-sm font-semibold text-foreground">Scripted 主题</h3>
+        <h3 className="text-sm font-semibold text-foreground">模板主题</h3>
         <div className="mt-3 grid grid-cols-2 gap-3">
           {(["background", "panel", "primary", "secondary", "text", "muted"] as const).map((key) => (
             <label key={key} className="block text-sm font-medium capitalize text-foreground">
@@ -138,156 +190,264 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
               <input
                 className={inputClassName}
                 value={segment.implementation.theme[key]}
-                onChange={(event) =>
-                  onSegmentChange({
-                    ...segment,
-                    implementation: {
-                      ...segment.implementation,
-                      theme: {
-                        ...segment.implementation.theme,
-                        [key]: event.currentTarget.value,
-                      },
-                    },
-                  })
-                }
+                onChange={(event) => updateTheme(key, event.currentTarget.value)}
               />
             </label>
           ))}
         </div>
       </div>
 
-      <div className="mt-6 border-t border-unfocused-border-color pt-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="text-sm font-semibold text-foreground">Scripted 场景</h3>
-          <div className="text-sm text-neutral-500">{segment.implementation.scenes.length} 个场景</div>
-        </div>
+      {segment.templateId === SCRIPTED_TEMPLATE_ID ? (
+        <ScriptedFields segment={segment} onSegmentChange={onSegmentChange} />
+      ) : (
+        <SpotlightFields segment={segment} onSegmentChange={onSegmentChange} />
+      )}
+    </section>
+  );
+};
 
-        <div className="mt-4 space-y-4">
-          {segment.implementation.scenes.map((scene, index) => (
-            <div key={scene.id} className="rounded-geist border border-unfocused-border-color p-4">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <div className="text-sm font-semibold text-foreground">
-                    场景 {index + 1}：{sceneTypeLabelMap[scene.type]}
-                  </div>
-                  <div className="text-xs text-neutral-500">{scene.id}</div>
+const ScriptedFields: FC<{
+  segment: ScriptedSegment;
+  onSegmentChange: (segment: VideoSegment) => void;
+}> = ({ segment, onSegmentChange }) => {
+  return (
+    <div className="mt-6 border-t border-unfocused-border-color pt-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h3 className="text-sm font-semibold text-foreground">Scripted 场景</h3>
+        <div className="text-sm text-neutral-500">{segment.implementation.scenes.length} 个场景</div>
+      </div>
+
+      <div className="mt-4 space-y-4">
+        {segment.implementation.scenes.map((scene, index) => (
+          <div key={scene.id} className="rounded-geist border border-unfocused-border-color p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="text-sm font-semibold text-foreground">
+                  场景 {index + 1}：{sceneTypeLabelMap[scene.type]}
                 </div>
-                <label className="w-32 text-sm font-medium text-foreground">
-                  帧数
+                <div className="text-xs text-neutral-500">{scene.id}</div>
+              </div>
+              <label className="w-32 text-sm font-medium text-foreground">
+                帧数
+                <input
+                  className={inputClassName}
+                  min={12}
+                  type="number"
+                  value={scene.duration}
+                  onChange={(event) => {
+                    const nextScene = {
+                      ...scene,
+                      duration: parsePositiveInteger(event.currentTarget.value, scene.duration, 12, 900),
+                    };
+                    onSegmentChange(replaceScene(segment, index, nextScene));
+                  }}
+                />
+              </label>
+            </div>
+
+            <label className="mt-3 block text-sm font-medium text-foreground">
+              前导文案
+              <input
+                className={inputClassName}
+                value={scene.kicker ?? ""}
+                onChange={(event) =>
+                  onSegmentChange(replaceScene(segment, index, { ...scene, kicker: event.currentTarget.value }))
+                }
+              />
+            </label>
+
+            {scene.type === "title" ? (
+              <>
+                <label className="mt-3 block text-sm font-medium text-foreground">
+                  标题
                   <input
                     className={inputClassName}
-                    min={12}
-                    type="number"
-                    value={scene.duration}
+                    value={scene.title}
+                    onChange={(event) =>
+                      onSegmentChange(replaceScene(segment, index, { ...scene, title: event.currentTarget.value }))
+                    }
+                  />
+                </label>
+                <label className="mt-3 block text-sm font-medium text-foreground">
+                  副标题
+                  <textarea
+                    className={`${inputClassName} min-h-20`}
+                    value={scene.subtitle ?? ""}
+                    onChange={(event) =>
+                      onSegmentChange(replaceScene(segment, index, { ...scene, subtitle: event.currentTarget.value }))
+                    }
+                  />
+                </label>
+              </>
+            ) : null}
+
+            {scene.type === "bullets" ? (
+              <>
+                <label className="mt-3 block text-sm font-medium text-foreground">
+                  标题
+                  <input
+                    className={inputClassName}
+                    value={scene.title}
+                    onChange={(event) =>
+                      onSegmentChange(replaceScene(segment, index, { ...scene, title: event.currentTarget.value }))
+                    }
+                  />
+                </label>
+                <label className="mt-3 block text-sm font-medium text-foreground">
+                  要点列表
+                  <textarea
+                    className={`${inputClassName} min-h-28`}
+                    value={scene.bullets.join("\n")}
                     onChange={(event) => {
-                      const nextScene = {
-                        ...scene,
-                        duration: parsePositiveInteger(event.currentTarget.value, scene.duration, 12, 900),
-                      };
-                      onSegmentChange(replaceScene(segment, index, nextScene));
+                      const bullets = event.currentTarget.value
+                        .split(/\r?\n/)
+                        .map((bullet) => bullet.trim())
+                        .filter(Boolean);
+                      onSegmentChange(
+                        replaceScene(segment, index, {
+                          ...scene,
+                          bullets: bullets.length ? bullets : [""],
+                        }),
+                      );
                     }}
                   />
                 </label>
-              </div>
+              </>
+            ) : null}
 
-              <label className="mt-3 block text-sm font-medium text-foreground">
-                前导文案
-                <input
-                  className={inputClassName}
-                  value={scene.kicker ?? ""}
-                  onChange={(event) =>
-                    onSegmentChange(replaceScene(segment, index, { ...scene, kicker: event.currentTarget.value }))
-                  }
-                />
-              </label>
-
-              {scene.type === "title" ? (
-                <>
-                  <label className="mt-3 block text-sm font-medium text-foreground">
-                    标题
-                    <input
-                      className={inputClassName}
-                      value={scene.title}
-                      onChange={(event) =>
-                        onSegmentChange(replaceScene(segment, index, { ...scene, title: event.currentTarget.value }))
-                      }
-                    />
-                  </label>
-                  <label className="mt-3 block text-sm font-medium text-foreground">
-                    副标题
-                    <textarea
-                      className={`${inputClassName} min-h-20`}
-                      value={scene.subtitle ?? ""}
-                      onChange={(event) =>
-                        onSegmentChange(replaceScene(segment, index, { ...scene, subtitle: event.currentTarget.value }))
-                      }
-                    />
-                  </label>
-                </>
-              ) : null}
-
-              {scene.type === "bullets" ? (
-                <>
-                  <label className="mt-3 block text-sm font-medium text-foreground">
-                    标题
-                    <input
-                      className={inputClassName}
-                      value={scene.title}
-                      onChange={(event) =>
-                        onSegmentChange(replaceScene(segment, index, { ...scene, title: event.currentTarget.value }))
-                      }
-                    />
-                  </label>
-                  <label className="mt-3 block text-sm font-medium text-foreground">
-                    要点列表
-                    <textarea
-                      className={`${inputClassName} min-h-28`}
-                      value={scene.bullets.join("\n")}
-                      onChange={(event) => {
-                        const bullets = event.currentTarget.value
-                          .split(/\r?\n/)
-                          .map((bullet) => bullet.trim())
-                          .filter(Boolean);
-                        onSegmentChange(
-                          replaceScene(segment, index, {
-                            ...scene,
-                            bullets: bullets.length ? bullets : [""],
-                          }),
-                        );
-                      }}
-                    />
-                  </label>
-                </>
-              ) : null}
-
-              {scene.type === "quote" ? (
-                <>
-                  <label className="mt-3 block text-sm font-medium text-foreground">
-                    引语
-                    <textarea
-                      className={`${inputClassName} min-h-24`}
-                      value={scene.quote}
-                      onChange={(event) =>
-                        onSegmentChange(replaceScene(segment, index, { ...scene, quote: event.currentTarget.value }))
-                      }
-                    />
-                  </label>
-                  <label className="mt-3 block text-sm font-medium text-foreground">
-                    作者
-                    <input
-                      className={inputClassName}
-                      value={scene.author ?? ""}
-                      onChange={(event) =>
-                        onSegmentChange(replaceScene(segment, index, { ...scene, author: event.currentTarget.value }))
-                      }
-                    />
-                  </label>
-                </>
-              ) : null}
-            </div>
-          ))}
-        </div>
+            {scene.type === "quote" ? (
+              <>
+                <label className="mt-3 block text-sm font-medium text-foreground">
+                  引语
+                  <textarea
+                    className={`${inputClassName} min-h-24`}
+                    value={scene.quote}
+                    onChange={(event) =>
+                      onSegmentChange(replaceScene(segment, index, { ...scene, quote: event.currentTarget.value }))
+                    }
+                  />
+                </label>
+                <label className="mt-3 block text-sm font-medium text-foreground">
+                  作者
+                  <input
+                    className={inputClassName}
+                    value={scene.author ?? ""}
+                    onChange={(event) =>
+                      onSegmentChange(replaceScene(segment, index, { ...scene, author: event.currentTarget.value }))
+                    }
+                  />
+                </label>
+              </>
+            ) : null}
+          </div>
+        ))}
       </div>
-    </section>
+    </div>
+  );
+};
+
+const SpotlightFields: FC<{
+  segment: SpotlightSegment;
+  onSegmentChange: (segment: VideoSegment) => void;
+}> = ({ segment, onSegmentChange }) => {
+  return (
+    <div className="mt-6 border-t border-unfocused-border-color pt-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h3 className="text-sm font-semibold text-foreground">Spotlight 内容</h3>
+        <label className="w-36 text-sm font-medium text-foreground">
+          帧数
+          <input
+            className={inputClassName}
+            min={30}
+            type="number"
+            value={segment.implementation.durationInFrames}
+            onChange={(event) =>
+              onSegmentChange({
+                ...segment,
+                implementation: {
+                  ...segment.implementation,
+                  durationInFrames: parsePositiveInteger(
+                    event.currentTarget.value,
+                    segment.implementation.durationInFrames,
+                    30,
+                    900,
+                  ),
+                },
+              })
+            }
+          />
+        </label>
+      </div>
+
+      <label className="mt-3 block text-sm font-medium text-foreground">
+        前导文案
+        <input
+          className={inputClassName}
+          value={segment.implementation.kicker ?? ""}
+          onChange={(event) =>
+            onSegmentChange({
+              ...segment,
+              implementation: {
+                ...segment.implementation,
+                kicker: event.currentTarget.value,
+              },
+            })
+          }
+        />
+      </label>
+      <label className="mt-3 block text-sm font-medium text-foreground">
+        主标题
+        <input
+          className={inputClassName}
+          value={segment.implementation.headline}
+          onChange={(event) =>
+            onSegmentChange({
+              ...segment,
+              implementation: {
+                ...segment.implementation,
+                headline: event.currentTarget.value,
+              },
+            })
+          }
+        />
+      </label>
+      <label className="mt-3 block text-sm font-medium text-foreground">
+        副标题
+        <textarea
+          className={`${inputClassName} min-h-20`}
+          value={segment.implementation.subheadline ?? ""}
+          onChange={(event) =>
+            onSegmentChange({
+              ...segment,
+              implementation: {
+                ...segment.implementation,
+                subheadline: event.currentTarget.value,
+              },
+            })
+          }
+        />
+      </label>
+      <label className="mt-3 block text-sm font-medium text-foreground">
+        强调点
+        <textarea
+          className={`${inputClassName} min-h-28`}
+          value={segment.implementation.callouts.join("\n")}
+          onChange={(event) => {
+            const callouts = event.currentTarget.value
+              .split(/\r?\n/)
+              .map((callout) => callout.trim())
+              .filter(Boolean)
+              .slice(0, 4);
+            onSegmentChange({
+              ...segment,
+              implementation: {
+                ...segment.implementation,
+                callouts: callouts.length ? callouts : [""],
+              },
+            });
+          }}
+        />
+      </label>
+    </div>
   );
 };

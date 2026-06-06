@@ -5,7 +5,7 @@ Status: partially resumed.
 当前补充：
 - 第一轮最小工作流已经落地，当前状态以 `docs/ITERATION_STATUS.md` 为准。
 - 本文件保留“更后续方向”的判断，不再代表当前实现是否已开始。
-- 产品模型已收敛为：一个 segment 对应一个 primary template；`templateId` 决定 `implementation` 的 schema；当前 `scripted` 模板的 `implementation` 是 `VideoSpec`，其中 `scenes` 是 scripted 专有的内部序列字段；已有视频、图片或纯色素材通过 project-level / segment-level `baseLayer` 表达。
+- 产品模型已收敛为：一个 segment 对应一个 primary template；`templateId` 决定 `implementation` 的 schema；当前注册模板包括 `scripted` 和 `spotlight`；`scripted` 的 `implementation` 是 `VideoSpec`，其中 `scenes` 是 scripted 专有的内部序列字段；`spotlight` 的 `implementation` 是 `SpotlightSpec`，其中 `callouts` 是 spotlight 专有内容字段；已有视频、图片或纯色素材通过 project-level / segment-level `baseLayer` 表达。
 
 此前判断（保留为背景）：
 - 不要一开始就把 `ai-video-studio` 扩成完整 AI 视频产品。
