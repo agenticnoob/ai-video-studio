@@ -20,7 +20,15 @@ export type BriefGeneratorInput = {
 export type BriefSpecOverrides = Partial<
   Pick<
     MockGeneratorInput,
-    "title" | "fps" | "width" | "height" | "sceneSeconds" | "background" | "primary" | "secondary" | "callToAction"
+    | "title"
+    | "fps"
+    | "width"
+    | "height"
+    | "sceneSeconds"
+    | "background"
+    | "primary"
+    | "secondary"
+    | "callToAction"
   >
 >;
 
@@ -103,7 +111,8 @@ export const buildMockSpecFromBrief = (
   input: BriefGeneratorInput,
   overrides: BriefSpecOverrides = {},
 ): VideoSpec => {
-  const brief = input.brief.trim() || "Create a concise product workflow video for AI Video Studio.";
+  const brief =
+    input.brief.trim() || "Create a concise product workflow video for AI Video Studio.";
 
   return buildMockSpec({
     prompt: brief,
@@ -116,6 +125,7 @@ export const buildMockSpecFromBrief = (
     primary: overrides.primary ?? "#2dd4bf",
     secondary: overrides.secondary ?? "#f59e0b",
     callToAction:
-      overrides.callToAction ?? "Tune the structured spec in the studio, then preview the result live.",
+      overrides.callToAction ??
+      "Tune the structured spec in the studio, then preview the result live.",
   });
 };

@@ -49,21 +49,11 @@ export const NextLogo: React.FC<{
 
   const evolution1 = evolvePath(evolve1, firstPath);
   const evolution2 = evolvePath(evolve2, secondPath);
-  const evolution3 = evolvePath(
-    interpolate(evolve3, [0, 1], [0, 0.7]),
-    thirdPath,
-  );
+  const evolution3 = evolvePath(interpolate(evolve3, [0, 1], [0, 0.7]), thirdPath);
 
   return (
     <svg style={style} fill="none" viewBox="0 0 180 180">
-      <mask
-        height="180"
-        id="mask"
-        className="[mask-type:alpha]"
-        width="180"
-        x="0"
-        y="0"
-      >
+      <mask height="180" id="mask" className="[mask-type:alpha]" width="180" x="0" y="0">
         <circle cx="90" cy="90" fill="black" r="90"></circle>
       </mask>
       <mask id="n-mask" className="[mask-type:alpha]">

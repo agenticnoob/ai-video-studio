@@ -59,9 +59,7 @@ export const getSegmentStart = (project: VideoProject, index: number): number =>
     .reduce((sum, segment) => sum + getSegmentDuration(segment), 0);
 };
 
-export const normalizeProject = (
-  project: z.input<typeof videoProjectSchema>,
-): VideoProject => {
+export const normalizeProject = (project: z.input<typeof videoProjectSchema>): VideoProject => {
   const meta = videoProjectMetaSchema.parse(project.meta);
   const segments = project.segments.map((segment) => {
     const templateId = segment.templateId ?? SCRIPTED_TEMPLATE_ID;

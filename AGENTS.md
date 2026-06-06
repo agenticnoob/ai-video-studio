@@ -97,6 +97,7 @@ validation and runtime commands. Do **not** run host `npm install`, host
 explicitly asks for host-local validation.
 
 ```bash
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run check'
 docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'
 docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'
 docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'

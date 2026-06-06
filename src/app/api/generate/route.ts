@@ -1,13 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { videoProjectSchema } from "../../../lib/project-schema";
-import {
-  MinimaxConfigError,
-} from "../../../lib/minimax/provider";
-import {
-  minimaxGenerateProject,
-  minimaxReviseSegment,
-} from "../../../lib/minimax";
+import { MinimaxConfigError } from "../../../lib/minimax/provider";
+import { minimaxGenerateProject, minimaxReviseSegment } from "../../../lib/minimax";
 
 const projectGenerateRequestSchema = z.object({
   mode: z.literal("project"),
@@ -72,7 +67,8 @@ export async function POST(request: Request) {
     if (error instanceof MinimaxConfigError) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    const message = error instanceof Error ? error.message : "Generation request could not be completed.";
+    const message =
+      error instanceof Error ? error.message : "Generation request could not be completed.";
     const status = UPSTREAM_ERROR_PATTERN.test(message) ? 502 : 500;
     console.error("Project generation failed", { status, message });
     return NextResponse.json({ error: message }, { status });

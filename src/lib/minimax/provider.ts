@@ -75,10 +75,7 @@ export type MinimaxTool = {
   };
 };
 
-export type MinimaxToolChoice =
-  | "auto"
-  | "none"
-  | { type: "function"; function: { name: string } };
+export type MinimaxToolChoice = "auto" | "none" | { type: "function"; function: { name: string } };
 
 export type MinimaxChatOptions = {
   signal?: AbortSignal;

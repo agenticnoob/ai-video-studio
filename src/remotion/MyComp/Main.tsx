@@ -1,12 +1,6 @@
-import {
-  AbsoluteFill,
-  Sequence,
-  spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
-import { z } from "zod";
-import { CompositionProps } from "../../../types/constants";
+import { AbsoluteFill, Sequence, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import type { z } from "zod";
+import type { CompositionProps } from "../../../types/constants";
 import { CJK_SANS_FONT_STACK } from "../font-stack";
 import { NextLogo } from "./NextLogo";
 import { Rings } from "./Rings";

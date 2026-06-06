@@ -134,10 +134,7 @@ const spotlightVideoSegmentSchema = z.object({
   implementation: spotlightSpecSchema,
 });
 
-const createSegmentJsonSchema = (
-  templateId: TemplateId,
-  implementation: Record<string, unknown>,
-) =>
+const createSegmentJsonSchema = (templateId: TemplateId, implementation: Record<string, unknown>) =>
   ({
     type: "object",
     additionalProperties: false,
@@ -181,8 +178,7 @@ in {"title", "bullets", "quote"} with fields:
 - implementation.meta: { title, fps=30, width=1280, height=720 }
 - implementation.theme: { background, panel, primary, secondary, text, muted }
 - implementation.scenes: 1+ items, each type in {"title", "bullets", "quote"} with matching fields; duration is integer frames at 30fps`,
-    preservationPrompt:
-      "for scripted segments, scenes and theme must match the input exactly",
+    preservationPrompt: "for scripted segments, scenes and theme must match the input exactly",
     buildRevisionPayload: (implementation: z.infer<typeof videoSpecSchema>) => ({
       meta: implementation.meta,
       theme: implementation.theme,
@@ -259,7 +255,10 @@ export const buildTemplateSelectionPrompt = (): string => {
 
 export const buildTemplateImplementationPrompt = (): string => {
   return templateIds
-    .map((templateId) => `# ${templateDefinitions[templateId].label} implementation rules\n${templateDefinitions[templateId].implementationPrompt}`)
+    .map(
+      (templateId) =>
+        `# ${templateDefinitions[templateId].label} implementation rules\n${templateDefinitions[templateId].implementationPrompt}`,
+    )
     .join("\n\n");
 };
 

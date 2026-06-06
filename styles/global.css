@@ -13,7 +13,9 @@
   --geist-quarter-pad: 6px;
   --geist-half-pad: 12px;
   --geist-pad: 24px;
-  --geist-font: "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", "Microsoft YaHei", "PingFang SC", Inter, system-ui, sans-serif;
+  --geist-font:
+    "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", "Microsoft YaHei", "PingFang SC",
+    Inter, system-ui, sans-serif;
 
   --geist-error: #e00;
 

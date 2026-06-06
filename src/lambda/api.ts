@@ -1,17 +1,10 @@
 import type { RenderMediaOnLambdaOutput } from "@remotion/lambda/client";
-import { z } from "zod";
-import { CompositionProps } from "../../types/constants";
-import {
-  ProgressRequest,
-  ProgressResponse,
-  RenderRequest,
-} from "../../types/schema";
-import { ApiResponse } from "../helpers/api-response";
+import type { z } from "zod";
+import type { CompositionProps } from "../../types/constants";
+import type { ProgressRequest, ProgressResponse, RenderRequest } from "../../types/schema";
+import type { ApiResponse } from "../helpers/api-response";
 
-const makeRequest = async <Res>(
-  endpoint: string,
-  body: unknown,
-): Promise<Res> => {
+const makeRequest = async <Res>(endpoint: string, body: unknown): Promise<Res> => {
   const result = await fetch(endpoint, {
     method: "post",
     body: JSON.stringify(body),
@@ -42,13 +35,7 @@ export const renderVideo = async ({
   return makeRequest<RenderMediaOnLambdaOutput>("/api/lambda/render", body);
 };
 
-export const getProgress = async ({
-  id,
-  bucketName,
-}: {
-  id: string;
-  bucketName: string;
-}) => {
+export const getProgress = async ({ id, bucketName }: { id: string; bucketName: string }) => {
   const body: z.infer<typeof ProgressRequest> = {
     id,
     bucketName,

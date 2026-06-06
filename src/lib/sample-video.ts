@@ -1,8 +1,4 @@
-import {
-  normalizeProject,
-  SCRIPTED_TEMPLATE_ID,
-  type VideoProject,
-} from "./project-schema";
+import { normalizeProject, SCRIPTED_TEMPLATE_ID, type VideoProject } from "./project-schema";
 import type { VideoSpec } from "./video-schema";
 
 export const sampleVideo: VideoSpec = {

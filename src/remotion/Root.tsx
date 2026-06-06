@@ -9,11 +9,7 @@ import {
   VIDEO_HEIGHT,
   VIDEO_WIDTH,
 } from "../../types/constants";
-import {
-  getProjectDuration,
-  videoProjectSchema,
-  type VideoProject,
-} from "../lib/project-schema";
+import { getProjectDuration, videoProjectSchema, type VideoProject } from "../lib/project-schema";
 import { getVideoDuration, videoSpecSchema, type VideoSpec } from "../lib/video-schema";
 import { sampleProject, sampleVideo } from "../lib/sample-video";
 import { Main } from "./MyComp/Main";

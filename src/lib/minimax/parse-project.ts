@@ -1,4 +1,4 @@
-import { z } from "zod";
+import type { z } from "zod";
 
 import { videoProjectSchema, type VideoProject } from "../project-schema";
 
@@ -28,9 +28,7 @@ const isProjectShaped = (value: unknown): boolean => {
   // Bounded heuristic: only unwrap if the candidate carries the three top-level
   // VideoProject keys. We deliberately do not inspect meta/brief/segments
   // sub-shapes here — Zod's safeParse is the actual gate.
-  return (
-    "meta" in record && "brief" in record && "segments" in record
-  );
+  return "meta" in record && "brief" in record && "segments" in record;
 };
 
 const looksLikeWrappedProject = (value: unknown): unknown | null => {
@@ -106,7 +104,12 @@ const unwrapDoubleEncodedStrings = (value: unknown, depth = 0): unknown => {
   if (typeof value === "string") {
     // Heuristic: a double-encoded brief looks like `"\"...some text...\""`
     // — the first and last chars are quotes, length is short (<= brief max).
-    if (value.length >= 4 && value.startsWith('"') && value.endsWith('"') && value.slice(1, -1).includes('"')) {
+    if (
+      value.length >= 4 &&
+      value.startsWith('"') &&
+      value.endsWith('"') &&
+      value.slice(1, -1).includes('"')
+    ) {
       try {
         const parsed = JSON.parse(value);
         if (typeof parsed === "string") {
@@ -195,11 +198,7 @@ const unwrapStringifiedStructuralFields = (value: unknown): unknown => {
   for (const k of Object.keys(record)) {
     const v = record[k];
     let unwrapped: unknown = v;
-    if (
-      STRINGIFIED_STRUCTURAL_KEYS.has(k) &&
-      typeof v === "string" &&
-      v.length > 0
-    ) {
+    if (STRINGIFIED_STRUCTURAL_KEYS.has(k) && typeof v === "string" && v.length > 0) {
       try {
         const parsed: unknown = JSON.parse(v);
         if (Array.isArray(parsed) || (parsed !== null && typeof parsed === "object")) {

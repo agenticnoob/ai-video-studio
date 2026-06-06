@@ -126,6 +126,19 @@ docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm
 docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'
 ```
 
+Code quality entry points:
+- `npm run lint`: ESLint for Next.js, TypeScript, and Remotion code.
+- `npm run typecheck`: TypeScript compile check without emitting files.
+- `npm run format:check`: Prettier style check.
+- `npm run style:check`: lint + typecheck + format check.
+- `npm run check`: style check + production build.
+
+Run these through Docker on this workstation, for example:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run check'
+```
+
 ## Docker files added
 - `Dockerfile`
 - `docker-compose.yml`

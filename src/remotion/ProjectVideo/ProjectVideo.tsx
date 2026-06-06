@@ -1,11 +1,7 @@
 import React from "react";
 import { Sequence } from "remotion";
 
-import {
-  getSegmentDuration,
-  getSegmentStart,
-  type VideoProject,
-} from "../../lib/project-schema";
+import { getSegmentDuration, getSegmentStart, type VideoProject } from "../../lib/project-schema";
 import { renderRegisteredSegment } from "../template-component-registry";
 
 export const ProjectVideo: React.FC<VideoProject> = (project) => {

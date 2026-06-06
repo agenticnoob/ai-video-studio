@@ -2,6 +2,11 @@ import { randomUUID } from "node:crypto";
 import { copyFile, mkdir, stat } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import type { bundle as bundleFn } from "@remotion/bundler";
+import type {
+  renderMedia as renderMediaFn,
+  selectComposition as selectCompositionFn,
+} from "@remotion/renderer";
 import { normalizeProject, type VideoProject } from "./project-schema";
 import {
   getLatestRenderAbsolutePath,
@@ -19,12 +24,26 @@ const webpackOverrideModuleUrl = pathToFileURL(
   path.join(process.cwd(), "src/remotion/webpack-override.mjs"),
 ).href;
 const importAtRuntime = <T>(specifier: string): Promise<T> => {
-  const dynamicImport = new Function(
-    "moduleSpecifier",
-    "return import(moduleSpecifier);",
-  ) as (moduleSpecifier: string) => Promise<T>;
+  const dynamicImport = new Function("moduleSpecifier", "return import(moduleSpecifier);") as (
+    moduleSpecifier: string,
+  ) => Promise<T>;
 
   return dynamicImport(specifier);
+};
+
+type RemotionBundlerModule = {
+  bundle: typeof bundleFn;
+};
+
+type RemotionRendererModule = {
+  renderMedia: typeof renderMediaFn;
+  selectComposition: typeof selectCompositionFn;
+};
+
+type BundleOptions = Exclude<Parameters<typeof bundleFn>[0], string>;
+
+type WebpackOverrideModule = {
+  webpackOverride: BundleOptions["webpackOverride"];
 };
 
 export type ProjectRenderResult = {
@@ -58,9 +77,9 @@ export const renderProjectVideo = async (
   projectInput: VideoProject,
 ): Promise<ProjectRenderResult> => {
   const [{ bundle }, { renderMedia, selectComposition }, { webpackOverride }] = await Promise.all([
-    importAtRuntime<typeof import("@remotion/bundler")>("@remotion/bundler"),
-    importAtRuntime<typeof import("@remotion/renderer")>("@remotion/renderer"),
-    importAtRuntime<typeof import("../remotion/webpack-override.mjs")>(webpackOverrideModuleUrl),
+    importAtRuntime<RemotionBundlerModule>("@remotion/bundler"),
+    importAtRuntime<RemotionRendererModule>("@remotion/renderer"),
+    importAtRuntime<WebpackOverrideModule>(webpackOverrideModuleUrl),
   ]);
   const project = normalizeProject(projectInput);
   const renderId = createRenderId();

@@ -6,9 +6,7 @@ import tseslint from "typescript-eslint";
 // Build Next.js recommended rules and an "off" map for overrides
 const nextRecommended = nextPlugin.configs.recommended ?? { rules: {} };
 const nextRecommendedRules = nextRecommended.rules ?? {};
-const offNextRules = Object.fromEntries(
-  Object.keys(nextRecommendedRules).map((k) => [k, "off"]),
-);
+const offNextRules = Object.fromEntries(Object.keys(nextRecommendedRules).map((k) => [k, "off"]));
 
 export default [
   // Global ignores
@@ -38,6 +36,23 @@ export default [
     plugins: { "@next/next": nextPlugin },
     rules: {
       ...nextRecommendedRules,
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        { prefer: "type-imports", fixStyle: "inline-type-imports" },
+      ],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
+      eqeqeq: ["error", "always", { null: "ignore" }],
+      "no-console": ["warn", { allow: ["warn", "error"] }],
+      "no-duplicate-imports": "error",
+      "object-shorthand": ["error", "always"],
+      "prefer-template": "error",
     },
   },
   // Remotion rules applied only to remotion files

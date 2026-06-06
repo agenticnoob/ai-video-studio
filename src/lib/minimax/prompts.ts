@@ -121,12 +121,8 @@ const buildSegmentPayloadForRevise = (project: VideoProject): unknown => {
       templateId: segment.templateId,
       implementation:
         segment.templateId === SCRIPTED_TEMPLATE_ID
-          ? templateDefinitions[SCRIPTED_TEMPLATE_ID].buildRevisionPayload(
-              segment.implementation,
-            )
-          : templateDefinitions[SPOTLIGHT_TEMPLATE_ID].buildRevisionPayload(
-              segment.implementation,
-            ),
+          ? templateDefinitions[SCRIPTED_TEMPLATE_ID].buildRevisionPayload(segment.implementation)
+          : templateDefinitions[SPOTLIGHT_TEMPLATE_ID].buildRevisionPayload(segment.implementation),
     })),
   };
 };

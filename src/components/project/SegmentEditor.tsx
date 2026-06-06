@@ -2,7 +2,7 @@ import type { FC } from "react";
 
 import {
   SCRIPTED_TEMPLATE_ID,
-  SPOTLIGHT_TEMPLATE_ID,
+  type SPOTLIGHT_TEMPLATE_ID,
   type VideoSegment,
 } from "../../lib/project-schema";
 import { getTemplateLabel } from "../../lib/template-registry";
@@ -48,7 +48,11 @@ const sceneTypeLabelMap = {
 type ScriptedSegment = Extract<VideoSegment, { templateId: typeof SCRIPTED_TEMPLATE_ID }>;
 type SpotlightSegment = Extract<VideoSegment, { templateId: typeof SPOTLIGHT_TEMPLATE_ID }>;
 
-const replaceScene = (segment: ScriptedSegment, index: number, scene: VideoScene): VideoSegment => ({
+const replaceScene = (
+  segment: ScriptedSegment,
+  index: number,
+  scene: VideoScene,
+): VideoSegment => ({
   ...segment,
   implementation: {
     ...segment.implementation,
@@ -184,16 +188,18 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
       <div className="mt-6 border-t border-unfocused-border-color pt-5">
         <h3 className="text-sm font-semibold text-foreground">模板主题</h3>
         <div className="mt-3 grid grid-cols-2 gap-3">
-          {(["background", "panel", "primary", "secondary", "text", "muted"] as const).map((key) => (
-            <label key={key} className="block text-sm font-medium capitalize text-foreground">
-              {themeLabelMap[key]}
-              <input
-                className={inputClassName}
-                value={segment.implementation.theme[key]}
-                onChange={(event) => updateTheme(key, event.currentTarget.value)}
-              />
-            </label>
-          ))}
+          {(["background", "panel", "primary", "secondary", "text", "muted"] as const).map(
+            (key) => (
+              <label key={key} className="block text-sm font-medium capitalize text-foreground">
+                {themeLabelMap[key]}
+                <input
+                  className={inputClassName}
+                  value={segment.implementation.theme[key]}
+                  onChange={(event) => updateTheme(key, event.currentTarget.value)}
+                />
+              </label>
+            ),
+          )}
         </div>
       </div>
 
@@ -214,7 +220,9 @@ const ScriptedFields: FC<{
     <div className="mt-6 border-t border-unfocused-border-color pt-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className="text-sm font-semibold text-foreground">Scripted 场景</h3>
-        <div className="text-sm text-neutral-500">{segment.implementation.scenes.length} 个场景</div>
+        <div className="text-sm text-neutral-500">
+          {segment.implementation.scenes.length} 个场景
+        </div>
       </div>
 
       <div className="mt-4 space-y-4">
@@ -237,7 +245,12 @@ const ScriptedFields: FC<{
                   onChange={(event) => {
                     const nextScene = {
                       ...scene,
-                      duration: parsePositiveInteger(event.currentTarget.value, scene.duration, 12, 900),
+                      duration: parsePositiveInteger(
+                        event.currentTarget.value,
+                        scene.duration,
+                        12,
+                        900,
+                      ),
                     };
                     onSegmentChange(replaceScene(segment, index, nextScene));
                   }}
@@ -251,7 +264,9 @@ const ScriptedFields: FC<{
                 className={inputClassName}
                 value={scene.kicker ?? ""}
                 onChange={(event) =>
-                  onSegmentChange(replaceScene(segment, index, { ...scene, kicker: event.currentTarget.value }))
+                  onSegmentChange(
+                    replaceScene(segment, index, { ...scene, kicker: event.currentTarget.value }),
+                  )
                 }
               />
             </label>
@@ -264,7 +279,12 @@ const ScriptedFields: FC<{
                     className={inputClassName}
                     value={scene.title}
                     onChange={(event) =>
-                      onSegmentChange(replaceScene(segment, index, { ...scene, title: event.currentTarget.value }))
+                      onSegmentChange(
+                        replaceScene(segment, index, {
+                          ...scene,
+                          title: event.currentTarget.value,
+                        }),
+                      )
                     }
                   />
                 </label>
@@ -274,7 +294,12 @@ const ScriptedFields: FC<{
                     className={`${inputClassName} min-h-20`}
                     value={scene.subtitle ?? ""}
                     onChange={(event) =>
-                      onSegmentChange(replaceScene(segment, index, { ...scene, subtitle: event.currentTarget.value }))
+                      onSegmentChange(
+                        replaceScene(segment, index, {
+                          ...scene,
+                          subtitle: event.currentTarget.value,
+                        }),
+                      )
                     }
                   />
                 </label>
@@ -289,7 +314,12 @@ const ScriptedFields: FC<{
                     className={inputClassName}
                     value={scene.title}
                     onChange={(event) =>
-                      onSegmentChange(replaceScene(segment, index, { ...scene, title: event.currentTarget.value }))
+                      onSegmentChange(
+                        replaceScene(segment, index, {
+                          ...scene,
+                          title: event.currentTarget.value,
+                        }),
+                      )
                     }
                   />
                 </label>
@@ -323,7 +353,12 @@ const ScriptedFields: FC<{
                     className={`${inputClassName} min-h-24`}
                     value={scene.quote}
                     onChange={(event) =>
-                      onSegmentChange(replaceScene(segment, index, { ...scene, quote: event.currentTarget.value }))
+                      onSegmentChange(
+                        replaceScene(segment, index, {
+                          ...scene,
+                          quote: event.currentTarget.value,
+                        }),
+                      )
                     }
                   />
                 </label>
@@ -333,7 +368,12 @@ const ScriptedFields: FC<{
                     className={inputClassName}
                     value={scene.author ?? ""}
                     onChange={(event) =>
-                      onSegmentChange(replaceScene(segment, index, { ...scene, author: event.currentTarget.value }))
+                      onSegmentChange(
+                        replaceScene(segment, index, {
+                          ...scene,
+                          author: event.currentTarget.value,
+                        }),
+                      )
                     }
                   />
                 </label>

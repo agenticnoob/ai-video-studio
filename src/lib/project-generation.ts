@@ -130,9 +130,7 @@ export const reviseSegmentFromPrompt = (
   revisionPrompt: string,
   index = 0,
 ): VideoSegment => {
-  const revisedBrief = cleanBrief(
-    [segment.intent, revisionPrompt].filter(Boolean).join(". "),
-  );
+  const revisedBrief = cleanBrief([segment.intent, revisionPrompt].filter(Boolean).join(". "));
 
   const nextSegment = buildSegmentFromBriefPart(revisedBrief, index, segment.implementation.meta);
 
@@ -165,9 +163,7 @@ export const reviseProjectSegmentFromPrompt = (
   return normalizeProject({
     ...project,
     segments: project.segments.map((segment, index) =>
-      index === segmentIndex
-        ? reviseSegmentFromPrompt(segment, revisionPrompt, index)
-        : segment,
+      index === segmentIndex ? reviseSegmentFromPrompt(segment, revisionPrompt, index) : segment,
     ),
   });
 };

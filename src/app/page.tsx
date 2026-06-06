@@ -51,13 +51,14 @@ const Home: NextPage = () => {
     [normalizedProject],
   );
   const selectedSegment = useMemo(
-    () =>
-      normalizedProject.segments.find((segment) => segment.id === selectedSegmentId) ??
-      null,
+    () => normalizedProject.segments.find((segment) => segment.id === selectedSegmentId) ?? null,
     [normalizedProject.segments, selectedSegmentId],
   );
-  const { renderMedia, state: renderState, undo: resetRenderState } =
-    useRendering(normalizedProject);
+  const {
+    renderMedia,
+    state: renderState,
+    undo: resetRenderState,
+  } = useRendering(normalizedProject);
   const isRendering = renderState.status === "rendering";
   const isMutatingProject = isGenerating || isRegeneratingSegment || isRendering;
 
@@ -150,7 +151,9 @@ const Home: NextPage = () => {
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
         <div className="space-y-6">
           <section className={sectionClassName}>
-            <div className="text-xs uppercase tracking-[0.22em] text-neutral-500">AI Video Studio</div>
+            <div className="text-xs uppercase tracking-[0.22em] text-neutral-500">
+              AI Video Studio
+            </div>
             <h1 className="mt-3 text-2xl font-bold text-foreground">分段优先工作台</h1>
             <p className="mt-3 text-sm leading-6 text-neutral-600">
               从一段 brief 生成视频项目，先预览完整成片，再逐段细化修改，并直接导出当前编辑态成片。

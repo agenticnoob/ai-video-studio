@@ -34,8 +34,7 @@ const isSegmentShaped = (s) =>
   Array.isArray(s.implementation.scenes);
 
 const isThemeShaped = (t) =>
-  isObject(t) &&
-  hasKeys(t, "background", "panel", "primary", "secondary", "text", "muted");
+  isObject(t) && hasKeys(t, "background", "panel", "primary", "secondary", "text", "muted");
 
 // ---------------------------------------------------------------------------
 // Parse-path simulators (mirror src/lib/minimax/parse-project.ts logic)
@@ -67,7 +66,11 @@ const looksLikeStringWrappedProject = (value) => {
 };
 
 const STRINGIFIED_STRUCTURAL_KEYS = new Set([
-  "meta", "segments", "theme", "scenes", "implementation",
+  "meta",
+  "segments",
+  "theme",
+  "scenes",
+  "implementation",
 ]);
 
 const unwrapStringifiedStructuralFields = (value, depth = 0) => {
@@ -152,7 +155,7 @@ const parseToolCallArguments = (argumentsString) => {
 const UPSTREAM_ERROR_PATTERN =
   /MiniMax request failed|MiniMax returned a non-JSON response|did not include any message content|MiniMax response was not valid JSON|truncated by max_tokens|had no tool_calls|unexpected function|tool_call arguments were empty|tool_call arguments were not valid JSON/;
 
-const classifyError = (message) => UPSTREAM_ERROR_PATTERN.test(message) ? 502 : 500;
+const classifyError = (message) => (UPSTREAM_ERROR_PATTERN.test(message) ? 502 : 500);
 
 // ---------------------------------------------------------------------------
 // Prompt builder contract check
@@ -252,7 +255,14 @@ check("Path 1: { project: VideoProject }", () => {
           templateId: "scripted",
           implementation: {
             meta: { title: "Test", fps: 30, width: 1280, height: 720 },
-            theme: { background: "#000", panel: "#111", primary: "#222", secondary: "#333", text: "#fff", muted: "#555" },
+            theme: {
+              background: "#000",
+              panel: "#111",
+              primary: "#222",
+              secondary: "#333",
+              text: "#fff",
+              muted: "#555",
+            },
             scenes: [{ id: "s1", type: "title", duration: 90, title: "Hello" }],
           },
         },
@@ -276,7 +286,14 @@ check('Path 2: { result: "<json-string>" }', () => {
         templateId: "scripted",
         implementation: {
           meta: { title: "Test", fps: 30, width: 1280, height: 720 },
-          theme: { background: "#000", panel: "#111", primary: "#222", secondary: "#333", text: "#fff", muted: "#555" },
+          theme: {
+            background: "#000",
+            panel: "#111",
+            primary: "#222",
+            secondary: "#333",
+            text: "#fff",
+            muted: "#555",
+          },
           scenes: [{ id: "s1", type: "title", duration: 90, title: "Hello" }],
         },
       },
@@ -296,7 +313,14 @@ check('Path 4: segments as stringified "[{...}]"', () => {
       templateId: "scripted",
       implementation: {
         meta: { title: "Test", fps: 30, width: 1280, height: 720 },
-        theme: { background: "#000", panel: "#111", primary: "#222", secondary: "#333", text: "#fff", muted: "#555" },
+        theme: {
+          background: "#000",
+          panel: "#111",
+          primary: "#222",
+          secondary: "#333",
+          text: "#fff",
+          muted: "#555",
+        },
         scenes: [{ id: "s1", type: "title", duration: 90, title: "Hello" }],
       },
     },
@@ -312,9 +336,14 @@ check('Path 4: segments as stringified "[{...}]"', () => {
 });
 
 // Path 4 nested: theme as stringified object
-check('Path 4: theme as stringified object', () => {
+check("Path 4: theme as stringified object", () => {
   const themeStr = JSON.stringify({
-    background: "#000", panel: "#111", primary: "#222", secondary: "#333", text: "#fff", muted: "#555",
+    background: "#000",
+    panel: "#111",
+    primary: "#222",
+    secondary: "#333",
+    text: "#fff",
+    muted: "#555",
   });
   const input = JSON.stringify({
     meta: { title: "Test", fps: 30, width: 1280, height: 720 },
@@ -350,7 +379,14 @@ check("Direct VideoProject (no wrapper)", () => {
         templateId: "scripted",
         implementation: {
           meta: { title: "Test", fps: 30, width: 1280, height: 720 },
-          theme: { background: "#000", panel: "#111", primary: "#222", secondary: "#333", text: "#fff", muted: "#555" },
+          theme: {
+            background: "#000",
+            panel: "#111",
+            primary: "#222",
+            secondary: "#333",
+            text: "#fff",
+            muted: "#555",
+          },
           scenes: [{ id: "s1", type: "title", duration: 90, title: "Hello" }],
         },
       },
@@ -402,13 +438,17 @@ check('"truncated by max_tokens" → 502', () => {
   if (got !== 502) throw new Error(`expected 502, got ${got}`);
 });
 
-check('MinimaxConfigError → 500', () => {
-  const got = classifyError("MINIMAX_API_KEY is not configured. Set it in .env.local to enable real generation.");
+check("MinimaxConfigError → 500", () => {
+  const got = classifyError(
+    "MINIMAX_API_KEY is not configured. Set it in .env.local to enable real generation.",
+  );
   if (got !== 500) throw new Error(`expected 500, got ${got}`);
 });
 
-check('Schema validation error → 500', () => {
-  const got = classifyError("Generated project failed schema validation: segments[0].implementation.scenes[0]: required");
+check("Schema validation error → 500", () => {
+  const got = classifyError(
+    "Generated project failed schema validation: segments[0].implementation.scenes[0]: required",
+  );
   if (got !== 500) throw new Error(`expected 500, got ${got}`);
 });
 

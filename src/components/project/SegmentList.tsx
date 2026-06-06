@@ -52,7 +52,9 @@ export const SegmentList: FC<SegmentListProps> = ({
                   {formatDuration(getSegmentDuration(segment), project.meta.fps)}
                 </div>
               </div>
-              <p className="mt-2 line-clamp-2 text-sm leading-5 text-neutral-600">{segment.intent}</p>
+              <p className="mt-2 line-clamp-2 text-sm leading-5 text-neutral-600">
+                {segment.intent}
+              </p>
             </button>
           );
         })}

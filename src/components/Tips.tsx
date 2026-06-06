@@ -22,9 +22,7 @@ const Tip: React.FC<{
             />
           </svg>
         </div>
-        <p className="text-sm leading-normal text-subtitle mb-6">
-          {description}
-        </p>
+        <p className="text-sm leading-normal text-subtitle mb-6">{description}</p>
       </div>
     </a>
   );
