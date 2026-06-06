@@ -158,31 +158,31 @@ The provider throws `MinimaxConfigError("MINIMAX_API_KEY is not configured. Set 
 |---|---|
 | `MINIMAX_API_KEY` missing or empty | 500 |
 | Network error / upstream non-2xx (4xx, 5xx) | 502 |
-| Upstream returns non-JSON or empty `choices[0].message.content` | 502 |
+| Upstream returns non-JSON | 502 |
+| Tool call missing, wrong function, empty arguments, or `finish_reason=length` | 502 |
 | Response is JSON but fails `videoProjectSchema` | 500 |
 | Invalid request body / unknown mode | 400 |
 
-### Minimal local verification
+### Docker-first verification
 
 ```bash
 cd /data/projects/labs/ai-video-studio
-npm install
-npm run lint
-npx tsc --noEmit
-npm run build
+./scripts/dev.sh
 ```
 
-Smoke test the missing-key path (returns 500):
+Then smoke test the missing-key path from another terminal (returns 500):
 
 ```bash
 cd /data/projects/labs/ai-video-studio
 # ensure .env.local does NOT export MINIMAX_API_KEY
-npm run dev
-# in another terminal
 curl -s -X POST http://127.0.0.1:3000/api/generate \
   -H 'content-type: application/json' \
   -d '{"mode":"project","brief":"hello world"}'
 # -> {"error":"MINIMAX_API_KEY is not configured. Set it in .env.local to enable real generation."} (status 500)
 ```
 
-Full design notes and prompt templates live in [`docs/providers/minimax.md`](docs/providers/minimax.md).
+Repo-local `npm run lint`, `npx tsc --noEmit`, and `npm run build` remain useful
+for static validation when Docker is not part of the task, but the app runtime
+for this project is Docker-first.
+
+Current MiniMax implementation notes live in [`docs/providers/minimax.md`](docs/providers/minimax.md).

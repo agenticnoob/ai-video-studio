@@ -1,6 +1,40 @@
 # Iteration Status
 
-Last updated: 2026-06-02
+Last updated: 2026-06-06
+
+## 2026-06-06 continuation — docs aligned to current MiniMax implementation
+
+- Updated [`docs/providers/minimax.md`](providers/minimax.md) from an early
+  provider design draft into the current implementation reference.
+- Corrected MiniMax verification docs to reflect the project runtime:
+  Docker-first via `./scripts/dev.sh`; repo-local npm commands are only static
+  validation helpers when Docker is not part of the task.
+- The document now matches the shipped tool-calling path:
+  - `src/lib/minimax/*` implementation files, not the old proposed
+    `src/lib/providers/*` shape
+  - forced single `emit_result` tool call
+  - `max_tokens=8192`
+  - no `response_format=json_object` on the tool-calling path
+  - Path 1-4 parser recovery for observed MiniMax argument shapes
+  - full non-target segment implementation payload in segment revise mode
+  - explicit 400 / 500 / 502 error boundaries with no silent mock fallback
+
+Practical next step:
+- choose the next small bounded product/code increment. Best candidates:
+  1. clarify the existing top brief action as whole-project generation /
+     regeneration when useful; the underlying `mode=project` path already
+     replaces the current project
+  2. add minimal render progress UX beyond idle/rendering/success/failure
+  3. start `baseLayer` modeling only if the task explicitly widens into media
+     underlays
+
+## 2026-06-06 continuation — removed deprecated generate spec field
+
+- Removed the deprecated `spec` compatibility field from
+  `POST /api/generate`.
+- The route now returns `{ project }` only for both full-project generation and
+  segment regeneration.
+- Confirmed there were no in-repo `data.spec` consumers before removal.
 
 ## T2-narrow patch (this iteration)
 
@@ -153,7 +187,8 @@ Current working flow:
 - returns schema-validated `VideoProject` JSON
 - **current implementation is MiniMax (`https://api.minimaxi.com/v1/text/chatcompletion_v2`) backed** — see [`docs/providers/minimax.md`](providers/minimax.md)
 - the local deterministic mock in `src/lib/project-generation.ts` is now **test-only** and is no longer imported by the route; missing `MINIMAX_API_KEY` surfaces as a 500 with an explicit message, never a silent fallback
-- the `spec` compatibility field in the `/api/generate` response is `@deprecated` — `page.tsx` reads `data.project` only, zero in-repo consumers depend on `data.spec`
+- `/api/generate` returns `project` only; the old deprecated `spec`
+  compatibility field has been removed
 
 ### Local render/export boundary
 - `src/app/api/render/route.ts` accepts the normalized current `VideoProject` and performs local Remotion render
@@ -244,6 +279,7 @@ Suggested next focus, in order:
 - Treat `scenes` as a `scripted` implementation detail, not as a universal product-level concept.
 - Model future video/image/color underlays as project-level or segment-level `baseLayer` data.
 - Do not widen scope into multi-template-per-segment support unless a concrete workflow proves that scene/component composition is insufficient.
-- Remove the temporary `/api/generate` `spec` compatibility field once no older consumer depends on it.
+- `/api/generate` now returns `{ project }` only; do not reintroduce the old
+  `spec` compatibility field unless a concrete external caller requires it.
 - Prefer repo-local artifacts for delegated workers when possible.
 - On this workstation, browser automation is not the default validation path.

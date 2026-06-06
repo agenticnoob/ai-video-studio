@@ -67,11 +67,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       project: result.project,
-      // @deprecated — kept for backward compatibility with any caller that
-      // reads data.spec. page.tsx reads data.project only; zero in-repo
-      // consumers depend on data.spec. Safe to remove once no external
-      // consumers are found.
-      spec: result.project.segments[0]?.implementation,
     });
   } catch (error) {
     if (error instanceof MinimaxConfigError) {
