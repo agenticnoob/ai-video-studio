@@ -187,7 +187,6 @@ const Home: NextPage = () => {
           <section className="overflow-hidden rounded-geist border border-unfocused-border-color bg-background shadow-[0_0_120px_rgba(0,0,0,0.10)]">
             <Player
               acknowledgeRemotionLicense
-              autoPlay
               component={ProjectVideo}
               compositionHeight={normalizedProject.meta.height}
               compositionWidth={normalizedProject.meta.width}
