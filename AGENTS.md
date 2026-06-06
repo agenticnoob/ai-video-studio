@@ -35,11 +35,14 @@ Do not describe it as an untouched scaffold.
 The current multi-template direction is implemented as a registered
 one-primary-template-per-segment model, not as multiple template instances
 inside a segment:
-- `src/lib/template-registry.ts` registers template ids, labels, Zod segment
-  schemas, MiniMax JSON Schema fragments, duration helpers, prompt snippets,
-  and revision payload builders.
-- `src/remotion/template-component-registry.tsx` registers `templateId` to
-  Remotion component rendering.
+- `src/templates/<template>/` owns each template's schema, server-safe
+  definition, structured capabilities, editor fields, runtime adapter, and
+  bundle export.
+- `src/templates/registry.ts` registers server-safe template metadata for
+  schema validation and MiniMax prompt/tool generation.
+- `src/templates/component-registry.tsx` registers runtime adapters for page
+  editing and Remotion preview rendering.
+- `src/lib/template-registry.ts` remains a compatibility re-export.
 - currently registered templates:
   - `scripted`: `VideoSpec` implementation with internal `scenes`
   - `spotlight`: focused-card implementation with `headline`,
@@ -75,6 +78,7 @@ Current product modeling decision:
 - `src/helpers/use-rendering.ts`
 - `src/lib/render-project.ts`
 - `src/lib/project-schema.ts`
+- `src/templates/*`
 - `src/lib/project-generation.ts`
 - `src/remotion/ProjectVideo/ProjectVideo.tsx`
 - `src/remotion/ScriptedVideo/*`

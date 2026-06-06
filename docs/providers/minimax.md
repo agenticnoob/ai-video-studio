@@ -21,7 +21,7 @@ Out of scope for this provider pass:
 - multi-provider registry or fallback chains
 - streaming responses
 - persistence, draft history, or render history UX
-- template expansion beyond `templateId: "scripted"`
+- template creation beyond the currently registered template modules
 - project-level or segment-level `baseLayer` media compositing
 
 ## Implementation Files
@@ -141,5 +141,7 @@ Useful Docker smoke paths:
 - `VideoSegment` remains the editing and regeneration unit.
 - Each segment has one primary template.
 - `templateId` determines the schema of `implementation`.
-- Current `scripted` implementations use `VideoSpec`.
+- Current registered templates are `scripted` (`VideoSpec`) and `spotlight`
+  (`SpotlightSpec`).
 - `VideoSpec.scenes` is a `scripted` template detail, not a universal segment field.
+- `SpotlightSpec.callouts` is a `spotlight` template detail.

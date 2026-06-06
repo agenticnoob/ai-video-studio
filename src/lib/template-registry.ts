@@ -5,6 +5,7 @@ export {
   buildTemplateSelectionPrompt,
   getTemplateDefinition,
   getTemplateLabel,
+  registeredTemplateIds,
   SCRIPTED_TEMPLATE_ID,
   SPOTLIGHT_TEMPLATE_ID,
   templateDefinitions,

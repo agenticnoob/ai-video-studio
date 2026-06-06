@@ -62,18 +62,24 @@ Current top-level boundaries:
    - segment-first editor
    - full preview panel
    - local render/export actions
-- `src/app/api/generate/route.ts`
+2. `/src/app/api/generate/route.ts`
    - MiniMax-backed project/segment generation
 3. `/src/app/api/render/*`
    - local Remotion export for the current edited project
 4. `/src/lib/project-schema.ts`
    - stable `VideoProject` contract used by generation, preview, and export
-5. `/src/lib/template-registry.ts`
-   - registered template ids, labels, schemas, MiniMax schema fragments,
-     duration helpers, and prompt snippets
-6. `/src/remotion/template-component-registry.tsx`
-   - registered `templateId` to Remotion component mapping
-7. `/src/remotion/*`
+5. `/src/templates/*`
+   - cohesive template modules with `schema`, server-safe `definition`,
+     structured `capabilities`, editor fields, runtime adapters, and bundle
+     exports
+6. `/src/templates/registry.ts`
+   - server-safe template metadata registry used by schema validation and
+     MiniMax prompt/tool generation
+7. `/src/templates/component-registry.tsx`
+   - runtime template registry used by the page editor and Remotion preview
+8. `/src/lib/template-registry.ts`
+   - compatibility re-export for existing code
+9. `/src/remotion/*`
    - render video from structured props instead of ad-hoc codegen
 
 ## Docker usage

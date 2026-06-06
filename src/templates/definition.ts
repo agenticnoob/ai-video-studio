@@ -1,5 +1,16 @@
 import type { z } from "zod";
 
+export type TemplateCapabilities = {
+  bestFor: string[];
+  textDensity: "low" | "medium" | "high";
+  recommendedDurationFrames: {
+    min: number;
+    max: number;
+  };
+  supportsMedia: boolean;
+  supportsBaseLayer: boolean;
+};
+
 export type TemplateDefinition<
   TId extends string,
   TImplementationSchema extends z.ZodTypeAny,
@@ -7,6 +18,7 @@ export type TemplateDefinition<
 > = {
   id: TId;
   label: string;
+  capabilities: TemplateCapabilities;
   implementationSchema: TImplementationSchema;
   segmentSchema: TSegmentSchema;
   implementationJsonSchema: Record<string, unknown>;

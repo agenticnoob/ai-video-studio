@@ -27,6 +27,24 @@ const spotlightImplementationJsonSchema = {
 export const spotlightTemplate = defineTemplate({
   id: SPOTLIGHT_TEMPLATE_ID,
   label: "Spotlight",
+  capabilities: {
+    bestFor: [
+      "hook",
+      "opener",
+      "key message",
+      "metric",
+      "transition bumper",
+      "recap",
+      "call to action",
+    ],
+    textDensity: "low",
+    recommendedDurationFrames: {
+      min: 120,
+      max: 240,
+    },
+    supportsMedia: false,
+    supportsBaseLayer: false,
+  },
   implementationSchema: spotlightSpecSchema,
   segmentSchema: spotlightSegmentSchema,
   implementationJsonSchema: spotlightImplementationJsonSchema,

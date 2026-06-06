@@ -1,16 +1,12 @@
-import { z } from "zod";
+import type { z } from "zod";
 
 import { spotlightSpecSchema } from "../../lib/spotlight-schema";
 import { SPOTLIGHT_TEMPLATE_ID } from "../ids";
+import { createTemplateSegmentSchema } from "../segment-schema";
 
-export const spotlightSegmentSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  intent: z.string(),
-  revisionPrompt: z.string().optional(),
-  durationInFrames: z.number().int().positive().optional(),
-  templateId: z.literal(SPOTLIGHT_TEMPLATE_ID),
-  implementation: spotlightSpecSchema,
-});
+export const spotlightSegmentSchema = createTemplateSegmentSchema(
+  SPOTLIGHT_TEMPLATE_ID,
+  spotlightSpecSchema,
+);
 
 export type SpotlightSegment = z.infer<typeof spotlightSegmentSchema>;

@@ -7,6 +7,14 @@ Last updated: 2026-06-07
 - Refactored the two-template implementation from a monolithic
   `src/lib/template-registry.ts` into cohesive template modules under
   `src/templates/`.
+- Added a shared `createTemplateSegmentSchema()` helper so future templates do
+  not repeat the segment base shape.
+- Added `defineTemplateBundle()` and per-template `index.ts` bundle exports to
+  bind each template's server-safe definition and runtime adapter at the module
+  boundary.
+- Added structured template capabilities (`bestFor`, `textDensity`,
+  recommended duration, media/baseLayer support) and included them in the
+  template selection prompt.
 - Added a server-safe template metadata registry:
   - template ids, labels, Zod segment schemas, MiniMax JSON Schema fragments,
     duration helpers, prompt snippets, and revision payload builders live in
@@ -26,7 +34,8 @@ Last updated: 2026-06-07
 - Kept the current `VideoProject` contract and one-primary-template-per-segment
   model unchanged.
 - Added `docs/TEMPLATE_ARCHITECTURE.md` to document the module shape,
-  registries, add-template workflow, and server/runtime import boundaries.
+  bundle shape, registries, add-template workflow, capabilities, and
+  server/runtime import boundaries.
 - Docker-first validation passed:
   - container `npm run lint`
   - container `npx tsc --noEmit`

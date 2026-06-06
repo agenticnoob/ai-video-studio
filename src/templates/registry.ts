@@ -1,8 +1,14 @@
 import { scriptedTemplate } from "./scripted/definition";
 import { spotlightTemplate } from "./spotlight/definition";
-import { SCRIPTED_TEMPLATE_ID, SPOTLIGHT_TEMPLATE_ID, type TemplateId } from "./ids";
+import {
+  registeredTemplateIds,
+  SCRIPTED_TEMPLATE_ID,
+  SPOTLIGHT_TEMPLATE_ID,
+  type TemplateId,
+} from "./ids";
 
 export { SCRIPTED_TEMPLATE_ID, SPOTLIGHT_TEMPLATE_ID };
+export { registeredTemplateIds };
 export type { TemplateId };
 
 export const templateDefinitions = {
@@ -10,7 +16,7 @@ export const templateDefinitions = {
   [SPOTLIGHT_TEMPLATE_ID]: spotlightTemplate,
 } as const;
 
-export const templateIds = Object.keys(templateDefinitions) as TemplateId[];
+export const templateIds = registeredTemplateIds;
 
 export const videoSegmentSchemaVariants = [
   templateDefinitions[SCRIPTED_TEMPLATE_ID].segmentSchema,
@@ -31,7 +37,19 @@ export const getTemplateLabel = (templateId: TemplateId): string => {
 
 export const buildTemplateSelectionPrompt = (): string => {
   return templateIds
-    .map((templateId) => `- ${templateId}: ${templateDefinitions[templateId].selectionGuidance}`)
+    .map((templateId) => {
+      const template = templateDefinitions[templateId];
+      const capabilities = template.capabilities;
+
+      return [
+        `- ${templateId}: ${template.selectionGuidance}`,
+        `  bestFor: ${capabilities.bestFor.join(", ")}`,
+        `  textDensity: ${capabilities.textDensity}`,
+        `  recommendedDurationFrames: ${capabilities.recommendedDurationFrames.min}-${capabilities.recommendedDurationFrames.max}`,
+        `  supportsMedia: ${capabilities.supportsMedia ? "yes" : "no"}`,
+        `  supportsBaseLayer: ${capabilities.supportsBaseLayer ? "yes" : "no"}`,
+      ].join("\n");
+    })
     .join("\n");
 };
 

@@ -67,6 +67,21 @@ const scriptedImplementationJsonSchema = {
 export const scriptedTemplate = defineTemplate({
   id: SCRIPTED_TEMPLATE_ID,
   label: "Scripted",
+  capabilities: {
+    bestFor: [
+      "explanatory flow",
+      "multi-step process",
+      "narrative development",
+      "before and after explanation",
+    ],
+    textDensity: "high",
+    recommendedDurationFrames: {
+      min: 90,
+      max: 600,
+    },
+    supportsMedia: false,
+    supportsBaseLayer: false,
+  },
   implementationSchema: videoSpecSchema,
   segmentSchema: scriptedSegmentSchema,
   implementationJsonSchema: scriptedImplementationJsonSchema,
