@@ -115,6 +115,13 @@ cd /data/projects/labs/ai-video-studio
 Then open:
 - http://localhost:3001
 
+Preview the local Remotion primitive catalog in the app:
+- http://localhost:3000/primitives
+
+Remotion Studio is kept for full-video and template-level compositions. The
+primitive catalog uses the app page above so small reusable components do not
+crowd the Studio composition list.
+
 Render the default/sample composition to `out/ai-video.mp4`:
 ```bash
 cd /data/projects/labs/ai-video-studio

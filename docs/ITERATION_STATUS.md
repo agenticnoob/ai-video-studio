@@ -2,6 +2,34 @@
 
 Last updated: 2026-06-08
 
+## 2026-06-08 continuation — RVE primitive catalog pilot
+
+- Started a stable intake path for React Video Editor's Remotion template
+  library by treating upstream "templates" as local Remotion primitive
+  candidates, not as registered `VideoSegment` templates.
+- Pulled the upstream source at commit
+  `6209b724798e48ff395f8df1a6fa2d26082372b5` for reference and ported a
+  first representative batch across categories:
+  - `PoppingText` under `src/remotion/primitives/text/`
+  - `BarChart` under `src/remotion/primitives/charts/`
+  - `GradientShiftBackground` under `src/remotion/primitives/backgrounds/`
+  - `LogoFadeReveal` under `src/remotion/primitives/logos/`
+  - `GalleryGrid` under `src/remotion/primitives/media/`
+  - `CrossDissolve` under `src/remotion/primitives/transitions/`
+- Added `src/remotion/catalog/primitive-catalog.ts` as the local primitive
+  catalog metadata source, including upstream source file, commit, license,
+  category, status, and review duration.
+- Added `/primitives` as a browser-based visual catalog page with a Remotion
+  Player preview and selectable primitive list, so migrated primitives can be
+  reviewed without editing Studio input props or registering every primitive
+  as a Studio composition.
+- Kept Remotion Studio focused on full-video and template-level compositions;
+  primitive browsing now goes through the app catalog page rather than the
+  Studio composition list.
+- Kept this as a primitive-library pilot only. None of the RVE components were
+  added to `src/templates/registered-definitions.ts` or exposed directly to
+  the generation provider.
+
 ## 2026-06-08 continuation — OGL metaballs primitive showcase
 
 - Added an OGL/WebGL `MetaBallsPrimitive` under

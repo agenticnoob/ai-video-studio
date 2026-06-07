@@ -111,6 +111,21 @@ A catalog entry should record:
 - default props for Studio previews
 - current maturity: candidate, reusable, adopted, or deprecated
 
+The initial RVE intake pilot uses `src/remotion/catalog/primitive-catalog.ts`
+as this metadata source and `/primitives` as the browser-based review page.
+Catalog entries record the upstream repository, commit, source file, license,
+category, status, and review duration. The catalog is an internal
+component-library index; it is not the provider-facing template registry and
+it should not be expanded into one Remotion Studio composition per primitive.
+
+Current RVE source baseline:
+
+```txt
+repository: https://github.com/reactvideoeditor/remotion-templates
+commit: 6209b724798e48ff395f8df1a6fa2d26082372b5
+license: MIT
+```
+
 ## Promotion Path
 
 Do not promote a primitive into `src/templates/` just because it is visually
