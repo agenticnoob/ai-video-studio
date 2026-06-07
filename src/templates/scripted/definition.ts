@@ -2,6 +2,7 @@ import { getVideoDuration, videoSpecSchema } from "../../lib/video-schema";
 import { defineTemplate } from "../definition";
 import { SCRIPTED_TEMPLATE_ID } from "../ids";
 import { createSegmentJsonSchema, metaJsonSchema, themeJsonSchema } from "../shared-json-schema";
+import { scriptedBlockPromptSummary } from "./blocks";
 import { scriptedSegmentSchema } from "./schema";
 
 const scriptedImplementationJsonSchema = {
@@ -94,9 +95,7 @@ must be the scripted VideoSpec shape. In that shape, implementation.scenes is
 an array of 1+ scripted scenes. Each scene has a discriminated type
 in {"title", "bullets", "quote"} with fields:
 
-  title:   { id, type:"title",   duration, kicker?, title, subtitle?, voiceover? }
-  bullets: { id, type:"bullets", duration, kicker?, title, bullets: string[>=1], voiceover? }
-  quote:   { id, type:"quote",   duration, kicker?, quote, author?, voiceover? }
+${scriptedBlockPromptSummary}
 
 - duration is an integer > 0, in frames at 30fps (so 90 is about 3 seconds)
 - scene ids must be unique within the segment and stable across regenerations

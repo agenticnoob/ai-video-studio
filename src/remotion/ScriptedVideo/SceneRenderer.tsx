@@ -1,8 +1,9 @@
 import React from "react";
 import { AbsoluteFill } from "remotion";
 import type { VideoScene, VideoSpec } from "../../lib/video-schema";
+import { renderScriptedBlockContent } from "../../templates/scripted/block-renderers";
 import { CJK_SANS_FONT_STACK } from "../font-stack";
-import { BulletScene, QuoteScene, TitleScene, useEntranceProgress, VideoPanel } from "../primitives";
+import { useEntranceProgress, VideoPanel } from "../primitives";
 
 export const SceneRenderer: React.FC<{
   scene: VideoScene;
@@ -22,32 +23,7 @@ export const SceneRenderer: React.FC<{
       }}
     >
       <VideoPanel entrance={entrance} theme={theme}>
-        {scene.type === "title" ? (
-          <TitleScene
-            kicker={scene.kicker}
-            subtitle={scene.subtitle}
-            theme={theme}
-            title={scene.title}
-          />
-        ) : null}
-
-        {scene.type === "bullets" ? (
-          <BulletScene
-            bullets={scene.bullets}
-            kicker={scene.kicker}
-            theme={theme}
-            title={scene.title}
-          />
-        ) : null}
-
-        {scene.type === "quote" ? (
-          <QuoteScene
-            author={scene.author}
-            kicker={scene.kicker}
-            quote={scene.quote}
-            theme={theme}
-          />
-        ) : null}
+        {renderScriptedBlockContent(scene, theme)}
       </VideoPanel>
     </AbsoluteFill>
   );

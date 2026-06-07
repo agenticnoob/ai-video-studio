@@ -31,9 +31,14 @@ The durable model is:
 Remotion primitives/components
   reusable visual building blocks, transitions, layouts, media helpers
 
+Template block contract
+  semantic bridge that records a visual block's effect, AI-visible fields,
+  and mapping from template parameters to Remotion primitives
+
 Template
   describes when it should be used, which parameters it accepts, and how
-  those parameters are rendered by composing Remotion primitives/components
+  those parameters are rendered by composing blocks and Remotion
+  primitives/components
 
 VideoSegment
   user-facing editable unit; implemented by one primary template
@@ -45,6 +50,10 @@ VideoProject
 One template may internally compose many Remotion components. Those components
 are implementation details of templates, not additional segment-level
 templates.
+
+For AI-assisted development, new visual capability should usually be introduced
+as a small primitive plus a template-local block contract before changing a
+template's top-level implementation schema.
 
 ## Directory Intent
 

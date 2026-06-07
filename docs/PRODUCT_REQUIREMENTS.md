@@ -26,6 +26,9 @@ Product direction:
 - AI should choose the most suitable existing template from registered
   template descriptions and usage guidance, then generate that template's
   structured parameters
+- when templates are developed with AI assistance, prefer small reusable
+  Remotion primitives plus template-local block contracts over open-ended
+  generated template code
 - existing video, image, or color material should be modeled as a project-level or segment-level base layer
 
 This keeps the user-facing model segment-first while leaving room for richer compositing inside templates.
@@ -109,6 +112,8 @@ Product model:
 - `implementation` is the template-specific parameter payload, not a universal project-level structure
 - a template can be internally composed from multiple Remotion components,
   scenes, renderers, layout primitives, transitions, and media helpers
+- a template may use template-local block contracts to describe how semantic
+  fields map onto reusable Remotion primitives
 - segment complexity should first be expressed through template-specific props and internal components
 - existing video / image / color material should be represented as a `baseLayer` rather than as another template
 

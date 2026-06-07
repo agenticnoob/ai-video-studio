@@ -25,6 +25,87 @@ animation utilities for render-critical motion.
 | `useEntranceProgress` | `src/remotion/primitives/transitions/useEntranceProgress.ts` | Frame-driven spring progress helper returning `0..1` for entrance animation. | `scripted`, `spotlight` |
 | `RemotionTheme` | `src/remotion/primitives/theme.ts` | Shared theme shape used by primitives: background, panel, primary, secondary, text, muted. | primitives and templates |
 
+## Parameter Exposure Model
+
+Primitive props are not exposed to the LLM directly.
+
+The LLM sees template implementation fields through the registered template
+schemas and prompts. The template runtime then maps those implementation fields
+to primitive props.
+
+```txt
+LLM-visible parameters
+  src/templates/<template>/definition.ts
+  src/templates/<template>/schema.ts
+  src/lib/*-schema.ts for current implementation schemas
+
+Semantic block contracts
+  src/templates/<template>/blocks.ts
+
+Template runtime mapping
+  src/templates/<template>/block-renderers.tsx
+  src/remotion/<TemplateVideo>/*
+  src/templates/<template>/runtime.tsx
+
+Primitive props
+  src/remotion/primitives/*
+```
+
+This keeps primitives reusable and template-agnostic. A primitive can have
+layout or motion props that a template controls internally without exposing
+those knobs to generation.
+
+For AI-assisted development, the preferred middle layer is a template block
+contract. A block contract documents the visual effect, AI-visible fields,
+intended use cases, and primitive mapping. The current scripted template uses
+`src/templates/scripted/blocks.ts` for this relationship and
+`src/templates/scripted/block-renderers.tsx` for the runtime mapping.
+
+Current mapping examples:
+
+| Template | LLM-visible implementation field | Runtime mapping | Primitive prop |
+|---|---|---|---|
+| `scripted` | `implementation.theme` | passed through `SceneRenderer` | `theme` on `VideoPanel`, `TitleScene`, `BulletScene`, `QuoteScene` |
+| `scripted` | `implementation.scenes[].kicker` | `SceneRenderer` switches on `scene.type` | `kicker` on `TitleScene`, `BulletScene`, `QuoteScene` |
+| `scripted` | `implementation.scenes[].title` | `scene.type === "title"` or `"bullets"` | `title` on `TitleScene` or `BulletScene` |
+| `scripted` | `implementation.scenes[].subtitle` | `scene.type === "title"` | `subtitle` on `TitleScene` |
+| `scripted` | `implementation.scenes[].bullets` | `scene.type === "bullets"` | `bullets` on `BulletScene` |
+| `scripted` | `implementation.scenes[].quote` / `author` | `scene.type === "quote"` | `quote` / `author` on `QuoteScene` |
+| `scripted` | `implementation.scenes[].duration` | used by `SceneRenderer` | duration controls `useEntranceProgress(Math.min(40, scene.duration))` |
+| `spotlight` | `implementation.theme` | passed through `SpotlightVideo` | `theme` on `VideoPanel`, `Kicker`, `CalloutGrid` |
+| `spotlight` | `implementation.kicker` | rendered when present | `children` on `Kicker` |
+| `spotlight` | `implementation.callouts` | passed directly | `callouts` on `CalloutGrid` |
+| `spotlight` | `implementation.durationInFrames` | used by `SpotlightVideo` | duration controls sweep animation range |
+
+Runtime-only props are intentionally not LLM-visible unless a template decides
+they are part of its implementation contract. Examples:
+
+- `VideoPanel.padding`
+- `VideoPanel.maxWidth`
+- `VideoPanel.style`
+- `Kicker.style`
+- `useEntranceProgress.damping`
+
+If a future template needs the LLM to control one of those values, add a
+template-specific implementation field first, validate it in that template's
+schema, document it in that template's prompt, and then map it to the primitive
+prop in the template runtime.
+
+## AI-Assisted Development Rule
+
+When asking AI to add a new template capability, prefer this order:
+
+1. Add or reuse Remotion primitives under `src/remotion/primitives/`.
+2. Add a template-local block contract under
+   `src/templates/<template>/blocks.ts`.
+3. Add runtime mapping under `src/templates/<template>/block-renderers.tsx`.
+4. Keep the template implementation schema as the only LLM-visible parameter
+   contract.
+5. Update this document with the primitive effect and mapping.
+
+This prevents AI-generated changes from merging rendering props, block
+semantics, and template schemas into one hard-to-maintain blob.
+
 ## Elements
 
 ### `VideoPanel`

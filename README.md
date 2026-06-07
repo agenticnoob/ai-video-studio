@@ -70,8 +70,8 @@ Current top-level boundaries:
    - stable `VideoProject` contract used by generation, preview, and export
 5. `/src/templates/*`
    - cohesive template modules with `schema`, server-safe `definition`,
-     structured `capabilities`, editor fields, runtime adapters, and bundle
-     exports
+     structured `capabilities`, optional block contracts, editor fields,
+     runtime adapters, and bundle exports
 6. `/src/templates/registry.ts`
    - derived server-safe template metadata registry used by schema validation
      and MiniMax prompt/tool generation
@@ -85,6 +85,8 @@ Current top-level boundaries:
    - compatibility re-export for existing code
 11. `/src/remotion/*`
    - render video from structured props instead of ad-hoc codegen
+   - reusable video primitives live under `src/remotion/primitives/` and may
+     be composed by template-local block renderers
 
 ## Docker usage
 

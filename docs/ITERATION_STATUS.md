@@ -30,6 +30,18 @@ Last updated: 2026-06-07
 - Added `docs/REMOTION_PRIMITIVES.md` so each reusable Remotion primitive has
   a documented visual effect, props summary, current usage, and intended reuse
   pattern.
+- Added a `scripted` block-contract pilot:
+  - `src/templates/scripted/blocks.ts` records title / bullets / quote
+    semantic blocks, AI-visible fields, visual effects, use cases, and
+    primitive mappings without importing React or Remotion
+  - `src/templates/scripted/block-renderers.tsx` maps validated scene fields
+    to Remotion primitives at runtime
+  - `src/remotion/ScriptedVideo/SceneRenderer.tsx` now delegates scene content
+    rendering through the scripted block renderer while keeping the existing
+    `VideoSpec.scenes` contract unchanged
+- Updated architecture docs to explain the AI-assisted development rule:
+  primitives stay visual, block contracts bridge semantics, and template
+  schemas remain the provider-visible parameter contract.
 
 ## 2026-06-07 continuation — registry source consolidation and render warmup
 
