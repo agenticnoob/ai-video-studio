@@ -42,6 +42,11 @@ src/templates/<template-id>/
   - duration helper
   - generation / revision / preservation prompt snippets
   - revision payload builder
+
+The current capability field names may still include base-layer wording for
+compatibility with existing template definitions. New product modeling should
+use `media.layers[]`; treat `baseLayer` as a media-layer role for background
+visual media, not as a separate project or segment field.
 - `blocks.ts`: optional server-safe block contracts. Use this to describe the
   semantic building blocks a template can compose, including visual effect,
   AI-visible fields, and mapping to Remotion primitives. This file must not

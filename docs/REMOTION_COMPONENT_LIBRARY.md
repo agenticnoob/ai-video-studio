@@ -127,6 +127,16 @@ commit: 6209b724798e48ff395f8df1a6fa2d26082372b5
 license: MIT
 ```
 
+Related external references:
+
+- Clippkit (`https://github.com/reactvideoeditor/clippkit`) reinforces the
+  component-library and catalog intake model.
+- Remotion trailer (`https://github.com/remotion-dev/trailer`) is a
+  finished-video narrative reference, not a primitive registry.
+
+Project-specific takeaways from both are recorded in
+`docs/EXTERNAL_REMOTION_REFERENCES.md`.
+
 ## Promotion Path
 
 Do not promote a primitive into `src/templates/` just because it is visually

@@ -2,6 +2,59 @@
 
 Last updated: 2026-06-08
 
+## 2026-06-08 continuation — media layer MVP implementation plan
+
+- Tightened `docs/MEDIA_LAYERS.md` from a broad model into a bounded first
+  implementation plan.
+- Defined the first media slice as project-level only:
+  `VideoProject.media.layers[]`, required `startFrame` and
+  `durationInFrames`, `sourceType: "public" | "remote"`, no uploads, no
+  generated assets, no waveform UI, no keyframes, and no segment-level media.
+- Documented the shared Remotion runtime entry:
+  `ProjectMediaLayers` filters/sorts layers, `MediaLayerSequence` owns the
+  single `<Sequence>` wrapper, `RenderMediaLayer` switches on
+  color/image/video/audio, and helper modules resolve sources/styles.
+- Recorded the implementation order: schema and normalization first, then
+  source/style helpers, renderer pieces, `ProjectVideo` integration, sample
+  layers, compact editor, and finally MiniMax preservation/omit behavior.
+- Added validation expectations for Docker-first lint/typecheck/build and a
+  render smoke test covering background, audio, foreground, and existing
+  template-rendered segment output.
+
+## 2026-06-08 continuation — external Remotion reference notes
+
+- Added `docs/EXTERNAL_REMOTION_REFERENCES.md` to preserve the takeaways from
+  Clippkit and `remotion-dev/trailer`.
+- Recorded Clippkit as a component-library / primitive-catalog reference:
+  useful for categorized local primitives, catalog review, source metadata,
+  and shadcn-style local ownership, but not as provider-facing template ids.
+- Recorded Remotion's trailer project as a finished-video narrative reference:
+  useful for scene naming, product-trailer structure, timing, code/demo beats,
+  and future `product-intro` / `launch-trailer` template inspiration, but not
+  as a direct template import.
+- Linked the new reference note from `docs/PRODUCT_ARCHITECTURE.md` and
+  `docs/REMOTION_COMPONENT_LIBRARY.md`.
+
+## 2026-06-08 continuation — unified media layer planning boundary
+
+- Reviewed the current `VideoProject` preview/export path before adding media
+  layers: page state, `POST /api/render`, `renderProjectVideo()`, and the
+  Remotion `ProjectVideo` composition all share the same normalized project
+  payload.
+- Confirmed current audio support is only a scripted-template internal hook:
+  `VideoSpec.scenes[].voiceover` renders via `<Audio>` inside
+  `ScriptedVideo`, but it is not a project-level or cross-template audio
+  track model.
+- Replaced the separate `baseLayer` / `audio.tracks` planning split with a
+  unified media layer model in `docs/MEDIA_LAYERS.md`: optional project-level
+  `media.layers[]` for image, video, audio, and color layers; later
+  segment-level media layers only if needed.
+- Reframed `baseLayer` as a media-layer role (`role: "base"` /
+  `placement: "background"`) instead of a separate schema field.
+- Kept the existing product model unchanged: media layers are timeline/media
+  data on the project or segment boundary, not additional templates inside a
+  segment.
+
 ## 2026-06-08 continuation — complete RVE primitive catalog intake
 
 - Started a stable intake path for React Video Editor's Remotion template

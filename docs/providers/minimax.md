@@ -22,7 +22,7 @@ Out of scope for this provider pass:
 - streaming responses
 - persistence, draft history, or render history UX
 - template creation beyond the currently registered template modules
-- project-level or segment-level `baseLayer` media compositing
+- project-level or segment-level `media.layers[]` compositing
 
 ## Implementation Files
 

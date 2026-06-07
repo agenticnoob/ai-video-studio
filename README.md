@@ -54,7 +54,9 @@ Current modeling direction:
   - `spotlight`: `SpotlightSpec` with `headline`, `subheadline`,
     `callouts`, and `durationInFrames`
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
-- future existing video, image, or color inputs should be modeled as project-level or segment-level `baseLayer` data
+- future existing video, image, audio, or color inputs should be modeled as
+  project-level or segment-level `media.layers[]` data; `baseLayer` is now a
+  media-layer role, not a separate project field
 
 Current top-level boundaries:
 1. `/src/app/page.tsx`

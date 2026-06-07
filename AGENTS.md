@@ -61,7 +61,7 @@ Keep the next iteration focused on:
 1. keep `VideoProject` as the generation contract
 2. add provider-backed generation behind the existing request modes
 3. preserve validation and bounded error handling
-4. do not widen into persistence/history, baseLayer work, or
+4. do not widen into persistence/history, media-layer work, or
    multi-template-per-segment orchestration unless the task explicitly asks for it
 
 Current product modeling decision:
@@ -70,7 +70,9 @@ Current product modeling decision:
 - `implementation` is template-specific; current registered templates are
   `scripted` (`VideoSpec`) and `spotlight` (`SpotlightSpec`)
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
-- model future existing video/image/color underlays as project-level or segment-level `baseLayer` data
+- model future existing video/image/audio/color material as project-level or
+  segment-level `media.layers[]` data; treat `baseLayer` as a layer role, not
+  a separate field
 - do not model one segment as multiple template instances unless a concrete future workflow proves that is necessary
 
 ## Important implementation files
@@ -94,7 +96,7 @@ Current product modeling decision:
 Still not implemented unless the new task explicitly asks for them:
 - saved drafts/history/project persistence
 - multi-template-per-segment orchestration
-- project-level / segment-level baseLayer media compositing
+- project-level / segment-level media-layer compositing
 - browser automation acceptance
 - end-user render progress UX beyond idle / rendering / success / failure
 
@@ -140,7 +142,8 @@ host-local setup.
   primitives. Do not use CSS animations, CSS transitions, or Tailwind animation
   utilities for render-critical motion.
 - Treat `scenes` as a scripted-template implementation detail.
-- Treat future video/image/color overlay or background needs as `baseLayer` modeling work.
+- Treat future video/image/audio/color overlay or background needs as
+  `media.layers[]` modeling work.
 - Prefer small bounded edits.
 - Prefer Docker-first artifacts and validation on this workstation.
 - Browser automation is not the default validation path on this workstation.

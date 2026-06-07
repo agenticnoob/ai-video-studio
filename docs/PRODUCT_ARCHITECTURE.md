@@ -62,6 +62,18 @@ not as `VideoSegment` templates. A reusable component only becomes a product
 template if it can implement a complete segment intent and has a schema,
 definition, runtime adapter, editor path, and registration.
 
+Images, videos, audio tracks, and color layers are timeline/media data, not
+templates. The next media-layer planning boundary is documented in
+`docs/MEDIA_LAYERS.md`: start with optional project-level
+`media.layers[]`, treat the old `baseLayer` idea as a layer role rather than a
+separate field, keep template-internal voiceover fields local until a
+deliberate migration is needed, and render media from the same `VideoProject`
+used by preview and export.
+
+The first media implementation should stay project-level only. Segment-level
+media, uploads, generated assets, waveform editing, keyframes, and provider-
+created media layers are follow-up work after the shared renderer is stable.
+
 ## Directory Intent
 
 Current and future structure should keep page UI, video runtime, template
@@ -93,6 +105,9 @@ runtime directory such as `src/remotion/primitives/` rather than
 
 The component-library policy for external Remotion examples is documented in
 `docs/REMOTION_COMPONENT_LIBRARY.md`.
+
+Specific external reference notes for Clippkit and Remotion's trailer project
+are documented in `docs/EXTERNAL_REMOTION_REFERENCES.md`.
 
 ## Template Selection Contract
 

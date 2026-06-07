@@ -32,7 +32,8 @@ Product direction:
 - when templates are developed with AI assistance, prefer small reusable
   Remotion primitives plus template-local block contracts over open-ended
   generated template code
-- existing video, image, or color material should be modeled as a project-level or segment-level base layer
+- existing video, image, audio, or color material should be modeled as
+  project-level or segment-level media layers
 
 This keeps the user-facing model segment-first while leaving room for richer compositing inside templates.
 
@@ -126,7 +127,8 @@ Product model:
 - reusable component libraries should feed the primitive / block layer before
   any component is promoted into the registered template layer
 - segment complexity should first be expressed through template-specific props and internal components
-- existing video / image / color material should be represented as a `baseLayer` rather than as another template
+- existing video, image, audio, or color material should be represented as
+  media layers rather than as additional templates
 
 Current registered templates:
 - `scripted`: `implementation` is `VideoSpec`
@@ -137,9 +139,14 @@ Current registered templates:
 - multi-template-per-segment orchestration is not part of the near-term product direction
 
 Potential future media model:
-- project-level `baseLayer`: one video, image, or color layer shared by the full generated video
-- segment-level `baseLayer`: one video, image, or color layer used only for that segment
-- template-specific media props: local images, clips, icons, or other assets used inside one template implementation
+- project-level `media.layers[]`: video, image, audio, or color layers shared
+  by the full generated video
+- segment-level `media.layers[]`: video, image, audio, or color layers used
+  only for that segment
+- `baseLayer` should be treated as a layer role for background visual media,
+  not as a separate top-level field
+- template-specific media props: local images, clips, icons, or other assets
+  used inside one template implementation
 
 ## 6. Inputs
 
@@ -261,14 +268,17 @@ V1 is not primarily:
 
 The following are important, but should not define v1.
 
-### 10.1 Existing-media base layers
+### 10.1 Existing-media layers
 
 Future capability:
-- user supplies an existing video, image, or color as a base layer
-- generated content is layered above that base layer
-- project-level base layers apply to the full generated video
-- segment-level base layers apply only to one segment
-- timing and overlay behavior are coordinated for video base layers
+- user supplies existing video, image, audio, or color as media layers
+- generated template content is layered with those media layers
+- project-level media layers apply to the full generated video
+- segment-level media layers apply only to one segment
+- visual base layers are represented as media layers with a base/background
+  role, not as a separate `baseLayer` field
+- timing and overlay behavior are coordinated for video/image/color layers
+- timing and volume behavior are coordinated for audio layers
 
 Why deferred:
 - significantly increases product and UI complexity
@@ -279,7 +289,8 @@ Why deferred:
 Current product decision:
 - do not model one segment as multiple template instances by default
 - prefer one primary template per segment
-- grow expressiveness through template-specific implementation fields, internal components, media props, and base layers
+- grow expressiveness through template-specific implementation fields, internal
+  components, media props, and shared media layers
 
 Why deferred:
 - this adds orchestration complexity before the product has proven it needs a segment-internal template timeline
@@ -348,7 +359,7 @@ Near-term product architecture should evolve from the current single-template mo
 - per-segment implementation data
 - segment-by-segment regeneration
 - full-video assembly and export
-- future project-level / segment-level base layers for existing media
+- future project-level / segment-level media layers for existing media
 
 Practical v1 shortcut:
 - keep one primary template instance per segment
@@ -358,11 +369,12 @@ Practical v1 shortcut:
 ## 14. Working decisions captured so far
 
 - Start with the simple no-overlay version.
-- Model future video / image / color inputs as base layers, not as extra templates.
+- Model future video / image / audio / color inputs as media layers, not as
+  extra templates.
 - Do not require a timeline-centric UI in v1.
 - Full-video preview should be primary; segment list should be secondary but always visible.
 - Segment edits should default to local regeneration.
 - Natural-language editing should be primary; structured editing should remain available as a secondary path.
-- Existing-media base layers are a future milestone.
+- Existing-media layers are a future milestone.
 - One segment should keep one primary template; template internals can grow through template-specific implementation fields/components.
 - AI-generated templates are future discussion, not current scope.
