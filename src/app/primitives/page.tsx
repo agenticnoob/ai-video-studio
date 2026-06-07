@@ -14,8 +14,10 @@ import {
 const categoryLabels = {
   background: "背景",
   chart: "图表",
+  cinematic: "电影感",
   logo: "Logo",
   media: "媒体",
+  scene: "场景",
   text: "文字",
   transition: "转场",
 } as const;

@@ -24,6 +24,13 @@ playback. Browser-side recording is not part of the current product flow.
 
 ## Current Inventory
 
+The complete RVE import is tracked in
+`src/remotion/catalog/primitive-catalog.ts`. That catalog currently contains
+all 81 upstream React Video Editor Remotion components from the baseline commit
+listed below. The table here highlights existing shared primitives and the
+first locally normalized RVE examples; use the catalog file for the exhaustive
+component list.
+
 | Primitive | File | Visual Effect | Current Use |
 |---|---|---|---|
 | `VideoPanel` | `src/remotion/primitives/elements/VideoPanel.tsx` | Large rounded content panel with themed background, border, shadow, entrance opacity, and slight slide/scale-in motion. | `scripted`, `spotlight` |
@@ -51,9 +58,11 @@ commit: 6209b724798e48ff395f8df1a6fa2d26082372b5
 license: MIT
 ```
 
-The first RVE batch was ported as local primitives with minimal prop
-normalization and catalog metadata. These components remain internal
-building blocks and are not provider-visible registered templates.
+All 81 RVE components from this baseline are now ported as local primitives
+with catalog metadata. A few upstream examples that used render-critical CSS
+animation or transition rules were adjusted to deterministic frame-driven
+Remotion logic during intake. These components remain internal building blocks
+and are not provider-visible registered templates.
 
 ## Directory Layers
 
