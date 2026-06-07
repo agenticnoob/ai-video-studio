@@ -2,6 +2,25 @@
 
 Last updated: 2026-06-08
 
+## 2026-06-08 continuation — OGL metaballs primitive showcase
+
+- Added an OGL/WebGL `MetaBallsPrimitive` under
+  `src/remotion/primitives/backgrounds/` as a reusable Remotion background
+  primitive, driven by `useCurrentFrame()` / Remotion frame state rather than
+  CSS animation, browser animation loops, or `performance.now()`.
+- Added a `MetaBallsDemo` Remotion Studio composition for reviewing the
+  primitive on port 3001 without promoting it into the product template
+  registry.
+- Added `CursorKeyframeTrack` playback helpers under
+  `src/remotion/primitives/interaction/` so future mouse/path-driven
+  primitives can consume normalized deterministic tracks when a template has a
+  concrete need for that data.
+- Kept browser-side mouse recording out of the current product flow. Cursor
+  tracks remain a low-level primitive input, not a `VideoProject`,
+  `VideoSegment`, or registered-template schema field.
+- Updated `docs/REMOTION_PRIMITIVES.md` to document the new primitive,
+  Studio showcase status, and the product boundary around cursor recording.
+
 ## 2026-06-08 continuation — Remotion component library terminology
 
 - Defined how external Remotion "template" libraries should map into this

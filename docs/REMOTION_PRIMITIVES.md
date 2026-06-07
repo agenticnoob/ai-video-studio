@@ -17,11 +17,18 @@ For Remotion motion rules, keep animation deterministic and frame-driven with
 Remotion APIs. Do not use CSS animations, CSS transitions, or Tailwind
 animation utilities for render-critical motion.
 
+Mouse-following effects should consume normalized cursor tracks when they need
+to be exportable. Use `CursorKeyframeTrack` from
+`src/remotion/primitives/interaction/cursor-keyframes.ts` for Remotion-side
+playback. Browser-side recording is not part of the current product flow.
+
 ## Current Inventory
 
 | Primitive | File | Visual Effect | Current Use |
 |---|---|---|---|
 | `VideoPanel` | `src/remotion/primitives/elements/VideoPanel.tsx` | Large rounded content panel with themed background, border, shadow, entrance opacity, and slight slide/scale-in motion. | `scripted`, `spotlight` |
+| `MetaBallsPrimitive` | `src/remotion/primitives/backgrounds/MetaBallsPrimitive.tsx` | Full-frame OGL/WebGL metaball shader with deterministic frame-driven blob motion and a cursor-like path ball. | Studio showcase |
+| `CursorKeyframeTrack` | `src/remotion/primitives/interaction/cursor-keyframes.ts` | Shared normalized cursor trajectory model and frame interpolation helpers for mouse-driven render effects. | `MetaBallsPrimitive` |
 | `Kicker` | `src/remotion/primitives/elements/Kicker.tsx` | Small uppercase label above primary content, using the template secondary color and wide letter spacing. | `scripted`, `spotlight` |
 | `CalloutGrid` | `src/remotion/primitives/layouts/CalloutGrid.tsx` | Horizontal grid of short key messages, each with an alternating primary/secondary top rule. | `spotlight` |
 | `TitleScene` | `src/remotion/primitives/scenes/TitleScene.tsx` | Title block with optional kicker and subtitle; optimized for opening or section-title moments. | `scripted` |

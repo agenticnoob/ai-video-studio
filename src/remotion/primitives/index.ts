@@ -1,3 +1,6 @@
+export { MetaBallsPrimitive } from "./backgrounds/MetaBallsPrimitive";
+export type { CursorKeyframe, CursorKeyframeTrack } from "./interaction/cursor-keyframes";
+export type { MetaBallsPrimitiveProps } from "./backgrounds/MetaBallsPrimitive";
 export { Kicker } from "./elements/Kicker";
 export { VideoPanel } from "./elements/VideoPanel";
 export { CalloutGrid } from "./layouts/CalloutGrid";

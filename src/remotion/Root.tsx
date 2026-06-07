@@ -12,6 +12,7 @@ import {
 import { getProjectDuration, videoProjectSchema, type VideoProject } from "../lib/project-schema";
 import { getVideoDuration, videoSpecSchema, type VideoSpec } from "../lib/video-schema";
 import { sampleProject, sampleVideo } from "../lib/sample-video";
+import { MetaBallsDemo } from "./demos/MetaBallsDemo";
 import { Main } from "./MyComp/Main";
 import { NextLogo } from "./MyComp/NextLogo";
 import { ProjectVideo } from "./ProjectVideo/ProjectVideo";
@@ -67,6 +68,19 @@ export const RemotionRoot: FC = () => {
             height: spec.meta.height,
           };
         }}
+      />
+      <Composition
+        id="MetaBallsDemo"
+        component={MetaBallsDemo}
+        defaultProps={{
+          cursorKeyframes: [],
+          cursorPath: "figureEight",
+          enableMouseInteraction: true,
+        }}
+        durationInFrames={180}
+        fps={30}
+        width={1280}
+        height={720}
       />
       <Composition
         id="NextLogo"
