@@ -4,6 +4,10 @@ The project uses one primary template per `VideoSegment`. A template is split
 into server-safe metadata and client/video runtime code so API routes can build
 schemas and prompts without importing React or Remotion components.
 
+For Remotion-specific rendering and animation rules, use the repo-local
+`.agents/skills/remotion-best-practices/SKILL.md` skill. It is vendored so
+agents working in this repository share the same Remotion guidance.
+
 ## Module Shape
 
 Each template should live in its own directory:
@@ -73,9 +77,17 @@ docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm
 - Keep `VideoProject` as the top-level generation, preview, and render
   contract.
 - Keep `VideoSegment.templateId` as the discriminator.
+- Keep one primary template per segment. A template may internally compose
+  reusable parameterized React animation components, scenes, blocks,
+  transitions, media helpers, and layout primitives, but those are template
+  internals, not additional segment-level templates.
 - Do not import runtime template files from API, MiniMax, or schema modules.
 - Do not import `src/templates/<template>/index.ts` from server-safe modules;
   template bundle indexes include runtime adapters.
 - Put template-specific fields, editor controls, renderer wiring, prompt
   snippets, and revision payload logic inside the template module before
   changing shared project code.
+- Keep Remotion motion deterministic and frame-driven. Prefer
+  `useCurrentFrame()`, `interpolate()`, `spring()`, `<Sequence>`, `<Series>`,
+  and Remotion transition primitives. Avoid CSS animations, CSS transitions,
+  and Tailwind animation utilities for render-critical motion.

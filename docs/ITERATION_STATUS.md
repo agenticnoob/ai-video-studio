@@ -35,6 +35,21 @@ Last updated: 2026-06-07
   - container `npm run build`
   - `git diff --check`
 
+## 2026-06-07 continuation — repo-local Remotion skill guidance
+
+- Installed the Remotion best-practices skill into
+  `.agents/skills/remotion-best-practices/` and recorded it in
+  `skills-lock.json` so agents in this repository share the same rendering
+  guidance.
+- Updated `AGENTS.md` and `docs/TEMPLATE_ARCHITECTURE.md` to treat the skill as
+  the repo-local Remotion rendering guide.
+- Clarified that templates may internally compose reusable parameterized React
+  animation components, scenes, blocks, transitions, media helpers, and layout
+  primitives while preserving one primary template per segment.
+- Clarified that Remotion motion should stay deterministic and frame-driven
+  with Remotion APIs, not CSS animations, CSS transitions, or Tailwind
+  animation utilities.
+
 ## 2026-06-07 continuation — template module architecture
 
 - Refactored the two-template implementation from a monolithic

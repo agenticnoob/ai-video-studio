@@ -17,6 +17,11 @@ These files together explain:
 - product direction
 - Docker-first local workflow
 
+When editing Remotion rendering code or template-internal animation
+components, also consult
+`.agents/skills/remotion-best-practices/SKILL.md`. Treat it as the repo-local
+Remotion rendering guide.
+
 ## Current project stage
 
 `ai-video-studio` already has a usable one-primary-template-per-segment authoring loop:
@@ -126,6 +131,14 @@ host-local setup.
 - Keep `VideoSpec` as the per-segment implementation contract for the current scripted template.
 - Keep `SpotlightSpec` as the per-segment implementation contract for the current spotlight template.
 - Keep one primary template per segment; grow template internals through template-specific implementation fields before introducing multi-template-per-segment orchestration.
+- Remotion template internals may be composed from reusable parameterized React
+  animation components, but keep those components inside the selected primary
+  template's `implementation` model rather than modeling them as additional
+  segment-level templates.
+- Keep Remotion animation frame-driven with `useCurrentFrame()`,
+  `interpolate()`, `spring()`, `<Sequence>`, `<Series>`, or Remotion transition
+  primitives. Do not use CSS animations, CSS transitions, or Tailwind animation
+  utilities for render-critical motion.
 - Treat `scenes` as a scripted-template implementation detail.
 - Treat future video/image/color overlay or background needs as `baseLayer` modeling work.
 - Prefer small bounded edits.
