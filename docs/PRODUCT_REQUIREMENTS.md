@@ -21,7 +21,11 @@ Target workflow:
 
 Product direction:
 - one segment should be implemented by one primary template
-- one template may contain multiple internal scenes / components
+- one template may contain multiple internal Remotion scenes / components /
+  transitions / layout primitives
+- AI should choose the most suitable existing template from registered
+  template descriptions and usage guidance, then generate that template's
+  structured parameters
 - existing video, image, or color material should be modeled as a project-level or segment-level base layer
 
 This keeps the user-facing model segment-first while leaving room for richer compositing inside templates.
@@ -93,13 +97,18 @@ The system should mainly decide:
 - which primary template best implements a segment
 - how to fill template props / structured parameters
 
+Template selection should be driven by each registered template's description,
+capabilities, usage scenarios, constraints, and examples. The AI should not
+invent new Remotion code as the default path.
+
 ### 5.4 Segment implementation
 
 Product model:
 - one segment is implemented by one primary template instance
 - `templateId` determines the schema of `implementation`
 - `implementation` is the template-specific parameter payload, not a universal project-level structure
-- a template can be internally composed from multiple React components, renderers, layout primitives, transitions, and media helpers
+- a template can be internally composed from multiple Remotion components,
+  scenes, renderers, layout primitives, transitions, and media helpers
 - segment complexity should first be expressed through template-specific props and internal components
 - existing video / image / color material should be represented as a `baseLayer` rather than as another template
 
@@ -156,7 +165,8 @@ Given the user input, the system should:
 1. interpret the creative intent
 2. split the full video into one or more segments
 3. infer the purpose of each segment
-4. choose a suitable implementation approach for each segment
+4. compare the segment purpose against registered template descriptions,
+   capabilities, and usage scenarios
 5. in v1, choose one existing template per segment
 6. generate structured props / schema-valid JSON for that segment implementation
 7. assemble the generated segments into a full-video draft
@@ -283,6 +293,7 @@ Near-term focus should remain:
 - better segment planning
 - better template selection
 - better parameter generation
+- reusable Remotion component primitives that templates can compose internally
 
 ## 11. Explicit non-goals for v1
 

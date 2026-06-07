@@ -4,6 +4,11 @@ The project uses one primary template per `VideoSegment`. A template is split
 into server-safe metadata and client/video runtime code so API routes can build
 schemas and prompts without importing React or Remotion components.
 
+Templates are built from existing Remotion code. The provider should not
+generate new Remotion source code during normal project generation; it should
+choose a registered template from the template descriptions and fill that
+template's structured parameters.
+
 For Remotion-specific rendering and animation rules, use the repo-local
 `.agents/skills/remotion-best-practices/SKILL.md` skill. It is vendored so
 agents working in this repository share the same Remotion guidance.
@@ -38,6 +43,55 @@ src/templates/<template-id>/
 - `editor.tsx`: template-specific structured field editor.
 - `runtime.tsx`: template-specific runtime adapter that wires the editor and
   Remotion renderer into the shared runtime interface.
+
+## Component Composition
+
+A template is allowed to compose many Remotion components internally:
+
+```txt
+template runtime
+  -> scenes / blocks
+  -> elements
+  -> transitions
+  -> media helpers
+  -> layout primitives
+```
+
+These Remotion components are reusable video building blocks. They are not
+top-level product concepts and they are not additional templates inside a
+segment. Keep the user-facing segment model stable: one segment chooses one
+primary template, and that template decides how to compose its internals.
+
+Future reusable Remotion building blocks should live under a Remotion runtime
+area such as `src/remotion/primitives/`, not under `src/components/`.
+`src/components/` is reserved for product-page UI components such as segment
+lists, editors, buttons, inputs, and render controls.
+
+The current primitive catalog lives in `docs/REMOTION_PRIMITIVES.md`. Update it
+whenever a new reusable video primitive is added or an existing primitive's
+visual role changes.
+
+## Provider Role
+
+The generation provider receives:
+
+- the user's topic / brief / revision prompt
+- the registered template ids and labels
+- structured capabilities and usage guidance
+- template-specific implementation rules
+- the JSON schema union for all registered segment implementations
+
+It should then:
+
+1. plan the project as one or more segments
+2. choose the most suitable registered template for each segment
+3. emit the full `VideoProject` through the forced tool call
+4. fill each segment's `implementation` with parameters matching that
+   segment's `templateId`
+
+The provider must not emit a generic universal `scenes` shape for every
+template. `scenes` is only valid where a template explicitly defines it, such
+as the current `scripted` implementation.
 
 ## Registries
 
@@ -81,6 +135,8 @@ docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm
   reusable parameterized React animation components, scenes, blocks,
   transitions, media helpers, and layout primitives, but those are template
   internals, not additional segment-level templates.
+- Keep `src/components/` for page UI. Put template-reusable Remotion visual
+  primitives in `src/remotion/` runtime folders.
 - Do not import runtime template files from API, MiniMax, or schema modules.
 - Do not import `src/templates/<template>/index.ts` from server-safe modules;
   template bundle indexes include runtime adapters.

@@ -3,7 +3,7 @@
 import { Player } from "@remotion/player";
 import type { NextPage } from "next";
 import { useMemo, useState } from "react";
-import { RenderControls } from "../components/RenderControls";
+import { RenderControls } from "../components/ui/RenderControls";
 import { ProjectSummary } from "../components/project/ProjectSummary";
 import { SegmentEditor } from "../components/project/SegmentEditor";
 import { SegmentList } from "../components/project/SegmentList";

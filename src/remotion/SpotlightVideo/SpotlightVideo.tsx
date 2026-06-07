@@ -1,18 +1,13 @@
 import React from "react";
-import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, interpolate, useCurrentFrame } from "remotion";
 
 import type { SpotlightSpec } from "../../lib/spotlight-schema";
 import { CJK_SANS_FONT_STACK } from "../font-stack";
+import { CalloutGrid, Kicker, useEntranceProgress, VideoPanel } from "../primitives";
 
 export const SpotlightVideo: React.FC<SpotlightSpec> = (spec) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  const entrance = spring({
-    fps,
-    frame,
-    config: { damping: 180 },
-    durationInFrames: 38,
-  });
+  const entrance = useEntranceProgress(38, 180);
   const sweep = interpolate(frame, [0, spec.durationInFrames], [-22, 122], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -34,39 +29,30 @@ export const SpotlightVideo: React.FC<SpotlightSpec> = (spec) => {
           background: `linear-gradient(105deg, transparent ${sweep - 18}%, ${spec.theme.secondary}22 ${sweep}%, transparent ${sweep + 18}%)`,
         }}
       />
-      <div
+      <VideoPanel
+        entrance={entrance}
+        maxWidth="none"
+        padding={64}
         style={{
-          position: "absolute",
-          left: 72,
-          top: 66,
-          right: 72,
           bottom: 66,
-          border: `1px solid ${spec.theme.primary}55`,
-          borderRadius: 36,
-          backgroundColor: spec.theme.panel,
           boxShadow: `0 36px 120px ${spec.theme.background}88`,
-          padding: 64,
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
+          left: 72,
+          position: "absolute",
+          right: 72,
+          top: 66,
           transform: `translateY(${(1 - entrance) * 42}px) scale(${0.97 + entrance * 0.03})`,
-          opacity: entrance,
+          width: "auto",
         }}
+        theme={spec.theme}
       >
         <div>
           {spec.kicker ? (
-            <div
-              style={{
-                color: spec.theme.secondary,
-                fontSize: 28,
-                fontWeight: 800,
-                letterSpacing: 4,
-                textTransform: "uppercase",
-                marginBottom: 24,
-              }}
-            >
+            <Kicker style={{ fontSize: 28, letterSpacing: 4, marginBottom: 24 }} theme={spec.theme}>
               {spec.kicker}
-            </div>
+            </Kicker>
           ) : null}
           <h1
             style={{
@@ -95,30 +81,8 @@ export const SpotlightVideo: React.FC<SpotlightSpec> = (spec) => {
           ) : null}
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: `repeat(${Math.min(spec.callouts.length, 4)}, minmax(0, 1fr))`,
-            gap: 18,
-          }}
-        >
-          {spec.callouts.map((callout, index) => (
-            <div
-              key={`${callout}-${index}`}
-              style={{
-                borderTop: `4px solid ${index % 2 === 0 ? spec.theme.primary : spec.theme.secondary}`,
-                color: spec.theme.text,
-                fontSize: 25,
-                fontWeight: 700,
-                lineHeight: 1.28,
-                paddingTop: 18,
-              }}
-            >
-              {callout}
-            </div>
-          ))}
-        </div>
-      </div>
+        <CalloutGrid callouts={spec.callouts} theme={spec.theme} />
+      </VideoPanel>
     </AbsoluteFill>
   );
 };

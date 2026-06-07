@@ -2,6 +2,35 @@
 
 Last updated: 2026-06-07
 
+## 2026-06-07 continuation — product architecture wording alignment
+
+- Clarified the current target architecture in `docs/PRODUCT_ARCHITECTURE.md`:
+  LLM receives registered template descriptions and usage guidance, selects
+  one primary template per segment, and emits schema-valid implementation
+  parameters instead of generating Remotion source code.
+- Clarified that multiple reusable Remotion components can compose each
+  template internally while preserving the one-primary-template-per-segment
+  product model.
+- Clarified directory intent:
+  - `src/components/` is product-page UI, not reusable Remotion video
+    primitives.
+  - future template-reusable Remotion scenes, elements, transitions, media
+    helpers, and layout primitives should live under `src/remotion/` runtime
+    folders such as `src/remotion/primitives/`.
+- Updated `docs/TEMPLATE_ARCHITECTURE.md` and
+  `docs/PRODUCT_REQUIREMENTS.md` so provider template selection is explicitly
+  driven by template descriptions, capabilities, usage scenarios, constraints,
+  and schema-valid parameters.
+- Started the matching source layout iteration:
+  - moved page-level reusable UI files under `src/components/ui/`
+  - added `src/remotion/primitives/` for template-reusable Remotion video
+    scenes, elements, and transition helpers
+  - refactored current scripted and spotlight renderers to consume the first
+    shared primitives while keeping their template implementations unchanged
+- Added `docs/REMOTION_PRIMITIVES.md` so each reusable Remotion primitive has
+  a documented visual effect, props summary, current usage, and intended reuse
+  pattern.
+
 ## 2026-06-07 continuation — registry source consolidation and render warmup
 
 - Consolidated template registration sources so future templates require less
