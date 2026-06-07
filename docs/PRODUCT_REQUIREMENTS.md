@@ -23,6 +23,9 @@ Product direction:
 - one segment should be implemented by one primary template
 - one template may contain multiple internal Remotion scenes / components /
   transitions / layout primitives
+- reusable Remotion examples from external libraries should be treated as
+  component / primitive candidates first, even when those libraries call them
+  templates
 - AI should choose the most suitable existing template from registered
   template descriptions and usage guidance, then generate that template's
   structured parameters
@@ -104,6 +107,12 @@ Template selection should be driven by each registered template's description,
 capabilities, usage scenarios, constraints, and examples. The AI should not
 invent new Remotion code as the default path.
 
+External Remotion component libraries can expand the internal visual
+vocabulary, but their individual effects should not automatically become
+registered templates. A chart, text effect, transition, lower third, logo
+reveal, background, or media layout is usually a component that a template can
+compose internally.
+
 ### 5.4 Segment implementation
 
 Product model:
@@ -114,6 +123,8 @@ Product model:
   scenes, renderers, layout primitives, transitions, and media helpers
 - a template may use template-local block contracts to describe how semantic
   fields map onto reusable Remotion primitives
+- reusable component libraries should feed the primitive / block layer before
+  any component is promoted into the registered template layer
 - segment complexity should first be expressed through template-specific props and internal components
 - existing video / image / color material should be represented as a `baseLayer` rather than as another template
 

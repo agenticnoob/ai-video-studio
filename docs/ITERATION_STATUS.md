@@ -1,6 +1,23 @@
 # Iteration Status
 
-Last updated: 2026-06-07
+Last updated: 2026-06-08
+
+## 2026-06-08 continuation — Remotion component library terminology
+
+- Defined how external Remotion "template" libraries should map into this
+  product:
+  - external "templates" are component / primitive candidates by default
+  - `ai-video-studio` templates remain segment-level primary implementation
+    mechanisms selected by `templateId`
+  - text effects, charts, transitions, logo reveals, backgrounds, lower
+    thirds, and media layouts should normally live under `src/remotion/`
+    rather than `src/templates/`
+- Added `docs/REMOTION_COMPONENT_LIBRARY.md` to document component-library
+  intake, directory roles, catalog shape, promotion path, implementation
+  rules, and external reference policy.
+- Updated product and template architecture docs so future RVE-style imports
+  do not blur primitive/component terminology with registered product
+  templates.
 
 ## 2026-06-07 continuation — product architecture wording alignment
 

@@ -8,6 +8,11 @@ page UI components and they are not top-level product concepts. A template may
 compose several primitives to produce its final visual style while still
 remaining one primary template for a `VideoSegment`.
 
+External Remotion libraries may call similar assets "templates". In this repo,
+those assets should be treated as reusable component or primitive candidates
+first. See `docs/REMOTION_COMPONENT_LIBRARY.md` for the intake and promotion
+policy.
+
 For Remotion motion rules, keep animation deterministic and frame-driven with
 Remotion APIs. Do not use CSS animations, CSS transitions, or Tailwind
 animation utilities for render-critical motion.
@@ -18,12 +23,31 @@ animation utilities for render-critical motion.
 |---|---|---|---|
 | `VideoPanel` | `src/remotion/primitives/elements/VideoPanel.tsx` | Large rounded content panel with themed background, border, shadow, entrance opacity, and slight slide/scale-in motion. | `scripted`, `spotlight` |
 | `Kicker` | `src/remotion/primitives/elements/Kicker.tsx` | Small uppercase label above primary content, using the template secondary color and wide letter spacing. | `scripted`, `spotlight` |
-| `CalloutGrid` | `src/remotion/primitives/elements/CalloutGrid.tsx` | Horizontal grid of short key messages, each with an alternating primary/secondary top rule. | `spotlight` |
+| `CalloutGrid` | `src/remotion/primitives/layouts/CalloutGrid.tsx` | Horizontal grid of short key messages, each with an alternating primary/secondary top rule. | `spotlight` |
 | `TitleScene` | `src/remotion/primitives/scenes/TitleScene.tsx` | Title block with optional kicker and subtitle; optimized for opening or section-title moments. | `scripted` |
 | `BulletScene` | `src/remotion/primitives/scenes/BulletScene.tsx` | Heading plus short bullet list; optimized for concise explanation or takeaway moments. | `scripted` |
 | `QuoteScene` | `src/remotion/primitives/scenes/QuoteScene.tsx` | Large quote text with optional author; optimized for testimonial, insight, or emotional emphasis. | `scripted` |
 | `useEntranceProgress` | `src/remotion/primitives/transitions/useEntranceProgress.ts` | Frame-driven spring progress helper returning `0..1` for entrance animation. | `scripted`, `spotlight` |
 | `RemotionTheme` | `src/remotion/primitives/theme.ts` | Shared theme shape used by primitives: background, panel, primary, secondary, text, muted. | primitives and templates |
+
+## Directory Layers
+
+Reusable Remotion primitives are split by role:
+
+- `elements/`: small visual atoms such as labels and panels.
+- `layouts/`: reusable arrangements of repeated content, such as callout grids.
+- `backgrounds/`: full-frame reusable background treatments.
+- `charts/`: reusable data visualization components.
+- `cinematic/`: film, vignette, letterbox, or camera-style treatments.
+- `logos/`: logo reveal and brand-mark treatments.
+- `media/`: reusable image/video presentation components.
+- `scenes/`: complete scene-level blocks composed from elements and layouts.
+- `text/`: reusable text animation treatments.
+- `transitions/`: frame-driven motion helpers and transition utilities.
+
+Keep future additions in the narrowest layer that fits. A primitive should not
+be promoted into a segment template unless it has a template-specific schema,
+definition, runtime adapter, and registration path.
 
 ## Parameter Exposure Model
 
@@ -153,6 +177,8 @@ Use when:
 Current examples:
 - `TitleScene`, `BulletScene`, and `QuoteScene` use `Kicker`
 - `spotlight` uses `Kicker` above the large headline
+
+## Layouts
 
 ### `CalloutGrid`
 

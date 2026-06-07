@@ -55,6 +55,13 @@ For AI-assisted development, new visual capability should usually be introduced
 as a small primitive plus a template-local block contract before changing a
 template's top-level implementation schema.
 
+External Remotion libraries may use the word `template` for reusable examples
+such as text effects, charts, transitions, logo reveals, backgrounds, and
+media layouts. In this product, treat those as Remotion component candidates,
+not as `VideoSegment` templates. A reusable component only becomes a product
+template if it can implement a complete segment intent and has a schema,
+definition, runtime adapter, editor path, and registration.
+
 ## Directory Intent
 
 Current and future structure should keep page UI, video runtime, template
@@ -83,6 +90,9 @@ When adding reusable video building blocks such as title scenes, bullet scenes,
 captions, backgrounds, progress markers, or transitions, prefer a Remotion
 runtime directory such as `src/remotion/primitives/` rather than
 `src/components/`.
+
+The component-library policy for external Remotion examples is documented in
+`docs/REMOTION_COMPONENT_LIBRARY.md`.
 
 ## Template Selection Contract
 

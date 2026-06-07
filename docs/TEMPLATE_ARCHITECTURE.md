@@ -71,6 +71,13 @@ top-level product concepts and they are not additional templates inside a
 segment. Keep the user-facing segment model stable: one segment chooses one
 primary template, and that template decides how to compose its internals.
 
+When importing ideas from external Remotion "template" libraries, translate
+their "template" term to this project's Remotion component / primitive layer
+unless the asset is being explicitly promoted into a full segment-level
+template. For example, a text animation, chart, transition, logo reveal, lower
+third, or gallery treatment should usually live under `src/remotion/` and be
+composed by a registered template runtime.
+
 Future reusable Remotion building blocks should live under a Remotion runtime
 area such as `src/remotion/primitives/`, not under `src/components/`.
 `src/components/` is reserved for product-page UI components such as segment
@@ -79,6 +86,9 @@ lists, editors, buttons, inputs, and render controls.
 The current primitive catalog lives in `docs/REMOTION_PRIMITIVES.md`. Update it
 whenever a new reusable video primitive is added or an existing primitive's
 visual role changes.
+
+The broader component-library intake and promotion policy lives in
+`docs/REMOTION_COMPONENT_LIBRARY.md`.
 
 ## Block Contracts
 
@@ -181,6 +191,9 @@ docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm
   reusable parameterized React animation components, scenes, blocks,
   transitions, media helpers, and layout primitives, but those are template
   internals, not additional segment-level templates.
+- Do not register every reusable Remotion component as a template. Promote a
+  component into `src/templates/` only when it represents a complete
+  segment-level implementation with its own schema and product use cases.
 - Keep `src/components/` for page UI. Put template-reusable Remotion visual
   primitives in `src/remotion/` runtime folders.
 - Do not import runtime template files from API, MiniMax, or schema modules.
