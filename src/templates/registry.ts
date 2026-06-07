@@ -1,30 +1,33 @@
-import { scriptedTemplate } from "./scripted/definition";
-import { spotlightTemplate } from "./spotlight/definition";
+import { SCRIPTED_TEMPLATE_ID, SPOTLIGHT_TEMPLATE_ID } from "./ids";
 import {
-  registeredTemplateIds,
-  SCRIPTED_TEMPLATE_ID,
-  SPOTLIGHT_TEMPLATE_ID,
-  type TemplateId,
-} from "./ids";
+  registeredTemplateDefinitions,
+  type RegisteredTemplateDefinition,
+} from "./registered-definitions";
 
 export { SCRIPTED_TEMPLATE_ID, SPOTLIGHT_TEMPLATE_ID };
-export { registeredTemplateIds };
-export type { TemplateId };
 
-export const templateDefinitions = {
-  [SCRIPTED_TEMPLATE_ID]: scriptedTemplate,
-  [SPOTLIGHT_TEMPLATE_ID]: spotlightTemplate,
-} as const;
+export type TemplateId = RegisteredTemplateDefinition["id"];
+
+type TemplateDefinitionsById = {
+  [TDefinition in RegisteredTemplateDefinition as TDefinition["id"]]: TDefinition;
+};
+
+type SegmentSchemaVariant = RegisteredTemplateDefinition["segmentSchema"];
+
+export const templateDefinitions = Object.fromEntries(
+  registeredTemplateDefinitions.map((template) => [template.id, template]),
+) as TemplateDefinitionsById;
+
+export const registeredTemplateIds = registeredTemplateDefinitions.map((template) => template.id);
 
 export const templateIds = registeredTemplateIds;
 
-export const videoSegmentSchemaVariants = [
-  templateDefinitions[SCRIPTED_TEMPLATE_ID].segmentSchema,
-  templateDefinitions[SPOTLIGHT_TEMPLATE_ID].segmentSchema,
-] as const;
+export const videoSegmentSchemaVariants = registeredTemplateDefinitions.map(
+  (template) => template.segmentSchema,
+) as [SegmentSchemaVariant, ...SegmentSchemaVariant[]];
 
-export const templateSegmentJsonSchemas = templateIds.map(
-  (templateId) => templateDefinitions[templateId].segmentJsonSchema,
+export const templateSegmentJsonSchemas = registeredTemplateDefinitions.map(
+  (template) => template.segmentJsonSchema,
 );
 
 export const getTemplateDefinition = (templateId: TemplateId) => {

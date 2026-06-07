@@ -73,13 +73,17 @@ Current top-level boundaries:
      structured `capabilities`, editor fields, runtime adapters, and bundle
      exports
 6. `/src/templates/registry.ts`
-   - server-safe template metadata registry used by schema validation and
-     MiniMax prompt/tool generation
-7. `/src/templates/component-registry.tsx`
+   - derived server-safe template metadata registry used by schema validation
+     and MiniMax prompt/tool generation
+7. `/src/templates/registered-definitions.ts`
+   - server-safe template definition registration source
+8. `/src/templates/registered-bundles.ts`
+   - runtime template bundle registration source
+9. `/src/templates/component-registry.tsx`
    - runtime template registry used by the page editor and Remotion preview
-8. `/src/lib/template-registry.ts`
+10. `/src/lib/template-registry.ts`
    - compatibility re-export for existing code
-9. `/src/remotion/*`
+11. `/src/remotion/*`
    - render video from structured props instead of ad-hoc codegen
 
 ## Docker usage
@@ -95,6 +99,11 @@ cd /data/projects/labs/ai-video-studio
 ```
 Then open:
 - http://localhost:3000
+
+The Docker startup path runs `npm run remotion:ensure-browser` before starting
+the app. This checks for Remotion's Chrome Headless Shell and downloads it
+upfront when missing, so the first in-app video export does not block on the
+browser dependency download.
 
 Start Remotion Studio:
 ```bash

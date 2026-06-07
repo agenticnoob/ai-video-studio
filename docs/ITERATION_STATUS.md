@@ -2,6 +2,39 @@
 
 Last updated: 2026-06-07
 
+## 2026-06-07 continuation — registry source consolidation and render warmup
+
+- Consolidated template registration sources so future templates require less
+  repeated center-file wiring:
+  - `src/templates/registered-definitions.ts` is now the server-safe list of
+    template definitions.
+  - `src/templates/registry.ts` derives `TemplateId`, template lookup maps,
+    registered ids, Zod segment schema variants, and MiniMax JSON schema
+    fragments from the server-safe definition list.
+  - `src/templates/registered-bundles.ts` is now the runtime list of template
+    bundles.
+  - `src/templates/component-registry.tsx` derives runtime adapters from the
+    bundle list and has a type-level coverage check so each registered
+    `TemplateId` must have runtime wiring.
+  - `src/templates/ids.ts` now only owns literal template id constants.
+- Updated `docs/TEMPLATE_ARCHITECTURE.md` so the add-template workflow points
+  to `registered-definitions.ts` and `registered-bundles.ts` instead of
+  editing the derived registries directly.
+- Added `scripts/ensure-remotion-browser.mjs` and
+  `npm run remotion:ensure-browser` to prepare Remotion's Chrome Headless
+  Shell dependency before runtime use.
+- Updated Docker `web`, `studio`, and `render` service commands to run the
+  browser preflight after dependency install and before starting Next,
+  Remotion Studio, or the sample render path.
+- Verified the current `web` container starts with the Remotion browser
+  preflight and then Next dev; the app responded with HTTP 200 after restart.
+- Docker-first validation passed:
+  - container `npm run remotion:ensure-browser`
+  - container `npm run lint`
+  - container `npx tsc --noEmit`
+  - container `npm run build`
+  - `git diff --check`
+
 ## 2026-06-07 continuation — template module architecture
 
 - Refactored the two-template implementation from a monolithic

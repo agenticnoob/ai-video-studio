@@ -22,6 +22,7 @@ services:
     command: >-
       bash -lc "mkdir -p /tmp/hermes-home /tmp/npm-cache &&
       [ -d /workspace/node_modules/next ] || npm install &&
+      npm run remotion:ensure-browser &&
       npm run dev -- --hostname 0.0.0.0 --port 3000"
 
   studio:
@@ -47,6 +48,7 @@ services:
     command: >-
       bash -lc "mkdir -p /tmp/hermes-home /tmp/npm-cache &&
       [ -d /workspace/node_modules/next ] || npm install &&
+      npm run remotion:ensure-browser &&
       npm run remotion -- --host 0.0.0.0 --port 3000"
 
   render:
@@ -69,6 +71,7 @@ services:
     command: >-
       bash -lc "mkdir -p /tmp/hermes-home /tmp/npm-cache /workspace/out &&
       [ -d /workspace/node_modules/next ] || npm install &&
+      npm run remotion:ensure-browser &&
       npm run render -- --output out/ai-video.mp4"
 
 volumes:

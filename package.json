@@ -55,6 +55,7 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
+    "remotion:ensure-browser": "node scripts/ensure-remotion-browser.mjs",
     "style:check": "npm run lint && npm run typecheck && npm run format:check",
     "check": "npm run style:check && npm run build",
     "remotion": "remotion studio",

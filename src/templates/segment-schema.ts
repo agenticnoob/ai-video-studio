@@ -1,9 +1,7 @@
 import { z } from "zod";
 
-import type { TemplateId } from "./ids";
-
 export const createTemplateSegmentSchema = <
-  TTemplateId extends TemplateId,
+  TTemplateId extends string,
   TImplementationSchema extends z.ZodTypeAny,
 >(
   templateId: TTemplateId,

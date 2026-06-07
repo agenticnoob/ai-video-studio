@@ -39,11 +39,15 @@ src/templates/<template-id>/
 
 - `src/templates/registry.ts` is server-safe. It must not import React,
   Remotion components, or template `runtime.tsx` files.
+- `src/templates/registered-definitions.ts` is the server-safe registration
+  source. `registry.ts` derives template ids, lookup maps, Zod segment schema
+  variants, and MiniMax JSON schema fragments from this list.
+- `src/templates/registered-bundles.ts` is the runtime registration source. It
+  imports template bundle indexes and is only consumed by runtime code.
 - `src/templates/component-registry.tsx` is runtime-only. It imports template
-  bundles and uses only their runtime adapters. It is used by the page editor
-  and Remotion preview.
-- `src/templates/ids.ts` owns the registered template id list and the
-  `TemplateId` union.
+  bundles through `registered-bundles.ts`, derives runtime adapters, and checks
+  at compile time that every registered `TemplateId` has runtime coverage.
+- `src/templates/ids.ts` owns literal template id constants.
 - `src/lib/template-registry.ts` is a compatibility re-export for existing
   project code.
 
@@ -52,9 +56,10 @@ src/templates/<template-id>/
 1. Add a template id in `src/templates/ids.ts`.
 2. Add `index.ts`, `schema.ts`, `definition.ts`, `editor.tsx`, and
    `runtime.tsx` under a new `src/templates/<template-id>/` directory.
-3. Register the server-safe definition in `src/templates/registry.ts`.
+3. Register the server-safe definition in
+   `src/templates/registered-definitions.ts`.
 4. Register the runtime side by adding the template bundle in
-   `src/templates/component-registry.tsx`.
+   `src/templates/registered-bundles.ts`.
 5. Run Docker-first validation:
 
 ```bash
