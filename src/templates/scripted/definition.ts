@@ -83,10 +83,30 @@ export const scriptedTemplate = defineTemplate({
     supportsMedia: false,
     supportsBaseLayer: false,
   },
+  planner: {
+    description:
+      "Multi-scene scripted sequence for explanations, process walkthroughs, narrative beats, and dense instructional content.",
+    avoidCases: [
+      "single punchy hook or metric that should read as one focused card",
+      "very short bumper, recap, or call-to-action with minimal text",
+    ],
+    narrationFit:
+      "Fits medium-to-long narration that can be split across title, bullet, and quote-style internal scenes.",
+    mediaExpectations:
+      "No external media is required; visual output is generated from text, theme colors, and internal Remotion primitives.",
+    examples: [
+      "Explain a three-step workflow",
+      "Tell a short before-and-after story",
+      "Break down a process with key bullets",
+    ],
+  },
   implementationSchema: videoSpecSchema,
   segmentSchema: scriptedSegmentSchema,
   implementationJsonSchema: scriptedImplementationJsonSchema,
-  segmentJsonSchema: createSegmentJsonSchema(SCRIPTED_TEMPLATE_ID, scriptedImplementationJsonSchema),
+  segmentJsonSchema: createSegmentJsonSchema(
+    SCRIPTED_TEMPLATE_ID,
+    scriptedImplementationJsonSchema,
+  ),
   getDuration: getVideoDuration,
   selectionGuidance:
     "Use scripted for explanatory flow, multi-step processes, narrative development, before/after explanations, or segments that benefit from several internal scenes.",

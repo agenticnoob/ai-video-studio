@@ -100,18 +100,23 @@ Current likely sequence:
 1. Lock the authoritative final generation goal
 - final goal document
 - PRD / architecture / README / agent notes point to the same target
+- status: implemented
 
 2. Add storyboard planning contract
 - validated `StoryboardPlan`
 - compact planner template manifest
 - template selection based on registered descriptions, capabilities, and use
   cases
+- status: core schema, manifest, MiniMax planner prompt/tool/parser, and
+  internal facade are implemented; main route integration and planner repair
+  remain later work
 
 3. Add TTS voiceover MVP
 - generate narration audio from planned segment text
 - write local audio artifacts
 - measure or normalize duration
 - feed audio duration back into segment compilation
+- status: next major pipeline slice
 
 4. Add duration-aware segment compiler
 - provide only the selected template schema and rules

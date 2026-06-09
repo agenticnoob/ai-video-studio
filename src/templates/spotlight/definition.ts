@@ -45,6 +45,22 @@ export const spotlightTemplate = defineTemplate({
     supportsMedia: false,
     supportsBaseLayer: false,
   },
+  planner: {
+    description:
+      "Focused single-card segment for hooks, key messages, metrics, punchlines, transition bumpers, recaps, and calls to action.",
+    avoidCases: [
+      "multi-step explanation that needs several internal beats",
+      "dense narration that requires many bullets or scene changes",
+    ],
+    narrationFit: "Fits short narration with one main message and a few supporting callouts.",
+    mediaExpectations:
+      "No external media is required; visual output is generated from text, theme colors, and focused card motion.",
+    examples: [
+      "Open with one strong promise",
+      "Highlight a metric or takeaway",
+      "Close with a concise call to action",
+    ],
+  },
   implementationSchema: spotlightSpecSchema,
   segmentSchema: spotlightSegmentSchema,
   implementationJsonSchema: spotlightImplementationJsonSchema,

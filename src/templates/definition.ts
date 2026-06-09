@@ -11,6 +11,14 @@ export type TemplateCapabilities = {
   supportsBaseLayer: boolean;
 };
 
+export type TemplatePlannerMetadata = {
+  description: string;
+  avoidCases: string[];
+  narrationFit: string;
+  mediaExpectations: string;
+  examples: string[];
+};
+
 export type TemplateDefinition<
   TId extends string,
   TImplementationSchema extends z.ZodTypeAny,
@@ -19,6 +27,7 @@ export type TemplateDefinition<
   id: TId;
   label: string;
   capabilities: TemplateCapabilities;
+  planner: TemplatePlannerMetadata;
   implementationSchema: TImplementationSchema;
   segmentSchema: TSegmentSchema;
   implementationJsonSchema: Record<string, unknown>;

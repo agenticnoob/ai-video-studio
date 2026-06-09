@@ -1,4 +1,6 @@
 export {
+  buildPlannerTemplateManifest,
+  buildPlannerTemplateManifestPrompt,
   buildTemplateImplementationPrompt,
   buildTemplatePreservationPrompt,
   buildTemplateRevisionPrompt,
@@ -14,4 +16,4 @@ export {
   videoSegmentSchemaVariants,
 } from "../templates/registry";
 
-export type { TemplateId } from "../templates/registry";
+export type { PlannerTemplateManifestEntry, TemplateId } from "../templates/registry";

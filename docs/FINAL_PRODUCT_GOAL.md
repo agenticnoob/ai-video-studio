@@ -445,7 +445,7 @@ Known limitation:
 
 ### Milestone 1: Authoritative Goal And Contracts
 
-Status: current documentation milestone.
+Status: implemented.
 
 Deliverables:
 
@@ -457,17 +457,24 @@ Deliverables:
 
 ### Milestone 2: Storyboard Plan Contract
 
+Status: groundwork implemented; route integration and planner repair remain
+future slices.
+
 Goal:
 
 - introduce a planner output contract before changing the full runtime path
 
-Deliverables:
+Implemented:
 
 - `StoryboardPlan` schema
 - `StoryboardSegmentPlan` schema
 - planner template manifest derived from registered templates
 - planner prompt that receives compact template metadata
-- route or internal function that can produce a validated plan
+- internal MiniMax function that can produce and validate a plan
+
+Remaining:
+
+- route or main generation wrapper that uses the planner result
 - basic repair path for invalid planner output
 
 Non-goals:

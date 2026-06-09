@@ -1,4 +1,5 @@
-import { templateSegmentJsonSchemas } from "../template-registry";
+import { MAX_STORYBOARD_SEGMENTS } from "../storyboard-plan-schema";
+import { templateIds, templateSegmentJsonSchemas } from "../template-registry";
 import type { MinimaxTool } from "./provider";
 
 const metaJsonSchema = {
@@ -41,6 +42,64 @@ export const EMIT_RESULT_TOOL: MinimaxTool = {
         },
       },
       required: ["meta", "brief", "segments"],
+    },
+  },
+};
+
+export const EMIT_STORYBOARD_PLAN_TOOL: MinimaxTool = {
+  type: "function",
+  function: {
+    name: "emit_result",
+    description:
+      "Emit a validated StoryboardPlan. Choose one registered primary template for each planned segment. Do not generate final template implementation fields.",
+    parameters: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        title: { type: "string" },
+        brief: { type: "string" },
+        language: { type: "string" },
+        globalStyle: { type: "string" },
+        segments: {
+          type: "array",
+          minItems: 1,
+          maxItems: MAX_STORYBOARD_SEGMENTS,
+          items: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              id: { type: "string" },
+              order: { type: "integer", minimum: 1 },
+              title: { type: "string" },
+              purpose: { type: "string" },
+              templateId: { type: "string", enum: templateIds },
+              templateReason: { type: "string" },
+              narration: {
+                type: "object",
+                additionalProperties: false,
+                properties: {
+                  text: { type: "string" },
+                  tone: { type: "string" },
+                },
+                required: ["text"],
+              },
+              visualBrief: { type: "string" },
+              pacingHint: { type: "string" },
+              expectedDurationSeconds: { type: "number", exclusiveMinimum: 0, maximum: 120 },
+            },
+            required: [
+              "id",
+              "order",
+              "purpose",
+              "templateId",
+              "templateReason",
+              "narration",
+              "visualBrief",
+            ],
+          },
+        },
+      },
+      required: ["title", "brief", "segments"],
     },
   },
 };

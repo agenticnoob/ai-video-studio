@@ -33,6 +33,20 @@ The current MiniMax-backed one-call `POST /api/generate` path is a shipped v1
 shortcut. It can stay while useful, but future generation work should move
 toward the staged planner -> TTS -> compiler -> assembly pipeline.
 
+Current implementation snapshot:
+
+- The shipped page and `/api/generate` route still use the one-call
+  `VideoProject` shortcut.
+- `src/lib/storyboard-plan-schema.ts` defines the first validated
+  `StoryboardPlan` boundary.
+- `src/templates/registry.ts` derives the planner template manifest from
+  server-safe registered template definitions.
+- `src/lib/minimax/prompts.ts`, `src/lib/minimax/tool-schema.ts`,
+  `src/lib/minimax/parse-storyboard-plan.ts`, and `src/lib/minimax/index.ts`
+  provide an internal MiniMax planner facade.
+- TTS assets, audio-duration probing, selected-template compiler functions,
+  and staged assembly into the active product route are still future slices.
+
 ## Composition Model
 
 The product should not ask AI to write Remotion source code. AI chooses from
@@ -127,8 +141,8 @@ src/templates/
   and bundle export
 
 src/lib/
-  shared project contracts, provider code, render helpers, and compatibility
-  re-exports
+  shared project and storyboard contracts, provider code, render helpers, and
+  compatibility re-exports
 ```
 
 When adding reusable video building blocks such as title scenes, bullet scenes,
@@ -150,9 +164,11 @@ explain:
 - what use cases it is best for
 - what use cases it should avoid
 - expected text density and timing range
+- narration fit and media expectations for planner selection
 - required and optional implementation fields
 - examples or rules that help the provider fill parameters safely
 
-The provider should use those definitions to select the most suitable
-template for each segment, then emit only schema-valid parameters for that
+The planner should use compact metadata to select the most suitable template
+for each segment. The compiler should later use only the selected template's
+full schema and implementation rules to emit schema-valid parameters for that
 template.

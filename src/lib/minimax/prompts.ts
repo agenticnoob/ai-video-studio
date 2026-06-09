@@ -1,6 +1,7 @@
 import type { MinimaxChatMessage, MinimaxTool, MinimaxToolChoice } from "./provider";
 import type { VideoProject } from "../project-schema";
 import {
+  buildPlannerTemplateManifestPrompt,
   buildTemplateImplementationPrompt,
   buildTemplatePreservationPrompt,
   buildTemplateRevisionPrompt,
@@ -9,7 +10,11 @@ import {
   getTemplateDefinition,
   templateIds,
 } from "../template-registry";
-import { EMIT_RESULT_TOOL, EMIT_RESULT_TOOL_CHOICE } from "./tool-schema";
+import {
+  EMIT_RESULT_TOOL,
+  EMIT_RESULT_TOOL_CHOICE,
+  EMIT_STORYBOARD_PLAN_TOOL,
+} from "./tool-schema";
 
 /**
  * Payload for the provider — messages + the tool definition we want the model
@@ -67,6 +72,41 @@ You MUST emit the result by calling the function tool named "emit_result".
 Pass the complete VideoProject object (top-level keys: meta, brief, segments)
 as the function arguments JSON string. Do not return the JSON in the assistant
 content channel — it will be ignored. Do not call any other tool.`;
+
+const STORYBOARD_PLAN_SYSTEM_PROMPT = `You create a structured "StoryboardPlan" for a segment-first video studio.
+
+This is the planning stage only. The output decides segment intent, narration,
+visual direction, and one primary registered template per segment. It must not
+generate final template implementation fields.
+
+The output must:
+- be a single JSON object (no markdown fence, no commentary)
+- validate against the StoryboardPlan tool schema
+- contain between 1 and 6 segments; prefer 1-3 unless the brief clearly needs more
+- use one primary template per segment
+- choose templateId from the registered template ids: ${templateIds.map((id) => `"${id}"`).join(", ")}
+- set segment.order as contiguous integers starting at 1
+- use stable segment ids like "segment-1", "segment-2"
+- write narration.text as the spoken script for that segment
+- explain templateReason using the selected template's fit for the segment purpose
+- describe visualBrief without inventing media URLs or Remotion source code
+- set expectedDurationSeconds when the brief or narration gives a useful timing hint
+
+# Planner template manifest
+${buildPlannerTemplateManifestPrompt()}
+
+# Planning boundaries
+- Do not generate implementation, scenes, callouts, theme, colors, or template props.
+- Do not invent template ids.
+- Do not model one segment as multiple template instances.
+- Do not create arbitrary media URLs.
+- Preserve the user's intent and language when possible.
+
+# Tool-calling contract (CRITICAL)
+You MUST emit the result by calling the function tool named "emit_result".
+Pass the complete StoryboardPlan object (top-level keys: title, brief, segments,
+and optional language/globalStyle) as the function arguments JSON string. Do
+not return the JSON in the assistant content channel — it will be ignored.`;
 
 /**
  * System prompt for segment-revision mode. Mostly the same shape, but the
@@ -137,6 +177,23 @@ export const buildProjectPrompt = (brief: string): MinimaxPrompt => {
   return {
     messages,
     tools: [EMIT_RESULT_TOOL],
+    toolChoice: EMIT_RESULT_TOOL_CHOICE,
+  };
+};
+
+export const buildStoryboardPlanPrompt = (brief: string): MinimaxPrompt => {
+  const safeBrief = brief.length > 0 ? brief : "Create a concise AI Video Studio workflow video.";
+  const messages: MinimaxChatMessage[] = [
+    { role: "system", content: STORYBOARD_PLAN_SYSTEM_PROMPT },
+    {
+      role: "user",
+      content: `Brief:\n"""\n${safeBrief}\n"""\n\nReturn a single JSON object matching the StoryboardPlan contract above. Call the "emit_result" tool with the complete plan as arguments.`,
+    },
+  ];
+
+  return {
+    messages,
+    tools: [EMIT_STORYBOARD_PLAN_TOOL],
     toolChoice: EMIT_RESULT_TOOL_CHOICE,
   };
 };

@@ -1,6 +1,6 @@
 # MiniMax Provider Implementation
 
-Status: implemented and current as of the T2/T3 stabilization pass.
+Status: implemented v1 provider path, with storyboard-planner groundwork added.
 
 This document describes the current `POST /api/generate` provider path. It is
 no longer a proposal. The provider keeps `VideoProject` as the generation,
@@ -10,21 +10,27 @@ request into schema-valid `VideoProject` JSON.
 Roadmap note:
 - The authoritative final generation target is `docs/FINAL_PRODUCT_GOAL.md`.
 - This MiniMax path is the shipped v1 shortcut.
-- Future generation work should evolve toward storyboard planning,
-  per-segment TTS, duration-aware selected-template compilation, and final
-  `VideoProject` assembly.
+- The internal storyboard-planner facade now exists, but it is not yet wired
+  into the main `POST /api/generate` route.
+- Future generation work should continue toward per-segment TTS,
+  duration-aware selected-template compilation, and final `VideoProject`
+  assembly.
 
 ## Scope
 
 In scope:
 - full-project generation from `mode: "project"`
 - selected-segment regeneration from `mode: "segment"`
+- internal storyboard-plan generation via `minimaxGenerateStoryboardPlan()`
 - single `emit_result` tool-calling path
 - strict Zod validation through `videoProjectSchema`
+- strict Zod validation through `storyboardPlanSchema` for planner output
 - bounded MiniMax shape recovery for known tool-call argument regressions
 - explicit 500/502 error surfacing; no silent mock fallback
 
 Out of scope for this provider pass:
+- replacing `/api/generate` with planner -> TTS -> compiler -> assembly
+- generated TTS assets and duration-aware selected-template compilation
 - multi-provider registry or fallback chains
 - streaming responses
 - persistence, draft history, or render history UX
@@ -35,10 +41,12 @@ Out of scope for this provider pass:
 
 - `src/app/api/generate/route.ts` validates request bodies and maps provider errors to HTTP status codes.
 - `src/lib/minimax/provider.ts` reads config and calls `text/chatcompletion_v2`.
-- `src/lib/minimax/prompts.ts` builds project and segment prompts plus the forced tool definition.
-- `src/lib/minimax/tool-schema.ts` contains the deep-recursive `emit_result` JSON schema.
+- `src/lib/minimax/prompts.ts` builds project, segment, and storyboard-planner prompts.
+- `src/lib/minimax/tool-schema.ts` contains the `emit_result` JSON schemas for both `VideoProject` and `StoryboardPlan`.
 - `src/lib/minimax/parse-project.ts` parses tool-call arguments and validates the final `VideoProject`.
-- `src/lib/minimax/index.ts` exposes `minimaxGenerateProject()` and `minimaxReviseSegment()`.
+- `src/lib/minimax/parse-storyboard-plan.ts` parses tool-call arguments and validates the planner `StoryboardPlan`.
+- `src/lib/minimax/index.ts` exposes `minimaxGenerateProject()`, `minimaxReviseSegment()`, and `minimaxGenerateStoryboardPlan()`.
+- `src/lib/storyboard-plan-schema.ts` defines the planner contract.
 - `src/lib/project-generation.ts` is test-only mock generation and is not imported by the route.
 
 ## Environment Variables
@@ -91,6 +99,13 @@ Segment mode:
 2. `minimaxReviseSegment()` sends the full current project, including every segment's `implementation.meta`, `implementation.theme`, and `implementation.scenes`.
 3. The prompt instructs MiniMax to return the full project and preserve non-target segments byte-for-byte.
 4. The same tool-call parser and Zod validation gate the returned project.
+
+Internal storyboard-planner mode:
+1. `minimaxGenerateStoryboardPlan()` builds a planning prompt from the brief.
+2. The prompt includes the compact planner template manifest derived from registered template definitions.
+3. MiniMax is forced to call `emit_result` with a `StoryboardPlan`.
+4. `parseStoryboardPlanToolCallArguments()` validates the result through `storyboardPlanSchema`.
+5. This path is available to future pipeline work, but no public route or page action consumes it yet.
 
 ## Parser Recovery
 
@@ -152,3 +167,5 @@ Useful Docker smoke paths:
   (`SpotlightSpec`).
 - `VideoSpec.scenes` is a `scripted` template detail, not a universal segment field.
 - `SpotlightSpec.callouts` is a `spotlight` template detail.
+- `StoryboardPlan` is the future planner-stage boundary, not the preview/render
+  payload; `VideoProject` remains the active page/export boundary.

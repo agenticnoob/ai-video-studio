@@ -43,6 +43,8 @@ src/templates/<template-id>/
   - id and label
   - structured capabilities (`bestFor`, `textDensity`, recommended duration,
     media/baseLayer support)
+  - planner metadata (`description`, `avoidCases`, `narrationFit`,
+    `mediaExpectations`, and `examples`)
   - implementation schema
   - segment schema
   - MiniMax JSON Schema fragment
@@ -145,6 +147,11 @@ The current v1 generation path may send enough registered template context for
 MiniMax to emit a full `VideoProject` in one call. That path is useful as a
 working shortcut, but it is not the final scaling model.
 
+Current planner groundwork exists: `src/lib/storyboard-plan-schema.ts` defines
+the plan contract, `src/templates/registry.ts` derives the compact planner
+manifest, and `src/lib/minimax/*` exposes an internal MiniMax planner facade.
+This is not yet wired into the main `POST /api/generate` route.
+
 The final provider workflow has two roles.
 
 Planner receives:
@@ -186,7 +193,8 @@ as the current `scripted` implementation.
   Remotion components, or template `runtime.tsx` files.
 - `src/templates/registered-definitions.ts` is the server-safe registration
   source. `registry.ts` derives template ids, lookup maps, Zod segment schema
-  variants, and MiniMax JSON schema fragments from this list.
+  variants, MiniMax JSON schema fragments, and the planner template manifest
+  from this list.
 - `src/templates/registered-bundles.ts` is the runtime registration source. It
   imports template bundle indexes and is only consumed by runtime code.
 - `src/templates/component-registry.tsx` is runtime-only. It imports template
@@ -201,6 +209,8 @@ as the current `scripted` implementation.
 1. Add a template id in `src/templates/ids.ts`.
 2. Add `index.ts`, `schema.ts`, `definition.ts`, `editor.tsx`, and
    `runtime.tsx` under a new `src/templates/<template-id>/` directory.
+   Include planner metadata in `definition.ts` so the storyboard planner can
+   choose the template without reading implementation schemas or runtime code.
 3. Register the server-safe definition in
    `src/templates/registered-definitions.ts`.
 4. Register the runtime side by adding the template bundle in

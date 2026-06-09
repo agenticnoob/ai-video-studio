@@ -2,6 +2,48 @@
 
 Last updated: latest documentation alignment
 
+## Latest continuation — handoff documentation alignment
+
+- Aligned `AGENTS.md`, `README.md`, product docs, architecture docs, template
+  docs, and MiniMax provider docs around the current staged-generation status.
+- Current handoff state:
+  - shipped v1 route: `POST /api/generate` still returns validated
+    `VideoProject` directly
+  - implemented groundwork: `StoryboardPlan` schema, compact planner template
+    manifest, and internal MiniMax storyboard-planner facade
+  - not implemented yet: public planner route wiring, planner repair, TTS
+    assets, audio-duration probing, selected-template compiler, and full
+    staged assembly
+- Next best bounded product slice remains TTS from planned segment narration,
+  unless the next task explicitly asks to expose or smoke-test the planner
+  facade first.
+
+## Latest continuation — storyboard plan contract groundwork
+
+- Added a server-safe `StoryboardPlan` / `StoryboardSegmentPlan` Zod contract
+  for the target planner stage before final `VideoProject` assembly.
+- Added template-local planner metadata to registered template definitions:
+  description, avoid cases, narration fit, media expectations, and examples.
+- Derived a compact planner template manifest from `src/templates/registry.ts`
+  so the planner can choose among registered templates without receiving full
+  implementation schemas or Remotion runtime internals.
+- Added an internal MiniMax storyboard-planner prompt, tool schema, parser, and
+  `minimaxGenerateStoryboardPlan()` facade.
+- Kept the shipped v1 `POST /api/generate` path unchanged: it still generates
+  schema-valid `VideoProject` directly until the staged pipeline is wired in a
+  later slice.
+- Preserved the durable model: one primary `templateId` per segment,
+  template-specific `implementation`, and `VideoProject` as the preview /
+  edit / export boundary.
+- Docker-first validation passed for this slice:
+  - `npm run lint`
+  - `npm run typecheck`
+  - `npm run build`
+  - targeted `npx prettier --check` on changed files
+  - `git diff --check`
+- Full `npm run check` is still blocked by pre-existing Prettier warnings in
+  unrelated `.agents/skills` and `src/remotion/primitives` files.
+
 ## Latest continuation — authoritative final generation goal
 
 - Added `docs/FINAL_PRODUCT_GOAL.md` as the authoritative product target and
@@ -475,6 +517,15 @@ Current product direction:
 - The final generation target is documented in
   `docs/FINAL_PRODUCT_GOAL.md`: planner -> TTS -> selected-template compiler
   -> assembled `VideoProject`.
+- The first planner-stage groundwork is implemented:
+  - `src/lib/storyboard-plan-schema.ts` validates `StoryboardPlan` and
+    `StoryboardSegmentPlan`
+  - `src/templates/registry.ts` derives a compact planner template manifest
+    from registered template definitions
+  - `src/lib/minimax/*` contains an internal MiniMax storyboard-planner prompt,
+    tool schema, parser, and `minimaxGenerateStoryboardPlan()` facade
+- The planner path is not yet wired into the main `POST /api/generate` product
+  route; that route still returns schema-validated `VideoProject` directly.
 - Future existing video, image, audio, or color inputs should be modeled as
   project-level or segment-level `media.layers[]` data, not as extra
   templates inside the segment.
@@ -522,6 +573,20 @@ Current working flow:
 - `/api/generate` returns `project` only; the old deprecated `spec`
   compatibility field has been removed
 
+### Storyboard planning groundwork
+- `src/lib/storyboard-plan-schema.ts` defines the planner-stage contract.
+- `src/templates/<template>/definition.ts` includes planner metadata:
+  description, avoid cases, narration fit, media expectations, and examples.
+- `src/templates/registry.ts` derives `buildPlannerTemplateManifest()` and
+  `buildPlannerTemplateManifestPrompt()` from registered definitions.
+- `src/lib/minimax/tool-schema.ts` exposes the `StoryboardPlan` tool schema.
+- `src/lib/minimax/prompts.ts` builds the storyboard-planner prompt from the
+  compact manifest.
+- `src/lib/minimax/parse-storyboard-plan.ts` parses and validates planner
+  tool-call arguments.
+- `src/lib/minimax/index.ts` exposes `minimaxGenerateStoryboardPlan()`.
+- No public route or page action consumes the planner result yet.
+
 ### Local render/export boundary
 - `src/app/api/render/route.ts` accepts the normalized current `VideoProject` and performs local Remotion render
 - `src/lib/render-project.ts` renders `ProjectVideo`, creates a unique render artifact, and refreshes `latest.mp4`
@@ -531,11 +596,15 @@ Current working flow:
 
 ### Video runtime wiring
 - `src/remotion/ProjectVideo/ProjectVideo.tsx` sequences project segments into one assembled composition
-- `src/lib/template-registry.ts` registers template ids, labels, schemas,
-  MiniMax schema fragments, duration helpers, prompt snippets, and revision
-  payload builders
-- `src/remotion/template-component-registry.tsx` maps registered `templateId`
-  values to Remotion components
+- `src/templates/registered-definitions.ts` is the server-safe template
+  definition registration source
+- `src/templates/registry.ts` derives template ids, labels, schemas, MiniMax
+  schema fragments, planner manifest, duration helpers, prompt snippets, and
+  revision payload builders
+- `src/templates/registered-bundles.ts` is the runtime bundle registration source
+- `src/templates/component-registry.tsx` maps registered `templateId` values
+  to editor fields and Remotion renderers
+- `src/lib/template-registry.ts` remains a compatibility re-export
 - `src/remotion/Root.tsx` registers both `ProjectVideo` and legacy `ScriptedVideo`
 - `src/remotion/ScriptedVideo/*` remains the segment implementation path for
   the `scripted` template
@@ -553,8 +622,10 @@ Current working flow:
 
 These are still out of scope or not implemented yet:
 - full-project regeneration UX beyond the current initial generate flow
-- staged storyboard-plan -> TTS -> segment-compiler generation pipeline
+- public route / page integration for planner -> TTS -> segment-compiler
+  staged generation
 - generated TTS audio assets and duration-aware template compilation
+- planner repair for invalid `StoryboardPlan` output
 - render job progress UX for end users
 - cancellation/progress history for finished renders
 - ~~real LLM/provider-backed generation~~ **shipped** (MiniMax; see [`docs/providers/minimax.md`](providers/minimax.md))
@@ -595,11 +666,22 @@ Latest Docker dev verification after the LAN-access + studio recovery pass:
 - `src/helpers/use-rendering.ts`
 - `src/lib/render-project.ts`
 - `src/lib/project-schema.ts`
+- `src/lib/storyboard-plan-schema.ts`
+- `src/lib/minimax/provider.ts`
+- `src/lib/minimax/prompts.ts`
+- `src/lib/minimax/tool-schema.ts`
+- `src/lib/minimax/parse-project.ts`
+- `src/lib/minimax/parse-storyboard-plan.ts`
+- `src/lib/minimax/index.ts`
 - `src/lib/template-registry.ts`
 - `src/lib/spotlight-schema.ts`
 - `src/lib/project-generation.ts`
+- `src/templates/registered-definitions.ts`
+- `src/templates/registered-bundles.ts`
+- `src/templates/registry.ts`
+- `src/templates/component-registry.tsx`
+- `src/templates/*`
 - `src/remotion/ProjectVideo/ProjectVideo.tsx`
-- `src/remotion/template-component-registry.tsx`
 - `src/remotion/ScriptedVideo/SceneRenderer.tsx`
 - `src/remotion/SpotlightVideo/SpotlightVideo.tsx`
 - `src/components/project/SegmentList.tsx`
@@ -613,18 +695,20 @@ Latest Docker dev verification after the LAN-access + studio recovery pass:
 ## Recommended next milestone
 
 - ~~replace the local deterministic `POST /api/generate` mock with a real provider-backed generation path while preserving schema validation and the project-level edit loop~~ **shipped** (MiniMax; see [`docs/providers/minimax.md`](providers/minimax.md)).
+- ~~define and validate `StoryboardPlan` / `StoryboardSegmentPlan` and derive
+  a compact planner template manifest~~ **groundwork shipped**.
 
 Suggested next focus, in order:
-1. define and validate `StoryboardPlan` / `StoryboardSegmentPlan`
-2. derive a compact planner template manifest from registered template
-   definitions
-3. add TTS voiceover generation for planned segment narration
-4. capture generated audio duration and metadata
-5. compile the selected template's `implementation` from narration, audio
+1. optionally add bounded planner repair or route wiring for
+   `minimaxGenerateStoryboardPlan()` if the next slice needs a live planner
+   endpoint
+2. add TTS voiceover generation for planned segment narration
+3. capture generated audio duration and metadata
+4. compile the selected template's `implementation` from narration, audio
    duration, visual brief, and template-specific schema/rules
-6. assemble compiled segments into the existing `VideoProject` preview/export
+5. assemble compiled segments into the existing `VideoProject` preview/export
    boundary
-7. keep the next work bounded unless a task explicitly asks for
+6. keep the next work bounded unless a task explicitly asks for
    persistence/history, generic media-layer compositing, or
    multi-template-per-segment orchestration
 

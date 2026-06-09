@@ -273,7 +273,7 @@ roadmap should evolve toward the staged final target in
 - AI-selected template per segment
 - generated structured props per segment
 - generated narration/TTS as the next major completeness step after the
-  provider-backed text generation loop
+  provider-backed text generation loop and planner-contract groundwork
 - assembly of all segments into one full-video draft
 - full-video preview as the primary viewing mode
 - adjacent segment list for navigation and editing
@@ -401,6 +401,17 @@ Near-term product architecture should evolve from the current single-template mo
 - segment-by-segment regeneration
 - full-video assembly and export
 - future project-level / segment-level media layers for existing media
+
+Current implementation note:
+- the `StoryboardPlan` / `StoryboardSegmentPlan` contract exists in
+  `src/lib/storyboard-plan-schema.ts`
+- `src/templates/registry.ts` derives a compact planner template manifest from
+  registered template definitions
+- `src/lib/minimax/*` contains an internal MiniMax storyboard-planner prompt,
+  tool schema, parser, and `minimaxGenerateStoryboardPlan()` facade
+- the shipped `POST /api/generate` path still returns a validated
+  `VideoProject` directly; planner -> TTS -> compiler -> assembly is not yet
+  the active product route
 
 Practical v1 shortcut:
 - keep one primary template instance per segment

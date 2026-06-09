@@ -37,6 +37,18 @@ Remotion rendering guide.
 - user can locally export the current edited project through `POST /api/render`
 - successful export writes both a stable latest artifact and a unique artifact for that render
 
+The first staged-generation groundwork is also in place:
+- `src/lib/storyboard-plan-schema.ts` defines validated `StoryboardPlan` and
+  `StoryboardSegmentPlan` contracts.
+- `src/templates/registry.ts` derives a compact planner template manifest from
+  registered template definitions.
+- `src/lib/minimax/prompts.ts`, `src/lib/minimax/tool-schema.ts`,
+  `src/lib/minimax/parse-storyboard-plan.ts`, and `src/lib/minimax/index.ts`
+  expose an internal MiniMax storyboard-planner facade.
+- This planner path is not yet wired into the main `POST /api/generate`
+  product flow; that route still returns schema-validated `VideoProject`
+  directly as the shipped v1 shortcut.
+
 This repo is past the upstream starter-demo stage.
 Do not describe it as an untouched scaffold.
 
@@ -58,9 +70,11 @@ inside a segment:
 
 ## Current highest-priority next milestone
 
-The MiniMax-backed v1 generation path is usable for the current stage. The
-next product milestone should move toward the authoritative final generation
-pipeline in `docs/FINAL_PRODUCT_GOAL.md`:
+The MiniMax-backed v1 generation path is usable for the current stage, and the
+validated storyboard-plan contract / compact planner manifest / internal
+planner facade are already present. The next product milestone should continue
+moving toward the authoritative final generation pipeline in
+`docs/FINAL_PRODUCT_GOAL.md`:
 
 ```txt
 brief -> StoryboardPlan -> per-segment TTS -> per-segment template compile
@@ -69,12 +83,13 @@ brief -> StoryboardPlan -> per-segment TTS -> per-segment template compile
 
 Keep the next iteration focused on:
 1. keep `VideoProject` as the preview/edit/export boundary
-2. introduce a validated storyboard-plan contract before full project assembly
-3. generate TTS audio from per-segment narration before template compilation
-4. use real audio duration plus the selected template context to generate
+2. keep the existing StoryboardPlan contract as the planner-stage boundary
+3. add bounded planner repair or route wiring only if needed for the next slice
+4. generate TTS audio from per-segment narration before template compilation
+5. use real audio duration plus the selected template context to generate
    schema-valid `implementation`
-5. preserve validation, bounded repair, and non-target segment preservation
-6. do not widen into persistence/history, generic media-layer work, or
+6. preserve validation, bounded repair, and non-target segment preservation
+7. do not widen into persistence/history, generic media-layer work, or
    multi-template-per-segment orchestration unless the task explicitly asks for it
 
 Current product modeling decision:
@@ -100,7 +115,13 @@ Current product modeling decision:
 - `src/helpers/use-rendering.ts`
 - `src/lib/render-project.ts`
 - `src/lib/project-schema.ts`
+- `src/lib/storyboard-plan-schema.ts`
 - `src/templates/*`
+- `src/templates/registered-definitions.ts`
+- `src/templates/registered-bundles.ts`
+- `src/templates/registry.ts`
+- `src/templates/component-registry.tsx`
+- `src/lib/minimax/*`
 - `src/lib/project-generation.ts`
 - `src/remotion/ProjectVideo/ProjectVideo.tsx`
 - `src/remotion/ScriptedVideo/*`
@@ -113,7 +134,8 @@ Still not implemented unless the new task explicitly asks for them:
 - multi-template-per-segment orchestration
 - project-level / segment-level media-layer compositing
 - full staged generation pipeline from storyboard plan through TTS and segment
-  template compilation
+  template compilation; only the planner contract / manifest / internal
+  planner facade are in place
 - browser automation acceptance
 - end-user render progress UX beyond idle / rendering / success / failure
 

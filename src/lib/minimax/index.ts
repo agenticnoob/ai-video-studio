@@ -2,10 +2,13 @@ import {
   callMinimaxChat,
   type MinimaxProjectRequest,
   type MinimaxSegmentRequest,
+  type MinimaxStoryboardPlanRequest,
 } from "./provider";
-import { buildProjectPrompt, buildSegmentPrompt } from "./prompts";
+import { buildProjectPrompt, buildSegmentPrompt, buildStoryboardPlanPrompt } from "./prompts";
 import { parseToolCallArguments } from "./parse-project";
 import type { VideoProject } from "../project-schema";
+import type { StoryboardPlan } from "../storyboard-plan-schema";
+import { parseStoryboardPlanToolCallArguments } from "./parse-storyboard-plan";
 
 export type MinimaxGenerateProjectResult = {
   project: VideoProject;
@@ -28,6 +31,18 @@ export const minimaxGenerateProject = async (
   const { messages, tools, toolChoice } = buildProjectPrompt(request.brief);
   const argumentsString = await callMinimaxChat(messages, { tools, toolChoice });
   return { project: parseToolCallArguments(argumentsString) };
+};
+
+export type MinimaxGenerateStoryboardPlanResult = {
+  plan: StoryboardPlan;
+};
+
+export const minimaxGenerateStoryboardPlan = async (
+  request: MinimaxStoryboardPlanRequest,
+): Promise<MinimaxGenerateStoryboardPlanResult> => {
+  const { messages, tools, toolChoice } = buildStoryboardPlanPrompt(request.brief);
+  const argumentsString = await callMinimaxChat(messages, { tools, toolChoice });
+  return { plan: parseStoryboardPlanToolCallArguments(argumentsString) };
 };
 
 export type MinimaxReviseSegmentResult = {

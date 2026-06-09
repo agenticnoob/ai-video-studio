@@ -194,6 +194,10 @@ export type MinimaxProjectRequest = {
   brief: string;
 };
 
+export type MinimaxStoryboardPlanRequest = {
+  brief: string;
+};
+
 export type MinimaxSegmentRequest = {
   project: VideoProject;
   segmentId: string;

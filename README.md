@@ -30,6 +30,11 @@ Current implementation status:
 - the current MiniMax generation path is a usable v1 shortcut; the
   authoritative final target is the staged planner -> TTS -> template compiler
   pipeline documented in `docs/FINAL_PRODUCT_GOAL.md`
+- the first storyboard-planning contract is in place as a server-safe schema,
+  compact registered-template manifest, and internal MiniMax planner facade;
+  it is not yet wired into the main `POST /api/generate` product path
+- the next generation slice should build from that planner contract toward
+  generated TTS audio and audio-duration-aware selected-template compilation
 - roadmap decisions should use `docs/FINAL_PRODUCT_GOAL.md` as the top-level
   source
 - current progress and next-step notes live in `docs/ITERATION_STATUS.md`
@@ -85,25 +90,53 @@ Current top-level boundaries:
    - local Remotion export for the current edited project
 4. `/src/lib/project-schema.ts`
    - stable `VideoProject` contract used by generation, preview, and export
-5. `/src/templates/*`
+5. `/src/lib/storyboard-plan-schema.ts`
+   - validated `StoryboardPlan` contract for the future planner stage
+6. `/src/templates/*`
    - cohesive template modules with `schema`, server-safe `definition`,
      structured `capabilities`, optional block contracts, editor fields,
      runtime adapters, and bundle exports
-6. `/src/templates/registry.ts`
+7. `/src/templates/registry.ts`
    - derived server-safe template metadata registry used by schema validation
-     and MiniMax prompt/tool generation
-7. `/src/templates/registered-definitions.ts`
+     MiniMax prompt/tool generation, and the planner template manifest
+8. `/src/templates/registered-definitions.ts`
    - server-safe template definition registration source
-8. `/src/templates/registered-bundles.ts`
+9. `/src/templates/registered-bundles.ts`
    - runtime template bundle registration source
-9. `/src/templates/component-registry.tsx`
+10. `/src/templates/component-registry.tsx`
    - runtime template registry used by the page editor and Remotion preview
-10. `/src/lib/template-registry.ts`
+11. `/src/lib/template-registry.ts`
    - compatibility re-export for existing code
-11. `/src/remotion/*`
-   - render video from structured props instead of ad-hoc codegen
-   - reusable video primitives live under `src/remotion/primitives/` and may
-     be composed by template-local block renderers
+12. `/src/remotion/*`
+    - render video from structured props instead of ad-hoc codegen
+    - reusable video primitives live under `src/remotion/primitives/` and may
+      be composed by template-local block renderers
+
+## Handoff for the next iteration
+
+Start from:
+- `docs/FINAL_PRODUCT_GOAL.md`
+- `docs/ITERATION_STATUS.md`
+- `docs/PRODUCT_REQUIREMENTS.md`
+- `docs/FUTURE_DIRECTION_NOTES.md`
+- `README.md`
+
+Current code checkpoint:
+- active product route: `POST /api/generate` still returns a validated
+  `VideoProject`
+- staged-generation groundwork: `StoryboardPlan` schema, planner manifest, and
+  internal MiniMax planner facade are implemented
+- not implemented yet: generated TTS assets, audio duration probing,
+  selected-template compiler, planner repair, and staged assembly into the main
+  route
+
+Best next bounded slice:
+- keep `VideoProject` as the preview/edit/export boundary
+- use `StoryboardPlan` as the planner-stage contract
+- add TTS asset generation for planned segment narration before changing
+  template compilation
+- avoid persistence/history, generic media-layer compositing, and
+  multi-template-per-segment orchestration unless explicitly reopened
 
 ## Docker usage
 
