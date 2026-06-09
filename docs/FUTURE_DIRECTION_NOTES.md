@@ -4,6 +4,9 @@ Status: partially resumed.
 
 当前补充：
 - 第一轮最小工作流已经落地，当前状态以 `docs/ITERATION_STATUS.md` 为准。
+- 最终生成目标和 roadmap 上游依据以 `docs/FINAL_PRODUCT_GOAL.md` 为准：
+  用户提示词 -> 分镜计划 -> 每个分镜 TTS -> 按真实音频时长编译所选模版
+  参数 -> 组装完整 `VideoProject`。
 - 本文件保留“更后续方向”的判断，不再代表当前实现是否已开始。
 - 产品模型已收敛为：一个 segment 对应一个 primary template；`templateId` 决定 `implementation` 的 schema；当前注册模板包括 `scripted` 和 `spotlight`；`scripted` 的 `implementation` 是 `VideoSpec`，其中 `scenes` 是 scripted 专有的内部序列字段；`spotlight` 的 `implementation` 是 `SpotlightSpec`，其中 `callouts` 是 spotlight 专有内容字段；已有视频、图片、音频或纯色素材通过 project-level / segment-level `media.layers[]` 表达；旧的 `baseLayer` 概念作为媒体层 role，而不是单独字段。
 
@@ -41,6 +44,11 @@ When implementation resumes, the preferred strategy is:
 - keep `ai-video-studio` as the main repo
 - borrow selected architecture ideas from `vibe-motion-app`
 - keep one primary template per segment unless a concrete future workflow proves that segment-internal template timelines are necessary
+- evolve generation from the current one-shot `VideoProject` shortcut into the
+  staged final pipeline: storyboard planner -> per-segment TTS ->
+  selected-template compiler -> assembled `VideoProject`
+- treat TTS voiceover as part of the main generated-video pipeline because
+  real narration duration should drive segment timing
 - express richer segment visuals through template-specific implementation fields,
   internal components, and media-layer props first
 
@@ -84,7 +92,42 @@ Not to implement yet; only keep as reference.
 
 ## Suggested future milestones
 
-When work restarts, likely sequence:
+The older starter milestones below have mostly been shipped. Current roadmap
+iteration should follow `docs/FINAL_PRODUCT_GOAL.md` instead.
+
+Current likely sequence:
+
+1. Lock the authoritative final generation goal
+- final goal document
+- PRD / architecture / README / agent notes point to the same target
+
+2. Add storyboard planning contract
+- validated `StoryboardPlan`
+- compact planner template manifest
+- template selection based on registered descriptions, capabilities, and use
+  cases
+
+3. Add TTS voiceover MVP
+- generate narration audio from planned segment text
+- write local audio artifacts
+- measure or normalize duration
+- feed audio duration back into segment compilation
+
+4. Add duration-aware segment compiler
+- provide only the selected template schema and rules
+- generate schema-valid `implementation`
+- repair bounded validation failures
+
+5. Assemble staged output into the current product loop
+- preview and export the assembled `VideoProject`
+- regenerate only the smallest affected scope
+
+6. Later media-layer and persistence work
+- add existing image/video/audio/color layers after generated narration is
+  stable
+- add saved plans, TTS metadata, compiler results, and render history later
+
+Older shipped starter sequence kept for background:
 
 1. Replace starter page with a product-style layout
 - prompt input
@@ -113,8 +156,11 @@ When work restarts, likely sequence:
 ## Current instruction
 
 Until a task explicitly widens scope:
+- treat `docs/FINAL_PRODUCT_GOAL.md` as the authoritative final target
 - do not auto-expand this repo into the full long-term vision in one step
 - treat `docs/ITERATION_STATUS.md` as the source of truth for current implemented progress
 - use this file for longer-term direction and deferred ideas
 - prefer one primary template per segment
+- prefer TTS -> audio duration -> template compile as the next generation
+  direction
 - prefer media layers for existing image, video, audio, and color needs

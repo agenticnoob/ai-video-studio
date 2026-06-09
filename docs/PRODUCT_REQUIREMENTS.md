@@ -2,6 +2,12 @@
 
 Status: draft, refined from product-direction discussion.
 
+Authoritative generation target:
+- `docs/FINAL_PRODUCT_GOAL.md` defines the final prompt-to-video generation
+  pipeline and should drive roadmap iteration.
+- This PRD defines the product model and scope, while the final-goal document
+  defines the detailed planner -> TTS -> template-compiler architecture.
+
 ## 1. Product definition
 
 `ai-video-studio` is a personal AI + Remotion video orchestrator.
@@ -14,7 +20,13 @@ The product goal is to turn loose creative input into a full video draft compose
 Target workflow:
 - user provides a creative brief, story, experience, or video requirements
 - AI interprets the input and plans the video as one or more segments
-- for each segment, the system generates an implementation plan using existing Remotion templates
+- for each segment, the system selects one registered template and writes the
+  narration / spoken script
+- the system generates TTS audio for each segment before final template
+  parameters are compiled
+- for each segment, the system uses the narration audio duration, selected
+  template contract, and visual brief to generate schema-valid implementation
+  parameters
 - the system assembles all segments into one playable full-video draft
 - the user reviews the whole video, adjusts segment intent or details, and re-generates as needed
 - the user exports the final video
@@ -29,6 +41,11 @@ Product direction:
 - AI should choose the most suitable existing template from registered
   template descriptions and usage guidance, then generate that template's
   structured parameters
+- final generation should be staged: storyboard planning first, per-segment
+  TTS second, selected-template parameter compilation third, project assembly
+  last
+- narration/TTS is part of the main generated-video pipeline because real
+  voice duration should drive segment timing and template parameters
 - when templates are developed with AI assistance, prefer small reusable
   Remotion primitives plus template-local block contracts over open-ended
   generated template code
@@ -72,6 +89,7 @@ A project is one video creation task.
 A project includes:
 - the user input / creative intent
 - the AI-generated segment plan
+- generated narration / TTS metadata for planned segments
 - per-segment implementation data
 - the assembled full-video draft
 
@@ -120,6 +138,8 @@ Product model:
 - one segment is implemented by one primary template instance
 - `templateId` determines the schema of `implementation`
 - `implementation` is the template-specific parameter payload, not a universal project-level structure
+- target generation separates segment planning, narration/TTS generation, and
+  template-specific `implementation` compilation
 - a template can be internally composed from multiple Remotion components,
   scenes, renderers, layout primitives, transitions, and media helpers
 - a template may use template-local block contracts to describe how semantic
@@ -137,6 +157,15 @@ Current registered templates:
 - `SpotlightSpec.callouts` is the spotlight template's focused-card content model
 - `scenes` is not a required field for every template; future templates may have completely different implementation fields
 - multi-template-per-segment orchestration is not part of the near-term product direction
+
+Target narration model:
+- each segment should eventually preserve narration text separately from the
+  generated audio source
+- TTS generation should produce an audio asset and measured duration before
+  the selected template's `implementation` is compiled
+- current `scripted` `VideoSpec.scenes[].voiceover` can serve as an early
+  compatibility entry point, but should not become the universal narration
+  model for all templates
 
 Potential future media model:
 - project-level `media.layers[]`: video, image, audio, or color layers shared
@@ -190,9 +219,13 @@ Given the user input, the system should:
 3. infer the purpose of each segment
 4. compare the segment purpose against registered template descriptions,
    capabilities, and usage scenarios
-5. in v1, choose one existing template per segment
-6. generate structured props / schema-valid JSON for that segment implementation
-7. assemble the generated segments into a full-video draft
+5. choose one existing template per segment
+6. write or refine narration for each segment
+7. generate TTS audio for each segment
+8. measure or normalize the real audio duration
+9. generate structured props / schema-valid JSON for the selected template
+   using that duration
+10. assemble the generated segments into a full-video draft
 
 ## 8. User responsibilities and editing model
 
@@ -226,6 +259,11 @@ Also support:
 
 V1 should focus on the simplest version of the product that still proves the core workflow.
 
+The shipped v1 path may use a simplified provider call that directly emits a
+schema-valid `VideoProject`. That is acceptable as a proving loop, but the
+roadmap should evolve toward the staged final target in
+`docs/FINAL_PRODUCT_GOAL.md`.
+
 ### 9.1 V1 must support
 
 - text-only creative input
@@ -234,6 +272,8 @@ V1 should focus on the simplest version of the product that still proves the cor
 - one template implementation per segment
 - AI-selected template per segment
 - generated structured props per segment
+- generated narration/TTS as the next major completeness step after the
+  provider-backed text generation loop
 - assembly of all segments into one full-video draft
 - full-video preview as the primary viewing mode
 - adjacent segment list for navigation and editing
@@ -354,9 +394,10 @@ The result should stay previewable, inspectable, editable, and exportable on the
 ## 13. Current recommended implementation direction
 
 Near-term product architecture should evolve from the current single-template model toward:
-- project-level video generation
-- AI-generated segment plan
-- per-segment implementation data
+- storyboard-plan-first video generation
+- AI-generated segment plan with template choice, narration, and visual brief
+- per-segment TTS audio generation
+- duration-aware per-segment implementation compilation
 - segment-by-segment regeneration
 - full-video assembly and export
 - future project-level / segment-level media layers for existing media
@@ -365,6 +406,8 @@ Practical v1 shortcut:
 - keep one primary template instance per segment
 - allow that template to contain multiple scenes and internal components
 - preserve the product requirement that a segment is the user-facing editing unit
+- keep the current one-shot `VideoProject` generation path while it remains
+  useful, but do not treat it as the final architecture
 
 ## 14. Working decisions captured so far
 
@@ -378,3 +421,7 @@ Practical v1 shortcut:
 - Existing-media layers are a future milestone.
 - One segment should keep one primary template; template internals can grow through template-specific implementation fields/components.
 - AI-generated templates are future discussion, not current scope.
+- TTS voiceover is part of the main generation roadmap, not merely a generic
+  media-layer enhancement.
+- Real narration audio duration should drive future template parameter
+  generation.

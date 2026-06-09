@@ -7,6 +7,13 @@ no longer a proposal. The provider keeps `VideoProject` as the generation,
 preview, and render contract; MiniMax only converts a brief or segment revision
 request into schema-valid `VideoProject` JSON.
 
+Roadmap note:
+- The authoritative final generation target is `docs/FINAL_PRODUCT_GOAL.md`.
+- This MiniMax path is the shipped v1 shortcut.
+- Future generation work should evolve toward storyboard planning,
+  per-segment TTS, duration-aware selected-template compilation, and final
+  `VideoProject` assembly.
+
 ## Scope
 
 In scope:

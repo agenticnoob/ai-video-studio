@@ -5,14 +5,17 @@ Use this file as the first-stop workflow note when starting a new task in this r
 ## Start here
 
 Before planning or editing, read these files in order:
-1. `docs/ITERATION_STATUS.md`
-2. `docs/PRODUCT_REQUIREMENTS.md`
-3. `docs/FUTURE_DIRECTION_NOTES.md`
-4. `README.md`
+1. `docs/FINAL_PRODUCT_GOAL.md`
+2. `docs/ITERATION_STATUS.md`
+3. `docs/PRODUCT_REQUIREMENTS.md`
+4. `docs/FUTURE_DIRECTION_NOTES.md`
+5. `README.md`
 
 These files together explain:
+- authoritative final generation goal
 - current implemented stage
 - product requirements
+- roadmap direction
 - deferred scope
 - product direction
 - Docker-first local workflow
@@ -55,13 +58,23 @@ inside a segment:
 
 ## Current highest-priority next milestone
 
-Stabilize the existing MiniMax-backed generation path and align docs to current implementation facts.
+The MiniMax-backed v1 generation path is usable for the current stage. The
+next product milestone should move toward the authoritative final generation
+pipeline in `docs/FINAL_PRODUCT_GOAL.md`:
+
+```txt
+brief -> StoryboardPlan -> per-segment TTS -> per-segment template compile
+-> assembled VideoProject
+```
 
 Keep the next iteration focused on:
-1. keep `VideoProject` as the generation contract
-2. add provider-backed generation behind the existing request modes
-3. preserve validation and bounded error handling
-4. do not widen into persistence/history, media-layer work, or
+1. keep `VideoProject` as the preview/edit/export boundary
+2. introduce a validated storyboard-plan contract before full project assembly
+3. generate TTS audio from per-segment narration before template compilation
+4. use real audio duration plus the selected template context to generate
+   schema-valid `implementation`
+5. preserve validation, bounded repair, and non-target segment preservation
+6. do not widen into persistence/history, generic media-layer work, or
    multi-template-per-segment orchestration unless the task explicitly asks for it
 
 Current product modeling decision:
@@ -70,6 +83,8 @@ Current product modeling decision:
 - `implementation` is template-specific; current registered templates are
   `scripted` (`VideoSpec`) and `spotlight` (`SpotlightSpec`)
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
+- treat generated narration/TTS as part of the main generation pipeline, not
+  as a generic media-layer feature to solve first
 - model future existing video/image/audio/color material as project-level or
   segment-level `media.layers[]` data; treat `baseLayer` as a layer role, not
   a separate field
@@ -97,6 +112,8 @@ Still not implemented unless the new task explicitly asks for them:
 - saved drafts/history/project persistence
 - multi-template-per-segment orchestration
 - project-level / segment-level media-layer compositing
+- full staged generation pipeline from storyboard plan through TTS and segment
+  template compilation
 - browser automation acceptance
 - end-user render progress UX beyond idle / rendering / success / failure
 
@@ -130,6 +147,11 @@ host-local setup.
 ## Notes for Hermes/Codex/OpenCode
 
 - Keep `VideoProject` as the top-level page/generation/preview/render boundary for this phase.
+- Treat `docs/FINAL_PRODUCT_GOAL.md` as the authoritative roadmap source.
+- Treat the current one-shot MiniMax project generation path as a shipped v1
+  shortcut, not the final generation architecture.
+- Move future generation work toward `StoryboardPlan` -> TTS -> selected
+  template compile -> assembled `VideoProject`.
 - Keep `VideoSpec` as the per-segment implementation contract for the current scripted template.
 - Keep `SpotlightSpec` as the per-segment implementation contract for the current spotlight template.
 - Keep one primary template per segment; grow template internals through template-specific implementation fields before introducing multi-template-per-segment orchestration.

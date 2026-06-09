@@ -4,7 +4,11 @@ AI-first web app scaffold evolving into a prompt-to-video studio.
 
 Goal:
 - user enters a natural-language brief
-- AI turns it into structured video parameters / project data
+- AI plans storyboard segments from the brief and registered template
+  capabilities
+- the system generates narration / TTS audio for each segment
+- AI compiles each segment into structured template parameters using the real
+  audio duration
 - page shows live preview for tuning
 - user tweaks copy, timing, colors, scenes, assets
 - final render exports a video artifact
@@ -23,6 +27,11 @@ Current implementation status:
 - `POST /api/generate` is now provider-backed (MiniMax / minimaxi.com) — see [MiniMax integration](#minimax-integration) below
 - generation and rendering support registered segment templates (`scripted`
   and `spotlight`) while preserving one primary template per segment
+- the current MiniMax generation path is a usable v1 shortcut; the
+  authoritative final target is the staged planner -> TTS -> template compiler
+  pipeline documented in `docs/FINAL_PRODUCT_GOAL.md`
+- roadmap decisions should use `docs/FINAL_PRODUCT_GOAL.md` as the top-level
+  source
 - current progress and next-step notes live in `docs/ITERATION_STATUS.md`
 - product requirements live in `docs/PRODUCT_REQUIREMENTS.md`
 - agent/new-task startup notes live in `AGENTS.md`
@@ -49,11 +58,17 @@ Current modeling direction:
 - `VideoSegment` is the user-facing editing and regeneration unit
 - one segment should have one primary template
 - `templateId` determines the schema of `implementation`
+- final generation should plan segments first, generate TTS audio per segment
+  second, then compile the selected template's `implementation` from the real
+  audio duration and segment visual brief
 - `implementation` is template-specific; current registered templates are:
   - `scripted`: `VideoSpec` with internal `scenes`
   - `spotlight`: `SpotlightSpec` with `headline`, `subheadline`,
     `callouts`, and `durationInFrames`
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
+- current `scripted` `voiceover` rendering is an early compatibility point for
+  TTS, but long-term narration text and generated audio metadata should be
+  modeled separately
 - future existing video, image, audio, or color inputs should be modeled as
   project-level or segment-level `media.layers[]` data; `baseLayer` is now a
   media-layer role, not a separate project field

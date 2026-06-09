@@ -2,6 +2,14 @@
 
 Status: planning and implementation-boundary note for the next media slice.
 
+Roadmap relationship:
+- `docs/FINAL_PRODUCT_GOAL.md` is the authoritative final generation target.
+- TTS voiceover belongs to the main generation pipeline and can be implemented
+  before the generic media-layer renderer.
+- This document defines how existing or timeline-level image/video/audio/color
+  material should be modeled when the project intentionally widens into media
+  compositing.
+
 This document records the unified media-layer model for images, videos, audio,
 and color layers. It replaces the earlier separate planning ideas of
 `baseLayer` for visual media and `audio.tracks` for sound.
@@ -439,7 +447,8 @@ Do not implement these until the basic project-level render path is stable:
 
 - segment-level media
 - media uploads
-- generated images, video, or TTS
+- generated images or video
+- TTS as a generic media-layer feature
 - source duration probing
 - waveform or filmstrip previews
 - drag/drop timeline editing
@@ -503,6 +512,12 @@ true:
 - scripted voiceovers need to be edited in the shared media layer panel
 - voiceover generation becomes project-wide
 - multiple templates need the same voiceover field semantics
+
+The final product roadmap now treats TTS voiceover as part of the main
+generation pipeline. That work may land before generic media layers. When it
+does, keep the generated narration metadata separable from the old
+`scene.voiceover` audio-src compatibility field so a later migration remains
+possible.
 
 If migration becomes necessary, convert scene voiceover into segment-relative
 audio media layers through a compatibility helper, then remove the

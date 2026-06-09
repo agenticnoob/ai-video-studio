@@ -4,21 +4,34 @@
 product boundary is `VideoProject`: generation, page preview, segment editing,
 and local export all operate on schema-validated project data.
 
+The authoritative final generation target is documented in
+`docs/FINAL_PRODUCT_GOAL.md`. This architecture document summarizes how that
+target maps onto the codebase.
+
 ## Core Loop
 
 1. The user gives a topic, brief, story, or video requirement.
-2. The provider receives the registered template descriptions, capabilities,
-   schemas, and implementation rules.
-3. The provider plans one or more `VideoSegment` items.
-4. For each segment, the provider chooses one primary `templateId` based on
-   the template's usage description and suitability.
-5. The provider generates that template's structured `implementation`
-   parameters.
-6. Zod validates the returned `VideoProject`.
-7. The page renders an assembled full-video preview from the project.
-8. The user edits structured fields or asks for natural-language segment
-   revision.
-9. The render endpoint exports the current edited project through Remotion.
+2. The planner receives the user prompt plus a compact manifest of registered
+   templates: descriptions, capabilities, use cases, constraints, and
+   recommended duration ranges.
+3. The planner returns a validated storyboard plan: ordered segments, selected
+   `templateId` values, narration text, segment purpose, and visual briefs.
+4. For each planned segment, the system generates TTS audio from the narration
+   text.
+5. The system measures or normalizes the generated audio duration.
+6. For each segment, the compiler receives only the selected template's full
+   schema and implementation rules, plus narration text, audio duration, and
+   visual brief.
+7. The compiler returns schema-valid template-specific `implementation`.
+8. The system assembles compiled segments into a validated `VideoProject`.
+9. The page renders an assembled full-video preview from the project.
+10. The user edits structured fields or asks for natural-language segment
+    revision.
+11. The render endpoint exports the current edited project through Remotion.
+
+The current MiniMax-backed one-call `POST /api/generate` path is a shipped v1
+shortcut. It can stay while useful, but future generation work should move
+toward the staged planner -> TTS -> compiler -> assembly pipeline.
 
 ## Composition Model
 
@@ -41,7 +54,8 @@ Template
   primitives/components
 
 VideoSegment
-  user-facing editable unit; implemented by one primary template
+  user-facing editable unit; implemented by one primary template; target home
+  for segment narration metadata
 
 VideoProject
   full generated video assembled from one or more segments
@@ -73,6 +87,25 @@ used by preview and export.
 The first media implementation should stay project-level only. Segment-level
 media, uploads, generated assets, waveform editing, keyframes, and provider-
 created media layers are follow-up work after the shared renderer is stable.
+
+Generated narration audio is different from generic existing-media intake. TTS
+voiceover belongs to the main generation pipeline because audio duration should
+drive the selected template's compiled parameters. It may later be represented
+through `media.layers[]` if that becomes the cleanest cross-template runtime
+model, but the roadmap should first prove TTS -> duration -> template compile.
+
+## Generation Context Boundaries
+
+Template context should be split by generation stage:
+
+- Planner context: compact metadata for all registered templates.
+- Compiler context: full schema and implementation rules for only the selected
+  template.
+- Runtime context: React/Remotion renderer code, kept internal and not exposed
+  to the provider.
+
+This separation keeps planner context small as template count grows and keeps
+template compilation easier to validate.
 
 ## Directory Intent
 

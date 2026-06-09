@@ -1,6 +1,24 @@
 # Iteration Status
 
-Last updated: 2026-06-08
+Last updated: latest documentation alignment
+
+## Latest continuation — authoritative final generation goal
+
+- Added `docs/FINAL_PRODUCT_GOAL.md` as the authoritative product target and
+  roadmap source.
+- Locked the final generation model as a staged pipeline:
+  user prompt -> storyboard plan -> per-segment TTS -> per-segment
+  selected-template compilation -> assembled `VideoProject`.
+- Clarified that the current MiniMax-backed one-shot `POST /api/generate`
+  path is a usable v1 shortcut, not the permanent generation architecture.
+- Reframed TTS voiceover as part of the main generated-video pipeline because
+  real narration duration should drive template parameter generation.
+- Kept the durable product model unchanged:
+  one primary `templateId` per `VideoSegment`, with template-specific
+  `implementation`.
+- Updated roadmap direction so media layers remain important later, but do not
+  precede the TTS-first generation pipeline unless a task explicitly widens
+  into existing-media compositing.
 
 ## 2026-06-08 continuation — media layer MVP implementation plan
 
@@ -454,7 +472,14 @@ Current product direction:
 - `templateId` determines the schema of `implementation`.
 - `implementation` is template-specific; current `scripted` implementations use `VideoSpec`.
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates.
-- Future existing video, image, or color inputs should be modeled as project-level or segment-level `baseLayer` data, not as extra templates inside the segment.
+- The final generation target is documented in
+  `docs/FINAL_PRODUCT_GOAL.md`: planner -> TTS -> selected-template compiler
+  -> assembled `VideoProject`.
+- Future existing video, image, audio, or color inputs should be modeled as
+  project-level or segment-level `media.layers[]` data, not as extra
+  templates inside the segment.
+- The old `baseLayer` idea is a media-layer role, not a separate product
+  field.
 
 Current working flow:
 1. user writes a brief
@@ -528,12 +553,14 @@ Current working flow:
 
 These are still out of scope or not implemented yet:
 - full-project regeneration UX beyond the current initial generate flow
+- staged storyboard-plan -> TTS -> segment-compiler generation pipeline
+- generated TTS audio assets and duration-aware template compilation
 - render job progress UX for end users
 - cancellation/progress history for finished renders
 - ~~real LLM/provider-backed generation~~ **shipped** (MiniMax; see [`docs/providers/minimax.md`](providers/minimax.md))
 - project persistence / saved drafts / history
 - multi-template-per-segment orchestration
-- project-level / segment-level baseLayer media compositing
+- project-level / segment-level media-layer compositing
 - browser automation acceptance
 
 ## Validation status
@@ -578,30 +605,48 @@ Latest Docker dev verification after the LAN-access + studio recovery pass:
 - `src/components/project/SegmentList.tsx`
 - `src/components/project/SegmentEditor.tsx`
 - `src/components/RenderControls.tsx`
+- `docs/FINAL_PRODUCT_GOAL.md`
 - `docs/PRODUCT_REQUIREMENTS.md`
 - `docs/FUTURE_DIRECTION_NOTES.md`
 - `docs/plans/2026-05-29-v1-segment-first-orchestrator.md`
 
 ## Recommended next milestone
 
-- ~~replace the local deterministic `POST /api/generate` mock with a real provider-backed generation path while preserving schema validation and the project-level edit loop~~ **shipped in this iteration** (MiniMax; see [`docs/providers/minimax.md`](providers/minimax.md)).
+- ~~replace the local deterministic `POST /api/generate` mock with a real provider-backed generation path while preserving schema validation and the project-level edit loop~~ **shipped** (MiniMax; see [`docs/providers/minimax.md`](providers/minimax.md)).
 
 Suggested next focus, in order:
-1. ~~keep `VideoProject` as the generation contract~~ ✓ kept
-2. ~~add provider integration behind the existing request modes~~ ✓ added (MiniMax)
-3. ~~preserve schema validation + deterministic fallback/error handling~~ ✓ preserved (strict parse, no silent mock fallback)
-4. keep the next work bounded unless a task explicitly asks for persistence/history or media-layer compositing
+1. define and validate `StoryboardPlan` / `StoryboardSegmentPlan`
+2. derive a compact planner template manifest from registered template
+   definitions
+3. add TTS voiceover generation for planned segment narration
+4. capture generated audio duration and metadata
+5. compile the selected template's `implementation` from narration, audio
+   duration, visual brief, and template-specific schema/rules
+6. assemble compiled segments into the existing `VideoProject` preview/export
+   boundary
+7. keep the next work bounded unless a task explicitly asks for
+   persistence/history, generic media-layer compositing, or
+   multi-template-per-segment orchestration
 
 ## Notes for future Hermes/Codex work
 
 - Keep `VideoProject` as the top-level page/generation/preview/render boundary for this phase.
+- Treat `docs/FINAL_PRODUCT_GOAL.md` as the authoritative final target and
+  roadmap source.
+- Treat the current one-shot MiniMax generation path as a shipped v1 shortcut,
+  not the final generation architecture.
+- Move future generation work toward storyboard planning, per-segment TTS,
+  duration-aware selected-template compilation, and final `VideoProject`
+  assembly.
 - Keep `VideoSpec` as the per-segment implementation contract for the current scripted template.
 - Keep `SpotlightSpec` as the per-segment implementation contract for the current spotlight template.
 - Keep one primary template per segment; grow segment expressiveness through template-specific implementation fields first.
 - Treat `scenes` as a `scripted` implementation detail, not as a universal product-level concept.
 - Treat `callouts` as a `spotlight` implementation detail, not as a universal
   product-level concept.
-- Model future video/image/color underlays as project-level or segment-level `baseLayer` data.
+- Model future existing video/image/audio/color material as project-level or
+  segment-level `media.layers[]` data.
+- Treat `baseLayer` as a media-layer role, not a separate product field.
 - Do not widen scope into multi-template-per-segment support unless a concrete workflow proves that scene/component composition is insufficient.
 - `/api/generate` now returns `{ project }` only; do not reintroduce the old
   `spec` compatibility field unless a concrete external caller requires it.

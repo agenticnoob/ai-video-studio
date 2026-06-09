@@ -9,6 +9,13 @@ generate new Remotion source code during normal project generation; it should
 choose a registered template from the template descriptions and fill that
 template's structured parameters.
 
+The final generation target is documented in `docs/FINAL_PRODUCT_GOAL.md`.
+Template metadata should support two provider contexts:
+
+- planner manifest: compact descriptions and capabilities for all templates
+- compiler context: complete schema and implementation rules for one selected
+  template
+
 For Remotion-specific rendering and animation rules, use the repo-local
 `.agents/skills/remotion-best-practices/SKILL.md` skill. It is vendored so
 agents working in this repository share the same Remotion guidance.
@@ -134,21 +141,40 @@ own implementation schema.
 
 ## Provider Role
 
-The generation provider receives:
+The current v1 generation path may send enough registered template context for
+MiniMax to emit a full `VideoProject` in one call. That path is useful as a
+working shortcut, but it is not the final scaling model.
+
+The final provider workflow has two roles.
+
+Planner receives:
 
 - the user's topic / brief / revision prompt
 - the registered template ids and labels
 - structured capabilities and usage guidance
-- template-specific implementation rules
-- the JSON schema union for all registered segment implementations
+- compact examples and constraints
+- recommended duration / narration fit
 
-It should then:
+Planner should:
 
 1. plan the project as one or more segments
 2. choose the most suitable registered template for each segment
-3. emit the full `VideoProject` through the forced tool call
-4. fill each segment's `implementation` with parameters matching that
-   segment's `templateId`
+3. write narration text and a visual brief for each segment
+4. return a validated storyboard plan, not final template implementation
+
+Compiler receives:
+
+- one planned segment
+- generated narration audio metadata and real duration
+- the selected template's full schema
+- the selected template's implementation rules and examples
+
+Compiler should:
+
+1. fill only the selected template's `implementation`
+2. use the real TTS duration as the timing anchor
+3. return schema-valid parameters matching the segment's `templateId`
+4. support bounded repair if validation fails
 
 The provider must not emit a generic universal `scenes` shape for every
 template. `scenes` is only valid where a template explicitly defines it, such
