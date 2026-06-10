@@ -152,8 +152,10 @@ the plan contract, `src/templates/registry.ts` derives the compact planner
 manifest, and `src/lib/minimax/*` exposes an internal MiniMax planner facade.
 The first internal TTS asset boundary also exists through
 `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`, and
-`/api/tts/assets/...`. Planner/TTS/compiler orchestration is not yet wired into
-the main `POST /api/generate` route.
+`/api/tts/assets/...`. The selected-template compiler and staged assembly path
+exists behind `POST /api/generate/staged`; the main page uses that staged path
+by default while keeping the shipped v1 `POST /api/generate` route as a
+fallback.
 
 The final provider workflow has two roles.
 
@@ -185,6 +187,9 @@ Compiler should:
 2. use the real TTS duration as the timing anchor
 3. return schema-valid parameters matching the segment's `templateId`
 4. support bounded repair if validation fails
+5. keep generated narration audio outside template-specific implementation
+   fields; audio belongs in template-external project data such as
+   `media.layers[]`
 
 The provider must not emit a generic universal `scenes` shape for every
 template. `scenes` is only valid where a template explicitly defines it, such

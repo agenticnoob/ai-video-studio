@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { projectMediaSchema } from "./media-layer-schema";
 import {
   SCRIPTED_TEMPLATE_ID,
   SPOTLIGHT_TEMPLATE_ID,
@@ -26,6 +27,7 @@ export const videoSegmentSchema = rawVideoSegmentSchema.transform((segment) => {
 export const videoProjectSchema = z.object({
   meta: videoProjectMetaSchema,
   brief: z.string(),
+  media: projectMediaSchema.optional(),
   segments: z.array(videoSegmentSchema).min(1),
 });
 
@@ -48,6 +50,7 @@ export const getSegmentStart = (project: VideoProject, index: number): number =>
 
 export const normalizeProject = (project: z.input<typeof videoProjectSchema>): VideoProject => {
   const meta = videoProjectMetaSchema.parse(project.meta);
+  const media = project.media ? projectMediaSchema.parse(project.media) : undefined;
   const segments = project.segments.map((segment) => {
     const templateId = segment.templateId ?? SCRIPTED_TEMPLATE_ID;
 
@@ -70,6 +73,7 @@ export const normalizeProject = (project: z.input<typeof videoProjectSchema>): V
   return videoProjectSchema.parse({
     meta,
     brief: project.brief,
+    ...(media ? { media } : {}),
     segments,
   });
 };

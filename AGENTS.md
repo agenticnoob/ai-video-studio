@@ -29,7 +29,9 @@ Remotion rendering guide.
 
 `ai-video-studio` already has a usable one-primary-template-per-segment authoring loop:
 - user writes a brief
-- page calls `POST /api/generate`
+- page defaults to staged generation through `POST /api/generate/staged`
+- page can fall back to the shipped one-shot `POST /api/generate` path through
+  a generation-mode toggle
 - API returns schema-validated `VideoProject`
 - page hydrates project-level editable state
 - assembled full-video preview renders live
@@ -49,10 +51,21 @@ The first staged-generation groundwork is also in place:
   `/api/tts/assets/...` provide the first internal TTS asset boundary for one
   planned segment's narration, including local audio artifacts and measured
   duration.
-- This planner path is not yet wired into the main `POST /api/generate`
-  product flow; that route still returns schema-validated `VideoProject`
-  directly as the shipped v1 shortcut, and TTS is not yet used by the main
-  route or selected-template compiler.
+- `src/lib/staged-project-generation.ts` and the MiniMax selected-template
+  compiler helpers provide the first staged assembly path:
+  StoryboardPlan -> per-segment TTS -> selected-template compile -> assembled
+  `VideoProject`.
+- `POST /api/generate/staged` is available as the staged endpoint for either a
+  brief, an existing `StoryboardPlan`, or one selected segment regeneration.
+- The main page now defaults to staged generation; `POST /api/generate` remains
+  available as the shipped v1 shortcut and fallback path.
+- In staged mode, selected-segment regeneration now regenerates the target
+  segment's plan, TTS audio, duration-aware template implementation, and
+  narration audio layer while preserving non-target segments.
+- Generated TTS assets are served from `/api/tts/assets/...` with byte-range
+  support so Remotion Player can seek audio during pause/resume.
+- Local export rewrites route media URLs to a Next API origin before Remotion
+  rendering so `/api/tts/assets/...` audio can be downloaded during export.
 
 This repo is past the upstream starter-demo stage.
 Do not describe it as an untouched scaffold.
@@ -89,7 +102,7 @@ brief -> StoryboardPlan -> per-segment TTS -> per-segment template compile
 Keep the next iteration focused on:
 1. keep `VideoProject` as the preview/edit/export boundary
 2. keep the existing StoryboardPlan contract as the planner-stage boundary
-3. add bounded planner repair or route wiring only if needed for the next slice
+3. add bounded planner repair or hardening only if needed for the next slice
 4. use generated narration audio from per-segment TTS before template
    compilation
 5. use real audio duration plus the selected template context to generate
@@ -139,10 +152,9 @@ Still not implemented unless the new task explicitly asks for them:
 - saved drafts/history/project persistence
 - multi-template-per-segment orchestration
 - project-level / segment-level media-layer compositing
-- full staged generation pipeline from storyboard plan through TTS and segment
-  template compilation; planner contract / manifest / internal planner facade
-  and the internal TTS asset boundary are in place, but selected-template
-  compilation and main-route assembly are not
+- broad media-layer editor work beyond the current generated narration audio
+  carrier
+- planner repair beyond the current bounded selected-template compiler repair
 - browser automation acceptance
 - end-user render progress UX beyond idle / rendering / success / failure
 
@@ -199,3 +211,6 @@ host-local setup.
 - Prefer Docker-first artifacts and validation on this workstation.
 - Browser automation is not the default validation path on this workstation.
 - `scripts/render.sh` still targets the sample/default composition render path; the current edited-project export path is the page action / `POST /api/render`.
+- For local export, route media such as `/api/tts/assets/...` is resolved
+  through `AI_VIDEO_STUDIO_RENDER_ASSET_ORIGIN` when set, otherwise
+  `http://127.0.0.1:3000`.

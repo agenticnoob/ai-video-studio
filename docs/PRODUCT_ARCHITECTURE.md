@@ -30,13 +30,13 @@ target maps onto the codebase.
 11. The render endpoint exports the current edited project through Remotion.
 
 The current MiniMax-backed one-call `POST /api/generate` path is a shipped v1
-shortcut. It can stay while useful, but future generation work should move
-toward the staged planner -> TTS -> compiler -> assembly pipeline.
+shortcut. It can stay while useful, but the active page flow now defaults to
+the staged planner -> TTS -> compiler -> assembly pipeline.
 
 Current implementation snapshot:
 
-- The shipped page and `/api/generate` route still use the one-call
-  `VideoProject` shortcut.
+- The shipped `/api/generate` route still provides the one-call
+  `VideoProject` shortcut as a fallback.
 - `src/lib/storyboard-plan-schema.ts` defines the first validated
   `StoryboardPlan` boundary.
 - `src/templates/registry.ts` derives the planner template manifest from
@@ -48,8 +48,19 @@ Current implementation snapshot:
   and `/api/tts/assets/...` provide the first internal TTS asset boundary for
   planned segment narration, including local artifact writing and ffprobe
   duration measurement.
-- Selected-template compiler functions and staged assembly into the active
-  product route are still future slices.
+- `src/lib/staged-project-generation.ts`, the MiniMax template compiler
+  helpers, and `POST /api/generate/staged` provide the staged assembly path
+  from brief or plan input to `VideoProject`.
+- The active page generation flow defaults to `/api/generate/staged`; the
+  shipped v1 `/api/generate` shortcut remains available through a fallback
+  toggle.
+- The active selected-segment regeneration flow also uses
+  `/api/generate/staged` when staged mode is enabled: one target segment is
+  replanned, regenerated through TTS, recompiled from real audio duration, and
+  merged back into the current `VideoProject`.
+- `/api/tts/assets/...` supports byte-range requests for Remotion Player
+  seeking, and `/api/render` resolves route media to an absolute Next app
+  origin before Remotion export.
 
 ## Composition Model
 
@@ -98,19 +109,19 @@ Images, videos, audio tracks, and color layers are timeline/media data, not
 templates. The next media-layer planning boundary is documented in
 `docs/MEDIA_LAYERS.md`: start with optional project-level
 `media.layers[]`, treat the old `baseLayer` idea as a layer role rather than a
-separate field, keep template-internal voiceover fields local until a
-deliberate migration is needed, and render media from the same `VideoProject`
-used by preview and export.
+separate field, keep generated narration audio outside template-specific
+`implementation` fields, and render media from the same `VideoProject` used by
+preview and export.
 
 The first media implementation should stay project-level only. Segment-level
 media, uploads, generated assets, waveform editing, keyframes, and provider-
 created media layers are follow-up work after the shared renderer is stable.
 
 Generated narration audio is different from generic existing-media intake. TTS
-voiceover belongs to the main generation pipeline because audio duration should
-drive the selected template's compiled parameters. It may later be represented
-through `media.layers[]` if that becomes the cleanest cross-template runtime
-model, but the roadmap should first prove TTS -> duration -> template compile.
+narration audio belongs to the main generation pipeline because audio duration
+should drive the selected template's compiled parameters. The current
+project-level audio media layer path gives that audio a template-external
+runtime home while the staged pipeline is built.
 
 ## Generation Context Boundaries
 

@@ -1,7 +1,7 @@
 # MiniMax Provider Implementation
 
-Status: implemented v1 provider path, with storyboard-planner and TTS asset
-groundwork added.
+Status: implemented v1 provider path plus active staged generation,
+selected-segment staged regeneration, and TTS asset delivery.
 
 This document describes the current `POST /api/generate` provider path. It is
 no longer a proposal. The provider keeps `VideoProject` as the generation,
@@ -10,13 +10,15 @@ request into schema-valid `VideoProject` JSON.
 
 Roadmap note:
 - The authoritative final generation target is `docs/FINAL_PRODUCT_GOAL.md`.
-- This MiniMax path is the shipped v1 shortcut.
-- The internal storyboard-planner facade now exists, but it is not yet wired
-  into the main `POST /api/generate` route.
-- The internal TTS asset route now exists for one planned segment at a time,
-  but it is not yet wired into the main `POST /api/generate` route.
-- Future generation work should continue toward duration-aware
-  selected-template compilation and final `VideoProject` assembly.
+- `POST /api/generate` is the shipped v1 shortcut.
+- The storyboard planner, TTS asset route, selected-template compiler, and
+  staged assembly path are wired behind `POST /api/generate/staged`.
+- The main page generation action now defaults to `POST /api/generate/staged`
+  and keeps `POST /api/generate` available as a one-shot fallback.
+- In staged mode, selected-segment regeneration replans only the target
+  segment, regenerates its narration audio, recompiles its template
+  implementation from the real audio duration, and preserves non-target
+  segments.
 
 ## Scope
 
@@ -25,6 +27,11 @@ In scope:
 - selected-segment regeneration from `mode: "segment"`
 - internal storyboard-plan generation via `minimaxGenerateStoryboardPlan()`
 - internal planned-segment TTS asset generation via `POST /api/tts`
+- staged generation via `POST /api/generate/staged`
+- staged selected-segment regeneration via `POST /api/generate/staged`
+- duration-aware selected-template implementation compilation
+- generated narration audio media-layer assembly and preservation
+- byte-range serving for generated TTS assets
 - single `emit_result` tool-calling path
 - strict Zod validation through `videoProjectSchema`
 - strict Zod validation through `storyboardPlanSchema` for planner output
@@ -32,25 +39,33 @@ In scope:
 - explicit 500/502 error surfacing; no silent mock fallback
 
 Out of scope for this provider pass:
-- replacing `/api/generate` with planner -> TTS -> compiler -> assembly
-- duration-aware selected-template compilation
 - multi-provider registry or fallback chains
 - streaming responses
 - persistence, draft history, or render history UX
 - template creation beyond the currently registered template modules
-- project-level or segment-level `media.layers[]` compositing
+- broad project-level or segment-level media-layer compositing beyond the
+  generated narration audio carrier
+- planner repair beyond selected-template compiler repair
 
 ## Implementation Files
 
 - `src/app/api/generate/route.ts` validates request bodies and maps provider errors to HTTP status codes.
 - `src/lib/minimax/provider.ts` reads config and calls `text/chatcompletion_v2`.
-- `src/lib/minimax/prompts.ts` builds project, segment, and storyboard-planner prompts.
-- `src/lib/minimax/tool-schema.ts` contains the `emit_result` JSON schemas for both `VideoProject` and `StoryboardPlan`.
+- `src/lib/minimax/prompts.ts` builds project, legacy segment,
+  storyboard-planner, staged segment-revision, and compiler prompts.
+- `src/lib/minimax/prompts.ts` also builds selected-template compiler prompts.
+- `src/lib/minimax/tool-schema.ts` contains the `emit_result` JSON schemas for `VideoProject`, `StoryboardPlan`, and selected template implementations.
 - `src/lib/minimax/parse-project.ts` parses tool-call arguments and validates the final `VideoProject`.
 - `src/lib/minimax/parse-storyboard-plan.ts` parses tool-call arguments and validates the planner `StoryboardPlan`.
-- `src/lib/minimax/index.ts` exposes `minimaxGenerateProject()`, `minimaxReviseSegment()`, and `minimaxGenerateStoryboardPlan()`.
+- `src/lib/minimax/parse-template-implementation.ts` parses selected-template compiler tool-call arguments.
+- `src/lib/minimax/index.ts` exposes `minimaxGenerateProject()`, `minimaxReviseSegment()`, `minimaxGenerateStoryboardPlan()`, `minimaxGenerateRevisedSegmentPlan()`, and `minimaxCompileTemplateImplementation()`.
 - `src/lib/storyboard-plan-schema.ts` defines the planner contract.
 - `src/lib/narration-asset-schema.ts` defines the generated narration asset metadata contract.
+- `src/lib/narration-media.ts` converts narration assets into project audio media layers.
+- `src/lib/staged-project-generation.ts` assembles staged planner/TTS/compiler output into `VideoProject`.
+- `src/lib/project-media.ts` preserves and retimes narration media layers when
+  one segment is regenerated.
+- `src/app/api/generate/staged/route.ts` runs the staged pipeline.
 - `src/lib/tts/config.ts` reads MiniMax TTS config.
 - `src/lib/tts/minimax.ts` calls the MiniMax synchronous speech endpoint.
 - `src/lib/tts/audio-duration.ts` probes generated audio duration with `ffprobe`.
@@ -74,6 +89,7 @@ Out of scope for this provider pass:
 | `MINIMAX_TTS_SAMPLE_RATE` | no | `32000` | Requested speech sample rate. |
 | `MINIMAX_TTS_BITRATE` | no | `128000` | Requested speech bitrate. |
 | `MINIMAX_TTS_CHANNEL` | no | `1` | Requested channel count, `1` or `2`. |
+| `AI_VIDEO_STUDIO_RENDER_ASSET_ORIGIN` | no | `http://127.0.0.1:3000` | Origin used by `/api/render` to resolve route media such as generated TTS audio during Remotion export. |
 
 If `MINIMAX_BASE_URL` is set without an `http://` or `https://` scheme, the
 provider logs a warning and falls back to the default base URL.
@@ -131,15 +147,19 @@ Segment mode:
 2. `minimaxReviseSegment()` sends the full current project, including every segment's `implementation.meta`, `implementation.theme`, and `implementation.scenes`.
 3. The prompt instructs MiniMax to return the full project and preserve non-target segments byte-for-byte.
 4. The same tool-call parser and Zod validation gate the returned project.
+5. Existing project media layers are reattached and narration layer
+   `startFrame` values are recalculated to prevent legacy one-shot segment
+   regeneration from dropping or desynchronizing staged narration audio.
 
-Internal storyboard-planner mode:
+Storyboard-planner mode:
 1. `minimaxGenerateStoryboardPlan()` builds a planning prompt from the brief.
 2. The prompt includes the compact planner template manifest derived from registered template definitions.
 3. MiniMax is forced to call `emit_result` with a `StoryboardPlan`.
 4. `parseStoryboardPlanToolCallArguments()` validates the result through `storyboardPlanSchema`.
-5. This path is available to future pipeline work, but no public route or page action consumes it yet.
+5. This path is consumed by `POST /api/generate/staged` for full-project
+   staged generation and selected-segment staged regeneration.
 
-Internal TTS mode:
+TTS mode:
 1. `POST /api/tts` validates `{ plan, segmentId, voiceId? }`.
 2. The route finds the selected `StoryboardSegmentPlan`.
 3. `synthesizeMinimaxSpeech()` sends the segment narration text to the
@@ -149,10 +169,38 @@ Internal TTS mode:
 5. `ffprobe` measures the generated file duration.
 6. The route returns a validated `SegmentNarrationAsset` with `audioSrc`,
    `durationInSeconds`, `durationInFrames`, provider, voice, and format.
+7. `/api/tts/assets/...` serves generated files with `Content-Length`,
+   `Accept-Ranges`, and `Content-Range` support so Remotion Player can seek
+   audio during preview pause/resume.
 
-This TTS path is intentionally internal for now. It creates the asset boundary
-needed by the next selected-template compiler slice, but the active
-`POST /api/generate` route still returns a complete `VideoProject` directly.
+Selected-template compiler mode:
+1. `minimaxCompileTemplateImplementation()` receives one
+   `StoryboardSegmentPlan`, its `SegmentNarrationAsset`, and the computed
+   target duration.
+2. The compiler prompt includes only the selected template's implementation
+   schema and rules.
+3. MiniMax is forced to call `emit_result` with only the template
+   implementation object.
+4. `parseTemplateImplementationToolCallArguments()` validates the result
+   through the selected template's Zod schema.
+5. The compiler rejects implementations whose visual duration is shorter than
+   the real narration duration and retries once with bounded repair context.
+
+Staged endpoint:
+1. `POST /api/generate/staged` with `mode: "brief"` runs planner -> TTS ->
+   compiler -> assembly.
+2. `POST /api/generate/staged` with `mode: "plan"` skips planner and runs TTS
+   -> compiler -> assembly from a validated `StoryboardPlan`.
+3. `POST /api/generate/staged` with `mode: "segment"` replans exactly the
+   target segment, regenerates its TTS asset, recompiles its selected-template
+   implementation, replaces that segment and its narration layer, and
+   preserves non-target segments.
+4. Generated narration audio is converted into project-level
+   `media.layers[]` audio layers.
+5. The route returns `{ plan, project, diagnostics }`.
+6. The main page uses this route by default for top-level generation and
+   selected-segment regeneration while keeping the one-shot route as a
+   fallback toggle.
 
 ## Parser Recovery
 

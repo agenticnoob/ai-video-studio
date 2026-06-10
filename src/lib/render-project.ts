@@ -18,6 +18,7 @@ import {
 } from "./render-artifacts";
 
 export const PROJECT_VIDEO_COMPOSITION_ID = "ProjectVideo";
+const DEFAULT_RENDER_ASSET_ORIGIN = "http://127.0.0.1:3000";
 
 const remotionEntryPoint = path.join(process.cwd(), "src/remotion/index.ts");
 const webpackOverrideModuleUrl = pathToFileURL(
@@ -62,6 +63,40 @@ const createRenderId = (): string => {
   return `render-${timestamp}-${randomUUID().slice(0, 8)}`.toLowerCase();
 };
 
+const getRenderAssetOrigin = (): string => {
+  const configuredOrigin = (
+    process.env.AI_VIDEO_STUDIO_RENDER_ASSET_ORIGIN ??
+    process.env.NEXT_PUBLIC_APP_ORIGIN ??
+    ""
+  ).trim();
+
+  return configuredOrigin.replace(/\/+$/, "") || DEFAULT_RENDER_ASSET_ORIGIN;
+};
+
+const resolveRouteMediaForRender = (project: VideoProject): VideoProject => {
+  if (!project.media?.layers.length) {
+    return project;
+  }
+
+  const assetOrigin = getRenderAssetOrigin();
+
+  return normalizeProject({
+    ...project,
+    media: {
+      layers: project.media.layers.map((layer) => {
+        if (layer.sourceType !== "route" || !layer.src.startsWith("/")) {
+          return layer;
+        }
+
+        return {
+          ...layer,
+          src: `${assetOrigin}${layer.src}`,
+        };
+      }),
+    },
+  });
+};
+
 export {
   getLatestRenderAbsolutePath,
   getRenderArtifactAbsolutePath,
@@ -81,7 +116,7 @@ export const renderProjectVideo = async (
     importAtRuntime<RemotionRendererModule>("@remotion/renderer"),
     importAtRuntime<WebpackOverrideModule>(webpackOverrideModuleUrl),
   ]);
-  const project = normalizeProject(projectInput);
+  const project = resolveRouteMediaForRender(normalizeProject(projectInput));
   const renderId = createRenderId();
   const outputPath = getRenderArtifactOutputPath(renderId);
   const absoluteOutputPath = getRenderArtifactAbsolutePath(renderId);

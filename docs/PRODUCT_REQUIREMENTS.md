@@ -163,9 +163,8 @@ Target narration model:
   generated audio source
 - TTS generation should produce an audio asset and measured duration before
   the selected template's `implementation` is compiled
-- current `scripted` `VideoSpec.scenes[].voiceover` can serve as an early
-  compatibility entry point, but should not become the universal narration
-  model for all templates
+- generated narration audio should be carried by template-external generation
+  data or audio media layers, not by template-specific scene fields
 
 Potential future media model:
 - project-level `media.layers[]`: video, image, audio, or color layers shared
@@ -412,9 +411,12 @@ Current implementation note:
 - `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`,
   and `/api/tts/assets/...` provide the first internal TTS asset boundary for
   one planned segment, with local audio artifacts and measured duration
-- the shipped `POST /api/generate` path still returns a validated
-  `VideoProject` directly; planner -> TTS -> compiler -> assembly is not yet
-  the active product route
+- `src/lib/staged-project-generation.ts`, the MiniMax selected-template
+  compiler helpers, and `POST /api/generate/staged` provide the staged
+  assembly path
+- the page defaults to `POST /api/generate/staged` for top-level generation
+- the shipped `POST /api/generate` path still returns a validated one-shot
+  `VideoProject` directly and remains available as a fallback
 
 Practical v1 shortcut:
 - keep one primary template instance per segment
@@ -435,7 +437,7 @@ Practical v1 shortcut:
 - Existing-media layers are a future milestone.
 - One segment should keep one primary template; template internals can grow through template-specific implementation fields/components.
 - AI-generated templates are future discussion, not current scope.
-- TTS voiceover is part of the main generation roadmap, not merely a generic
-  media-layer enhancement.
+- TTS narration audio is part of the main generation roadmap, not merely a
+  generic media-layer enhancement.
 - Real narration audio duration should drive future template parameter
   generation.

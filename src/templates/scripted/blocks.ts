@@ -17,7 +17,7 @@ export const scriptedBlockContracts = [
     label: "Title block",
     visualEffect: "Large title card with optional kicker and subtitle inside a themed panel.",
     bestFor: ["opening a segment", "introducing a section", "presenting one core idea"],
-    llmFields: ["id", "duration", "kicker?", "title", "subtitle?", "voiceover?"],
+    llmFields: ["id", "duration", "kicker?", "title", "subtitle?"],
     primitiveMapping: [
       "scene.kicker -> TitleScene.kicker",
       "scene.title -> TitleScene.title",
@@ -31,7 +31,7 @@ export const scriptedBlockContracts = [
     label: "Bullet block",
     visualEffect: "Heading with a short list of scan-friendly bullets inside a themed panel.",
     bestFor: ["steps", "benefits", "reasons", "compact explanations", "takeaways"],
-    llmFields: ["id", "duration", "kicker?", "title", "bullets", "voiceover?"],
+    llmFields: ["id", "duration", "kicker?", "title", "bullets"],
     primitiveMapping: [
       "scene.kicker -> BulletScene.kicker",
       "scene.title -> BulletScene.title",
@@ -45,7 +45,7 @@ export const scriptedBlockContracts = [
     label: "Quote block",
     visualEffect: "Large quote text with optional attribution inside a themed panel.",
     bestFor: ["testimonials", "emotional emphasis", "memorable statements", "reflective beats"],
-    llmFields: ["id", "duration", "kicker?", "quote", "author?", "voiceover?"],
+    llmFields: ["id", "duration", "kicker?", "quote", "author?"],
     primitiveMapping: [
       "scene.kicker -> QuoteScene.kicker",
       "scene.quote -> QuoteScene.quote",

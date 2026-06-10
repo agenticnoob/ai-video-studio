@@ -15,7 +15,6 @@ export const themeSchema = z.object({
 const baseSceneSchema = z.object({
   id: z.string(),
   duration: z.number().int().positive(),
-  voiceover: z.string().optional(),
   kicker: z.string().optional(),
 });
 

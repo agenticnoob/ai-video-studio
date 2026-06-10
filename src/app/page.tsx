@@ -22,6 +22,8 @@ type GenerateResponse = {
   error?: string;
 };
 
+type GenerationPipeline = "staged" | "shortcut";
+
 const inputClassName =
   "mt-2 w-full rounded-geist border border-unfocused-border-color bg-background px-3 py-2 text-sm outline-none focus:border-focused-border-color";
 
@@ -41,6 +43,7 @@ const Home: NextPage = () => {
     getInitialSelectedSegmentId(sampleProject),
   );
   const [revisionPrompt, setRevisionPrompt] = useState("");
+  const [generationPipeline, setGenerationPipeline] = useState<GenerationPipeline>("staged");
   const [isGenerating, setIsGenerating] = useState(false);
   const [isRegeneratingSegment, setIsRegeneratingSegment] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,16 +64,19 @@ const Home: NextPage = () => {
   } = useRendering(normalizedProject);
   const isRendering = renderState.status === "rendering";
   const isMutatingProject = isGenerating || isRegeneratingSegment || isRendering;
+  const isStagedGeneration = generationPipeline === "staged";
 
   const generateProject = async () => {
     setIsGenerating(true);
     setError(null);
 
     try {
-      const response = await fetch("/api/generate", {
+      const response = await fetch(isStagedGeneration ? "/api/generate/staged" : "/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode: "project", brief }),
+        body: JSON.stringify(
+          isStagedGeneration ? { mode: "brief", brief } : { mode: "project", brief },
+        ),
       });
       const data = (await response.json()) as GenerateResponse;
 
@@ -104,7 +110,7 @@ const Home: NextPage = () => {
     setError(null);
 
     try {
-      const response = await fetch("/api/generate", {
+      const response = await fetch(isStagedGeneration ? "/api/generate/staged" : "/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -168,13 +174,32 @@ const Home: NextPage = () => {
               />
             </label>
 
+            <label className="mt-4 flex items-center gap-3 text-sm text-foreground">
+              <input
+                checked={isStagedGeneration}
+                className="h-4 w-4 accent-foreground"
+                disabled={isMutatingProject}
+                type="checkbox"
+                onChange={(event) =>
+                  setGenerationPipeline(event.currentTarget.checked ? "staged" : "shortcut")
+                }
+              />
+              <span>阶段式生成</span>
+            </label>
+
             <button
               className="mt-4 rounded-geist border border-foreground bg-foreground px-4 py-2 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-60"
               disabled={isMutatingProject}
               onClick={generateProject}
               type="button"
             >
-              {isGenerating ? "正在生成项目..." : "生成项目"}
+              {isGenerating
+                ? isStagedGeneration
+                  ? "正在阶段式生成..."
+                  : "正在生成项目..."
+                : isStagedGeneration
+                  ? "阶段式生成项目"
+                  : "生成项目"}
             </button>
 
             {error ? (

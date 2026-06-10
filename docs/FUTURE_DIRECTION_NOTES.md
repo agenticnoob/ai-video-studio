@@ -47,8 +47,8 @@ When implementation resumes, the preferred strategy is:
 - evolve generation from the current one-shot `VideoProject` shortcut into the
   staged final pipeline: storyboard planner -> per-segment TTS ->
   selected-template compiler -> assembled `VideoProject`
-- treat TTS voiceover as part of the main generated-video pipeline because
-  real narration duration should drive segment timing
+- treat TTS narration audio as part of the main generated-video pipeline
+  because real narration duration should drive segment timing
 - express richer segment visuals through template-specific implementation fields,
   internal components, and media-layer props first
 
@@ -107,28 +107,28 @@ Current likely sequence:
 - compact planner template manifest
 - template selection based on registered descriptions, capabilities, and use
   cases
-- status: core schema, manifest, MiniMax planner prompt/tool/parser, and
-  internal facade are implemented; main route integration and planner repair
-  remain later work
+- status: implemented for the active staged route; planner repair remains
+  later hardening work
 
-3. Add TTS voiceover MVP
+3. Add TTS narration audio MVP
 - generate narration audio from planned segment text
 - write local audio artifacts
 - measure or normalize duration
 - feed audio duration back into segment compilation
-- status: internal asset/API boundary implemented for one planned segment;
-  MiniMax TTS smoke test passed, and main-route/compiler integration remains
-  later work
+- status: implemented in the active staged full-project and selected-segment
+  regeneration paths
 
 4. Add duration-aware segment compiler
 - provide only the selected template schema and rules
 - generate schema-valid `implementation`
 - repair bounded validation failures
-- status: next major pipeline slice
+- status: implemented with one bounded selected-template repair attempt
 
 5. Assemble staged output into the current product loop
 - preview and export the assembled `VideoProject`
 - regenerate only the smallest affected scope
+- status: implemented for the active page path; continue hardening
+  multi-segment smoke, planner repair, and progress UX
 
 6. Later media-layer and persistence work
 - add existing image/video/audio/color layers after generated narration is

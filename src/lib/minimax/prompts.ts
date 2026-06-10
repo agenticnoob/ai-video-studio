@@ -1,4 +1,10 @@
-import type { MinimaxChatMessage, MinimaxTool, MinimaxToolChoice } from "./provider";
+import type {
+  MinimaxChatMessage,
+  MinimaxSegmentPlanRevisionRequest,
+  MinimaxTemplateCompileRequest,
+  MinimaxTool,
+  MinimaxToolChoice,
+} from "./provider";
 import type { VideoProject } from "../project-schema";
 import {
   buildPlannerTemplateManifestPrompt,
@@ -14,6 +20,7 @@ import {
   EMIT_RESULT_TOOL,
   EMIT_RESULT_TOOL_CHOICE,
   EMIT_STORYBOARD_PLAN_TOOL,
+  buildEmitTemplateImplementationTool,
 } from "./tool-schema";
 
 /**
@@ -108,6 +115,64 @@ Pass the complete StoryboardPlan object (top-level keys: title, brief, segments,
 and optional language/globalStyle) as the function arguments JSON string. Do
 not return the JSON in the assistant content channel — it will be ignored.`;
 
+const buildTemplateCompilerSystemPrompt = (request: MinimaxTemplateCompileRequest): string => {
+  const template = getTemplateDefinition(request.segment.templateId);
+  const durationRange = template.capabilities.recommendedDurationFrames;
+  const repairInstructions =
+    request.validationError || request.previousInvalidOutput
+      ? [
+          "# Repair input",
+          "The previous compiler output was rejected. Return a corrected implementation object only.",
+          request.validationError ? `Validation error: ${request.validationError}` : "",
+          request.previousInvalidOutput
+            ? `Previous invalid output:\n\`\`\`json\n${request.previousInvalidOutput.slice(
+                0,
+                4000,
+              )}\n\`\`\``
+            : "",
+        ]
+          .filter(Boolean)
+          .join("\n")
+      : "";
+
+  return `You compile one planned storyboard segment into the selected template's implementation JSON.
+
+# Output contract
+- Return ONLY the selected template implementation object.
+- Do not return a VideoProject.
+- Do not return a VideoSegment.
+- Do not wrap the object in "implementation", "segment", "project", "media", or "narration".
+- Do not include audio source fields, media fields, narration asset metadata, or provider metadata.
+- Generated narration audio is carried outside template implementation through project media layers.
+- The implementation must validate against the selected template schema.
+
+# Selected template
+- templateId: ${template.id}
+- label: ${template.label}
+- recommendedDurationFrames: ${durationRange.min}-${durationRange.max}
+- targetDurationInFrames: ${request.targetDurationInFrames}
+- implementation rules:
+${template.implementationPrompt}
+
+# Timing rules
+- Use 30fps.
+- implementation.meta must use fps=30, width=1280, height=720.
+- The visual implementation duration must be at least ${request.targetDurationInFrames} frames.
+- Prefer exactly ${request.targetDurationInFrames} frames unless the template needs a small visual tail.
+- Use the real narration duration as the timing anchor; do not guess a shorter duration.
+
+# Theme rules
+- Include all required theme fields when the selected template schema requires theme.
+- Use readable contrast and CSS color literals.
+
+${repairInstructions}
+
+# Tool-calling contract (CRITICAL)
+You MUST emit the result by calling the function tool named "emit_result".
+Pass only the selected template implementation object as the function arguments JSON string.
+Do not return JSON in the assistant content channel — it will be ignored.`;
+};
+
 /**
  * System prompt for segment-revision mode. Mostly the same shape, but the
  * preservation rule moves from "emit one of N segments" to "emit full project
@@ -165,6 +230,39 @@ const buildSegmentPayloadForRevise = (project: VideoProject): unknown => {
   };
 };
 
+const buildSegmentPlanRevisionPayload = (
+  project: VideoProject,
+  segmentId: string,
+): unknown => {
+  const targetIndex = project.segments.findIndex((segment) => segment.id === segmentId);
+  const targetSegment = targetIndex >= 0 ? project.segments[targetIndex] : null;
+
+  return {
+    project: {
+      title: project.meta.title,
+      brief: project.brief,
+      segmentCount: project.segments.length,
+    },
+    targetSegment:
+      targetSegment === null
+        ? null
+        : {
+            id: targetSegment.id,
+            order: targetIndex + 1,
+            title: targetSegment.title,
+            intent: targetSegment.intent,
+            templateId: targetSegment.templateId,
+          },
+    surroundingSegments: project.segments.map((segment, index) => ({
+      id: segment.id,
+      order: index + 1,
+      title: segment.title,
+      intent: segment.intent,
+      templateId: segment.templateId,
+    })),
+  };
+};
+
 export const buildProjectPrompt = (brief: string): MinimaxPrompt => {
   const safeBrief = brief.length > 0 ? brief : "Create a concise AI Video Studio workflow video.";
   const messages: MinimaxChatMessage[] = [
@@ -194,6 +292,99 @@ export const buildStoryboardPlanPrompt = (brief: string): MinimaxPrompt => {
   return {
     messages,
     tools: [EMIT_STORYBOARD_PLAN_TOOL],
+    toolChoice: EMIT_RESULT_TOOL_CHOICE,
+  };
+};
+
+export const buildSegmentPlanRevisionPrompt = ({
+  project,
+  revisionPrompt,
+  segmentId,
+}: MinimaxSegmentPlanRevisionRequest): MinimaxPrompt => {
+  const payload = JSON.stringify(buildSegmentPlanRevisionPayload(project, segmentId), null, 2);
+  const messages: MinimaxChatMessage[] = [
+    {
+      role: "system",
+      content: `You revise one storyboard segment inside an existing video project.
+
+Return a StoryboardPlan containing EXACTLY ONE segment: the target segment to regenerate.
+This is the planning stage only. Do not generate final template implementation fields.
+
+# Output requirements
+- Keep the target segment id exactly "${segmentId}".
+- Set the single segment order to 1.
+- Preserve the original language unless the revision request explicitly asks otherwise.
+- Choose one registered primary template from: ${templateIds.map((id) => `"${id}"`).join(", ")}.
+- Keep the current template unless the revision request clearly asks for a different presentation style.
+- Write narration.text as the actual spoken script for this segment, not as an instruction.
+- Keep narration concise enough for a short product-demo segment.
+- Describe visualBrief for this segment without inventing media URLs or Remotion source code.
+- Do not include implementation, scenes, callouts, theme, colors, audio URLs, or provider metadata.
+
+# Planner template manifest
+${buildPlannerTemplateManifestPrompt()}
+
+# Tool-calling contract (CRITICAL)
+You MUST emit the result by calling the function tool named "emit_result".
+Pass the complete one-segment StoryboardPlan object as the function arguments JSON string.`,
+    },
+    {
+      role: "user",
+      content: `Current project and target segment:\n\`\`\`json\n${payload}\n\`\`\`\n\nRevision request:\n"""\n${revisionPrompt}\n"""\n\nReturn exactly one planned segment for "${segmentId}" with fresh narration text. Call the "emit_result" tool with the StoryboardPlan as arguments.`,
+    },
+  ];
+
+  return {
+    messages,
+    tools: [EMIT_STORYBOARD_PLAN_TOOL],
+    toolChoice: EMIT_RESULT_TOOL_CHOICE,
+  };
+};
+
+export const buildTemplateCompilerPrompt = (
+  request: MinimaxTemplateCompileRequest,
+): MinimaxPrompt => {
+  const template = getTemplateDefinition(request.segment.templateId);
+  const payload = JSON.stringify(
+    {
+      plan: {
+        title: request.plan.title,
+        brief: request.plan.brief,
+        language: request.plan.language,
+        globalStyle: request.plan.globalStyle,
+      },
+      segment: request.segment,
+      narration: {
+        text: request.narration.text,
+        durationInFrames: request.narration.durationInFrames,
+        durationInSeconds: request.narration.durationInSeconds,
+        voiceId: request.narration.voiceId,
+        provider: request.narration.provider,
+        format: request.narration.format,
+      },
+      selectedTemplate: {
+        templateId: template.id,
+        label: template.label,
+        planner: template.planner,
+        capabilities: template.capabilities,
+        implementationJsonSchema: template.implementationJsonSchema,
+      },
+      targetDurationInFrames: request.targetDurationInFrames,
+    },
+    null,
+    2,
+  );
+  const messages: MinimaxChatMessage[] = [
+    { role: "system", content: buildTemplateCompilerSystemPrompt(request) },
+    {
+      role: "user",
+      content: `Compiler input:\n\`\`\`json\n${payload}\n\`\`\`\n\nReturn only the selected "${request.segment.templateId}" implementation object. Call the "emit_result" tool with that implementation as arguments.`,
+    },
+  ];
+
+  return {
+    messages,
+    tools: [buildEmitTemplateImplementationTool(request.segment.templateId)],
     toolChoice: EMIT_RESULT_TOOL_CHOICE,
   };
 };

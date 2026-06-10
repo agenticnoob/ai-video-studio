@@ -98,7 +98,7 @@ What to adopt:
 - Treat product trailer patterns as future template inspiration:
   intro, feature beat, code walkthrough, terminal/demo moment, website reveal,
   transition bridge, pricing/CTA, and end card.
-- Keep timing, transitions, voiceover, and scene durations explicit enough to
+- Keep timing, transitions, narration audio, and scene durations explicit enough to
   reason about preview and export behavior.
 - Consider a future `product-intro` or `launch-trailer` registered template
   only after its semantic schema is clear.

@@ -1,5 +1,10 @@
 import { MAX_STORYBOARD_SEGMENTS } from "../storyboard-plan-schema";
-import { templateIds, templateSegmentJsonSchemas } from "../template-registry";
+import {
+  getTemplateDefinition,
+  templateIds,
+  templateSegmentJsonSchemas,
+  type TemplateId,
+} from "../template-registry";
 import type { MinimaxTool } from "./provider";
 
 const metaJsonSchema = {
@@ -35,7 +40,7 @@ export const EMIT_RESULT_TOOL: MinimaxTool = {
         segments: {
           type: "array",
           minItems: 1,
-          maxItems: 3,
+          maxItems: MAX_STORYBOARD_SEGMENTS,
           items: {
             oneOf: templateSegmentJsonSchemas,
           },
@@ -102,6 +107,19 @@ export const EMIT_STORYBOARD_PLAN_TOOL: MinimaxTool = {
       required: ["title", "brief", "segments"],
     },
   },
+};
+
+export const buildEmitTemplateImplementationTool = (templateId: TemplateId): MinimaxTool => {
+  const template = getTemplateDefinition(templateId);
+
+  return {
+    type: "function",
+    function: {
+      name: "emit_result",
+      description: `Emit only the schema-valid implementation object for the selected "${templateId}" template. Do not wrap it in a segment, project, media, narration, or implementation key.`,
+      parameters: template.implementationJsonSchema,
+    },
+  };
 };
 
 /** Forced selection — model must call `emit_result`, no auto-routing. */

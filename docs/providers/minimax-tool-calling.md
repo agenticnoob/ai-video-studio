@@ -28,7 +28,7 @@
 > A 2-segment explainer for an AI video studio: segment 1 shows the user typing a brief and the studio returning a structured project; segment 2 shows the user editing a single segment and the studio regenerating only that one.
 
 3-segment 长 brief（用于 length truncation 探针）：
-> A 3-segment product tour for an AI video studio. Segment 1: User types a brief in the editor and the studio auto-drafts a structured project with 2-3 segments, a theme, and scenes (title, bullets, quote) per segment. Segment 2: User selects a single segment and clicks 'regenerate' to see the studio revise only that one segment while leaving others byte-identical; user iterates on color, copy, and ordering. Segment 3: User exports the final video through Remotion Lambda and downloads an MP4 with embedded captions, a cover image, and per-scene voiceover notes. Make each segment visually distinct (different primary/secondary colors) but keep text contrast high.
+> A 3-segment product tour for an AI video studio. Segment 1: User types a brief in the editor and the studio auto-drafts a structured project with 2-3 segments, a theme, and scenes (title, bullets, quote) per segment. Segment 2: User selects a single segment and clicks 'regenerate' to see the studio revise only that one segment while leaving others byte-identical; user iterates on color, copy, and ordering. Segment 3: User exports the final video through Remotion Lambda and downloads an MP4 with embedded captions, a cover image, and per-segment narration notes. Make each segment visually distinct (different primary/secondary colors) but keep text contrast high.
 
 测试脚本：`scripts-tmp-research-tc-probe.mjs`（5 个场景 × 5 次采样）+ `scripts-tmp-research-trunc-check.mjs`（length 探针，4 次采样）。
 
@@ -122,7 +122,7 @@ const EMIT_RESULT_TOOL = {
         segments: {
           type: "array",
           minItems: 1,
-          maxItems: 3,
+          maxItems: 6,
           items: {
             type: "object",
             additionalProperties: false,

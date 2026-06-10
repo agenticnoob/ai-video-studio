@@ -2,6 +2,189 @@
 
 Last updated: latest documentation alignment
 
+## Latest continuation — staged preview, segment regeneration, and export hardening
+
+- Hardened the user-facing staged preview / edit / export loop.
+- `POST /api/generate/staged` now supports selected-segment regeneration:
+  - `mode: "segment"` accepts the current `VideoProject`, target
+    `segmentId`, and `revisionPrompt`
+  - MiniMax first replans exactly that segment as a one-segment
+    `StoryboardPlan`
+  - TTS regenerates the target segment's narration audio
+  - the selected-template compiler uses the new real audio duration to produce
+    schema-valid target `implementation`
+  - the target `VideoSegment` and its narration audio layer are replaced in
+    the current project
+  - non-target segments and their narration layers are preserved, with
+    narration layer `startFrame` values recalculated against the revised
+    segment timeline
+- The main page routes selected-segment regeneration to
+  `POST /api/generate/staged` while staged generation is enabled. The shipped
+  one-shot `/api/generate` segment path remains available only when the
+  fallback generation mode is selected.
+- The legacy `/api/generate` segment path now reattaches existing project media
+  layers before returning, preventing old one-shot segment regeneration from
+  dropping staged narration audio.
+- TTS asset serving now supports byte-range requests:
+  - `/api/tts/assets/...` returns `Accept-Ranges: bytes`
+  - `Range: bytes=...` requests return `206 Partial Content` and
+    `Content-Range`
+  - this fixes Remotion Player pause/resume seek failures where the current
+    segment audio could disappear until the next segment
+- Local edited-project export now resolves route media before Remotion
+  rendering:
+  - project state can keep route URLs such as `/api/tts/assets/...`
+  - `/api/render` rewrites route media to an absolute Next app origin for the
+    renderer
+  - default render asset origin is `http://127.0.0.1:3000`
+  - `AI_VIDEO_STUDIO_RENDER_ASSET_ORIGIN` can override that origin for other
+    runtime topologies
+- Validation/smoke performed during this slice:
+  - Docker `npx tsc --noEmit`
+  - `git diff --check`
+  - direct `Range` smoke against an existing generated TTS asset returned
+    `206 Partial Content`
+  - `/api/render` smoke with route TTS audio returned `200` and wrote
+    `out/renders/render-2026-06-10t17-37-30-062z-0b8ae5f1.mp4`
+
+Current readiness:
+- staged full-project generation is the default user path
+- staged selected-segment regeneration is wired for the active page path
+- generated narration audio survives preview pause/resume and local export
+- the one-shot `/api/generate` path remains as a fallback shortcut, not the
+  final generation architecture
+
+Remaining next slices:
+- planner repair for invalid `StoryboardPlan` output
+- broader multi-template smoke fixtures
+- richer progress UX beyond idle / rendering / success / failure
+- persistence/history only after the staged loop is stable
+
+## Previous continuation — page staged generation toggle
+
+- Wired the main page's top-level generate action to staged generation by
+  default.
+- Added a page-level generation-mode toggle:
+  - enabled: `POST /api/generate/staged` with `mode: "brief"`
+  - disabled: shipped one-shot `POST /api/generate` with `mode: "project"`
+- Initially kept selected-segment regeneration on the existing one-shot segment
+  revision path. This has since been superseded by staged segment regeneration
+  in the latest continuation.
+- Current page behavior:
+  - creative brief generation now triggers planner -> TTS -> selected-template
+    compiler -> narration audio media layer -> assembled `VideoProject`
+  - the old MiniMax one-shot project route remains available as a fallback
+  - preview, direct field editing, selected-segment revision, and export still
+    operate on the normalized `VideoProject` boundary
+- Superseded next slices:
+  - user-facing preview / edit / export hardening is now underway
+  - staged segment-level regeneration is now wired
+  - one-shot fallback remains available while staged output continues to
+    harden
+
+## Latest continuation — staged endpoint live smoke
+
+- Live-smoked `POST /api/generate/staged` with configured local MiniMax/TTS
+  credentials through the running Docker dev server.
+- `mode: "brief"` smoke passed for a short one-segment Chinese creative brief:
+  - route returned `200`
+  - planner produced a validated one-segment `StoryboardPlan`
+  - planner selected `spotlight`
+  - TTS generated a narration audio asset
+  - compiler returned schema-valid `SpotlightSpec` in one attempt with no
+    repair
+  - assembled `VideoProject` included one project-level narration audio media
+    layer
+  - compiled visual duration matched the measured narration duration
+- `mode: "plan"` smoke passed for a single `spotlight` segment:
+  - route returned `200`
+  - generated one project-level narration audio media layer
+  - generated TTS audio served from `/api/tts/assets/...`
+  - selected-template compiler returned schema-valid `SpotlightSpec`
+  - compiler completed in one attempt with no repair
+  - compiled visual duration matched the measured narration duration
+- `mode: "plan"` smoke passed for a single `scripted` segment:
+  - route returned `200`
+  - generated one project-level narration audio media layer
+  - generated TTS audio served from `/api/tts/assets/...`
+  - selected-template compiler returned schema-valid `VideoSpec`
+  - compiler completed in one attempt with no repair
+  - compiled scene durations summed to the measured narration duration
+- Confirmed generated TTS asset routes returned `200 audio/mpeg` with
+  non-empty bodies.
+- Current readiness:
+  - planner -> TTS -> media layer -> selected-template compiler -> assembled
+    `VideoProject` works for a single-segment `mode: "brief"` smoke
+  - TTS -> media layer -> selected-template compiler -> assembled
+    `VideoProject` works for both registered templates in single-segment
+    `mode: "plan"` smoke tests
+  - superseded by the later page staged generation toggle slice: the main
+    generate action now defaults to staged generation, and the next step is to
+    validate the user-facing preview / edit / export loop on staged output
+
+## Latest continuation — selected-template compiler slice
+
+- Added the first duration-aware selected-template compiler path without
+  replacing the shipped v1 `POST /api/generate` route.
+- Added MiniMax compiler wiring that:
+  - receives one `StoryboardSegmentPlan`
+  - receives the segment's `SegmentNarrationAsset`
+  - computes a target duration from real narration frames and the selected
+    template's recommended minimum
+  - sends only the selected template's implementation schema and rules
+  - returns only the selected template's `implementation`, not a segment,
+    project, media layer, or narration object
+  - validates with the selected template's Zod schema
+  - retries once with bounded repair context when parsing, schema validation,
+    or duration coverage fails
+- Added staged assembly helpers:
+  - `createNarrationAudioLayer()` converts TTS assets into project-level
+    `media.layers[]` audio layers with `kind: "narration"`
+  - `compilePlannedSegment()` compiles one planned segment into a validated
+    `VideoSegment`
+  - `generateStagedProjectFromPlan()` runs per-segment TTS, selected-template
+    compilation, narration audio layer creation, and final `VideoProject`
+    normalization
+  - `generateStagedProjectFromBrief()` runs planner first, then delegates to
+    the staged plan path
+- Added opt-in `POST /api/generate/staged`:
+  - `mode: "brief"` runs planner -> TTS -> compiler -> assembly
+  - `mode: "plan"` skips planner and runs TTS -> compiler -> assembly from a
+    validated `StoryboardPlan`
+  - the current page and shipped `/api/generate` shortcut are unchanged
+- Remaining next slices:
+  - live smoke of `/api/generate/staged` with configured MiniMax/TTS
+    credentials
+  - route/page choice for when to expose staged generation as the main user
+    action
+  - segment-level staged regeneration using the smallest needed scope
+
+## Latest continuation — narration audio boundary cleanup
+
+- Quarantined the old scripted scene audio hook out of new generation paths:
+  - removed it from the scripted scene Zod contract
+  - removed it from the provider-visible scripted JSON schema
+  - removed it from scripted block `llmFields`
+  - stopped rendering audio from scripted scene fields in `ScriptedVideo`
+- Added the first minimal template-external media carrier for generated
+  narration audio:
+  - `src/lib/media-layer-schema.ts`
+  - optional `VideoProject.media.layers[]`
+  - project-level audio layers with `type: "audio"` and
+    `kind: "narration"`
+  - `ProjectMediaLayers` renders project audio layers from the shared
+    `ProjectVideo` composition path
+- Updated product / architecture / media-layer docs so future TTS and compiler
+  work uses template-external narration audio data instead of template-specific
+  implementation fields.
+- Current boundary after this cleanup:
+  - selected-template compiler should generate visual/template
+    `implementation` only
+  - generated narration audio should be represented as project media layer data
+    or other template-external segment generation metadata
+  - do not reintroduce scripted scene audio fields in provider-visible schemas,
+    prompts, compiler outputs, or runtime rendering
+
 ## Latest continuation — TTS asset boundary groundwork
 
 - Added the first concrete TTS asset boundary for planned segments without
@@ -39,11 +222,11 @@ Last updated: latest documentation alignment
   - implemented groundwork: `StoryboardPlan` schema, compact planner template
     manifest, internal MiniMax storyboard-planner facade, and internal TTS
     asset generation/serving for planned segment narration
-  - not implemented yet: public planner route wiring, planner repair,
+  - then not implemented yet: public planner route wiring, planner repair,
     selected-template compiler, and full staged assembly
-- Next best bounded product slice is selected-template compilation from a
-  planned segment plus measured narration asset, unless the next task
-  explicitly asks to wire or smoke-test the staged route first.
+- Superseded by the later selected-template compiler slice: compiler
+  groundwork and opt-in staged assembly now exist behind
+  `POST /api/generate/staged`.
 
 ## Latest continuation — storyboard plan contract groundwork
 
@@ -80,8 +263,8 @@ Last updated: latest documentation alignment
   selected-template compilation -> assembled `VideoProject`.
 - Clarified that the current MiniMax-backed one-shot `POST /api/generate`
   path is a usable v1 shortcut, not the permanent generation architecture.
-- Reframed TTS voiceover as part of the main generated-video pipeline because
-  real narration duration should drive template parameter generation.
+- Reframed TTS narration audio as part of the main generated-video pipeline
+  because real narration duration should drive template parameter generation.
 - Kept the durable product model unchanged:
   one primary `templateId` per `VideoSegment`, with template-specific
   `implementation`.
@@ -128,10 +311,9 @@ Last updated: latest documentation alignment
   layers: page state, `POST /api/render`, `renderProjectVideo()`, and the
   Remotion `ProjectVideo` composition all share the same normalized project
   payload.
-- Confirmed current audio support is only a scripted-template internal hook:
-  `VideoSpec.scenes[].voiceover` renders via `<Audio>` inside
-  `ScriptedVideo`, but it is not a project-level or cross-template audio
-  track model.
+- Confirmed the earlier audio support was only a scripted-template internal
+  hook, not a project-level or cross-template audio track model. That hook has
+  since been removed from new generation/runtime paths.
 - Replaced the separate `baseLayer` / `audio.tracks` planning split with a
   unified media layer model in `docs/MEDIA_LAYERS.md`: optional project-level
   `media.layers[]` for image, video, audio, and color layers; later
@@ -551,8 +733,11 @@ Current product direction:
     from registered template definitions
   - `src/lib/minimax/*` contains an internal MiniMax storyboard-planner prompt,
     tool schema, parser, and `minimaxGenerateStoryboardPlan()` facade
-- The planner path is not yet wired into the main `POST /api/generate` product
-  route; that route still returns schema-validated `VideoProject` directly.
+- `POST /api/generate/staged` exposes the staged path for brief or existing
+  plan input, and the page now defaults to this staged path for top-level
+  generation.
+- `POST /api/generate` still returns schema-validated `VideoProject` directly
+  and remains available through the one-shot fallback toggle.
 - Future existing video, image, audio, or color inputs should be modeled as
   project-level or segment-level `media.layers[]` data, not as extra
   templates inside the segment.
@@ -729,7 +914,7 @@ Suggested next focus, in order:
 1. optionally add bounded planner repair or route wiring for
    `minimaxGenerateStoryboardPlan()` if the next slice needs a live planner
    endpoint
-2. add TTS voiceover generation for planned segment narration
+2. add TTS narration audio generation for planned segment narration
 3. capture generated audio duration and metadata
 4. compile the selected template's `implementation` from narration, audio
    duration, visual brief, and template-specific schema/rules

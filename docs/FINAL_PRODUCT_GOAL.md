@@ -89,11 +89,12 @@ Important modeling rules:
 - A `VideoSegment` has one primary `templateId`.
 - `templateId` determines the schema of `implementation`.
 - `implementation` is template-specific, not a universal project field.
-- Narration text and generated audio should become segment-level generation
-  data over time, not be hidden only inside one template's private fields.
-- Existing `scripted` support for `VideoSpec.scenes[].voiceover` is a useful
-  compatibility entry point, but the long-term target should distinguish
-  spoken text from generated audio source.
+- Narration text and generated audio should stay outside template-specific
+  `implementation` fields and should not be hidden inside one template's
+  private scene model.
+- The old scripted scene audio hook must not be treated as the narration/TTS
+  model. New generation paths should use segment-level narration metadata or
+  media-layer audio instead.
 - `VideoSpec.scenes` is specific to the `scripted` template.
 - Future templates should define their own implementation fields.
 - Do not model one segment as multiple template instances unless a concrete
@@ -213,7 +214,7 @@ TTS non-responsibilities:
 Why TTS happens before template compilation:
 
 - Real spoken duration controls segment duration.
-- Visual pacing should fit the voiceover, not the other way around.
+- Visual pacing should fit the narration audio, not the other way around.
 - Template parameter generation can use the real number of frames.
 - Later caption and subtitle timing can be derived from the same narration
   artifact.
@@ -409,12 +410,13 @@ Current compatibility notes:
 
 - `VideoProject` remains the top-level contract.
 - `VideoSegment` remains the editing unit.
-- `scripted` currently has `VideoSpec.scenes[].voiceover`.
-- `ScriptedVideo` already renders scene voiceover with Remotion `<Audio>`.
-- This is enough to build the first TTS slice without designing the whole media
-  layer system first.
-- Long-term narration metadata should be separated from audio src so the system
-  can distinguish spoken text, generated audio, voice, timing, and provider.
+- New narration/TTS work must not use scripted scene fields as the audio
+  carrier.
+- `VideoProject.media.layers[]` now has a minimal project-level audio layer
+  path that can carry generated narration audio outside templates.
+- Narration metadata should stay separated from template implementation data so
+  the system can distinguish spoken text, generated audio, voice, timing, and
+  provider.
 
 ## 7. Roadmap
 
@@ -438,11 +440,10 @@ Implemented capability:
 
 Known limitation:
 
-- generation is still largely one provider call that emits the final
-  `VideoProject`
-- TTS asset generation exists as an internal staged-pipeline slice, but it is
-  not part of the main generation path yet
-- real audio duration does not yet drive template compilation
+- the shipped one-shot `POST /api/generate` route still exists as a fallback
+  shortcut
+- the active staged page path now uses planner -> TTS -> compiler -> assembly,
+  but planner repair and broader smoke coverage still need hardening
 
 ### Milestone 1: Authoritative Goal And Contracts
 
@@ -458,8 +459,8 @@ Deliverables:
 
 ### Milestone 2: Storyboard Plan Contract
 
-Status: groundwork implemented; route integration and planner repair remain
-future slices.
+Status: implemented for the active staged route; planner repair remains a
+future hardening slice.
 
 Goal:
 
@@ -475,7 +476,6 @@ Implemented:
 
 Remaining:
 
-- route or main generation wrapper that uses the planner result
 - basic repair path for invalid planner output
 
 Non-goals:
@@ -486,8 +486,8 @@ Non-goals:
 
 ### Milestone 3: TTS Asset MVP
 
-Status: first internal asset/API boundary implemented; active product-route
-integration remains a future slice.
+Status: implemented for the active staged route and selected-segment
+regeneration path.
 
 Goal:
 
@@ -508,14 +508,12 @@ Deliverables:
 - audio serving path that Remotion can consume
 - duration probing or provider-returned duration normalization
 - `SegmentNarrationAsset` metadata
-- first UI or API action that generates voiceover for a selected scripted
-  segment
+- first UI or API action that generates narration audio for a planned segment
 
 Remaining:
 
-- wire TTS into the main planner -> compiler flow
-- feed generated narration audio into the selected template compiler
-- make preview/export use generated audio through compiled template output
+- harden provider-specific failure handling and retry behavior
+- add richer voice selection when the basic loop is stable
 
 Initial scope:
 
@@ -528,19 +526,37 @@ Initial scope:
 
 ### Milestone 4: Audio-Duration-Driven Segment Compiler
 
+Status: implemented for full-project staged generation and selected-segment
+staged regeneration; live hardening remains active.
+
 Goal:
 
 - use real TTS duration to compile one segment's template parameters
 
-Deliverables:
+Implemented:
 
-- selected-template compiler prompt
-- selected-template schema-only context
+- selected-template compiler prompt and tool schema
+- selected-template schema-only context for compiler calls
 - compile function that accepts plan + narration asset + duration
-- strict Zod validation
-- bounded repair
-- `scripted` segment support first
-- preview/export uses generated audio
+- strict Zod validation against the selected template schema
+- one bounded compiler repair attempt
+- project-level narration audio media layer assembly
+- `POST /api/generate/staged` route for brief or existing plan input
+- main page generation defaults to the staged route, with the one-shot v1 path
+  kept as a fallback toggle
+- `POST /api/generate/staged` segment mode replans one target segment,
+  regenerates its TTS audio, recompiles its selected-template implementation,
+  replaces that segment's narration media layer, and preserves non-target
+  segments
+- TTS asset route supports byte ranges for Remotion Player seek behavior
+- local `/api/render` resolves route media such as `/api/tts/assets/...` to a
+  Next app origin before Remotion export
+
+Remaining:
+
+- broader template-specific smoke fixtures
+- planner repair for invalid storyboard plans
+- richer progress/error UX for multi-stage generation
 
 Success criteria:
 
@@ -611,8 +627,9 @@ Important ordering:
 
 - media layers are important, but they should not block the TTS-first
   generation pipeline
-- generated narration audio can later be migrated or represented through media
-  layers if that becomes the cleanest cross-template model
+- generated narration audio should use template-external project data; the
+  current minimal audio media layer path is the first cross-template runtime
+  carrier
 
 ### Milestone 9: Persistence And Generation History
 

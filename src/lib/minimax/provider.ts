@@ -1,4 +1,6 @@
+import type { SegmentNarrationAsset } from "../narration-asset-schema";
 import type { VideoProject } from "../project-schema";
+import type { StoryboardPlan, StoryboardSegmentPlan } from "../storyboard-plan-schema";
 
 export const DEFAULT_MINIMAX_BASE_URL = "https://api.minimaxi.com/v1";
 // Default model. Per the T1 research probe
@@ -202,4 +204,19 @@ export type MinimaxSegmentRequest = {
   project: VideoProject;
   segmentId: string;
   revisionPrompt: string;
+};
+
+export type MinimaxSegmentPlanRevisionRequest = {
+  project: VideoProject;
+  segmentId: string;
+  revisionPrompt: string;
+};
+
+export type MinimaxTemplateCompileRequest = {
+  plan: StoryboardPlan;
+  segment: StoryboardSegmentPlan;
+  narration: SegmentNarrationAsset;
+  targetDurationInFrames: number;
+  validationError?: string;
+  previousInvalidOutput?: string;
 };

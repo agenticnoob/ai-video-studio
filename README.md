@@ -31,13 +31,23 @@ Current implementation status:
   authoritative final target is the staged planner -> TTS -> template compiler
   pipeline documented in `docs/FINAL_PRODUCT_GOAL.md`
 - the first storyboard-planning contract is in place as a server-safe schema,
-  compact registered-template manifest, and internal MiniMax planner facade;
-  it is not yet wired into the main `POST /api/generate` product path
+  compact registered-template manifest, and internal MiniMax planner facade
 - the first TTS asset boundary is in place for planned segments:
   `SegmentNarrationAsset`, internal `POST /api/tts`, local `out/tts/...`
-  artifacts, `/api/tts/assets/...` serving, and ffprobe duration measurement
-- the next generation slice should build from that planner contract toward
-  audio-duration-aware selected-template compilation and staged route wiring
+  artifacts, `/api/tts/assets/...` serving with byte-range support, and
+  ffprobe duration measurement
+- the selected-template compiler and staged endpoint use planned segment
+  narration, real TTS duration, and only the selected template schema/rules to
+  compile template-specific `implementation`
+- the page defaults to staged generation through `POST /api/generate/staged`
+  and keeps the shipped v1 `POST /api/generate` shortcut available through a
+  page-level toggle
+- staged selected-segment regeneration reruns the target segment's planning,
+  TTS, selected-template compilation, and narration media-layer replacement
+  while preserving non-target segments
+- in-app export resolves route media such as `/api/tts/assets/...` through the
+  Next app origin before Remotion rendering so generated narration audio is
+  included in the exported file
 - roadmap decisions should use `docs/FINAL_PRODUCT_GOAL.md` as the top-level
   source
 - current progress and next-step notes live in `docs/ITERATION_STATUS.md`
@@ -47,10 +57,12 @@ Current implementation status:
 ## Current product flow
 
 1. user writes a brief
-2. page calls `POST /api/generate`
+2. page calls `POST /api/generate/staged` by default, or `POST /api/generate`
+   when the one-shot fallback is selected
 3. API returns schema-validated `VideoProject`
 4. page renders assembled preview via `ProjectVideo`
-5. user edits a selected segment and can regenerate only that segment
+5. user edits a selected segment and can regenerate only that segment; staged
+   regeneration reruns that segment's narration/TTS/template compile chain
 6. user exports the current edited project through `POST /api/render`
 7. successful render writes:
    - unique artifact: `out/renders/render-<timestamp>-<id>.mp4`
@@ -74,9 +86,9 @@ Current modeling direction:
   - `spotlight`: `SpotlightSpec` with `headline`, `subheadline`,
     `callouts`, and `durationInFrames`
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
-- current `scripted` `voiceover` rendering is an early compatibility point for
-  TTS, but long-term narration text and generated audio metadata should be
-  modeled separately
+- generated narration audio should be carried outside template-specific
+  `implementation` fields; the scripted scene schema no longer exposes an
+  audio field to generation providers
 - future existing video, image, audio, or color inputs should be modeled as
   project-level or segment-level `media.layers[]` data; `baseLayer` is now a
   media-layer role, not a separate project field
@@ -125,21 +137,26 @@ Start from:
 - `README.md`
 
 Current code checkpoint:
-- active product route: `POST /api/generate` still returns a validated
-  `VideoProject`
+- active page generation defaults to `POST /api/generate/staged`
+- fallback product route: `POST /api/generate` still returns a validated
+  one-shot `VideoProject`
 - staged-generation groundwork: `StoryboardPlan` schema, planner manifest, and
   internal MiniMax planner facade are implemented
 - TTS groundwork: internal `POST /api/tts` can generate and serve a
   `SegmentNarrationAsset` for one planned segment when MiniMax TTS is
   configured
-- not implemented yet: main-route planner/TTS wiring, selected-template
-  compiler, planner repair, and staged assembly into the active product route
+- selected-template compiler groundwork: internal compiler functions and
+  `POST /api/generate/staged` can assemble a staged project
+- staged selected-segment regeneration is wired for the active page path
+- route media export hardening is in place for generated narration audio
+- not implemented yet: planner repair, persistence/history, and broad
+  media-layer editing
 
 Best next bounded slice:
 - keep `VideoProject` as the preview/edit/export boundary
 - use `StoryboardPlan` as the planner-stage contract
-- compile one selected template from `StoryboardPlan` + generated narration
-  asset + measured audio duration before changing the active generation route
+- continue hardening the user-facing preview / edit / export loop on staged
+  output, especially multi-segment and regenerated-segment cases
 - avoid persistence/history, generic media-layer compositing, and
   multi-template-per-segment orchestration unless explicitly reopened
 
@@ -187,6 +204,10 @@ Important distinction:
 - `./scripts/render.sh` is still the default/sample composition render path from the Docker wrapper
 - current edited-project export is the in-app action / `POST /api/render`
 - the edited-project export writes `out/renders/latest.mp4` plus a unique `out/renders/render-*.mp4`
+- generated route media such as `/api/tts/assets/...` is converted to an
+  absolute Next app URL for Remotion export. Override the default
+  `http://127.0.0.1:3000` with `AI_VIDEO_STUDIO_RENDER_ASSET_ORIGIN` when the
+  renderer needs a different origin.
 
 Stop containers:
 ```bash
@@ -260,6 +281,12 @@ MiniMax TTS uses the same `MINIMAX_API_KEY`. Optional TTS-specific variables:
 | `MINIMAX_TTS_SAMPLE_RATE` | no | `32000` | Requested audio sample rate. |
 | `MINIMAX_TTS_BITRATE` | no | `128000` | Requested audio bitrate. |
 | `MINIMAX_TTS_CHANNEL` | no | `1` | Requested channel count, `1` or `2`. |
+
+Local render/export also supports:
+
+| Variable | Required | Default | Purpose |
+|---|---|---|---|
+| `AI_VIDEO_STUDIO_RENDER_ASSET_ORIGIN` | no | `http://127.0.0.1:3000` | Origin used by `/api/render` to resolve route media such as generated TTS audio during Remotion export. |
 
 ### What happens if the key is missing
 

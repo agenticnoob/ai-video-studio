@@ -1,11 +1,13 @@
 # Media Layer Model
 
-Status: planning and implementation-boundary note for the next media slice.
+Status: implementation-boundary note plus current generated narration audio
+carrier.
 
 Roadmap relationship:
 - `docs/FINAL_PRODUCT_GOAL.md` is the authoritative final generation target.
-- TTS voiceover belongs to the main generation pipeline and can be implemented
-  before the generic media-layer renderer.
+- TTS narration audio belongs to the main generation pipeline. Generated
+  narration audio should be represented outside template-specific
+  `implementation` fields.
 - This document defines how existing or timeline-level image/video/audio/color
   material should be modeled when the project intentionally widens into media
   compositing.
@@ -28,13 +30,15 @@ a semantic role on a media layer, not a separate field.
 
 This is feasible if the first implementation is deliberately small.
 
-The first slice should be a shared renderer and structured data model, not a
-general-purpose timeline editor:
+The first implemented slice is generated narration audio as project-level
+media. Future media-layer expansion should still stay deliberately small and
+avoid becoming a general-purpose timeline editor:
 
 - project-level media only: `VideoProject.media.layers[]`
 - each layer requires `startFrame` and `durationInFrames`
 - each layer renders through one shared Remotion `<Sequence>` wrapper
-- source types are limited to `public` and `remote`
+- current generated narration audio uses `sourceType: "route"` for
+  `/api/tts/assets/...`; future existing media can use `public` or `remote`
 - editing is a compact structured form, not drag/drop timeline editing
 - MiniMax preserves or omits media; it does not invent asset URLs
 - no uploads, generated assets, waveform UI, keyframes, ducking, or beat sync
@@ -77,18 +81,23 @@ VideoSegment.templateId
   -> ProjectVideo <Sequence from durationInFrames>
 ```
 
-The `scripted` template already has a local `scene.voiceover?: string` field
-inside `VideoSpec.scenes[]`. `ScriptedVideo` renders it with Remotion's
-`<Audio>` inside the scene sequence.
+The scripted template used to expose a template-internal scene audio hook. That
+field is now quarantined out of generation/provider-visible schemas and is no
+longer rendered by `ScriptedVideo`. New narration audio must use
+template-external project data.
 
-That existing field is a template-internal scene audio hook. It is not a
-general media layer model:
+Current code includes a deliberately small project-level audio path:
 
-- it only exists on `scripted`
-- it is not available to `spotlight`
-- it does not model project-level media, segment-level media, volume, offsets,
-  looping, muting, trimming, visual fit, opacity, or stacking
-- it is not surfaced in the page editor as a shared media layer
+- `VideoProject.media.layers[]`
+- audio layers with `type: "audio"` and `kind: "narration"`
+- shared rendering through `ProjectMediaLayers`
+- `POST /api/generate/staged` creates narration layers for full-project
+  generation and replaces the target narration layer during staged
+  selected-segment regeneration
+- `/api/tts/assets/...` supports byte ranges for preview seeking
+- `/api/render` converts route media to an absolute Next app origin before
+  Remotion rendering
+- no image/video/color layer renderer yet
 
 ## Product Boundary
 
@@ -186,8 +195,8 @@ type VideoMediaLayer = BaseMediaLayer & {
 type AudioMediaLayer = BaseMediaLayer & {
   type: "audio";
   src: string;
-  sourceType?: "public" | "remote";
-  kind?: "music" | "voiceover" | "sfx" | "ambient";
+  sourceType?: "public" | "remote" | "route";
+  kind?: "narration" | "music" | "sfx" | "ambient";
   trimStartFrame?: number;
   volume?: number;
   loop?: boolean;
@@ -504,24 +513,10 @@ a full video editor timeline.
 
 ## Migration Notes
 
-Do not delete `scene.voiceover` as part of the first media-layer slice.
-
-Keep it as a scripted-template implementation detail until one of these is
-true:
-
-- scripted voiceovers need to be edited in the shared media layer panel
-- voiceover generation becomes project-wide
-- multiple templates need the same voiceover field semantics
-
-The final product roadmap now treats TTS voiceover as part of the main
-generation pipeline. That work may land before generic media layers. When it
-does, keep the generated narration metadata separable from the old
-`scene.voiceover` audio-src compatibility field so a later migration remains
-possible.
-
-If migration becomes necessary, convert scene voiceover into segment-relative
-audio media layers through a compatibility helper, then remove the
-template-local field in a separate schema migration.
+The old scripted scene audio hook should not be reintroduced into
+provider-visible schemas, prompts, compiler outputs, or runtime rendering.
+Generated narration audio belongs in template-external project data, currently
+the minimal project-level audio media layer path.
 
 Do not add a separate `baseLayer` field. Existing references to `baseLayer`
 should be interpreted as a planned `media.layers[]` visual layer with

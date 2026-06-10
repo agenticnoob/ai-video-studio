@@ -11,8 +11,78 @@ import {
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+type ByteRange =
+  | {
+      end: number;
+      start: number;
+    }
+  | "unsatisfiable";
+
+const parseByteRange = (rangeHeader: string | null, fileSize: number): ByteRange | null => {
+  if (!rangeHeader?.startsWith("bytes=")) {
+    return null;
+  }
+
+  const [firstRange] = rangeHeader.slice("bytes=".length).split(",");
+  const [rawStart, rawEnd] = firstRange.split("-");
+
+  if (rawStart === "" && rawEnd === "") {
+    return "unsatisfiable";
+  }
+
+  if (rawStart === "") {
+    const suffixLength = Number(rawEnd);
+    if (!Number.isInteger(suffixLength) || suffixLength <= 0) {
+      return "unsatisfiable";
+    }
+
+    return {
+      start: Math.max(fileSize - suffixLength, 0),
+      end: fileSize - 1,
+    };
+  }
+
+  const start = Number(rawStart);
+  const requestedEnd = rawEnd === "" ? fileSize - 1 : Number(rawEnd);
+
+  if (
+    !Number.isInteger(start) ||
+    !Number.isInteger(requestedEnd) ||
+    start < 0 ||
+    requestedEnd < start ||
+    start >= fileSize
+  ) {
+    return "unsatisfiable";
+  }
+
+  return {
+    start,
+    end: Math.min(requestedEnd, fileSize - 1),
+  };
+};
+
+const createTtsAssetHeaders = ({
+  assetPath,
+  contentLength,
+  fileName,
+}: {
+  assetPath: string;
+  contentLength: number;
+  fileName: string;
+}): HeadersInit => {
+  return {
+    "accept-ranges": "bytes",
+    "access-control-allow-origin": "*",
+    "access-control-expose-headers": "Accept-Ranges, Content-Length, Content-Range",
+    "cache-control": "no-store",
+    "content-disposition": `inline; filename="${fileName}"`,
+    "content-length": String(contentLength),
+    "content-type": getTtsAssetContentType(assetPath),
+  };
+};
+
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ assetPath: string[] }> },
 ) {
   const { assetPath: assetPathParts } = await params;
@@ -24,18 +94,45 @@ export async function GET(
 
   try {
     const absoluteOutputPath = getTtsArtifactAbsolutePath(assetPath);
-    const [buffer, outputStats] = await Promise.all([
-      readFile(absoluteOutputPath),
-      stat(absoluteOutputPath),
-    ]);
+    const outputStats = await stat(absoluteOutputPath);
     const fileName = path.basename(absoluteOutputPath);
+    const byteRange = parseByteRange(request.headers.get("range"), outputStats.size);
+
+    if (byteRange === "unsatisfiable") {
+      return new Response(null, {
+        status: 416,
+        headers: {
+          "accept-ranges": "bytes",
+          "content-range": `bytes */${outputStats.size}`,
+        },
+      });
+    }
+
+    const buffer = await readFile(absoluteOutputPath);
+
+    if (byteRange) {
+      const chunk = buffer.subarray(byteRange.start, byteRange.end + 1);
+
+      return new Response(new Uint8Array(chunk), {
+        status: 206,
+        headers: {
+          ...createTtsAssetHeaders({
+            assetPath,
+            contentLength: chunk.length,
+            fileName,
+          }),
+          "content-range": `bytes ${byteRange.start}-${byteRange.end}/${outputStats.size}`,
+        },
+      });
+    }
 
     return new Response(new Uint8Array(buffer), {
       headers: {
-        "cache-control": "no-store",
-        "content-disposition": `inline; filename="${fileName}"`,
-        "content-length": String(outputStats.size),
-        "content-type": getTtsAssetContentType(assetPath),
+        ...createTtsAssetHeaders({
+          assetPath,
+          contentLength: outputStats.size,
+          fileName,
+        }),
       },
     });
   } catch {
