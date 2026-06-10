@@ -116,12 +116,15 @@ Current likely sequence:
 - write local audio artifacts
 - measure or normalize duration
 - feed audio duration back into segment compilation
-- status: next major pipeline slice
+- status: internal asset/API boundary implemented for one planned segment;
+  MiniMax TTS smoke test passed, and main-route/compiler integration remains
+  later work
 
 4. Add duration-aware segment compiler
 - provide only the selected template schema and rules
 - generate schema-valid `implementation`
 - repair bounded validation failures
+- status: next major pipeline slice
 
 5. Assemble staged output into the current product loop
 - preview and export the assembled `VideoProject`

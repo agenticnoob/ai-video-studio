@@ -1,6 +1,7 @@
 # MiniMax Provider Implementation
 
-Status: implemented v1 provider path, with storyboard-planner groundwork added.
+Status: implemented v1 provider path, with storyboard-planner and TTS asset
+groundwork added.
 
 This document describes the current `POST /api/generate` provider path. It is
 no longer a proposal. The provider keeps `VideoProject` as the generation,
@@ -12,9 +13,10 @@ Roadmap note:
 - This MiniMax path is the shipped v1 shortcut.
 - The internal storyboard-planner facade now exists, but it is not yet wired
   into the main `POST /api/generate` route.
-- Future generation work should continue toward per-segment TTS,
-  duration-aware selected-template compilation, and final `VideoProject`
-  assembly.
+- The internal TTS asset route now exists for one planned segment at a time,
+  but it is not yet wired into the main `POST /api/generate` route.
+- Future generation work should continue toward duration-aware
+  selected-template compilation and final `VideoProject` assembly.
 
 ## Scope
 
@@ -22,6 +24,7 @@ In scope:
 - full-project generation from `mode: "project"`
 - selected-segment regeneration from `mode: "segment"`
 - internal storyboard-plan generation via `minimaxGenerateStoryboardPlan()`
+- internal planned-segment TTS asset generation via `POST /api/tts`
 - single `emit_result` tool-calling path
 - strict Zod validation through `videoProjectSchema`
 - strict Zod validation through `storyboardPlanSchema` for planner output
@@ -30,7 +33,7 @@ In scope:
 
 Out of scope for this provider pass:
 - replacing `/api/generate` with planner -> TTS -> compiler -> assembly
-- generated TTS assets and duration-aware selected-template compilation
+- duration-aware selected-template compilation
 - multi-provider registry or fallback chains
 - streaming responses
 - persistence, draft history, or render history UX
@@ -47,6 +50,13 @@ Out of scope for this provider pass:
 - `src/lib/minimax/parse-storyboard-plan.ts` parses tool-call arguments and validates the planner `StoryboardPlan`.
 - `src/lib/minimax/index.ts` exposes `minimaxGenerateProject()`, `minimaxReviseSegment()`, and `minimaxGenerateStoryboardPlan()`.
 - `src/lib/storyboard-plan-schema.ts` defines the planner contract.
+- `src/lib/narration-asset-schema.ts` defines the generated narration asset metadata contract.
+- `src/lib/tts/config.ts` reads MiniMax TTS config.
+- `src/lib/tts/minimax.ts` calls the MiniMax synchronous speech endpoint.
+- `src/lib/tts/audio-duration.ts` probes generated audio duration with `ffprobe`.
+- `src/lib/tts/artifacts.ts` owns local TTS artifact paths and download URLs.
+- `src/app/api/tts/route.ts` generates one planned segment narration asset.
+- `src/app/api/tts/assets/[...assetPath]/route.ts` serves generated audio files from `out/tts/...`.
 - `src/lib/project-generation.ts` is test-only mock generation and is not imported by the route.
 
 ## Environment Variables
@@ -56,9 +66,31 @@ Out of scope for this provider pass:
 | `MINIMAX_API_KEY` | yes | none | Bearer token for MiniMax. Missing or blank throws `MinimaxConfigError`. |
 | `MINIMAX_MODEL` | no | `MiniMax-M2.7-highspeed` | Model sent on every request. Override via env only. |
 | `MINIMAX_BASE_URL` | no | `https://api.minimaxi.com/v1` | Base URL; request path is `/text/chatcompletion_v2`. |
+| `MINIMAX_GROUP_ID` | account-dependent | none | Optional `GroupId` query param for MiniMax TTS deployments that require it. |
+| `MINIMAX_TTS_ENDPOINT` | no | `${MINIMAX_BASE_URL}/t2a_v2` | Full speech endpoint override. |
+| `MINIMAX_TTS_MODEL` | no | `speech-2.8-turbo` | Speech model sent by `POST /api/tts`. |
+| `MINIMAX_TTS_VOICE_ID` | no | `male-qn-qingse` | Default voice used by `POST /api/tts`. |
+| `MINIMAX_TTS_EMOTION` | no | none | Optional `voice_setting.emotion` for models that support emotion. |
+| `MINIMAX_TTS_SAMPLE_RATE` | no | `32000` | Requested speech sample rate. |
+| `MINIMAX_TTS_BITRATE` | no | `128000` | Requested speech bitrate. |
+| `MINIMAX_TTS_CHANNEL` | no | `1` | Requested channel count, `1` or `2`. |
 
 If `MINIMAX_BASE_URL` is set without an `http://` or `https://` scheme, the
 provider logs a warning and falls back to the default base URL.
+
+TTS implementation follows the official MiniMax synchronous speech HTTP
+contract documented at
+`https://platform.minimaxi.com/docs/api-reference/speech-t2a-http`:
+
+- endpoint: `POST https://api.minimaxi.com/v1/t2a_v2`
+- `Content-Type: application/json`
+- bearer authorization through `MINIMAX_API_KEY`
+- non-streaming request with `stream: false`
+- `audio_setting` includes `sample_rate`, `bitrate`, `format`, and `channel`
+- `subtitle_enable: false`
+- `output_format: "hex"`
+- successful non-streaming JSON returns `data.audio` as hex-encoded audio and
+  `base_resp.status_code: 0`
 
 ## Request Shape
 
@@ -107,6 +139,21 @@ Internal storyboard-planner mode:
 4. `parseStoryboardPlanToolCallArguments()` validates the result through `storyboardPlanSchema`.
 5. This path is available to future pipeline work, but no public route or page action consumes it yet.
 
+Internal TTS mode:
+1. `POST /api/tts` validates `{ plan, segmentId, voiceId? }`.
+2. The route finds the selected `StoryboardSegmentPlan`.
+3. `synthesizeMinimaxSpeech()` sends the segment narration text to the
+   MiniMax synchronous speech endpoint.
+4. The provider decodes `data.audio` from hex into a local audio file under
+   `out/tts/...`.
+5. `ffprobe` measures the generated file duration.
+6. The route returns a validated `SegmentNarrationAsset` with `audioSrc`,
+   `durationInSeconds`, `durationInFrames`, provider, voice, and format.
+
+This TTS path is intentionally internal for now. It creates the asset boundary
+needed by the next selected-template compiler slice, but the active
+`POST /api/generate` route still returns a complete `VideoProject` directly.
+
 ## Parser Recovery
 
 The parser is strict first and only uses bounded recovery for observed MiniMax
@@ -131,6 +178,9 @@ fall back to mock data. Zod remains the final contract gate.
 | Tool call missing, wrong function, empty arguments, or `finish_reason=length` | 502 |
 | Tool-call arguments are not valid JSON | 502 |
 | Parsed JSON fails `videoProjectSchema` | 500 |
+| TTS request has an invalid body or missing segment id | 400 |
+| Missing or blank `MINIMAX_API_KEY` for TTS | 500 |
+| MiniMax TTS network error, non-2xx response, or unusable audio response | 502 |
 
 There is no silent fallback to `src/lib/project-generation.ts`.
 

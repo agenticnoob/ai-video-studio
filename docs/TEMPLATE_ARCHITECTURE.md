@@ -150,7 +150,10 @@ working shortcut, but it is not the final scaling model.
 Current planner groundwork exists: `src/lib/storyboard-plan-schema.ts` defines
 the plan contract, `src/templates/registry.ts` derives the compact planner
 manifest, and `src/lib/minimax/*` exposes an internal MiniMax planner facade.
-This is not yet wired into the main `POST /api/generate` route.
+The first internal TTS asset boundary also exists through
+`src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`, and
+`/api/tts/assets/...`. Planner/TTS/compiler orchestration is not yet wired into
+the main `POST /api/generate` route.
 
 The final provider workflow has two roles.
 

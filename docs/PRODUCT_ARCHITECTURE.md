@@ -44,8 +44,12 @@ Current implementation snapshot:
 - `src/lib/minimax/prompts.ts`, `src/lib/minimax/tool-schema.ts`,
   `src/lib/minimax/parse-storyboard-plan.ts`, and `src/lib/minimax/index.ts`
   provide an internal MiniMax planner facade.
-- TTS assets, audio-duration probing, selected-template compiler functions,
-  and staged assembly into the active product route are still future slices.
+- `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`,
+  and `/api/tts/assets/...` provide the first internal TTS asset boundary for
+  planned segment narration, including local artifact writing and ffprobe
+  duration measurement.
+- Selected-template compiler functions and staged assembly into the active
+  product route are still future slices.
 
 ## Composition Model
 

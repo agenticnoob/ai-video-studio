@@ -409,6 +409,9 @@ Current implementation note:
   registered template definitions
 - `src/lib/minimax/*` contains an internal MiniMax storyboard-planner prompt,
   tool schema, parser, and `minimaxGenerateStoryboardPlan()` facade
+- `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`,
+  and `/api/tts/assets/...` provide the first internal TTS asset boundary for
+  one planned segment, with local audio artifacts and measured duration
 - the shipped `POST /api/generate` path still returns a validated
   `VideoProject` directly; planner -> TTS -> compiler -> assembly is not yet
   the active product route

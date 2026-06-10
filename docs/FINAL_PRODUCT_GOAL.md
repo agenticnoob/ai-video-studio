@@ -440,7 +440,8 @@ Known limitation:
 
 - generation is still largely one provider call that emits the final
   `VideoProject`
-- TTS is not part of the main generation path
+- TTS asset generation exists as an internal staged-pipeline slice, but it is
+  not part of the main generation path yet
 - real audio duration does not yet drive template compilation
 
 ### Milestone 1: Authoritative Goal And Contracts
@@ -485,9 +486,20 @@ Non-goals:
 
 ### Milestone 3: TTS Asset MVP
 
+Status: first internal asset/API boundary implemented; active product-route
+integration remains a future slice.
+
 Goal:
 
 - generate audio from planned segment narration and measure real duration
+
+Implemented:
+
+- `SegmentNarrationAsset` validation
+- MiniMax-backed internal `POST /api/tts` for one planned segment
+- local artifact writing under `out/tts/...`
+- `/api/tts/assets/...` serving for Remotion-consumable audio URLs
+- ffprobe duration measurement and frame normalization
 
 Deliverables:
 
@@ -498,6 +510,12 @@ Deliverables:
 - `SegmentNarrationAsset` metadata
 - first UI or API action that generates voiceover for a selected scripted
   segment
+
+Remaining:
+
+- wire TTS into the main planner -> compiler flow
+- feed generated narration audio into the selected template compiler
+- make preview/export use generated audio through compiled template output
 
 Initial scope:
 

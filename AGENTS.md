@@ -45,9 +45,14 @@ The first staged-generation groundwork is also in place:
 - `src/lib/minimax/prompts.ts`, `src/lib/minimax/tool-schema.ts`,
   `src/lib/minimax/parse-storyboard-plan.ts`, and `src/lib/minimax/index.ts`
   expose an internal MiniMax storyboard-planner facade.
+- `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`, and
+  `/api/tts/assets/...` provide the first internal TTS asset boundary for one
+  planned segment's narration, including local audio artifacts and measured
+  duration.
 - This planner path is not yet wired into the main `POST /api/generate`
   product flow; that route still returns schema-validated `VideoProject`
-  directly as the shipped v1 shortcut.
+  directly as the shipped v1 shortcut, and TTS is not yet used by the main
+  route or selected-template compiler.
 
 This repo is past the upstream starter-demo stage.
 Do not describe it as an untouched scaffold.
@@ -85,7 +90,8 @@ Keep the next iteration focused on:
 1. keep `VideoProject` as the preview/edit/export boundary
 2. keep the existing StoryboardPlan contract as the planner-stage boundary
 3. add bounded planner repair or route wiring only if needed for the next slice
-4. generate TTS audio from per-segment narration before template compilation
+4. use generated narration audio from per-segment TTS before template
+   compilation
 5. use real audio duration plus the selected template context to generate
    schema-valid `implementation`
 6. preserve validation, bounded repair, and non-target segment preservation
@@ -134,8 +140,9 @@ Still not implemented unless the new task explicitly asks for them:
 - multi-template-per-segment orchestration
 - project-level / segment-level media-layer compositing
 - full staged generation pipeline from storyboard plan through TTS and segment
-  template compilation; only the planner contract / manifest / internal
-  planner facade are in place
+  template compilation; planner contract / manifest / internal planner facade
+  and the internal TTS asset boundary are in place, but selected-template
+  compilation and main-route assembly are not
 - browser automation acceptance
 - end-user render progress UX beyond idle / rendering / success / failure
 

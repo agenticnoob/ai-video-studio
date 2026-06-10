@@ -33,8 +33,11 @@ Current implementation status:
 - the first storyboard-planning contract is in place as a server-safe schema,
   compact registered-template manifest, and internal MiniMax planner facade;
   it is not yet wired into the main `POST /api/generate` product path
+- the first TTS asset boundary is in place for planned segments:
+  `SegmentNarrationAsset`, internal `POST /api/tts`, local `out/tts/...`
+  artifacts, `/api/tts/assets/...` serving, and ffprobe duration measurement
 - the next generation slice should build from that planner contract toward
-  generated TTS audio and audio-duration-aware selected-template compilation
+  audio-duration-aware selected-template compilation and staged route wiring
 - roadmap decisions should use `docs/FINAL_PRODUCT_GOAL.md` as the top-level
   source
 - current progress and next-step notes live in `docs/ITERATION_STATUS.md`
@@ -126,15 +129,17 @@ Current code checkpoint:
   `VideoProject`
 - staged-generation groundwork: `StoryboardPlan` schema, planner manifest, and
   internal MiniMax planner facade are implemented
-- not implemented yet: generated TTS assets, audio duration probing,
-  selected-template compiler, planner repair, and staged assembly into the main
-  route
+- TTS groundwork: internal `POST /api/tts` can generate and serve a
+  `SegmentNarrationAsset` for one planned segment when MiniMax TTS is
+  configured
+- not implemented yet: main-route planner/TTS wiring, selected-template
+  compiler, planner repair, and staged assembly into the active product route
 
 Best next bounded slice:
 - keep `VideoProject` as the preview/edit/export boundary
 - use `StoryboardPlan` as the planner-stage contract
-- add TTS asset generation for planned segment narration before changing
-  template compilation
+- compile one selected template from `StoryboardPlan` + generated narration
+  asset + measured audio duration before changing the active generation route
 - avoid persistence/history, generic media-layer compositing, and
   multi-template-per-segment orchestration unless explicitly reopened
 
@@ -242,6 +247,19 @@ Add to `.env.local` (see `.env.example`):
 | `MINIMAX_API_KEY` | yes | — | Bearer token for `https://api.minimaxi.com/v1/text/chatcompletion_v2`. |
 | `MINIMAX_MODEL` | no | `MiniMax-M2.7-highspeed` | The `model` field sent on every request. Must be read from `process.env`, never hard-coded. |
 | `MINIMAX_BASE_URL` | no | `https://api.minimaxi.com/v1` | Override only for testing against a self-hosted gateway. |
+
+MiniMax TTS uses the same `MINIMAX_API_KEY`. Optional TTS-specific variables:
+
+| Variable | Required | Default | Purpose |
+|---|---|---|---|
+| `MINIMAX_GROUP_ID` | account-dependent | — | Added as `GroupId` query param for MiniMax speech deployments that require it. |
+| `MINIMAX_TTS_ENDPOINT` | no | `${MINIMAX_BASE_URL}/t2a_v2` | Full TTS endpoint override. Use this if your speech endpoint differs from the chat base URL. |
+| `MINIMAX_TTS_MODEL` | no | `speech-2.8-turbo` | Speech model used by `POST /api/tts`. |
+| `MINIMAX_TTS_VOICE_ID` | no | `male-qn-qingse` | Default voice for planned segment narration. |
+| `MINIMAX_TTS_EMOTION` | no | — | Optional MiniMax voice emotion for speech-2.8 models. |
+| `MINIMAX_TTS_SAMPLE_RATE` | no | `32000` | Requested audio sample rate. |
+| `MINIMAX_TTS_BITRATE` | no | `128000` | Requested audio bitrate. |
+| `MINIMAX_TTS_CHANNEL` | no | `1` | Requested channel count, `1` or `2`. |
 
 ### What happens if the key is missing
 

@@ -2,6 +2,33 @@
 
 Last updated: latest documentation alignment
 
+## Latest continuation — TTS asset boundary groundwork
+
+- Added the first concrete TTS asset boundary for planned segments without
+  changing the shipped v1 `POST /api/generate` route.
+- Added `SegmentNarrationAsset` validation for narration text, served audio
+  source, measured seconds, measured frames, provider, voice, and format.
+- Added an internal MiniMax-backed TTS path:
+  - `POST /api/tts` accepts a validated `StoryboardPlan` plus `segmentId`
+  - `src/lib/tts` generates one planned segment's narration audio
+  - generated files are written under `out/tts/...`
+  - `/api/tts/assets/...` serves the generated local audio artifact
+  - `ffprobe` measures real audio duration and converts it to frames
+- Kept the current product boundary intact:
+  - `VideoProject` remains the preview/edit/export contract
+  - `POST /api/generate` still returns a validated `VideoProject` directly
+  - the new TTS route is an internal staged-pipeline slice, not the active
+    main generation path yet
+- Docker/local smoke passed with configured MiniMax credentials:
+  - `POST /api/tts` returned `200` with a MiniMax `mp3` narration asset
+  - the response included measured duration (`4.32s`, `130` frames at 30fps)
+  - `/api/tts/assets/...` returned `200 audio/mpeg` with a non-empty body
+- Remaining next slices:
+  - selected-template compiler that accepts `StoryboardSegmentPlan` +
+    `SegmentNarrationAsset` + measured duration
+  - planner/TTS/compiler route wiring
+  - bounded planner/compiler repair
+
 ## Latest continuation — handoff documentation alignment
 
 - Aligned `AGENTS.md`, `README.md`, product docs, architecture docs, template
@@ -10,13 +37,13 @@ Last updated: latest documentation alignment
   - shipped v1 route: `POST /api/generate` still returns validated
     `VideoProject` directly
   - implemented groundwork: `StoryboardPlan` schema, compact planner template
-    manifest, and internal MiniMax storyboard-planner facade
-  - not implemented yet: public planner route wiring, planner repair, TTS
-    assets, audio-duration probing, selected-template compiler, and full
-    staged assembly
-- Next best bounded product slice remains TTS from planned segment narration,
-  unless the next task explicitly asks to expose or smoke-test the planner
-  facade first.
+    manifest, internal MiniMax storyboard-planner facade, and internal TTS
+    asset generation/serving for planned segment narration
+  - not implemented yet: public planner route wiring, planner repair,
+    selected-template compiler, and full staged assembly
+- Next best bounded product slice is selected-template compilation from a
+  planned segment plus measured narration asset, unless the next task
+  explicitly asks to wire or smoke-test the staged route first.
 
 ## Latest continuation — storyboard plan contract groundwork
 
