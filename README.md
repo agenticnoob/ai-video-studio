@@ -6,7 +6,7 @@ Goal:
 - user enters a natural-language brief
 - AI plans storyboard segments from the brief and registered template
   capabilities
-- the system generates narration / TTS audio for each segment
+- the system generates narration audio and aligned captions for each segment
 - AI compiles each segment into structured template parameters using the real
   audio duration
 - page shows live preview for tuning
@@ -28,14 +28,19 @@ Current implementation status:
 - generation and rendering support registered segment templates (`scripted`
   and `spotlight`) while preserving one primary template per segment
 - the current MiniMax generation path is a usable v1 shortcut; the
-  authoritative final target is the staged planner -> TTS -> template compiler
-  pipeline documented in `docs/FINAL_PRODUCT_GOAL.md`
+  authoritative final target is the staged planner -> narration synthesis ->
+  audio + aligned captions -> template compiler pipeline documented in
+  `docs/FINAL_PRODUCT_GOAL.md`
 - the first storyboard-planning contract is in place as a server-safe schema,
   compact registered-template manifest, and internal MiniMax planner facade
 - the first TTS asset boundary is in place for planned segments:
   `SegmentNarrationAsset`, internal `POST /api/tts`, local `out/tts/...`
   artifacts, `/api/tts/assets/...` serving with byte-range support, and
   ffprobe duration measurement
+- generated narration audio is attached to `VideoSegment.narration.audio` and
+  flattened to the project timeline for preview/export; project-level
+  narration media layers remain supported only as a transitional compatibility
+  carrier
 - the selected-template compiler and staged endpoint use planned segment
   narration, real TTS duration, and only the selected template schema/rules to
   compile template-specific `implementation`
@@ -43,7 +48,7 @@ Current implementation status:
   and keeps the shipped v1 `POST /api/generate` shortcut available through a
   page-level toggle
 - staged selected-segment regeneration reruns the target segment's planning,
-  TTS, selected-template compilation, and narration media-layer replacement
+  TTS, selected-template compilation, and segment-owned narration replacement
   while preserving non-target segments
 - the main page has been split into a thin layout entry plus focused project
   generation, generation controls, and preview modules so the staged loop can
@@ -57,6 +62,10 @@ Current implementation status:
   source
 - current progress and next-step notes live in `docs/ITERATION_STATUS.md`
 - product requirements live in `docs/PRODUCT_REQUIREMENTS.md`
+- F5-TTS / aligned captions provider target lives in
+  `docs/providers/f5-tts.md`
+- implementation handoff for that slice lives in
+  `docs/HANDOFF_F5_TTS_CAPTIONS.md`
 - agent/new-task startup notes live in `AGENTS.md`
 
 ## Current product flow
@@ -83,17 +92,22 @@ Current modeling direction:
 - `VideoSegment` is the user-facing editing and regeneration unit
 - one segment should have one primary template
 - `templateId` determines the schema of `implementation`
-- final generation should plan segments first, generate TTS audio per segment
-  second, then compile the selected template's `implementation` from the real
-  audio duration and segment visual brief
+- final generation should plan segments first, generate narration audio plus
+  aligned captions per segment second, then compile the selected template's
+  `implementation` from the real audio duration and segment visual brief
 - `implementation` is template-specific; current registered templates are:
   - `scripted`: `VideoSpec` with internal `scenes`
   - `spotlight`: `SpotlightSpec` with `headline`, `subheadline`,
     `callouts`, and `durationInFrames`
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
 - generated narration audio should be carried outside template-specific
-  `implementation` fields; the scripted scene schema no longer exposes an
+  `implementation` fields; the target home is segment-owned
+  `VideoSegment.narration`, and the scripted scene schema no longer exposes an
   audio field to generation providers
+- the next narration-provider direction is an in-project F5-TTS provider that
+  returns local audio plus aligned caption cues when available
+- caption cues should be stored with segment narration data using segment-local
+  timing, then rendered by shared project preview/export code
 - future existing video, image, audio, or color inputs should be modeled as
   project-level or segment-level `media.layers[]` data; `baseLayer` is now a
   media-layer role, not a separate project field
@@ -163,16 +177,21 @@ Current code checkpoint:
 - basic bounded planner repair is in place for invalid `StoryboardPlan`
   output
 - deterministic staged smoke fixtures cover a mixed `scripted` + `spotlight`
-  project and selected-segment narration replacement; Remotion Studio exposes
-  this as `StagedSmokeMixedTemplateProject`
+  project with segment-owned narration audio and selected-segment narration
+  replacement; the next fixture update should cover segment-owned captions;
+  Remotion Studio exposes the current fixture as
+  `StagedSmokeMixedTemplateProject`
 - not implemented yet: persistence/history and broad media-layer editing
 
 Best next bounded slice:
 - keep `VideoProject` as the preview/edit/export boundary
 - use `StoryboardPlan` as the planner-stage contract
-- continue hardening the user-facing preview / edit / export loop on staged
-  output, especially live multi-segment generation and clearer progress/error
-  UX
+- continue from `VideoSegment.narration` as the target home for generated
+  narration text, audio metadata, and segment-local caption cues
+- add caption normalization and caption rendering on top of the existing
+  segment-owned narration flattening path
+- add the in-project F5-TTS provider and caption normalization after the
+  segment-owned narration contract is in place
 - avoid persistence/history, generic media-layer compositing, and
   multi-template-per-segment orchestration unless explicitly reopened
 

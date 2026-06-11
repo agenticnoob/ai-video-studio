@@ -13,6 +13,9 @@ Roadmap note:
 - `POST /api/generate` is the shipped v1 shortcut.
 - The storyboard planner, TTS asset route, selected-template compiler, and
   staged assembly path are wired behind `POST /api/generate/staged`.
+- The next narration-provider target is the in-project F5-TTS provider
+  described in `docs/providers/f5-tts.md`; MiniMax TTS remains the current
+  working provider/fallback until that path lands.
 - The main page generation action now defaults to `POST /api/generate/staged`
   and keeps `POST /api/generate` available as a one-shot fallback.
 - In staged mode, selected-segment regeneration replans only the target
@@ -30,7 +33,9 @@ In scope:
 - staged generation via `POST /api/generate/staged`
 - staged selected-segment regeneration via `POST /api/generate/staged`
 - duration-aware selected-template implementation compilation
-- generated narration audio media-layer assembly and preservation
+- segment-owned generated narration audio through
+  `VideoSegment.narration.audio`
+- render-time flattening for segment-owned narration audio
 - byte-range serving for generated TTS assets
 - single `emit_result` tool-calling path
 - strict Zod validation through `videoProjectSchema`
@@ -40,11 +45,12 @@ In scope:
 
 Out of scope for this provider pass:
 - multi-provider registry or fallback chains
+- F5-TTS provider integration and aligned caption generation
 - streaming responses
 - persistence, draft history, or render history UX
 - template creation beyond the currently registered template modules
 - broad project-level or segment-level media-layer compositing beyond the
-  generated narration audio carrier
+  current narration audio compatibility path
 - planner repair beyond selected-template compiler repair
 
 ## Implementation Files
@@ -61,10 +67,13 @@ Out of scope for this provider pass:
 - `src/lib/minimax/index.ts` exposes `minimaxGenerateProject()`, `minimaxReviseSegment()`, `minimaxGenerateStoryboardPlan()`, `minimaxGenerateRevisedSegmentPlan()`, and `minimaxCompileTemplateImplementation()`.
 - `src/lib/storyboard-plan-schema.ts` defines the planner contract.
 - `src/lib/narration-asset-schema.ts` defines the generated narration asset metadata contract.
-- `src/lib/narration-media.ts` converts narration assets into project audio media layers.
+- `src/lib/narration-asset-schema.ts` also defines segment-owned narration
+  audio and caption contracts.
 - `src/lib/staged-project-generation.ts` assembles staged planner/TTS/compiler output into `VideoProject`.
-- `src/lib/project-media.ts` preserves and retimes narration media layers when
-  one segment is regenerated.
+- `src/lib/staged-project-assembly.ts` preserves non-target segment narration
+  data when one segment is regenerated.
+- `src/remotion/ProjectVideo/ProjectNarrationLayers.tsx` flattens
+  segment-owned narration audio during preview/export.
 - `src/app/api/generate/staged/route.ts` runs the staged pipeline.
 - `src/lib/tts/config.ts` reads MiniMax TTS config.
 - `src/lib/tts/minimax.ts` calls the MiniMax synchronous speech endpoint.
@@ -147,7 +156,7 @@ Segment mode:
 2. `minimaxReviseSegment()` sends the full current project, including every segment's `implementation.meta`, `implementation.theme`, and `implementation.scenes`.
 3. The prompt instructs MiniMax to return the full project and preserve non-target segments byte-for-byte.
 4. The same tool-call parser and Zod validation gate the returned project.
-5. Existing project media layers are reattached and narration layer
+5. Existing project media layers are reattached and current narration layer
    `startFrame` values are recalculated to prevent legacy one-shot segment
    regeneration from dropping or desynchronizing staged narration audio.
 
@@ -193,14 +202,25 @@ Staged endpoint:
    -> compiler -> assembly from a validated `StoryboardPlan`.
 3. `POST /api/generate/staged` with `mode: "segment"` replans exactly the
    target segment, regenerates its TTS asset, recompiles its selected-template
-   implementation, replaces that segment and its narration layer, and
-   preserves non-target segments.
-4. Generated narration audio is converted into project-level
-   `media.layers[]` audio layers.
+   implementation, replaces that segment and its `VideoSegment.narration`
+   audio data, and preserves non-target segments.
+4. Generated narration audio is attached to
+   `VideoSegment.narration.audio`; project-level narration media layers remain
+   supported only as a transitional compatibility path.
 5. The route returns `{ plan, project, diagnostics }`.
 6. The main page uses this route by default for top-level generation and
    selected-segment regeneration while keeping the one-shot route as a
    fallback toggle.
+
+F5-TTS roadmap note:
+- The future target is planner -> narration synthesis -> audio + aligned
+  captions -> compiler -> assembly.
+- F5-TTS should be added under the project-owned TTS/narration provider
+  boundary, not inside MiniMax-specific code.
+- Before or alongside F5-TTS, add caption normalization and store captions as
+  segment-local `VideoSegment.narration.captions` data.
+- MiniMax-specific `subtitle_enable: false` describes the current MiniMax TTS
+  request only; it is not the final caption strategy.
 
 ## Parser Recovery
 

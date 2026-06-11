@@ -1,9 +1,7 @@
-import { createNarrationAudioLayer } from "./narration-media";
-import type { SegmentNarrationAsset } from "./narration-asset-schema";
+import { segmentNarrationFromAsset, type SegmentNarrationAsset } from "./narration-asset-schema";
 import { videoSegmentSchema, type VideoProject, type VideoSegment } from "./project-schema";
 import {
   assembleStagedProject,
-  getNextNarrationStartFrame,
   orderPlanSegments,
   replaceSegmentAndNarrationLayer,
 } from "./staged-project-assembly";
@@ -147,22 +145,17 @@ const spotlightSegment = videoSegmentSchema.parse({
 
 export const mixedTemplateCompiledSegments: VideoSegment[] = [scriptedSegment, spotlightSegment];
 
-const orderedPlanSegments = orderPlanSegments(mixedTemplateStoryboardPlan);
-let nextNarrationStartFrame = 0;
-const mixedTemplateNarrationLayers = orderedPlanSegments.map((segmentPlan, index) => {
-  const segment = mixedTemplateCompiledSegments[index];
-  const layer = createNarrationAudioLayer({
-    narration: mixedTemplateNarrationAssets[segmentPlan.id],
-    segmentId: segmentPlan.id,
-    startFrame: nextNarrationStartFrame,
-  });
-  nextNarrationStartFrame = getNextNarrationStartFrame(nextNarrationStartFrame, segment);
-  return layer;
-});
+const mixedTemplateCompiledSegmentsWithNarration = orderPlanSegments(
+  mixedTemplateStoryboardPlan,
+).map((segmentPlan, index) =>
+  videoSegmentSchema.parse({
+    ...mixedTemplateCompiledSegments[index],
+    narration: segmentNarrationFromAsset(mixedTemplateNarrationAssets[segmentPlan.id]),
+  }),
+);
 
 export const mixedTemplateStagedProject: VideoProject = assembleStagedProject({
-  compiledSegments: mixedTemplateCompiledSegments.map((segment) => ({ segment })),
-  narrationLayers: mixedTemplateNarrationLayers,
+  compiledSegments: mixedTemplateCompiledSegmentsWithNarration.map((segment) => ({ segment })),
   plan: mixedTemplateStoryboardPlan,
 });
 
@@ -191,17 +184,11 @@ export const mixedTemplateSegmentRevisionProject: VideoProject = replaceSegmentA
   project: mixedTemplateStagedProject,
   segment: revisedSpotlightSegment,
   segmentId: "segment-2",
-  segmentIndex: 1,
 });
 
 const assertMixedTemplateFixture = (): void => {
   const [firstSegment, secondSegment] = mixedTemplateStagedProject.segments;
-  const layers = mixedTemplateStagedProject.media?.layers ?? [];
-  const [firstLayer, secondLayer] = layers;
-  const revisedLayers = mixedTemplateSegmentRevisionProject.media?.layers ?? [];
-  const revisedTargetLayer = revisedLayers.find(
-    (layer) => layer.id === "segment-2-narration-audio",
-  );
+  const [revisedFirstSegment, revisedSecondSegment] = mixedTemplateSegmentRevisionProject.segments;
 
   if (firstSegment.templateId !== SCRIPTED_TEMPLATE_ID) {
     throw new Error("Mixed-template smoke fixture expected segment-1 to use scripted.");
@@ -209,16 +196,23 @@ const assertMixedTemplateFixture = (): void => {
   if (secondSegment.templateId !== SPOTLIGHT_TEMPLATE_ID) {
     throw new Error("Mixed-template smoke fixture expected segment-2 to use spotlight.");
   }
-  if (firstLayer?.startFrame !== 0 || secondLayer?.startFrame !== firstSegment.durationInFrames) {
-    throw new Error("Mixed-template smoke fixture narration layer timeline is invalid.");
-  }
   if (
-    JSON.stringify(mixedTemplateSegmentRevisionProject.segments[0]) !== JSON.stringify(firstSegment)
+    firstSegment.narration?.audio?.src !== "/api/tts/assets/smoke/segment-1.mp3" ||
+    secondSegment.narration?.audio?.src !== "/api/tts/assets/smoke/segment-2.mp3"
   ) {
+    throw new Error("Mixed-template smoke fixture expected segment-owned narration audio.");
+  }
+  if (mixedTemplateStagedProject.media?.layers.some((layer) => layer.kind === "narration")) {
+    throw new Error("Mixed-template smoke fixture should not use project-level narration layers.");
+  }
+  if (JSON.stringify(revisedFirstSegment) !== JSON.stringify(firstSegment)) {
     throw new Error("Mixed-template smoke fixture should preserve the non-target segment data.");
   }
-  if (revisedTargetLayer?.startFrame !== firstSegment.durationInFrames) {
-    throw new Error("Mixed-template smoke fixture revised narration layer startFrame is invalid.");
+  if (
+    revisedSecondSegment.narration?.text !==
+    "Only the target segment gets fresh narration and template parameters."
+  ) {
+    throw new Error("Mixed-template smoke fixture should replace target segment narration.");
   }
 };
 
@@ -227,10 +221,10 @@ assertMixedTemplateFixture();
 export const mixedTemplateSmokeFixtureSummary = {
   segmentCount: mixedTemplateStagedProject.segments.length,
   templateIds: mixedTemplateStagedProject.segments.map((segment) => segment.templateId),
-  narrationLayerStartFrames: mixedTemplateStagedProject.media?.layers.map(
-    (layer) => layer.startFrame,
+  narrationAudioSources: mixedTemplateStagedProject.segments.map(
+    (segment) => segment.narration?.audio?.src,
   ),
-  revisedNarrationLayerStartFrames: mixedTemplateSegmentRevisionProject.media?.layers.map(
-    (layer) => layer.startFrame,
+  revisedNarrationAudioSources: mixedTemplateSegmentRevisionProject.segments.map(
+    (segment) => segment.narration?.audio?.src,
   ),
 };

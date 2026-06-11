@@ -24,13 +24,16 @@ with this target.
 
 然后系统按分镜循环生成：
 
-1. 用当前分镜台词调用 TTS，生成当前分镜语音。
+1. 用当前分镜台词调用项目内 narration provider，优先使用项目内 F5-TTS
+   provider 生成当前分镜语音和对齐字幕。
 2. 读取或归一化当前语音的真实时长。
-3. 把真实时长、当前分镜选择的模版信息、当前分镜大致内容、台词、
+3. 基于 provider 返回的 alignment 生成字幕数据；如果 provider 暂时不返回
+   alignment，再使用 narration 和语音时长生成 fallback 字幕。
+4. 把真实时长、当前分镜选择的模版信息、当前分镜大致内容、台词、
    全局风格上下文交给 LLM。
-4. LLM 只返回该模版需要的 schema-valid 参数。
-5. 系统把 `templateId`、生成语音、真实时长、模版参数组合成当前分镜。
-6. 全部分镜生成后，系统把它们组装成一个完整 `VideoProject`，用于预览、
+5. LLM 只返回该模版需要的 schema-valid 参数。
+6. 系统把 `templateId`、生成语音、真实时长、字幕数据、模版参数组合成当前分镜。
+7. 全部分镜生成后，系统把它们组装成一个完整 `VideoProject`，用于预览、
    编辑、重新生成和本地导出。
 
 The English sections below turn this product statement into engineering
@@ -47,7 +50,8 @@ The final generation model is not a single LLM call that directly emits a full
 ```txt
 user prompt
   -> storyboard planning
-  -> per-segment narration / TTS
+  -> per-segment narration synthesis
+  -> audio + aligned captions
   -> per-segment template compilation
   -> assembled VideoProject
   -> preview, edit, regenerate, export
@@ -59,11 +63,13 @@ The system should:
 2. Choose how many segments / shots the video needs.
 3. Select one primary registered template for each segment.
 4. Write or refine narration for each segment.
-5. Generate TTS audio for each segment before final template parameters are
-   compiled.
-6. Use the real audio duration to generate schema-valid template parameters.
-7. Assemble all compiled segments into one `VideoProject`.
-8. Let the user preview, edit, regenerate, and export the full video.
+5. Generate narration audio and aligned captions for each segment before final
+   template parameters are compiled.
+6. Prefer the in-project F5-TTS provider for local narration synthesis and
+   caption alignment.
+7. Use the real audio duration to generate schema-valid template parameters.
+8. Assemble all compiled segments into one `VideoProject`.
+9. Let the user preview, edit, regenerate, and export the full video.
 
 This keeps the product segment-first, template-driven, voice-aware, and
 scalable as the template library grows.
@@ -78,8 +84,9 @@ Use these terms consistently.
 | Shot / storyboard segment / 分镜 | `VideoSegment` | The user-facing editable unit in the final video. |
 | Template | `templateId` + template module | A registered implementation mechanism for one segment. |
 | Template choice | `templateId` | The primary template selected for a segment. |
-| Narration / 台词 | `narration.text` target model | The spoken script for one segment. |
-| TTS result | narration audio asset metadata | Generated audio file plus duration, provider, voice, and related metadata. |
+| Narration / 台词 | `VideoSegment.narration.text` target model | The spoken script for one segment. |
+| Narration synthesis result | `VideoSegment.narration.audio` target model | Generated audio file plus duration, provider, voice, and related metadata owned by the segment. |
+| Captions / subtitles | `VideoSegment.narration.captions` target model | Segment-local timed readable text returned or normalized from narration synthesis and kept outside template-specific implementation data. |
 | Template parameters | `implementation` | The template-specific data needed by the selected renderer. |
 | Compiled segment | `VideoSegment` | Template choice + narration/audio metadata + validated implementation. |
 | Full video | `VideoProject` | The assembled project used by preview, editing, and export. |
@@ -91,10 +98,21 @@ Important modeling rules:
 - `implementation` is template-specific, not a universal project field.
 - Narration text and generated audio should stay outside template-specific
   `implementation` fields and should not be hidden inside one template's
-  private scene model.
+  private scene model. The target home is `VideoSegment.narration`.
+- Caption/subtitle data should be returned by the narration provider when
+  possible, normalized from provider alignment, remain editable, and stay
+  outside template-specific `implementation` fields. Caption timing should be
+  segment-local under `VideoSegment.narration.captions`; shared preview/export
+  code can flatten those cues to the global project timeline.
+- The preferred narration provider is an in-project F5-TTS provider boundary,
+  not a separate external product. It may run as a local service/process, but
+  its adapter, request contract, artifact handling, and fallback behavior
+  belong in this repository.
 - The old scripted scene audio hook must not be treated as the narration/TTS
-  model. New generation paths should use segment-level narration metadata or
-  media-layer audio instead.
+  model. New generation paths should use segment-level narration metadata.
+  The current staged path stores generated narration audio in segment-level
+  narration metadata; project-level narration media layers are compatibility
+  carriers, not the target ownership model.
 - `VideoSpec.scenes` is specific to the `scripted` template.
 - Future templates should define their own implementation fields.
 - Do not model one segment as multiple template instances unless a concrete
@@ -169,41 +187,50 @@ Why this stage exists:
 - It creates a stable intermediate artifact that can be edited, audited, and
   partially regenerated.
 
-### 3.2 Stage B: Segment Narration And TTS
+### 3.2 Stage B: Segment Narration Synthesis And Alignment
 
 For each planned segment, the system generates voice audio before compiling the
-template implementation.
+template implementation. The preferred target is an in-project F5-TTS provider
+that returns both audio and caption/alignment data from the same narration
+request.
 
-TTS input:
+Narration synthesis input:
 
 - segment narration text
 - language
 - desired voice / voice profile when selected
 - tone or delivery hint
 - segment id and project id for deterministic artifact naming
+- optional reference audio / speaker profile for local F5-TTS voice control
 
-TTS output:
+Narration synthesis output:
 
 ```ts
 type SegmentNarrationAsset = {
   text: string;
-  audioSrc: string;
-  durationInFrames: number;
-  durationInSeconds: number;
-  voiceId?: string;
-  provider?: string;
-  format?: "mp3" | "wav" | "aac" | "m4a";
+  audio?: {
+    src: string;
+    durationInFrames: number;
+    durationInSeconds: number;
+    voiceId?: string;
+    provider?: "f5-tts" | "minimax" | string;
+    format?: "mp3" | "wav" | "aac" | "m4a";
+  };
+  captions?: SegmentCaptions;
 };
 ```
 
-TTS responsibilities:
+Narration provider responsibilities:
 
 - produce a local or serveable audio asset
 - report the real duration
+- return aligned caption/subtitle cues when the provider can produce alignment
 - keep enough metadata to support regeneration and debugging
 - make preview and export use the same audio asset
+- keep the provider adapter and artifact handling inside this project, even if
+  the F5-TTS runtime itself is served by a local process or container
 
-TTS non-responsibilities:
+Narration provider non-responsibilities:
 
 - do not decide the final visual implementation
 - do not mutate unrelated segments
@@ -211,13 +238,13 @@ TTS non-responsibilities:
 - do not require waveform editing, ducking, beat sync, or timeline UI for the
   first implementation
 
-Why TTS happens before template compilation:
+Why narration synthesis happens before template compilation:
 
 - Real spoken duration controls segment duration.
 - Visual pacing should fit the narration audio, not the other way around.
 - Template parameter generation can use the real number of frames.
-- Later caption and subtitle timing can be derived from the same narration
-  artifact.
+- Caption and subtitle timing should come from the same narration provider
+  result when available, so audio and readable text share one timing source.
 
 Duration guard:
 
@@ -229,14 +256,83 @@ Duration guard:
   - choose a better template
   - ask the user only if automatic repair would change intent too much
 
-### 3.3 Stage C: Segment Template Compilation
+### 3.3 Stage C: Caption Cue Normalization
 
-After TTS, the system compiles each segment into template-specific render data.
+After narration synthesis returns audio and alignment, the system should
+normalize caption cues before final project assembly. In the preferred F5-TTS
+path, this stage consumes provider-returned alignment instead of acting as a
+separate subtitle generation pass.
+
+Caption input:
+
+- segment narration text
+- generated narration audio metadata
+- provider-returned alignment / caption cues when available
+- real `durationInFrames` and `durationInSeconds`
+- language
+- optional caption style preferences when present
+
+Caption output:
+
+```ts
+type SegmentCaptionCue = {
+  id: string;
+  text: string;
+  startFrame: number; // segment-local
+  durationInFrames: number;
+};
+
+type SegmentCaptions = {
+  language?: string;
+  cues: SegmentCaptionCue[];
+  style?: {
+    preset?: string;
+    position?: "bottom" | "center" | "top";
+  };
+};
+```
+
+Caption responsibilities:
+
+- normalize readable subtitles from provider-returned alignment/caption data
+- align cue timing with the generated narration audio using provider-returned
+  alignment whenever available
+- keep caption data editable and regeneratable per segment
+- make preview and export render the same caption data
+- keep caption content separate from template-specific `implementation`
+- keep cue timing segment-local; preview/export can add each segment's global
+  start frame at render time
+
+Caption non-responsibilities:
+
+- do not become a professional subtitle editor in the first implementation
+- do not require word-perfect forced alignment before the basic caption loop is
+  useful, but prefer F5-TTS alignment whenever available
+- do not make each template own its own private subtitle data model
+- do not treat captions as an independent LLM subtitle-generation stage when
+  the narration provider already returned alignment
+
+Why caption normalization is a separate step:
+
+- Caption cues depend on narration-provider output and audio timing, not on a
+  single template's internal schema.
+- F5-TTS can make captions substantially better by returning timing data from
+  the same local provider request that produced the audio.
+- The user should be able to edit or regenerate subtitles without changing the
+  selected template's visual parameters.
+- Caption rendering can later be styled globally or per segment while the
+  caption cues remain stable data.
+
+### 3.4 Stage D: Segment Template Compilation
+
+After narration synthesis and caption normalization, the system compiles each
+segment into template-specific render data.
 
 Compiler input:
 
 - one `StoryboardSegmentPlan`
 - its `SegmentNarrationAsset`
+- its `SegmentCaptions`, when captions are enabled or generated
 - real `durationInFrames`
 - selected template's complete schema
 - selected template's implementation rules
@@ -260,7 +356,9 @@ type CompiledVideoSegment = {
 Compiler responsibilities:
 
 - fill only the selected template's schema
-- use the real TTS duration as the timing anchor
+- use the real narration audio duration as the timing anchor
+- respect caption-safe layout constraints when the template renders text near
+  the caption area
 - keep visual content aligned with `visualBrief` and narration
 - produce data that passes Zod validation
 - preserve the selected template unless repair requires a template change
@@ -282,7 +380,7 @@ Validation and repair:
 - After a small number of failed repairs, the system should return a clear
   error instead of silently falling back to unrelated content.
 
-### 3.4 Stage D: Project Assembly
+### 3.5 Stage E: Project Assembly
 
 The system assembles compiled segments into a `VideoProject`.
 
@@ -290,6 +388,7 @@ Assembly responsibilities:
 
 - preserve the original brief
 - preserve ordered compiled segments
+- preserve generated caption/subtitle cues
 - compute or normalize durations
 - ensure preview and export consume the same project payload
 - keep generated assets reachable by Remotion
@@ -361,15 +460,23 @@ Recommended edit scopes:
 - full project re-plan: user changes the whole brief or story direction
 - segment re-plan: user changes what one segment should say or do
 - narration regenerate: user changes the spoken script or voice
-- TTS regenerate: user keeps narration text but changes voice/delivery
+- narration synthesis regenerate: user keeps narration text but changes
+  voice/delivery/provider
+- captions regenerate: user keeps narration/audio but changes subtitle wording,
+  timing, language, or display style
 - implementation regenerate: user keeps narration/audio but changes visuals
 - field edit: user directly edits template parameters
 
 Regeneration rules:
 
-- If narration text changes, rerun TTS and segment compilation.
-- If only the voice changes, rerun TTS and segment compilation only when timing
-  changes enough to affect visuals.
+- If narration text changes, rerun narration synthesis, caption normalization,
+  and segment compilation.
+- If narration text changes and captions are enabled, regenerate or realign
+  captions for the affected segment.
+- If only the voice or narration provider changes, rerun narration synthesis
+  and segment compilation only when timing changes enough to affect visuals.
+- If only caption text or caption style changes, preserve narration audio and
+  template implementation unless layout constraints require visual repair.
 - If only visual direction changes, reuse existing narration audio and rerun
   template compilation.
 - If template changes, rerun template compilation and validate against the new
@@ -396,7 +503,8 @@ This path can stay while it is sufficient. The final target evolves it into:
 ```txt
 brief
   -> StoryboardPlan
-  -> per-segment TTS
+  -> per-segment narration synthesis
+  -> audio + aligned captions
   -> per-segment template compiler
   -> assembled VideoProject
   -> preview/edit/export
@@ -410,13 +518,25 @@ Current compatibility notes:
 
 - `VideoProject` remains the top-level contract.
 - `VideoSegment` remains the editing unit.
-- New narration/TTS work must not use scripted scene fields as the audio
+- New narration-provider work must not use scripted scene fields as the audio
   carrier.
-- `VideoProject.media.layers[]` now has a minimal project-level audio layer
-  path that can carry generated narration audio outside templates.
+- The staged path now carries generated narration audio in segment-owned
+  `VideoSegment.narration.audio` and flattens it to the project timeline for
+  preview and export.
+- `VideoProject.media.layers[]` still supports project-level audio layers,
+  including old narration layers as a transitional compatibility path, but it
+  is no longer the primary generated narration ownership model.
+- The remaining target work is segment-owned `VideoSegment.narration.captions`,
+  with caption cues flattened to the project timeline for preview and export.
 - Narration metadata should stay separated from template implementation data so
   the system can distinguish spoken text, generated audio, voice, timing, and
   provider.
+- Caption/subtitle metadata should also stay separated from template
+  implementation data so subtitle editing, timing, styling, preview, and export
+  can evolve independently from any one template schema.
+- The F5-TTS provider should be implemented as part of this project. It can
+  call a local service/process/container, but the repo owns the provider
+  contract, config, artifact writing, caption normalization, and fallback path.
 
 ## 7. Roadmap
 
@@ -444,6 +564,8 @@ Known limitation:
   shortcut
 - the active staged page path now uses planner -> TTS -> compiler -> assembly,
   with bounded planner repair and deterministic mixed-template smoke fixtures;
+  F5-TTS narration synthesis and aligned captions are newly added final-target
+  work that still needs implementation and integration into this path;
   provider-backed live smoke coverage still needs hardening
 
 ### Milestone 1: Authoritative Goal And Contracts
@@ -454,8 +576,10 @@ Deliverables:
 
 - this document
 - updated PRD / README / agent notes that point to this target
-- explicit statement that the final path is planner -> TTS -> compiler ->
-  assembly
+- explicit statement that the final path is planner -> narration synthesis ->
+  audio + aligned captions -> compiler -> assembly
+- explicit statement that captions/subtitles are produced or normalized from
+  the narration provider result
 - explicit statement that current one-shot generation is a v1 shortcut
 
 ### Milestone 2: Storyboard Plan Contract
@@ -513,6 +637,9 @@ Deliverables:
 
 Remaining:
 
+- add an in-project F5-TTS provider path that can return audio plus aligned
+  captions for planned segment narration
+- add caption normalization/fallback cues into `VideoSegment.narration.captions`
 - harden provider-specific failure handling and retry behavior
 - add richer voice selection when the basic loop is stable
 
@@ -541,13 +668,15 @@ Implemented:
 - compile function that accepts plan + narration asset + duration
 - strict Zod validation against the selected template schema
 - one bounded compiler repair attempt
-- project-level narration audio media layer assembly
+- segment-owned narration audio assembly through
+  `VideoSegment.narration.audio`
+- render-time flattening for segment-owned narration audio
 - `POST /api/generate/staged` route for brief or existing plan input
 - main page generation defaults to the staged route, with the one-shot v1 path
   kept as a fallback toggle
 - `POST /api/generate/staged` segment mode replans one target segment,
   regenerates its TTS audio, recompiles its selected-template implementation,
-  replaces that segment's narration media layer, and preserves non-target
+  replaces that segment's owned narration data, and preserves non-target
   segments
 - TTS asset route supports byte ranges for Remotion Player seek behavior
 - local `/api/render` resolves route media such as `/api/tts/assets/...` to a
@@ -558,12 +687,15 @@ Implemented:
 
 Remaining:
 
+- segment-owned caption normalization and render-time caption flattening
 - provider-backed live multi-segment staged smoke
 - richer progress/error UX for multi-stage generation
 
 Success criteria:
 
 - a generated segment plays with TTS audio
+- the preferred F5-TTS path returns or enables aligned caption cues for the
+  segment narration
 - segment duration matches or safely contains the audio duration
 - template visual timing is generated from audio duration, not arbitrary
   guessed timing
@@ -576,7 +708,9 @@ Goal:
 
 Deliverables:
 
-- full generate action runs planner -> TTS loop -> compiler loop -> assembly
+- full generate action runs planner -> narration synthesis loop -> audio +
+  aligned captions -> compiler loop -> assembly
+- generated audio and captions are attached to their owning `VideoSegment`
 - page can display generation progress by stage
 - segment regeneration chooses the smallest needed stage
 - generated project remains editable and exportable through existing paths
@@ -598,15 +732,21 @@ Deliverables:
 - deterministic smoke fixtures for registered template mixes
 - provider-backed live smoke coverage as template count grows
 
-### Milestone 7: Narration, Captions, And Audio Polish
+### Milestone 7: Captions, Narration, And Audio Polish
 
 Goal:
 
-- improve the audible video experience after the basic TTS loop works
+- improve the audible and readable video experience after the basic TTS loop
+  works
 
 Deliverables:
 
-- caption/subtitle data derived from narration
+- caption/subtitle data returned by F5-TTS when available, otherwise
+  normalized from narration and generated audio duration as a fallback
+- in-project F5-TTS provider integration for audio plus aligned captions
+- segment-owned narration/caption contracts and render-time flattening
+- preview/export rendering for captions
+- segment-level caption editing and regeneration
 - per-segment voice selection
 - optional project-level narration consistency
 - volume normalization
@@ -623,17 +763,17 @@ Goal:
 Deliverables:
 
 - project-level `media.layers[]`
+- segment-level `media.layers[]` for media that belongs to one segment
 - shared Remotion media renderer
 - compact structured media editor
-- later segment-level media if a concrete workflow requires it
 
 Important ordering:
 
-- media layers are important, but they should not block the TTS-first
-  generation pipeline
-- generated narration audio should use template-external project data; the
-  current minimal audio media layer path is the first cross-template runtime
-  carrier
+- media layers are important, but they should not block the
+  narration-provider-first generation pipeline
+- generated narration audio should use template-external segment-owned data;
+  the current minimal project audio media layer path is only the first
+  cross-template runtime carrier
 
 ### Milestone 9: Persistence And Generation History
 
@@ -658,10 +798,10 @@ Do not use this roadmap to accidentally expand scope into:
 - multi-template-per-segment orchestration
 - full professional timeline editing
 - AI-generated Remotion source code as the default path
-- uploaded media management before TTS generation works
+- uploaded media management before narration-provider generation works
 - generated images/videos before narration audio works
-- waveform editing, ducking, beat sync, or DAW-style audio controls in the TTS
-  MVP
+- waveform editing, ducking, beat sync, or DAW-style audio controls in the
+  narration-provider MVP
 - broad provider abstraction before one concrete provider path proves the
   staged pipeline
 
@@ -671,12 +811,13 @@ When choosing between possible next steps, prefer work that moves the product
 toward:
 
 1. a better `StoryboardPlan`
-2. generated narration audio
-3. real audio duration driving template parameters
-4. one selected template's schema-valid implementation
-5. reliable assembly into `VideoProject`
-6. preview/export parity
-7. segment-level regeneration with minimal blast radius
+2. generated narration audio through the in-project provider boundary
+3. caption/subtitle data returned or normalized from provider alignment
+4. real audio duration driving template parameters
+5. one selected template's schema-valid implementation
+6. reliable assembly into `VideoProject`
+7. preview/export parity
+8. segment-level regeneration with minimal blast radius
 
 Prefer deferring work that mainly improves:
 

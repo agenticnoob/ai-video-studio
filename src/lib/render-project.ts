@@ -74,7 +74,14 @@ const getRenderAssetOrigin = (): string => {
 };
 
 const resolveRouteMediaForRender = (project: VideoProject): VideoProject => {
-  if (!project.media?.layers.length) {
+  const hasRouteMediaLayer = project.media?.layers.some(
+    (layer) => layer.sourceType === "route" && layer.src.startsWith("/"),
+  );
+  const hasRouteSegmentNarration = project.segments.some((segment) =>
+    segment.narration?.audio?.src.startsWith("/"),
+  );
+
+  if (!hasRouteMediaLayer && !hasRouteSegmentNarration) {
     return project;
   }
 
@@ -82,18 +89,41 @@ const resolveRouteMediaForRender = (project: VideoProject): VideoProject => {
 
   return normalizeProject({
     ...project,
-    media: {
-      layers: project.media.layers.map((layer) => {
-        if (layer.sourceType !== "route" || !layer.src.startsWith("/")) {
-          return layer;
-        }
+    ...(project.media
+      ? {
+          media: {
+            layers: project.media.layers.map((layer) => {
+              if (layer.sourceType !== "route" || !layer.src.startsWith("/")) {
+                return layer;
+              }
 
-        return {
-          ...layer,
-          src: `${assetOrigin}${layer.src}`,
-        };
-      }),
-    },
+              return {
+                ...layer,
+                src: `${assetOrigin}${layer.src}`,
+              };
+            }),
+          },
+        }
+      : {}),
+    segments: project.segments.map((segment) => {
+      const narration = segment.narration;
+      const audio = narration?.audio;
+
+      if (!narration || !audio?.src.startsWith("/")) {
+        return segment;
+      }
+
+      return {
+        ...segment,
+        narration: {
+          ...narration,
+          audio: {
+            ...audio,
+            src: `${assetOrigin}${audio.src}`,
+          },
+        },
+      };
+    }),
   });
 };
 

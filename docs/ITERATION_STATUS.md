@@ -1,6 +1,91 @@
 # Iteration Status
 
-Last updated: latest staged smoke fixture hardening
+Last updated: segment-owned narration audio implementation
+
+## Latest continuation — segment-owned narration audio implementation
+
+- Added segment-owned narration/caption contracts:
+  - `VideoSegment.narration.text`
+  - `VideoSegment.narration.audio`
+  - `VideoSegment.narration.captions`
+- Updated staged full-project generation so generated TTS output is attached to
+  the compiled owning segment as `segment.narration.audio`.
+- Updated staged selected-segment regeneration so the target segment's
+  narration and implementation are replaced together, while non-target segment
+  data is preserved.
+- Added render-time flattening for segment-owned narration audio through shared
+  Remotion project rendering, with export-time route media resolution for
+  `segment.narration.audio.src`.
+- Kept project-level narration media layers as a transitional compatibility
+  path for older/current projects, but they are no longer the primary staged
+  narration carrier.
+- Updated deterministic mixed-template staged smoke fixtures to assert
+  segment-owned narration audio and selected-segment narration replacement.
+
+Current readiness:
+- The next slice can add caption normalization/fallback cues and render shared
+  segment-owned captions.
+- F5-TTS provider integration should still come after the shared caption
+  contracts and normalization path are hardened.
+
+## Previous continuation — segment-owned narration/captions handoff alignment
+
+- Updated the next implementation plan after the timeline-model discussion:
+  generated narration audio and caption cues should belong to the owning
+  `VideoSegment`, not to top-level `VideoProject.captions` or long-term
+  project-level narration media layers.
+- New target ownership model:
+  - `VideoSegment.narration.text` stores the spoken script
+  - `VideoSegment.narration.audio` stores generated audio metadata, provider,
+    source URL, and measured duration
+  - `VideoSegment.narration.captions` stores segment-local caption cues
+  - `VideoProject.media.layers[]` is reserved for true full-video assets such
+    as background music, ambience, watermarks, or global overlays
+  - future `VideoSegment.media.layers[]` can carry segment-owned non-narration
+    media when media editing widens
+- Clarified the then-current implementation as transitional:
+  - at that point, active staged generation still carried generated narration
+    audio through project-level `media.layers[]`
+  - selected-segment regeneration retimed those then-current narration layers
+  - that plan was later completed for `VideoSegment.narration.audio`; captions
+    remain the next model-alignment step
+- Rewrote `docs/HANDOFF_F5_TTS_CAPTIONS.md` so the next conversation starts
+  from segment-owned narration/captions before adding F5-TTS runtime details.
+- Aligned docs and README around this model and removed the superseded early
+  implementation plan under `docs/plans/`.
+
+Current readiness:
+- Superseded by the latest continuation: `VideoSegment.narration.audio` now
+  owns generated audio, and the next slice should add caption normalization,
+  shared caption rendering, and then F5-TTS provider integration.
+- Do not start by adding top-level `VideoProject.captions`.
+
+## Latest continuation — F5-TTS aligned-captions target alignment
+
+- Updated the authoritative target from a plain TTS-first staged path to a
+  narration-synthesis path:
+  `StoryboardPlan` -> in-project narration provider -> audio + aligned
+  captions -> selected-template compiler -> assembled `VideoProject`.
+- Added the product decision that F5-TTS should be an in-project provider
+  boundary, not a separate product:
+  - runtime may be a local process or Docker service
+  - this repo owns the provider adapter, config, request/response contract,
+    artifact handling, caption normalization, and fallback behavior
+- Kept the current implementation status unchanged:
+  - active staged generation still uses the existing TTS asset path
+  - MiniMax TTS remains the current working provider/fallback
+  - F5-TTS provider code, caption schema, caption rendering, and caption-aware
+    staged regeneration are not implemented yet
+- Added `docs/providers/f5-tts.md` as the handoff target for the next
+  implementation slice.
+- Validation performed for this documentation slice:
+  - `git diff --check`
+
+Current readiness:
+- docs now define F5-TTS + aligned captions as the next narration-provider
+  direction.
+- implementation should start by adding shared caption contracts and an
+  in-project F5-TTS provider adapter before changing template internals.
 
 ## Latest continuation — deterministic mixed-template staged smoke fixtures
 
@@ -23,7 +108,9 @@ Last updated: latest staged smoke fixture hardening
   - `VideoProject` remains the preview/edit/export boundary.
   - one primary `templateId` still determines each segment's
     template-specific `implementation`.
-  - narration audio remains template-external project media layer data.
+  - narration audio remained template-external project media layer data in
+    that slice; the latest target now migrates ownership to
+    `VideoSegment.narration`.
 - Validation performed for this slice:
   - Docker `npx tsc --noEmit`
   - Docker `npm run lint`
@@ -33,8 +120,9 @@ Last updated: latest staged smoke fixture hardening
 
 Current readiness:
 - the repo now has a deterministic, no-provider smoke artifact for mixed
-  registered templates, narration layer timeline assembly, and selected
-  segment narration replacement.
+  registered templates, then-current narration layer timeline assembly, and
+  selected segment narration replacement. The latest smoke fixture now asserts
+  segment-owned narration audio.
 
 Remaining next slices:
 - live multi-segment staged smoke with configured providers
@@ -292,8 +380,9 @@ Remaining next slices:
 - Current boundary after this cleanup:
   - selected-template compiler should generate visual/template
     `implementation` only
-  - generated narration audio should be represented as project media layer data
-    or other template-external segment generation metadata
+  - generated narration audio used project media layer data as the first
+    runtime carrier; the latest target now prefers segment-owned narration
+    metadata
   - do not reintroduce scripted scene audio fields in provider-visible schemas,
     prompts, compiler outputs, or runtime rendering
 
@@ -381,8 +470,8 @@ Remaining next slices:
   one primary `templateId` per `VideoSegment`, with template-specific
   `implementation`.
 - Updated roadmap direction so media layers remain important later, but do not
-  precede the TTS-first generation pipeline unless a task explicitly widens
-  into existing-media compositing.
+  precede the narration-provider-first generation pipeline unless a task
+  explicitly widens into existing-media compositing.
 
 ## 2026-06-08 continuation — media layer MVP implementation plan
 
@@ -1043,9 +1132,13 @@ Suggested next focus, in order:
   roadmap source.
 - Treat the current one-shot MiniMax generation path as a shipped v1 shortcut,
   not the final generation architecture.
-- Move future generation work toward storyboard planning, per-segment TTS,
-  duration-aware selected-template compilation, and final `VideoProject`
-  assembly.
+- Move future generation work toward storyboard planning, in-project narration
+  synthesis, audio + aligned captions, duration-aware selected-template
+  compilation, and final `VideoProject` assembly.
+- Treat F5-TTS as the preferred next narration-provider boundary in this repo,
+  while MiniMax TTS remains the current working provider/fallback.
+- Keep caption/subtitle cues outside template-specific `implementation`; render
+  them through shared project-level preview/export code.
 - Keep `VideoSpec` as the per-segment implementation contract for the current scripted template.
 - Keep `SpotlightSpec` as the per-segment implementation contract for the current spotlight template.
 - Keep one primary template per segment; grow segment expressiveness through template-specific implementation fields first.

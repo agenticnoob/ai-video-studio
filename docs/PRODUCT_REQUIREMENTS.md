@@ -6,7 +6,8 @@ Authoritative generation target:
 - `docs/FINAL_PRODUCT_GOAL.md` defines the final prompt-to-video generation
   pipeline and should drive roadmap iteration.
 - This PRD defines the product model and scope, while the final-goal document
-  defines the detailed planner -> TTS -> template-compiler architecture.
+  defines the detailed planner -> narration synthesis -> audio + aligned
+  captions -> template-compiler architecture.
 
 ## 1. Product definition
 
@@ -22,8 +23,8 @@ Target workflow:
 - AI interprets the input and plans the video as one or more segments
 - for each segment, the system selects one registered template and writes the
   narration / spoken script
-- the system generates TTS audio for each segment before final template
-  parameters are compiled
+- the system generates narration audio and caption alignment for each segment
+  before final template parameters are compiled
 - for each segment, the system uses the narration audio duration, selected
   template contract, and visual brief to generate schema-valid implementation
   parameters
@@ -45,7 +46,9 @@ Product direction:
   TTS second, selected-template parameter compilation third, project assembly
   last
 - narration/TTS is part of the main generated-video pipeline because real
-  voice duration should drive segment timing and template parameters
+  voice duration should drive segment timing and template parameters; the
+  preferred next provider path is an in-project F5-TTS provider that can return
+  audio plus aligned captions
 - when templates are developed with AI assistance, prefer small reusable
   Remotion primitives plus template-local block contracts over open-ended
   generated template code
@@ -159,12 +162,18 @@ Current registered templates:
 - multi-template-per-segment orchestration is not part of the near-term product direction
 
 Target narration model:
-- each segment should eventually preserve narration text separately from the
-  generated audio source
-- TTS generation should produce an audio asset and measured duration before
-  the selected template's `implementation` is compiled
-- generated narration audio should be carried by template-external generation
-  data or audio media layers, not by template-specific scene fields
+- each segment should own narration text, generated audio metadata, and caption
+  cues under segment-owned narration data
+- TTS/narration synthesis should produce an audio asset, measured duration, and
+  aligned caption cues when available before the selected template's
+  `implementation` is compiled
+- generated narration audio should be carried by template-external,
+  segment-owned narration data, not by template-specific scene fields
+- caption/subtitle cues should also be carried outside template-specific
+  implementation data, with segment-local timing, so they can be previewed,
+  exported, edited, and regenerated consistently across templates
+- the F5-TTS provider should live in this project as a provider boundary, even
+  if its runtime is a local process or container
 
 Potential future media model:
 - project-level `media.layers[]`: video, image, audio, or color layers shared
@@ -220,8 +229,8 @@ Given the user input, the system should:
    capabilities, and usage scenarios
 5. choose one existing template per segment
 6. write or refine narration for each segment
-7. generate TTS audio for each segment
-8. measure or normalize the real audio duration
+7. generate narration audio and aligned captions for each segment
+8. measure or normalize the real audio duration and caption cue timing
 9. generate structured props / schema-valid JSON for the selected template
    using that duration
 10. assemble the generated segments into a full-video draft
@@ -395,7 +404,7 @@ The result should stay previewable, inspectable, editable, and exportable on the
 Near-term product architecture should evolve from the current single-template model toward:
 - storyboard-plan-first video generation
 - AI-generated segment plan with template choice, narration, and visual brief
-- per-segment TTS audio generation
+- segment-owned narration audio generation with aligned captions
 - duration-aware per-segment implementation compilation
 - segment-by-segment regeneration
 - full-video assembly and export
@@ -410,7 +419,12 @@ Current implementation note:
   tool schema, parser, and `minimaxGenerateStoryboardPlan()` facade
 - `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`,
   and `/api/tts/assets/...` provide the first internal TTS asset boundary for
-  one planned segment, with local audio artifacts and measured duration
+  one planned segment, with local audio artifacts and measured duration; the
+  next provider direction is an in-project F5-TTS provider that also returns
+  aligned captions
+- generated narration audio is now carried by `VideoSegment.narration.audio`
+  and flattened for preview/export; the target next slice is to add
+  segment-owned caption cues and shared caption rendering
 - `src/lib/staged-project-generation.ts`, the MiniMax selected-template
   compiler helpers, and `POST /api/generate/staged` provide the staged
   assembly path
@@ -448,3 +462,5 @@ Practical v1 shortcut:
   generic media-layer enhancement.
 - Real narration audio duration should drive future template parameter
   generation.
+- Caption/subtitle alignment should come from the narration provider when
+  available, with F5-TTS as the preferred local provider path.

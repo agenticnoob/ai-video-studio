@@ -5,13 +5,19 @@ Status: partially resumed.
 当前补充：
 - 第一轮最小工作流已经落地，当前状态以 `docs/ITERATION_STATUS.md` 为准。
 - 最终生成目标和 roadmap 上游依据以 `docs/FINAL_PRODUCT_GOAL.md` 为准：
-  用户提示词 -> 分镜计划 -> 每个分镜 TTS -> 按真实音频时长编译所选模版
-  参数 -> 组装完整 `VideoProject`。
+  用户提示词 -> 分镜计划 -> 每个分镜 narration synthesis -> audio +
+  aligned captions -> 按真实音频时长编译所选模版参数 -> 组装完整
+  `VideoProject`。
 - staged 主链路已经做过一轮结构整理：页面生成状态、生成控制面板、预览面板、
   staged API request/error 边界、以及 staged project assembly 边界已经拆开；
   这是为了继续 harden staged loop，不代表产品模型变化。
 - 本文件保留“更后续方向”的判断，不再代表当前实现是否已开始。
 - 产品模型已收敛为：一个 segment 对应一个 primary template；`templateId` 决定 `implementation` 的 schema；当前注册模板包括 `scripted` 和 `spotlight`；`scripted` 的 `implementation` 是 `VideoSpec`，其中 `scenes` 是 scripted 专有的内部序列字段；`spotlight` 的 `implementation` 是 `SpotlightSpec`，其中 `callouts` 是 spotlight 专有内容字段；已有视频、图片、音频或纯色素材通过 project-level / segment-level `media.layers[]` 表达；旧的 `baseLayer` 概念作为媒体层 role，而不是单独字段。
+- 最新模型决策：当前 TTS 音频已经迁入 `VideoSegment.narration.audio`，
+  并通过 render-time flatten 播放和导出。`VideoProject.media.layers[]`
+  保留给真正的全视频资产以及旧 narration layer 的兼容路径。下一步应在
+  `VideoSegment.narration.captions` 上补齐 caption cue normalization 和
+  共享字幕渲染；project 继续负责 segment 顺序和全局 timeline flatten。
 
 此前判断（保留为背景）：
 - 不要一开始就把 `ai-video-studio` 扩成完整 AI 视频产品。
@@ -48,10 +54,18 @@ When implementation resumes, the preferred strategy is:
 - borrow selected architecture ideas from `vibe-motion-app`
 - keep one primary template per segment unless a concrete future workflow proves that segment-internal template timelines are necessary
 - evolve generation from the current one-shot `VideoProject` shortcut into the
-  staged final pipeline: storyboard planner -> per-segment TTS ->
-  selected-template compiler -> assembled `VideoProject`
-- treat TTS narration audio as part of the main generated-video pipeline
-  because real narration duration should drive segment timing
+  staged final pipeline: storyboard planner -> per-segment narration
+  synthesis -> audio + aligned captions -> selected-template compiler ->
+  assembled `VideoProject`
+- treat TTS/narration synthesis as part of the main generated-video pipeline
+  because real narration duration should drive segment timing, and because
+  provider-returned alignment should drive captions/subtitles
+- store generated narration audio and caption cues with their owning segment;
+  use project-level flattening for preview/export rather than making top-level
+  project media the long-term narration owner
+- implement F5-TTS as an in-project provider boundary, not as a separate
+  product; keep config, adapter, artifacts, caption normalization, and fallback
+  behavior in this repo even if the runtime is a local process or container
 - express richer segment visuals through template-specific implementation fields,
   internal components, and media-layer props first
 
@@ -121,6 +135,17 @@ Current likely sequence:
 - status: implemented in the active staged full-project and selected-segment
   regeneration paths
 
+3b. Add in-project F5-TTS provider with aligned captions
+- first align the data model around segment-owned
+  `VideoSegment.narration.audio` and `VideoSegment.narration.captions`
+- synthesize planned segment narration through a project-owned F5-TTS provider
+  adapter
+- normalize provider-returned alignment into segment-local caption/subtitle
+  cues
+- keep MiniMax TTS as a working provider/fallback while the F5-TTS path lands
+- render caption cues consistently in preview and export
+- status: planned next direction
+
 4. Add duration-aware segment compiler
 - provide only the selected template schema and rules
 - generate schema-valid `implementation`
@@ -173,6 +198,6 @@ Until a task explicitly widens scope:
 - treat `docs/ITERATION_STATUS.md` as the source of truth for current implemented progress
 - use this file for longer-term direction and deferred ideas
 - prefer one primary template per segment
-- prefer TTS -> audio duration -> template compile as the next generation
-  direction
+- prefer narration synthesis -> audio + aligned captions -> template compile as
+  the next generation direction
 - prefer media layers for existing image, video, audio, and color needs

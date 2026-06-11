@@ -62,6 +62,7 @@ export async function POST(request: Request) {
               templateId: result.segment.templateId,
             },
           ],
+          narrationSegmentCount: result.segment.narration?.audio ? 1 : 0,
           narrationLayerCount: 1,
           segmentCount: 1,
         },
@@ -96,6 +97,8 @@ export async function POST(request: Request) {
           segmentId: segment.segment.id,
           templateId: segment.segment.templateId,
         })),
+        narrationSegmentCount: result.segments.filter((segment) => segment.segment.narration?.audio)
+          .length,
         narrationLayerCount: result.narrationLayers.length,
         segmentCount: result.segments.length,
       },

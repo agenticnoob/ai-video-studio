@@ -5,6 +5,7 @@ import {
   type VideoProject,
   type VideoSegment,
 } from "./project-schema";
+import { segmentNarrationFromAsset, type SegmentNarrationAsset } from "./narration-asset-schema";
 import {
   storyboardPlanSchema,
   type StoryboardPlan,
@@ -18,7 +19,6 @@ import {
 } from "./minimax";
 import { getTemplateDefinition } from "./template-registry";
 import type { AudioMediaLayer } from "./media-layer-schema";
-import type { SegmentNarrationAsset } from "./narration-asset-schema";
 import {
   assembleStagedProject,
   getNextNarrationStartFrame,
@@ -63,6 +63,7 @@ export const compilePlannedSegment = async ({
     id: segment.id,
     title: segment.title ?? segment.purpose,
     intent: segment.purpose,
+    narration: segmentNarrationFromAsset(narration),
     templateId: segment.templateId,
     implementation: compiled.implementation,
   });
@@ -192,7 +193,6 @@ export const generateStagedSegmentRevision = async ({
     project,
     segment: compiled.segment,
     segmentId,
-    segmentIndex,
   });
 
   return {

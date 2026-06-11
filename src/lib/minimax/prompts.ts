@@ -168,7 +168,7 @@ const buildTemplateCompilerSystemPrompt = (request: MinimaxTemplateCompileReques
 - Do not return a VideoSegment.
 - Do not wrap the object in "implementation", "segment", "project", "media", or "narration".
 - Do not include audio source fields, media fields, narration asset metadata, or provider metadata.
-- Generated narration audio is carried outside template implementation through project media layers.
+- Generated narration audio is carried outside template implementation through VideoSegment.narration.
 - The implementation must validate against the selected template schema.
 
 # Selected template

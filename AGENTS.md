@@ -9,7 +9,9 @@ Before planning or editing, read these files in order:
 2. `docs/ITERATION_STATUS.md`
 3. `docs/PRODUCT_REQUIREMENTS.md`
 4. `docs/FUTURE_DIRECTION_NOTES.md`
-5. `README.md`
+5. `docs/HANDOFF_F5_TTS_CAPTIONS.md` when the task involves F5-TTS,
+   captions/subtitles, or narration provider work
+6. `README.md`
 
 These files together explain:
 - authoritative final generation goal
@@ -18,6 +20,7 @@ These files together explain:
 - roadmap direction
 - deferred scope
 - product direction
+- F5-TTS / aligned captions handoff when relevant
 - Docker-first local workflow
 
 When editing Remotion rendering code or template-internal animation
@@ -54,14 +57,20 @@ The first staged-generation groundwork is also in place:
 - `src/lib/staged-project-generation.ts` and the MiniMax selected-template
   compiler helpers provide the first staged assembly path:
   StoryboardPlan -> per-segment TTS -> selected-template compile -> assembled
-  `VideoProject`.
+  `VideoProject`. Generated narration audio is now owned by
+  `VideoSegment.narration.audio`; the next target extends this narration
+  boundary to captions and F5-TTS.
 - `POST /api/generate/staged` is available as the staged endpoint for either a
   brief, an existing `StoryboardPlan`, or one selected segment regeneration.
 - The main page now defaults to staged generation; `POST /api/generate` remains
   available as the shipped v1 shortcut and fallback path.
 - In staged mode, selected-segment regeneration now regenerates the target
   segment's plan, TTS audio, duration-aware template implementation, and
-  narration audio layer while preserving non-target segments.
+  segment-owned narration audio while preserving non-target segments.
+- Generated TTS assets are attached to `VideoSegment.narration.audio` and
+  flattened to the project timeline for preview/export. Project-level
+  narration media layers remain supported only as a transitional compatibility
+  path for older/current projects.
 - Generated TTS assets are served from `/api/tts/assets/...` with byte-range
   support so Remotion Player can seek audio during pause/resume.
 - Local export rewrites route media URLs to a Next API origin before Remotion
@@ -76,8 +85,9 @@ The first staged-generation groundwork is also in place:
 - Bounded planner repair is in place for invalid `StoryboardPlan` output in
   both full-brief and selected-segment staged planner paths.
 - Deterministic staged smoke fixtures cover a mixed `scripted` + `spotlight`
-  project, narration layer timeline assembly, and selected-segment narration
-  replacement. Remotion exposes this fixture as
+  project with segment-owned narration audio and selected-segment narration
+  replacement. The next fixture update should cover segment-owned captions.
+  Remotion exposes this fixture as
   `StagedSmokeMixedTemplateProject`, and `npm run smoke:staged-fixtures`
   bundles/loads it through `src/remotion/index.ts`.
 
@@ -109,7 +119,8 @@ moving toward the authoritative final generation pipeline in
 `docs/FINAL_PRODUCT_GOAL.md`:
 
 ```txt
-brief -> StoryboardPlan -> per-segment TTS -> per-segment template compile
+brief -> StoryboardPlan -> per-segment narration synthesis
+-> audio + aligned captions -> per-segment template compile
 -> assembled VideoProject
 ```
 
@@ -117,14 +128,20 @@ Keep the next iteration focused on:
 1. keep `VideoProject` as the preview/edit/export boundary
 2. keep the existing StoryboardPlan contract as the planner-stage boundary
 3. keep the bounded planner repair path active and visible in diagnostics
-4. use generated narration audio from per-segment TTS before template
-   compilation
-5. use real audio duration plus the selected template context to generate
+4. keep generated narration audio in `VideoSegment.narration.audio`
+5. add segment-owned `VideoSegment.narration.captions` normalization and
+   shared caption rendering
+6. add the in-project F5-TTS provider boundary for narration synthesis,
+   including audio artifacts, measured duration, and aligned captions when
+   available
+7. keep narration audio and subtitle/caption cues outside template-specific
+   `implementation`
+8. use real audio duration plus the selected template context to generate
    schema-valid `implementation`
-6. preserve validation, bounded repair, and non-target segment preservation
-7. use deterministic smoke fixtures and provider-backed live smoke to harden
+9. preserve validation, bounded repair, and non-target segment preservation
+10. use deterministic smoke fixtures and provider-backed live smoke to harden
    mixed registered-template output before widening scope
-8. do not widen into persistence/history, generic media-layer work, or
+11. do not widen into persistence/history, generic media-layer work, or
    multi-template-per-segment orchestration unless the task explicitly asks for it
 
 Current product modeling decision:
@@ -135,6 +152,11 @@ Current product modeling decision:
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
 - treat generated narration/TTS as part of the main generation pipeline, not
   as a generic media-layer feature to solve first
+- treat F5-TTS as an in-project provider boundary: runtime may be local service
+  or container, but request/response contract, config, artifact handling,
+  caption normalization, and fallback behavior belong in this repo
+- treat caption/subtitle cues as narration-provider output normalized into
+  segment-owned caption data, not as template-private implementation fields
 - model future existing video/image/audio/color material as project-level or
   segment-level `media.layers[]` data; treat `baseLayer` as a layer role, not
   a separate field
@@ -154,8 +176,11 @@ Current product modeling decision:
 - `src/lib/render-project.ts`
 - `src/lib/project-schema.ts`
 - `src/lib/storyboard-plan-schema.ts`
+- `src/lib/narration-asset-schema.ts`
+- `src/lib/tts/*`
 - `src/lib/staged-generation-api.ts`
 - `src/lib/staged-project-assembly.ts`
+- `docs/providers/f5-tts.md`
 - `src/templates/*`
 - `src/templates/registered-definitions.ts`
 - `src/templates/registered-bundles.ts`
@@ -174,7 +199,9 @@ Still not implemented unless the new task explicitly asks for them:
 - multi-template-per-segment orchestration
 - project-level / segment-level media-layer compositing
 - broad media-layer editor work beyond the current generated narration audio
-  carrier
+  carrier and planned segment-owned caption/subtitle data
+- professional subtitle editor, waveform editor, beat sync, ducking, or
+  DAW-style audio controls
 - planner repair beyond the current bounded planner/compiler repair paths
 - browser automation acceptance
 - end-user render progress UX beyond idle / rendering / success / failure
@@ -216,8 +243,16 @@ host-local setup.
 - Treat `docs/FINAL_PRODUCT_GOAL.md` as the authoritative roadmap source.
 - Treat the current one-shot MiniMax project generation path as a shipped v1
   shortcut, not the final generation architecture.
-- Move future generation work toward `StoryboardPlan` -> TTS -> selected
-  template compile -> assembled `VideoProject`.
+- Move future generation work toward `StoryboardPlan` -> in-project narration
+  synthesis -> audio + aligned captions -> selected-template compile ->
+  assembled `VideoProject`.
+- Treat F5-TTS as the preferred next narration provider boundary in this repo,
+  not as a separate external product. Runtime may be local process/container;
+  this repo owns adapter, config, artifacts, caption normalization, and
+  fallback behavior.
+- Keep caption/subtitle cues outside template-specific `implementation`; store
+  them with segment narration data and render them through shared preview/export
+  flattening code.
 - Keep `VideoSpec` as the per-segment implementation contract for the current scripted template.
 - Keep `SpotlightSpec` as the per-segment implementation contract for the current spotlight template.
 - Keep one primary template per segment; grow template internals through template-specific implementation fields before introducing multi-template-per-segment orchestration.

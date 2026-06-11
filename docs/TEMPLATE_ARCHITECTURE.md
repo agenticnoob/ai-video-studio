@@ -157,6 +157,12 @@ exists behind `POST /api/generate/staged`; the main page uses that staged path
 by default while keeping the shipped v1 `POST /api/generate` route as a
 fallback.
 
+The next narration-provider direction is an in-project F5-TTS provider that
+returns audio plus aligned caption cues from the same segment narration
+request. F5-TTS should not become a template concern: the repo-owned provider
+adapter normalizes audio/caption artifacts before the selected-template
+compiler runs.
+
 The final provider workflow has two roles.
 
 Planner receives:
@@ -177,19 +183,22 @@ Planner should:
 Compiler receives:
 
 - one planned segment
-- generated narration audio metadata and real duration
+- generated narration audio metadata, real duration, and caption/alignment
+  data when available
 - the selected template's full schema
 - the selected template's implementation rules and examples
 
 Compiler should:
 
 1. fill only the selected template's `implementation`
-2. use the real TTS duration as the timing anchor
+2. use the real narration audio duration as the timing anchor
 3. return schema-valid parameters matching the segment's `templateId`
 4. support bounded repair if validation fails
 5. keep generated narration audio outside template-specific implementation
-   fields; audio belongs in template-external project data such as
-   `media.layers[]`
+   fields; target audio ownership is `VideoSegment.narration.audio`
+6. keep caption/subtitle cues outside template-specific implementation fields;
+   target caption ownership is `VideoSegment.narration.captions`; templates
+   may expose only caption-safe layout or styling hooks when needed
 
 The provider must not emit a generic universal `scenes` shape for every
 template. `scenes` is only valid where a template explicitly defines it, such

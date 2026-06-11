@@ -1,13 +1,20 @@
 # Media Layer Model
 
-Status: implementation-boundary note plus current generated narration audio
-carrier.
+Status: implementation-boundary note plus segment-owned narration alignment.
 
 Roadmap relationship:
 - `docs/FINAL_PRODUCT_GOAL.md` is the authoritative final generation target.
 - TTS narration audio belongs to the main generation pipeline. Generated
   narration audio should be represented outside template-specific
   `implementation` fields.
+- Narration audio and caption/subtitle cues should be owned by the segment
+  under `VideoSegment.narration`. Generated narration audio now lives in
+  `VideoSegment.narration.audio`; top-level narration media layers remain only
+  as a compatibility path.
+- Caption/subtitle cues are also part of the narration pipeline, preferably
+  returned by the in-project F5-TTS provider and normalized as segment-local
+  caption data. They are not part of the generic media-layer MVP described in
+  this document.
 - This document defines how existing or timeline-level image/video/audio/color
   material should be modeled when the project intentionally widens into media
   compositing.
@@ -16,11 +23,12 @@ This document records the unified media-layer model for images, videos, audio,
 and color layers. It replaces the earlier separate planning ideas of
 `baseLayer` for visual media and `audio.tracks` for sound.
 
-The key decision:
+The key decision for media layers:
 
 ```txt
-project.media.layers[]
-segment.media.layers[] later, only when needed
+project.media.layers[] for full-video assets
+segment.media.layers[] for media that belongs to one segment
+segment.narration for generated narration audio and captions
 ```
 
 All externally supplied media should use one layer array. `baseLayer` becomes
@@ -30,11 +38,16 @@ a semantic role on a media layer, not a separate field.
 
 This is feasible if the first implementation is deliberately small.
 
-The first implemented slice is generated narration audio as project-level
-media. Future media-layer expansion should still stay deliberately small and
-avoid becoming a general-purpose timeline editor:
+The first implemented slice carried generated narration audio as project-level
+media. That path works for preview/export, but it is no longer the target
+ownership model. Future media-layer expansion should still stay deliberately
+small and avoid becoming a general-purpose timeline editor:
 
-- project-level media only: `VideoProject.media.layers[]`
+- project-level media for full-video assets: `VideoProject.media.layers[]`
+- segment-owned narration for generated narration audio and captions:
+  `VideoSegment.narration`
+- segment-level media for non-narration assets that belong to one segment:
+  `VideoSegment.media.layers[]`
 - each layer requires `startFrame` and `durationInFrames`
 - each layer renders through one shared Remotion `<Sequence>` wrapper
 - current generated narration audio uses `sourceType: "route"` for
@@ -84,20 +97,27 @@ VideoSegment.templateId
 The scripted template used to expose a template-internal scene audio hook. That
 field is now quarantined out of generation/provider-visible schemas and is no
 longer rendered by `ScriptedVideo`. New narration audio must use
-template-external project data.
+template-external segment-owned data.
 
-Current code includes a deliberately small project-level audio path:
+Current code includes segment-owned generated narration audio plus a
+deliberately small project-level audio compatibility path:
 
 - `VideoProject.media.layers[]`
-- audio layers with `type: "audio"` and `kind: "narration"`
+- audio layers with `type: "audio"` and `kind: "narration"` for legacy/current
+  compatibility
 - shared rendering through `ProjectMediaLayers`
-- `POST /api/generate/staged` creates narration layers for full-project
-  generation and replaces the target narration layer during staged
-  selected-segment regeneration
+- `VideoSegment.narration.audio` stores generated TTS audio metadata for staged
+  output
+- `ProjectNarrationLayers` flattens segment-owned narration audio to the global
+  project timeline during preview/export
 - `/api/tts/assets/...` supports byte ranges for preview seeking
 - `/api/render` converts route media to an absolute Next app origin before
   Remotion rendering
 - no image/video/color layer renderer yet
+
+This is current implementation fact. The next alignment slice should add
+captions into `VideoSegment.narration.captions`, then flatten those
+segment-owned caption cues to the project timeline in `ProjectVideo`.
 
 ## Product Boundary
 
@@ -108,9 +128,10 @@ Keep:
 
 ```txt
 VideoProject
-  -> media.layers[]?
+  -> media.layers[]?        // full-video assets only
   -> VideoSegment[]
-      -> media.layers[]? later, if needed
+      -> narration?         // generated speech audio and captions
+      -> media.layers[]?    // segment-owned non-narration media
       -> one primary templateId
       -> template-specific implementation
       -> template runtime / Remotion primitives
@@ -124,10 +145,10 @@ implementation mechanisms.
 `media.layers[].role = "base"` or `placement = "background"` when a layer acts
 as the old base layer.
 
-## Recommended First Schema
+## Recommended Media Schema
 
-Add an optional `media` object to `VideoProject` first. Keep it small and
-renderable.
+Keep project and segment media layers small and renderable. Do not use this
+generic media-layer schema as the primary narration contract.
 
 ```ts
 type VideoProjectMedia = {
@@ -233,8 +254,8 @@ Initial rules:
   by the shared media-layer renderer, not by templates.
 
 Do not add gain envelopes, waveform editing, beat detection, ducking, subtitle
-sync, upload persistence, source-duration probing, keyframed transforms, or
-generated media assets in the first slice.
+sync as a media-layer feature, upload persistence, source-duration probing,
+keyframed transforms, or generated media assets in the first slice.
 
 ## Project vs Segment Media
 
@@ -245,13 +266,22 @@ segments:
 - ambient bed
 - full-video base image, video, or color
 - full-video watermark or foreground overlay
-- narration generated after the whole project is planned
 
-Segment-level media can be added later if there is a clear editing need. Do
-not add it in the first implementation slice.
+Use segment-level ownership for assets that belong to one segment:
+
+- generated narration audio and captions, preferably through
+  `segment.narration`
+- segment-specific image, video, audio, or color layers when media editing
+  widens beyond narration
+- segment-local sound effects or visual overlays
+
+For future timeline editing, this gives a clean split: segment data owns
+content assets, while the project timeline owns segment order, transitions,
+global layers, and absolute placement.
 
 ```ts
 type VideoSegment = {
+  narration?: SegmentNarration;
   media?: VideoSegmentMedia;
   templateId: TemplateId;
   implementation: unknown;
@@ -266,9 +296,9 @@ type SegmentMediaLayer = Omit<MediaLayer, "startFrame"> & {
 };
 ```
 
-Segment-level `startFrame` should be relative to the segment, not the full
-project. `ProjectVideo` can translate it with `getSegmentStart(project, index)`
-when rendering.
+Segment-owned narration captions and segment-level media `startFrame` values
+should be relative to the segment, not the full project. `ProjectVideo` can
+translate them with `getSegmentStart(project, index)` when rendering.
 
 Do not put reusable media fields into every template implementation just to
 make media available. Template implementations should only own media props when
@@ -298,9 +328,11 @@ ProjectVideo
   -> project background visual media layers
   -> project audio media layers
   -> segment sequences
-       -> optional segment background layers later
+       -> segment narration audio
+       -> optional segment captions
+       -> optional segment background layers
        -> segment renderer
-       -> optional segment foreground/audio layers later
+       -> optional segment foreground/audio layers
   -> project foreground visual media layers
 ```
 
@@ -356,8 +388,8 @@ participate in visual stacking. Keep audio ordering data-driven by
 `startFrame`, `durationInFrames`, and `volume`, not by visual `zIndex`.
 
 For project-level layers, `startFrame` is already absolute on the full video
-timeline. For segment-level layers later, the renderer should convert
-segment-relative time into project-relative time:
+timeline. For segment-owned narration, captions, and media layers, the renderer
+should convert segment-relative time into project-relative time:
 
 ```txt
 absoluteStartFrame = getSegmentStart(project, segmentIndex) + layer.startFrame
@@ -435,35 +467,44 @@ validated `MediaLayer` data and does not know whether the current segment is
 
 Implement in this order:
 
-1. Add the `media.layers[]` schemas and TypeScript types.
-2. Normalize missing `project.media` to `{ layers: [] }`.
-3. Add source resolution for `sourceType: "public" | "remote"`.
-4. Add visual style helpers for `fit`, `opacity`, `zIndex`, and simple
+1. Add segment-owned caption normalization helpers.
+2. Generate fallback caption cues from narration text and measured audio
+   duration when provider alignment is unavailable.
+3. Add render-time flattening for segment-owned captions.
+4. Keep `project.media.layers[]` for true full-video media.
+5. Add source resolution for `sourceType: "public" | "remote"`.
+6. Add visual style helpers for `fit`, `opacity`, `zIndex`, and simple
    transforms.
-5. Add `RenderMediaLayer` for `color`, `image`, `video`, and `audio`.
-6. Add `MediaLayerSequence` as the single `<Sequence>` wrapper.
-7. Add `ProjectMediaLayers` and call it from `ProjectVideo`.
-8. Add one or two sample project layers for smoke testing.
-9. Add a compact project media panel after rendering works.
-10. Update MiniMax schema/prompt only to preserve existing media or omit it.
+7. Add `RenderMediaLayer` for `color`, `image`, `video`, and `audio`.
+8. Add `MediaLayerSequence` as the single `<Sequence>` wrapper for generic
+   media.
+9. Add one or two sample project/segment layers for smoke testing when generic
+   media work resumes.
+10. Add a compact media panel after rendering works.
+11. Update MiniMax schema/prompt only to preserve existing media or omit it.
 
 This means preview/export support lands before editing polish. That is the
 safest order because the UI can stay simple once the render contract is real.
 
 ## Not In The First Slice
 
-Do not implement these until the basic project-level render path is stable:
+Do not implement these until the segment-owned narration/caption loop and basic
+render path are stable:
 
-- segment-level media
 - media uploads
 - generated images or video
-- TTS as a generic media-layer feature
+- TTS as a generic project media-layer feature
 - source duration probing
 - waveform or filmstrip previews
 - drag/drop timeline editing
 - keyframed transforms
 - beat sync, silence detection, ducking, or captions
 - provider-created media layers without a known asset library
+
+Caption/subtitle work should be handled through the narration-provider target
+instead: F5-TTS returns audio plus aligned caption cues, segment-owned
+narration stores them, and shared project rendering flattens them for
+preview/export parity outside template `implementation`.
 
 ## Generation Contract
 
@@ -515,8 +556,9 @@ a full video editor timeline.
 
 The old scripted scene audio hook should not be reintroduced into
 provider-visible schemas, prompts, compiler outputs, or runtime rendering.
-Generated narration audio belongs in template-external project data, currently
-the minimal project-level audio media layer path.
+Generated narration audio belongs in template-external segment-owned data. The
+current minimal project-level audio media layer path is a compatibility carrier
+and should not be treated as the generated narration ownership model.
 
 Do not add a separate `baseLayer` field. Existing references to `baseLayer`
 should be interpreted as a planned `media.layers[]` visual layer with
