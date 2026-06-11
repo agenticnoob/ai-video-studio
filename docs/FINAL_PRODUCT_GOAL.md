@@ -566,7 +566,9 @@ Known limitation:
 - the active staged page path now uses planner -> TTS -> compiler -> assembly,
   with bounded planner repair and deterministic mixed-template smoke fixtures;
   segment-owned narration audio/captions and the Next-side F5 adapter are in
-  place; provider-backed live smoke coverage still needs hardening
+  place; the optional F5 runtime service has passed GPU real-mode direct,
+  Next-adapter, deterministic staged, and staged-export smoke coverage;
+  provider-backed full staged-route live smoke coverage still needs hardening
 
 ### Milestone 1: Authoritative Goal And Contracts
 
@@ -634,13 +636,15 @@ Deliverables:
 - duration probing or provider-returned duration normalization
 - `SegmentNarrationAsset` metadata
 - first UI or API action that generates narration audio for a planned segment
+- optional local F5-TTS runtime service described in
+  `docs/providers/f5-tts-service-plan.md`
+- GPU real-mode smoke coverage for the F5 runtime, Next adapter,
+  deterministic staged assembly, and staged export
 
 Remaining:
 
-- add the optional local F5-TTS runtime service described in
-  `docs/providers/f5-tts-service-plan.md`
-- harden provider-specific failure handling and retry behavior against a real
-  F5 runtime
+- harden provider-specific failure handling and retry behavior across full
+  `POST /api/generate/staged` live requests
 - add richer voice selection when the basic loop is stable
 
 Initial scope:
@@ -687,8 +691,8 @@ Implemented:
 
 Remaining:
 
-- optional local F5-TTS runtime service
-- provider-backed live multi-segment staged smoke
+- provider-backed live multi-segment staged smoke through
+  `POST /api/generate/staged`
 - richer progress/error UX for multi-stage generation
 
 Success criteria:
@@ -747,6 +751,8 @@ Deliverables:
 - segment-owned narration/caption contracts and render-time flattening
 - preview/export rendering for captions
 - optional local F5-TTS runtime service with health and synthesize endpoints
+- GPU real-mode F5 smoke coverage through direct service, Next adapter,
+  deterministic staged assembly, and staged export
 - segment-level caption editing and regeneration
 - per-segment voice selection
 - optional project-level narration consistency

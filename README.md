@@ -108,13 +108,16 @@ Current modeling direction:
   audio field to generation providers
 - the in-project F5-TTS provider adapter is the preferred local narration path
   when `F5_TTS_BASE_URL` points at a running service
+- the optional `f5-tts` Docker overlay provides a contract-smoke runtime and a
+  real `F5_TTS_SERVICE_MODE=f5` runtime; the GPU overlay has been validated
+  with the local checkpoint, vocab, and Vocos vocoder
 - caption cues should be stored with segment narration data using segment-local
   timing, then rendered by shared project preview/export code
 - F5-TTS can be selected with `TTS_PROVIDER=f5-tts` or by setting
   `F5_TTS_BASE_URL`; when F5 does not return alignment, the project normalizes
   deterministic fallback captions from narration text and real audio duration
-- the next F5-TTS implementation slice is the optional local runtime service
-  described in `docs/providers/f5-tts-service-plan.md`
+- F5 runtime setup and validation details live in
+  `docs/providers/f5-tts-service-plan.md`
 - future existing video, image, audio, or color inputs should be modeled as
   project-level or segment-level `media.layers[]` data; `baseLayer` is now a
   media-layer role, not a separate project field
@@ -188,6 +191,11 @@ Current code checkpoint:
   narration/caption replacement;
   Remotion Studio exposes the current fixture as
   `StagedSmokeMixedTemplateProject`
+- optional local F5 runtime service is implemented with contract-smoke and
+  real GPU-backed `F5_TTS_SERVICE_MODE=f5` modes
+- real F5 validation has passed direct service smoke, Next `/api/tts` adapter
+  smoke, deterministic staged mixed-template smoke, and deterministic staged
+  export smoke
 - not implemented yet: persistence/history and broad media-layer editing
 
 Best next bounded slice:
@@ -195,10 +203,8 @@ Best next bounded slice:
 - use `StoryboardPlan` as the planner-stage contract
 - continue from `VideoSegment.narration` as the target home for generated
   narration text, audio metadata, and segment-local caption cues
-- add the optional local F5-TTS runtime service behind the existing
-  `src/lib/tts/f5.ts` adapter
-- add provider-backed live smoke for the F5 service once a local model/runtime
-  is available
+- add a provider-backed `POST /api/generate/staged` live smoke that combines
+  MiniMax planner/compiler with real F5 narration
 - avoid persistence/history, generic media-layer compositing, and
   multi-template-per-segment orchestration unless explicitly reopened
 
@@ -253,6 +259,68 @@ List Remotion compositions and load the deterministic staged smoke fixtures:
 cd /data/projects/labs/ai-video-studio
 docker compose run --rm web npm run smoke:staged-fixtures
 ```
+
+Start the optional F5-TTS contract-smoke runtime:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose -f docker-compose.yml -f docker-compose.f5.yml up -d f5-tts
+scripts/f5-tts-smoke.sh
+```
+
+This does not download F5 model checkpoints. It only verifies the local HTTP
+contract consumed by the Next.js F5 adapter.
+
+Validate the Next-side F5 adapter and generated TTS asset route:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose -f docker-compose.yml -f docker-compose.f5.yml up -d web
+scripts/f5-tts-next-smoke.sh
+```
+
+This smoke calls `POST /api/tts`, writes a local `out/tts/...` artifact through
+the existing adapter, and verifies `/api/tts/assets/...` byte-range serving.
+It still uses contract-smoke audio, not a downloaded F5 model.
+
+Validate a deterministic staged project using F5 narration assets:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose -f docker-compose.yml -f docker-compose.f5.yml up -d web
+npm run smoke:f5-staged
+```
+
+This smoke avoids MiniMax planner/compiler calls. It uses a fixed two-segment
+storyboard plan, generates each segment's narration through `POST /api/tts`,
+assembles a schema-compatible `VideoProject`, and checks byte-range serving for
+each generated narration asset. To also export the assembled project through
+`POST /api/render`, run:
+
+```bash
+F5_TTS_STAGED_SMOKE_RENDER=true npm run smoke:f5-staged
+```
+
+Run the real F5 runtime on GPU when the host NVIDIA driver/runtime is
+available:
+
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose -f docker-compose.yml -f docker-compose.f5.yml -f docker-compose.f5.gpu.yml up -d --build f5-tts web
+scripts/f5-tts-smoke.sh
+```
+
+The GPU overlay sets `F5_TTS_SERVICE_MODE=f5`, `F5_TTS_DEVICE=cuda`, and
+requests all visible GPUs. It still requires the local F5 checkpoint, vocab,
+and Vocos vocoder under `models/f5-tts/`.
+
+On this workstation the GPU path has been validated with:
+- direct service smoke: `F5_TTS_BASE_URL=http://127.0.0.1:7865 scripts/f5-tts-smoke.sh`
+- Next adapter smoke: `NEXT_ORIGIN=http://127.0.0.1:3000 scripts/f5-tts-next-smoke.sh`
+- staged assembly smoke: `docker compose -f docker-compose.yml -f docker-compose.f5.yml -f docker-compose.f5.gpu.yml exec -T web npm run smoke:f5-staged`
+- staged export smoke: `docker compose -f docker-compose.yml -f docker-compose.f5.yml -f docker-compose.f5.gpu.yml exec -T web bash -lc 'F5_TTS_STAGED_SMOKE_RENDER=true npm run smoke:f5-staged'`
+
+If `F5_TTS_DEFAULT_REFERENCE_AUDIO` is unset, the service uses the default
+English reference WAV bundled with `f5-tts` plus the upstream example reference
+text. For a custom voice, set both `F5_TTS_DEFAULT_REFERENCE_AUDIO` and
+`F5_TTS_DEFAULT_REFERENCE_TEXT`.
 
 Important distinction:
 - `./scripts/render.sh` is still the default/sample composition render path from the Docker wrapper

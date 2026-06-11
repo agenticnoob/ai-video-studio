@@ -16,9 +16,10 @@ Status: partially resumed.
 - 最新模型决策：当前 TTS 音频已经迁入 `VideoSegment.narration.audio`，
   字幕已经进入 `VideoSegment.narration.captions`，二者都通过
   render-time flatten 预览和导出。`VideoProject.media.layers[]` 保留给真正的
-  全视频资产以及旧 narration layer 的兼容路径。下一步应按
-  `docs/providers/f5-tts-service-plan.md` 增加可选的本地 F5-TTS runtime
-  service；project 继续负责 segment 顺序和全局 timeline flatten。
+  全视频资产以及旧 narration layer 的兼容路径。可选的本地 F5-TTS runtime
+  service 已经落地，并通过 GPU real-mode direct / Next adapter /
+  deterministic staged / staged export smoke；project 继续负责 segment 顺序和
+  全局 timeline flatten。
 
 此前判断（保留为背景）：
 - 不要一开始就把 `ai-video-studio` 扩成完整 AI 视频产品。
@@ -67,6 +68,9 @@ When implementation resumes, the preferred strategy is:
 - implement F5-TTS as an in-project provider boundary, not as a separate
   product; keep config, adapter, artifacts, caption normalization, and fallback
   behavior in this repo even if the runtime is a local process or container
+- keep the F5 runtime as an opt-in service boundary; use deterministic smoke
+  for no-MiniMax validation and add full staged-route live smoke before
+  widening scope
 - express richer segment visuals through template-specific implementation fields,
   internal components, and media-layer props first
 
@@ -145,8 +149,9 @@ Current likely sequence:
   cues
 - keep MiniMax TTS as a working provider/fallback while the F5-TTS path lands
 - render caption cues consistently in preview and export
-- status: implemented for the Next-side adapter and shared caption path; the
-  next slice is the optional local F5-TTS runtime service plan
+- status: implemented for the Next-side adapter, shared caption path, optional
+  local runtime service, GPU real-mode synthesis, deterministic staged smoke,
+  and staged export smoke
 
 4. Add duration-aware segment compiler
 - provide only the selected template schema and rules

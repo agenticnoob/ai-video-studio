@@ -37,8 +37,10 @@ target maps onto the codebase.
 The current MiniMax-backed one-call `POST /api/generate` path is a shipped v1
 shortcut. It can stay while useful, but the active page flow now defaults to
 the staged planner -> TTS -> compiler -> assembly pipeline. Segment-owned
-narration audio/captions and the Next-side F5 adapter are in place; the next
-target is an optional local F5-TTS runtime service.
+narration audio/captions, the Next-side F5 adapter, and the optional local
+F5-TTS runtime service are in place. The current hardening target is a full
+provider-backed `POST /api/generate/staged` live smoke that combines MiniMax
+planner/compiler calls with real F5 narration.
 
 Current implementation snapshot:
 
@@ -57,8 +59,10 @@ Current implementation snapshot:
   duration measurement.
 - The in-project F5-TTS provider boundary lives under `src/lib/tts/`. The repo
   owns its request/response contract, config, artifact handling, caption
-  normalization, and fallback behavior. The next service step is documented in
-  `docs/providers/f5-tts-service-plan.md`.
+  normalization, and fallback behavior. The optional `services/f5-tts/`
+  runtime supports contract-smoke mode and real `F5_TTS_SERVICE_MODE=f5`
+  synthesis; the GPU overlay has been validated with the local checkpoint,
+  vocab, and Vocos vocoder under `models/f5-tts/`.
 - `src/lib/staged-project-generation.ts`, the MiniMax template compiler
   helpers, and `POST /api/generate/staged` provide the staged assembly path
   from brief or plan input to `VideoProject`.

@@ -37,6 +37,15 @@ next-env.d.ts
 out/
 .env
 build
+
+# python
+__pycache__/
+*.py[cod]
+
+# Local F5-TTS runtime assets. Keep model checkpoints and private voices out of Git.
+models/f5-tts/
+voices/f5-tts/
+
 # AppleDouble (macOS SMB access artifact)
 ._*
 

@@ -1,7 +1,7 @@
 # Handoff: Segment-Owned Narration, F5-TTS, And Captions
 
 Status: implementation handoff; captions/provider adapter implemented,
-runtime service planned next.
+F5 runtime service implemented, and GPU real-mode validation passed.
 
 Use this document when starting the next implementation slice. It supersedes
 the earlier idea of adding top-level `VideoProject.captions` first. The updated
@@ -140,7 +140,7 @@ Current transitional behavior:
 - Generic project-level media remains reserved for true full-video assets such
   as background music, ambience, watermarks, or global overlays.
 
-Implemented in the F5/captions slice:
+Implemented in the F5/captions/runtime slices:
 
 - caption normalization helpers and fallback caption splitter.
 - F5-TTS provider module behind the existing TTS boundary.
@@ -149,21 +149,26 @@ Implemented in the F5/captions slice:
 - Remotion flattening/rendering for segment-owned captions.
 - selected-segment caption replacement through `VideoSegment.narration`.
 - caption coverage in staged smoke fixtures.
+- optional `services/f5-tts/` FastAPI runtime with `contract-smoke` and real
+  `F5_TTS_SERVICE_MODE=f5` modes.
+- Docker overlays for the F5 service and explicit GPU runtime.
+- direct service smoke, Next `/api/tts` provider smoke, deterministic staged
+  smoke, and deterministic staged export smoke.
 
 Still not implemented yet:
 
-- a bundled F5-TTS runtime/container in this repo.
-- provider-backed live smoke against a real F5 service.
+- a full `POST /api/generate/staged` live smoke that exercises MiniMax
+  planner/compiler plus the real F5 service in one request.
 - caption editing UI beyond rendering generated cues.
 
 ## Recommended Implementation Order
 
 The original implementation order below is now mostly completed. The next
-implementation slice should follow
-[`docs/providers/f5-tts-service-plan.md`](providers/f5-tts-service-plan.md) and
-create the optional local F5-TTS runtime service.
+implementation slice should add a bounded live staged-route smoke that calls
+`POST /api/generate/staged` with MiniMax planner/compiler configuration and
+real F5 narration enabled.
 
-### Next: Add The F5-TTS Runtime Service
+### Completed: Add The F5-TTS Runtime Service
 
 Suggested files:
 
@@ -182,8 +187,18 @@ Rules:
 - satisfy the HTTP contract already consumed by `src/lib/tts/f5.ts`
 - keep the service opt-in so normal `web` and `studio` development do not
   require F5 model downloads or GPU support
-- keep MiniMax fallback available until provider-backed F5 live smoke passes
+- keep MiniMax fallback available for systems where the local F5 runtime is not
+  running
 - do not move narration or captions into template-specific `implementation`
+
+Validation now covered:
+
+- `scripts/f5-tts-smoke.sh` for direct runtime health/synthesis.
+- `scripts/f5-tts-next-smoke.sh` for the Next adapter and generated asset
+  route.
+- `npm run smoke:f5-staged` for deterministic mixed-template assembly.
+- `F5_TTS_STAGED_SMOKE_RENDER=true npm run smoke:f5-staged` for export through
+  `/api/render`.
 
 ### 1. Add Caption Normalization Helpers
 

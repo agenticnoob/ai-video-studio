@@ -94,6 +94,13 @@ The first staged-generation groundwork is also in place:
   Remotion exposes this fixture as
   `StagedSmokeMixedTemplateProject`, and `npm run smoke:staged-fixtures`
   bundles/loads it through `src/remotion/index.ts`.
+- The optional `f5-tts` Docker service is implemented with contract-smoke mode
+  and real `F5_TTS_SERVICE_MODE=f5` mode. The GPU overlay has been validated
+  locally with the downloaded checkpoint, vocab, and Vocos vocoder under
+  `models/f5-tts/`.
+- Real F5 validation has passed direct service smoke, Next `/api/tts` adapter
+  smoke, deterministic staged mixed-template smoke, and deterministic staged
+  export smoke.
 
 This repo is past the upstream starter-demo stage.
 Do not describe it as an untouched scaffold.
@@ -135,15 +142,17 @@ Keep the next iteration focused on:
 4. keep generated narration audio in `VideoSegment.narration.audio`
 5. keep segment-owned `VideoSegment.narration.captions` normalization and
    shared caption rendering active
-6. add the optional local F5-TTS runtime service behind the existing
-   in-project provider adapter, including health/smoke coverage
+6. keep the optional local F5-TTS runtime service healthy behind the existing
+   in-project provider adapter, including contract-smoke and real GPU smoke
+   coverage
 7. keep narration audio and subtitle/caption cues outside template-specific
    `implementation`
 8. use real audio duration plus the selected template context to generate
    schema-valid `implementation`
 9. preserve validation, bounded repair, and non-target segment preservation
-10. use deterministic smoke fixtures and provider-backed live smoke to harden
-   mixed registered-template output before widening scope
+10. use deterministic smoke fixtures and a full provider-backed
+   `POST /api/generate/staged` live smoke to harden mixed registered-template
+   output before widening scope
 11. do not widen into persistence/history, generic media-layer work, or
    multi-template-per-segment orchestration unless the task explicitly asks for it
 

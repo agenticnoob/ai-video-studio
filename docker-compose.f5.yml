@@ -1,0 +1,35 @@
+services:
+  f5-tts:
+    build:
+      context: .
+      dockerfile: services/f5-tts/Dockerfile
+    image: ai-video-studio-f5-tts:local
+    working_dir: /service
+    restart: unless-stopped
+    environment:
+      F5_TTS_SERVICE_MODE: "${F5_TTS_SERVICE_MODE:-contract-smoke}"
+      F5_TTS_MODEL_PATH: "${F5_TTS_MODEL_PATH:-/models/f5-tts/model_1250000.safetensors}"
+      F5_TTS_VOCAB_PATH: "${F5_TTS_VOCAB_PATH:-/models/f5-tts/vocab.txt}"
+      F5_TTS_VOCODER_PATH: "${F5_TTS_VOCODER_PATH:-/models/f5-tts/vocos-mel-24khz}"
+      F5_TTS_ALLOW_VOCODER_DOWNLOAD: "${F5_TTS_ALLOW_VOCODER_DOWNLOAD:-false}"
+      F5_TTS_DEVICE: "${F5_TTS_DEVICE:-}"
+      F5_TTS_NFE_STEP: "${F5_TTS_NFE_STEP:-16}"
+      F5_TTS_DEFAULT_REFERENCE_AUDIO: "${F5_TTS_DEFAULT_REFERENCE_AUDIO:-}"
+      F5_TTS_DEFAULT_REFERENCE_TEXT: "${F5_TTS_DEFAULT_REFERENCE_TEXT:-}"
+    volumes:
+      - ./models/f5-tts:/models/f5-tts:ro
+      - ./voices/f5-tts:/voices/f5-tts:ro
+    ports:
+      - "${F5_TTS_PORT:-7865}:7865"
+
+  web:
+    depends_on:
+      - f5-tts
+    environment:
+      TTS_PROVIDER: "${TTS_PROVIDER:-f5-tts}"
+      F5_TTS_BASE_URL: "${F5_TTS_BASE_URL:-http://f5-tts:7865}"
+      F5_TTS_ENDPOINT: "${F5_TTS_ENDPOINT:-http://f5-tts:7865/synthesize}"
+      F5_TTS_VOICE_ID: "${F5_TTS_VOICE_ID:-default}"
+      F5_TTS_FORMAT: "${F5_TTS_FORMAT:-wav}"
+      F5_TTS_REFERENCE_AUDIO: "${F5_TTS_REFERENCE_AUDIO:-}"
+      F5_TTS_FALLBACK_TO_MINIMAX: "${F5_TTS_FALLBACK_TO_MINIMAX:-true}"

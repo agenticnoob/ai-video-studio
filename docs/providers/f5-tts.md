@@ -1,6 +1,7 @@
 # F5-TTS Provider Target
 
-Status: provider adapter implemented; local runtime service planned next.
+Status: provider adapter implemented; contract-smoke runtime and real
+GPU-backed F5 runtime validated.
 
 This document defines the F5-TTS provider boundary for `ai-video-studio`.
 F5-TTS is integrated as a provider inside this project, not treated as a
@@ -8,9 +9,11 @@ separate product. The Next.js-side adapter, request contract, configuration,
 artifact handling, caption normalization, and fallback behavior belong to this
 repository.
 
-The adapter is in place. The next implementation target is the optional local
-runtime service described in
-[`docs/providers/f5-tts-service-plan.md`](f5-tts-service-plan.md).
+The adapter is in place. The optional local runtime service has a
+contract-smoke wrapper and a real `F5_TTS_SERVICE_MODE=f5` mode described in
+[`docs/providers/f5-tts-service-plan.md`](f5-tts-service-plan.md). The real
+mode has been validated locally with Docker GPU access, the local checkpoint,
+the vocab file, and the Vocos vocoder under `models/f5-tts/`.
 
 ## Product Role
 
@@ -25,9 +28,10 @@ StoryboardSegmentPlan.narration.text
   -> assembled VideoProject
 ```
 
-MiniMax TTS remains the working provider/fallback while the local F5-TTS
-runtime service lands. The staged pipeline calls the project-owned narration
-provider interface instead of hard-coding provider details in assembly code.
+MiniMax TTS remains the working provider/fallback when the local F5-TTS
+runtime is not configured or not running. The staged pipeline calls the
+project-owned narration provider interface instead of hard-coding provider
+details in assembly code.
 
 ## Provider Boundary
 
@@ -132,6 +136,7 @@ Request body sent to the runtime:
 - no model checkpoints committed to Git
 - no mandatory F5 runtime for normal web/studio development before the service
   overlay is enabled
+- no F5 model download in the first service-wrapper slice
 
 ## Success Criteria
 
@@ -145,3 +150,30 @@ Request body sent to the runtime:
 - preview and export render the same audio and captions
 - selected-segment regeneration replaces only the target segment's audio and
   captions while preserving non-target segments
+
+Current runtime note:
+
+- `services/f5-tts/` exposes the expected HTTP endpoints in `contract-smoke`
+  mode.
+- Contract-smoke mode returns generated WAV test audio and fallback captions.
+- `scripts/f5-tts-next-smoke.sh` calls `POST /api/tts` against a running Next
+  app to verify the Next adapter, local audio artifact creation, duration
+  probing, caption normalization, and `/api/tts/assets/...` byte-range serving.
+- `npm run smoke:f5-staged` builds a deterministic two-segment staged project
+  from F5 narration assets without calling MiniMax planner/compiler code.
+- `F5_TTS_SERVICE_MODE=f5` switches the service to the local checkpoint path.
+  The service reports `modelLoaded: false` until the first real `/synthesize`
+  request loads the model.
+- GPU real mode is enabled through `docker-compose.f5.gpu.yml`, which sets
+  `F5_TTS_DEVICE=cuda` and requests Docker GPU access. CPU should be treated as
+  a diagnostic fallback, not the preferred runtime.
+- The local GPU overlay has been validated with container-side PyTorch, and
+  real F5 synthesis has passed with the local checkpoint, vocab, and Vocos
+  vocoder under `models/f5-tts/`.
+- The real-mode validation path has passed direct service smoke, Next
+  `/api/tts` provider smoke, deterministic staged mixed-template smoke, and
+  deterministic staged export smoke.
+- If no custom local reference voice is configured, the service uses the
+  package default English reference WAV plus the upstream example reference
+  text. For custom voices, set both `F5_TTS_DEFAULT_REFERENCE_AUDIO` and
+  `F5_TTS_DEFAULT_REFERENCE_TEXT`.

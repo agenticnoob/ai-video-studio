@@ -1,0 +1,8 @@
+services:
+  f5-tts:
+    gpus: all
+    environment:
+      F5_TTS_SERVICE_MODE: "${F5_TTS_SERVICE_MODE:-f5}"
+      F5_TTS_DEVICE: "${F5_TTS_DEVICE:-cuda}"
+      NVIDIA_VISIBLE_DEVICES: "${NVIDIA_VISIBLE_DEVICES:-all}"
+      NVIDIA_DRIVER_CAPABILITIES: "${NVIDIA_DRIVER_CAPABILITIES:-compute,utility}"

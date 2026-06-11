@@ -1,6 +1,7 @@
 # F5-TTS Service Plan
 
-Status: next implementation plan for the in-project F5-TTS runtime service.
+Status: runtime service, Next provider, deterministic staged smoke, and real
+GPU-backed F5 mode validation added.
 
 This plan starts after the provider adapter and segment-owned captions slice:
 
@@ -10,8 +11,18 @@ This plan starts after the provider adapter and segment-owned captions slice:
 - `VideoSegment.narration.captions` owns segment-local caption cues.
 - Preview/export already flatten segment-owned narration audio and captions.
 
-The next step is to add the runtime service that the adapter calls through
-`F5_TTS_BASE_URL`.
+The current service wrapper can be started through `F5_TTS_BASE_URL` in
+contract-smoke mode without downloading a model. It proves the HTTP boundary,
+Docker overlay, and smoke script before a real F5 checkpoint is installed.
+`scripts/f5-tts-next-smoke.sh` also proves the Next adapter, local artifact
+writing, duration probing, caption normalization, and byte-range asset serving
+through `POST /api/tts`.
+`npm run smoke:f5-staged` proves a deterministic staged project can assemble
+segment-owned F5 narration assets without MiniMax planner/compiler calls.
+`F5_TTS_SERVICE_MODE=f5` switches the service from generated smoke audio to
+the local F5 checkpoint under `models/f5-tts/`.
+With the local checkpoint, vocab, and Vocos vocoder present, the same smoke
+path now validates real GPU-backed F5 synthesis end to end.
 
 ## Goal
 
@@ -33,15 +44,20 @@ a local Python process, or a GPU-enabled container.
 
 ## Service Shape
 
-Preferred first service:
+Current first service:
 
 - a separate Docker Compose service named `f5-tts`
-- Python/FastAPI or similar small HTTP wrapper
+- Python/FastAPI HTTP wrapper under `services/f5-tts/`
 - mounted model/cache directory so checkpoints are not committed to Git
 - mounted reference-voice directory for local voice profiles
-- generated response returned to the Next app as JSON with base64 audio or a
-  route/downloadable URL
+- generated response returned to the Next app as JSON with base64 audio
 - health endpoint for startup checks and smoke tests
+- default `contract-smoke` mode returns a generated WAV and fallback caption
+  cue; it does not run a real F5-TTS checkpoint yet
+- real `f5` mode loads `F5_TTS_MODEL_PATH` and `F5_TTS_VOCAB_PATH` lazily on
+  the first `/synthesize` request
+- real `f5` mode uses `F5_TTS_VOCODER_PATH` for the local Vocos vocoder and
+  logs `/synthesize` failures with tracebacks for runtime diagnosis
 
 Recommended repo paths:
 
@@ -81,7 +97,8 @@ Response:
 {
   "ok": true,
   "provider": "f5-tts",
-  "modelLoaded": true
+  "modelLoaded": false,
+  "mode": "contract-smoke"
 }
 ```
 
@@ -134,6 +151,9 @@ If the service cannot return alignment yet, it should still return valid audio.
 The Next adapter already creates deterministic fallback captions from narration
 text and measured audio duration.
 
+In the current contract-smoke wrapper, the returned audio is synthetic test WAV
+data and `modelLoaded` is false. Do not treat this as real F5 synthesis.
+
 ## Docker And Environment
 
 The web service should not embed the F5 model runtime. Keep the Next.js app
@@ -149,6 +169,12 @@ F5_TTS_VOICE_ID=default
 F5_TTS_FORMAT=wav
 F5_TTS_REFERENCE_AUDIO=/voices/f5-tts/default.wav
 F5_TTS_FALLBACK_TO_MINIMAX=true
+F5_TTS_SERVICE_MODE=f5
+F5_TTS_MODEL_PATH=/models/f5-tts/model_1250000.safetensors
+F5_TTS_VOCAB_PATH=/models/f5-tts/vocab.txt
+F5_TTS_VOCODER_PATH=/models/f5-tts/vocos-mel-24khz
+F5_TTS_ALLOW_VOCODER_DOWNLOAD=false
+F5_TTS_NFE_STEP=16
 ```
 
 Suggested host smoke env:
@@ -164,20 +190,64 @@ download models or require GPU support:
 docker compose -f docker-compose.yml -f docker-compose.f5.yml up f5-tts web
 ```
 
+GPU mode is an additional explicit overlay:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.f5.yml -f docker-compose.f5.gpu.yml up -d --build f5-tts web
+```
+
+The GPU overlay sets `F5_TTS_SERVICE_MODE=f5`, `F5_TTS_DEVICE=cuda`, requests
+all visible GPUs, and requires a working host NVIDIA driver plus Docker NVIDIA
+runtime. Use CPU only for diagnostics or systems without GPU access.
+
+Validated local state:
+
+- Docker can expose one `NVIDIA GeForce RTX 5060` to the `f5-tts` container.
+- `models/f5-tts/model_1250000.safetensors`, `models/f5-tts/vocab.txt`, and
+  `models/f5-tts/vocos-mel-24khz/` are sufficient for local real-mode
+  validation.
+- `scripts/f5-tts-smoke.sh` passed against real `mode=f5` output with
+  `modelLoaded=true`.
+- `scripts/f5-tts-next-smoke.sh` passed against the Next `/api/tts` adapter,
+  local audio artifact writing, duration probing, captions, and byte-range
+  serving.
+- `npm run smoke:f5-staged` passed for deterministic mixed `scripted` +
+  `spotlight` assembly using real F5 narration.
+- `F5_TTS_STAGED_SMOKE_RENDER=true npm run smoke:f5-staged` passed and
+  produced an exported MP4 through `/api/render`.
+
 ## Implementation Order
 
 1. Add the `services/f5-tts/` HTTP wrapper with `/health` and `/synthesize`.
+   Status: implemented for contract-smoke mode.
 2. Add `docker-compose.f5.yml` as an optional service overlay.
+   Status: implemented.
 3. Add ignored local model/reference-voice directories to `.gitignore`.
+   Status: implemented.
 4. Add `.env.example` entries for F5 service runtime configuration.
+   Status: implemented.
 5. Add `scripts/f5-tts-smoke.sh` that calls `/health` and `/synthesize`.
-6. Add a provider-backed staged smoke path that sets `TTS_PROVIDER=f5-tts`
-   and confirms:
+   Status: implemented.
+6. Add a provider-backed Next narration smoke path that sets
+   `TTS_PROVIDER=f5-tts` and calls `POST /api/tts`.
+   Status: implemented by `scripts/f5-tts-next-smoke.sh`.
+7. Add a deterministic provider-backed staged smoke path that sets
+   `TTS_PROVIDER=f5-tts` without MiniMax planner/compiler calls.
+   Status: implemented by `npm run smoke:f5-staged`.
+8. Add a live provider-backed staged route smoke for `POST /api/generate/staged`
+   when MiniMax planner/compiler configuration is available, and confirm:
    - generated audio lands under `out/tts/...`
    - `/api/tts/assets/...` serves the audio with byte-range support
    - generated project segments contain narration audio and captions
    - `/api/render` can export a project using the F5-generated audio
-7. Update docs only after the runtime smoke has passed.
+9. Replace or extend contract-smoke synthesis with a real local F5 invocation.
+   Status: implemented and validated locally through the GPU overlay with the
+   downloaded checkpoint, vocab, and Vocos vocoder.
+
+The deterministic smoke already confirms generated audio under `out/tts/...`,
+byte-range serving for `/api/tts/assets/...`, segment-owned narration audio and
+captions, and optional `/api/render` export when
+`F5_TTS_STAGED_SMOKE_RENDER=true` is set.
 
 ## Validation
 
@@ -186,6 +256,9 @@ Minimum validation for the service slice:
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.f5.yml up -d f5-tts
 scripts/f5-tts-smoke.sh
+docker compose -f docker-compose.yml -f docker-compose.f5.yml up -d web
+scripts/f5-tts-next-smoke.sh
+npm run smoke:f5-staged
 docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'
 docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'
 docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'
@@ -193,9 +266,10 @@ docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm
 git diff --check
 ```
 
-Provider-backed live smoke should be added once a local model/runtime is
-available on the workstation. Until then, keep MiniMax fallback enabled so the
-existing staged generation loop stays usable.
+Provider-backed live smoke against `POST /api/generate/staged` still depends on
+MiniMax planner/compiler configuration. Until that route smoke is added, the
+deterministic staged smoke is the bounded no-MiniMax validation path for real
+F5 narration, captions, asset serving, and export.
 
 ## Non-Goals
 

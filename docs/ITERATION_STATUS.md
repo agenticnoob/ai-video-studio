@@ -1,6 +1,129 @@
 # Iteration Status
 
-Last updated: F5-TTS service plan alignment
+Last updated: F5-TTS GPU real-mode validation
+
+## Latest continuation — F5-TTS GPU real-mode validation
+
+- Added real F5 synthesis mode behind `F5_TTS_SERVICE_MODE=f5` while keeping
+  `contract-smoke` as the default service mode.
+- Real mode:
+  - loads `F5_TTS_MODEL_PATH` and `F5_TTS_VOCAB_PATH` lazily on first
+    `/synthesize`
+  - defaults to `/models/f5-tts/model_1250000.safetensors`
+  - defaults to `/models/f5-tts/vocab.txt`
+  - uses `F5_TTS_NFE_STEP` to control inference steps
+  - uses request/env reference audio when provided, otherwise attempts the
+    package default English reference sample
+- Added the `f5-tts` Python package and runtime system dependencies to the
+  `services/f5-tts` image.
+- Added `docker-compose.f5.gpu.yml` for explicit GPU real-mode startup:
+  `F5_TTS_SERVICE_MODE=f5`, `F5_TTS_DEVICE=cuda`, and Docker GPU access.
+- Extended env examples and service docs for real-mode paths, device override,
+  and reference audio/text configuration.
+- Real mode fails explicitly when model/vocab/dependencies/reference data are
+  missing; it does not silently fall back to generated smoke audio.
+- Fixed real-mode diagnostics so `/synthesize` failures are logged with a
+  traceback in the service container.
+- Fixed the default reference fallback: the upstream package ships
+  `basic_ref_en.wav` but not `basic_ref_en.txt`, so the service now uses the
+  upstream example reference text when no custom reference voice is configured.
+
+Current readiness:
+- Local model files and the Vocos vocoder are present under `models/f5-tts/`,
+  and the service is wired to use them.
+- GPU overlay validation confirmed container-side PyTorch can see one
+  `NVIDIA GeForce RTX 5060`.
+- Direct real F5 smoke passed through
+  `F5_TTS_BASE_URL=http://127.0.0.1:7865 scripts/f5-tts-smoke.sh` with
+  `mode=f5`, `modelLoaded=true`, WAV output, and fallback caption cues.
+- Next provider smoke passed through `scripts/f5-tts-next-smoke.sh`, confirming
+  `/api/tts` adapter output, local `out/tts` WAV artifacts, duration probing,
+  captions, and `/api/tts/assets/...` byte-range serving.
+- Deterministic staged smoke passed through `npm run smoke:f5-staged` using
+  real F5 narration for mixed `scripted` + `spotlight` segments.
+- Deterministic staged export smoke passed with
+  `F5_TTS_STAGED_SMOKE_RENDER=true npm run smoke:f5-staged`; `/api/render`
+  produced `render-2026-06-11t15-31-39-590z-483a4f75` with a 2,103,133 byte
+  MP4 artifact.
+- If a custom local reference voice is needed, mount it under `voices/f5-tts/`
+  and set `F5_TTS_DEFAULT_REFERENCE_AUDIO` plus
+  `F5_TTS_DEFAULT_REFERENCE_TEXT`.
+
+## Latest continuation — F5-TTS deterministic staged smoke
+
+- Added `scripts/f5-tts-staged-smoke.mjs` and `npm run smoke:f5-staged`.
+- The smoke uses a deterministic two-segment `StoryboardPlan` and avoids
+  MiniMax planner/compiler calls.
+- It generates each segment's narration through `POST /api/tts` with
+  `provider: "f5-tts"`, then assembles a schema-compatible `VideoProject` with
+  one `scripted` segment and one `spotlight` segment.
+- The smoke verifies:
+  - each segment receives `VideoSegment.narration.audio.provider = "f5-tts"`
+  - each segment receives `VideoSegment.narration.captions`
+  - each generated `/api/tts/assets/...` URL serves byte ranges with `206`
+  - deterministic template implementations use the measured narration duration
+- Optional export validation is available with
+  `F5_TTS_STAGED_SMOKE_RENDER=true npm run smoke:f5-staged`.
+
+Current readiness:
+- The same deterministic staged smoke now works against both contract-smoke and
+  real GPU-backed F5 mode.
+- It validates the product-owned narration boundary without MiniMax
+  planner/compiler calls and can optionally validate `/api/render`.
+
+## Previous continuation — F5-TTS Next provider smoke
+
+- Added `scripts/f5-tts-next-smoke.sh` to exercise the Next.js-side F5-TTS
+  provider adapter through `POST /api/tts`.
+- The smoke is intentionally scoped to the narration-provider stage, so it does
+  not require MiniMax planner/compiler credentials and does not download a real
+  F5 model.
+- The smoke confirms:
+  - `POST /api/tts` can call the `f5-tts` contract-smoke runtime
+  - the Next adapter writes a local `out/tts/...` WAV artifact
+  - ffprobe duration probing succeeds
+  - response narration has provider `f5-tts`, format `wav`, and caption cues
+  - `/api/tts/assets/...` serves the generated artifact with byte-range support
+- Updated `docker-compose.f5.yml` so the overlay `web` service depends on the
+  optional `f5-tts` service.
+
+Current readiness:
+- The repo now has two F5 service checks:
+  - `scripts/f5-tts-smoke.sh` validates the runtime HTTP contract directly.
+  - `scripts/f5-tts-next-smoke.sh` validates the Next adapter and asset route
+    against that runtime.
+- This still is not real F5 synthesis; `modelLoaded` remains false in the
+  contract-smoke service.
+- Full `POST /api/generate/staged` provider-backed smoke still needs MiniMax
+  planner/compiler configuration, or a separate deterministic compiler harness.
+
+## Previous continuation — F5-TTS contract-smoke runtime wrapper
+
+- Added the optional `f5-tts` Docker Compose overlay service described by the
+  service plan, without downloading or bundling a real F5 model.
+- Added `services/f5-tts/`, a small FastAPI HTTP wrapper that exposes:
+  - `GET /health`
+  - `POST /synthesize`
+- The first runtime mode is `contract-smoke`: it returns a generated WAV and
+  fallback caption cue so the existing Next-side adapter can verify the HTTP
+  contract, local artifact writing, duration probing, and caption
+  normalization.
+- Added `scripts/f5-tts-smoke.sh` for direct service health/synthesis contract
+  checks.
+- Added ignored local asset directories for future model checkpoints and
+  private reference voices:
+  - `models/f5-tts/`
+  - `voices/f5-tts/`
+- Updated env examples for the optional F5 runtime overlay.
+
+Current readiness:
+- The service boundary can be validated without downloading F5 model weights.
+- This is not real F5 synthesis yet; `modelLoaded` is false in the smoke
+  service.
+- The next implementation slice should either wire the wrapper to a real local
+  F5 invocation once checkpoints/reference voices are available, or add a
+  provider-backed staged smoke using the contract-smoke service to exercise the
+  existing Next adapter end to end.
 
 ## Latest continuation — F5-TTS runtime service plan
 
@@ -19,8 +142,9 @@ Last updated: F5-TTS service plan alignment
   is not running.
 
 Current readiness:
-- The next implementation slice should create the F5-TTS runtime service
-  described in `docs/providers/f5-tts-service-plan.md`.
+- Superseded by the latest runtime validation: the F5-TTS runtime service
+  described in `docs/providers/f5-tts-service-plan.md` has been created and
+  validated.
 - Do not restart from caption normalization or provider adapter work; that
   boundary is already in place.
 
@@ -44,9 +168,10 @@ Current readiness:
   to cover segment-owned caption cues and selected-segment caption replacement.
 
 Current readiness:
-- The data/render path for segment-owned captions is in place.
-- The repo owns the F5 provider adapter contract, but a bundled F5 runtime or
-  provider-backed live smoke against a real F5 service is still a later slice.
+- Superseded by the latest runtime validation: the data/render path for
+  segment-owned captions is in place, the F5 provider adapter contract is
+  owned by the repo, and the optional F5 runtime now has contract-smoke and
+  real GPU-backed smoke coverage.
 
 ## Latest continuation — segment-owned narration audio implementation
 
@@ -72,7 +197,8 @@ Current readiness:
 - Superseded by the latest F5/captions slice: caption normalization/fallback
   cues, shared caption rendering, and the Next-side F5 provider adapter are
   now in place.
-- The next slice should add the optional local F5-TTS runtime service.
+- Superseded by the latest runtime validation: the optional local F5-TTS
+  runtime service has been added and validated.
 
 ## Previous continuation — segment-owned narration/captions handoff alignment
 
@@ -103,8 +229,8 @@ Current readiness:
 Current readiness:
 - Superseded by the latest continuations: `VideoSegment.narration.audio` and
   `VideoSegment.narration.captions` now own generated narration data, and the
-  Next-side F5 provider adapter is in place.
-- The next slice should add the optional local F5-TTS runtime service.
+  Next-side F5 provider adapter is in place; the optional local F5-TTS runtime
+  service has also been added and validated.
 - Do not start by adding top-level `VideoProject.captions`.
 
 ## Latest continuation — F5-TTS aligned-captions target alignment
