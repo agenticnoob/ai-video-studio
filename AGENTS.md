@@ -73,6 +73,13 @@ The first staged-generation groundwork is also in place:
 - Staged request validation/error classification lives in
   `src/lib/staged-generation-api.ts`; staged assembly and narration-layer
   replacement helpers live in `src/lib/staged-project-assembly.ts`.
+- Bounded planner repair is in place for invalid `StoryboardPlan` output in
+  both full-brief and selected-segment staged planner paths.
+- Deterministic staged smoke fixtures cover a mixed `scripted` + `spotlight`
+  project, narration layer timeline assembly, and selected-segment narration
+  replacement. Remotion exposes this fixture as
+  `StagedSmokeMixedTemplateProject`, and `npm run smoke:staged-fixtures`
+  bundles/loads it through `src/remotion/index.ts`.
 
 This repo is past the upstream starter-demo stage.
 Do not describe it as an untouched scaffold.
@@ -109,13 +116,15 @@ brief -> StoryboardPlan -> per-segment TTS -> per-segment template compile
 Keep the next iteration focused on:
 1. keep `VideoProject` as the preview/edit/export boundary
 2. keep the existing StoryboardPlan contract as the planner-stage boundary
-3. add bounded planner repair or hardening only if needed for the next slice
+3. keep the bounded planner repair path active and visible in diagnostics
 4. use generated narration audio from per-segment TTS before template
    compilation
 5. use real audio duration plus the selected template context to generate
    schema-valid `implementation`
 6. preserve validation, bounded repair, and non-target segment preservation
-7. do not widen into persistence/history, generic media-layer work, or
+7. use deterministic smoke fixtures and provider-backed live smoke to harden
+   mixed registered-template output before widening scope
+8. do not widen into persistence/history, generic media-layer work, or
    multi-template-per-segment orchestration unless the task explicitly asks for it
 
 Current product modeling decision:
@@ -166,7 +175,7 @@ Still not implemented unless the new task explicitly asks for them:
 - project-level / segment-level media-layer compositing
 - broad media-layer editor work beyond the current generated narration audio
   carrier
-- planner repair beyond the current bounded selected-template compiler repair
+- planner repair beyond the current bounded planner/compiler repair paths
 - browser automation acceptance
 - end-user render progress UX beyond idle / rendering / success / failure
 

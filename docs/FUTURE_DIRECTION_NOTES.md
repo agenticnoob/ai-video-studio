@@ -110,8 +110,8 @@ Current likely sequence:
 - compact planner template manifest
 - template selection based on registered descriptions, capabilities, and use
   cases
-- status: implemented for the active staged route; planner repair remains
-  later hardening work
+- status: implemented for the active staged route, with one bounded planner
+  repair attempt for invalid planner output
 
 3. Add TTS narration audio MVP
 - generate narration audio from planned segment text
@@ -130,8 +130,9 @@ Current likely sequence:
 5. Assemble staged output into the current product loop
 - preview and export the assembled `VideoProject`
 - regenerate only the smallest affected scope
-- status: implemented for the active page path; continue hardening
-  multi-segment smoke, planner repair, and progress UX
+- status: implemented for the active page path, with deterministic
+  mixed-template smoke fixtures; continue hardening live multi-segment smoke
+  and progress UX
 
 6. Later media-layer and persistence work
 - add existing image/video/audio/color layers after generated narration is

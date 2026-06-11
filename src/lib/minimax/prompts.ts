@@ -1,6 +1,7 @@
 import type {
   MinimaxChatMessage,
   MinimaxSegmentPlanRevisionRequest,
+  MinimaxStoryboardPlanRequest,
   MinimaxTemplateCompileRequest,
   MinimaxTool,
   MinimaxToolChoice,
@@ -114,6 +115,30 @@ You MUST emit the result by calling the function tool named "emit_result".
 Pass the complete StoryboardPlan object (top-level keys: title, brief, segments,
 and optional language/globalStyle) as the function arguments JSON string. Do
 not return the JSON in the assistant content channel — it will be ignored.`;
+
+const buildStoryboardRepairInstructions = ({
+  previousInvalidOutput,
+  validationError,
+}: {
+  previousInvalidOutput?: string;
+  validationError?: string;
+}): string => {
+  if (!previousInvalidOutput && !validationError) {
+    return "";
+  }
+
+  return [
+    "# Repair input",
+    "The previous StoryboardPlan output was rejected. Return a corrected StoryboardPlan object only.",
+    "Preserve the user's intent, but fix JSON shape, required fields, valid templateId values, unique ids, and contiguous order values.",
+    validationError ? `Validation error: ${validationError}` : "",
+    previousInvalidOutput
+      ? `Previous invalid output:\n\`\`\`json\n${previousInvalidOutput.slice(0, 4000)}\n\`\`\``
+      : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+};
 
 const buildTemplateCompilerSystemPrompt = (request: MinimaxTemplateCompileRequest): string => {
   const template = getTemplateDefinition(request.segment.templateId);
@@ -230,10 +255,7 @@ const buildSegmentPayloadForRevise = (project: VideoProject): unknown => {
   };
 };
 
-const buildSegmentPlanRevisionPayload = (
-  project: VideoProject,
-  segmentId: string,
-): unknown => {
+const buildSegmentPlanRevisionPayload = (project: VideoProject, segmentId: string): unknown => {
   const targetIndex = project.segments.findIndex((segment) => segment.id === segmentId);
   const targetSegment = targetIndex >= 0 ? project.segments[targetIndex] : null;
 
@@ -279,10 +301,21 @@ export const buildProjectPrompt = (brief: string): MinimaxPrompt => {
   };
 };
 
-export const buildStoryboardPlanPrompt = (brief: string): MinimaxPrompt => {
+export const buildStoryboardPlanPrompt = ({
+  brief,
+  previousInvalidOutput,
+  validationError,
+}: MinimaxStoryboardPlanRequest): MinimaxPrompt => {
   const safeBrief = brief.length > 0 ? brief : "Create a concise AI Video Studio workflow video.";
+  const repairInstructions = buildStoryboardRepairInstructions({
+    previousInvalidOutput,
+    validationError,
+  });
   const messages: MinimaxChatMessage[] = [
-    { role: "system", content: STORYBOARD_PLAN_SYSTEM_PROMPT },
+    {
+      role: "system",
+      content: [STORYBOARD_PLAN_SYSTEM_PROMPT, repairInstructions].filter(Boolean).join("\n\n"),
+    },
     {
       role: "user",
       content: `Brief:\n"""\n${safeBrief}\n"""\n\nReturn a single JSON object matching the StoryboardPlan contract above. Call the "emit_result" tool with the complete plan as arguments.`,
@@ -297,11 +330,17 @@ export const buildStoryboardPlanPrompt = (brief: string): MinimaxPrompt => {
 };
 
 export const buildSegmentPlanRevisionPrompt = ({
+  previousInvalidOutput,
   project,
   revisionPrompt,
   segmentId,
+  validationError,
 }: MinimaxSegmentPlanRevisionRequest): MinimaxPrompt => {
   const payload = JSON.stringify(buildSegmentPlanRevisionPayload(project, segmentId), null, 2);
+  const repairInstructions = buildStoryboardRepairInstructions({
+    previousInvalidOutput,
+    validationError,
+  });
   const messages: MinimaxChatMessage[] = [
     {
       role: "system",
@@ -323,6 +362,8 @@ This is the planning stage only. Do not generate final template implementation f
 
 # Planner template manifest
 ${buildPlannerTemplateManifestPrompt()}
+
+${repairInstructions}
 
 # Tool-calling contract (CRITICAL)
 You MUST emit the result by calling the function tool named "emit_result".

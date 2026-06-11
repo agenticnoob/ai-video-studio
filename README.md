@@ -160,14 +160,19 @@ Current code checkpoint:
   `src/lib/staged-generation-api.ts`; staged assembly and narration-layer
   replacement helpers live in `src/lib/staged-project-assembly.ts`
 - route media export hardening is in place for generated narration audio
-- not implemented yet: planner repair, persistence/history, and broad
-  media-layer editing
+- basic bounded planner repair is in place for invalid `StoryboardPlan`
+  output
+- deterministic staged smoke fixtures cover a mixed `scripted` + `spotlight`
+  project and selected-segment narration replacement; Remotion Studio exposes
+  this as `StagedSmokeMixedTemplateProject`
+- not implemented yet: persistence/history and broad media-layer editing
 
 Best next bounded slice:
 - keep `VideoProject` as the preview/edit/export boundary
 - use `StoryboardPlan` as the planner-stage contract
 - continue hardening the user-facing preview / edit / export loop on staged
-  output, especially multi-segment and regenerated-segment cases
+  output, especially live multi-segment generation and clearer progress/error
+  UX
 - avoid persistence/history, generic media-layer compositing, and
   multi-template-per-segment orchestration unless explicitly reopened
 
@@ -215,6 +220,12 @@ Render the default/sample composition to `out/ai-video.mp4`:
 ```bash
 cd /data/projects/labs/ai-video-studio
 ./scripts/render.sh
+```
+
+List Remotion compositions and load the deterministic staged smoke fixtures:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose run --rm web npm run smoke:staged-fixtures
 ```
 
 Important distinction:

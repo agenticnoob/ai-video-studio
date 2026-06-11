@@ -83,6 +83,8 @@ export type GenerateStagedProjectFromPlanRequest = {
 export type GenerateStagedProjectResult = {
   narrationLayers: AudioMediaLayer[];
   plan: StoryboardPlan;
+  plannerAttempts?: number;
+  plannerRepaired?: boolean;
   project: VideoProject;
   segments: CompilePlannedSegmentResult[];
 };
@@ -98,6 +100,8 @@ export type GenerateStagedSegmentRevisionResult = {
   compilerAttempts: number;
   narration: SegmentNarrationAsset;
   plan: StoryboardPlan;
+  plannerAttempts: number;
+  plannerRepaired: boolean;
   project: VideoProject;
   repaired: boolean;
   segment: VideoSegment;
@@ -162,7 +166,11 @@ export const generateStagedSegmentRevision = async ({
     throw new StoryboardSegmentNotFoundError(segmentId);
   }
 
-  const { plan: rawPlan } = await minimaxGenerateRevisedSegmentPlan({
+  const {
+    attempts: plannerAttempts,
+    plan: rawPlan,
+    repaired: plannerRepaired,
+  } = await minimaxGenerateRevisedSegmentPlan({
     project,
     revisionPrompt,
     segmentId,
@@ -191,6 +199,8 @@ export const generateStagedSegmentRevision = async ({
     compilerAttempts: compiled.compilerAttempts,
     narration,
     plan,
+    plannerAttempts,
+    plannerRepaired,
     project: revisedProject,
     repaired: compiled.repaired,
     segment: compiled.segment,
@@ -206,6 +216,17 @@ export const generateStagedProjectFromBrief = async ({
   brief,
   voiceId,
 }: GenerateStagedProjectFromBriefRequest): Promise<GenerateStagedProjectResult> => {
-  const { plan } = await minimaxGenerateStoryboardPlan({ brief });
-  return generateStagedProjectFromPlan({ plan, voiceId });
+  const {
+    attempts: plannerAttempts,
+    plan,
+    repaired: plannerRepaired,
+  } = await minimaxGenerateStoryboardPlan({
+    brief,
+  });
+  const result = await generateStagedProjectFromPlan({ plan, voiceId });
+  return {
+    ...result,
+    plannerAttempts,
+    plannerRepaired,
+  };
 };

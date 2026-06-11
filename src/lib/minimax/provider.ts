@@ -198,6 +198,8 @@ export type MinimaxProjectRequest = {
 
 export type MinimaxStoryboardPlanRequest = {
   brief: string;
+  previousInvalidOutput?: string;
+  validationError?: string;
 };
 
 export type MinimaxSegmentRequest = {
@@ -210,6 +212,8 @@ export type MinimaxSegmentPlanRevisionRequest = {
   project: VideoProject;
   segmentId: string;
   revisionPrompt: string;
+  previousInvalidOutput?: string;
+  validationError?: string;
 };
 
 export type MinimaxTemplateCompileRequest = {

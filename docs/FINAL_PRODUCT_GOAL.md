@@ -443,7 +443,8 @@ Known limitation:
 - the shipped one-shot `POST /api/generate` route still exists as a fallback
   shortcut
 - the active staged page path now uses planner -> TTS -> compiler -> assembly,
-  but planner repair and broader smoke coverage still need hardening
+  with bounded planner repair and deterministic mixed-template smoke fixtures;
+  provider-backed live smoke coverage still needs hardening
 
 ### Milestone 1: Authoritative Goal And Contracts
 
@@ -459,8 +460,8 @@ Deliverables:
 
 ### Milestone 2: Storyboard Plan Contract
 
-Status: implemented for the active staged route; planner repair remains a
-future hardening slice.
+Status: implemented for the active staged route, including bounded planner
+repair.
 
 Goal:
 
@@ -473,10 +474,10 @@ Implemented:
 - planner template manifest derived from registered templates
 - planner prompt that receives compact template metadata
 - internal MiniMax function that can produce and validate a plan
-
-Remaining:
-
-- basic repair path for invalid planner output
+- one bounded planner repair attempt for invalid JSON or schema-invalid
+  `StoryboardPlan` output
+- selected-segment planner repair that still requires exactly one planned
+  segment before target id/order reassignment
 
 Non-goals:
 
@@ -557,8 +558,7 @@ Implemented:
 
 Remaining:
 
-- broader template-specific smoke fixtures
-- planner repair for invalid storyboard plans
+- provider-backed live multi-segment staged smoke
 - richer progress/error UX for multi-stage generation
 
 Success criteria:
@@ -595,7 +595,8 @@ Deliverables:
 - examples and constraints per template
 - duration guard per template
 - template-specific repair prompts
-- tests or smoke fixtures for each registered template
+- deterministic smoke fixtures for registered template mixes
+- provider-backed live smoke coverage as template count grows
 
 ### Milestone 7: Narration, Captions, And Audio Polish
 

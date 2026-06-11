@@ -8,6 +8,16 @@ const formatIssues = (issues: z.ZodIssue[]): string =>
     .map((issue) => `${issue.path.join(".") || "<root>"}: ${issue.message}`)
     .join("; ");
 
+export class StoryboardPlanParseError extends Error {
+  raw: string;
+
+  constructor(message: string, raw: string) {
+    super(message);
+    this.name = "StoryboardPlanParseError";
+    this.raw = raw;
+  }
+}
+
 const looksLikeWrappedPlan = (value: unknown): unknown | null => {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
     return null;
@@ -28,8 +38,9 @@ export const parseStoryboardPlanToolCallArguments = (argumentsString: string): S
     parsed = JSON.parse(argumentsString);
   } catch (err) {
     const detail = err instanceof Error ? err.message : String(err);
-    throw new Error(
+    throw new StoryboardPlanParseError(
       `MiniMax storyboard tool_call arguments were not valid JSON: ${detail}; raw=${head}`,
+      argumentsString,
     );
   }
 
@@ -46,7 +57,8 @@ export const parseStoryboardPlanToolCallArguments = (argumentsString: string): S
     }
   }
 
-  throw new Error(
+  throw new StoryboardPlanParseError(
     `Generated storyboard plan failed schema validation: ${formatIssues(result.error.issues)} ; raw=${head}`,
+    argumentsString,
   );
 };

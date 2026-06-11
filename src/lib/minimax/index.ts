@@ -16,7 +16,10 @@ import {
 import { parseToolCallArguments } from "./parse-project";
 import type { VideoProject } from "../project-schema";
 import type { StoryboardPlan } from "../storyboard-plan-schema";
-import { parseStoryboardPlanToolCallArguments } from "./parse-storyboard-plan";
+import {
+  parseStoryboardPlanToolCallArguments,
+  StoryboardPlanParseError,
+} from "./parse-storyboard-plan";
 import {
   parseTemplateImplementationToolCallArguments,
   TemplateImplementationParseError,
@@ -48,41 +51,113 @@ export const minimaxGenerateProject = async (
 };
 
 export type MinimaxGenerateStoryboardPlanResult = {
+  attempts: number;
   plan: StoryboardPlan;
+  repaired: boolean;
 };
+
+const MAX_STORYBOARD_PLAN_REPAIR_ATTEMPTS = 1;
 
 export const minimaxGenerateStoryboardPlan = async (
   request: MinimaxStoryboardPlanRequest,
 ): Promise<MinimaxGenerateStoryboardPlanResult> => {
-  const { messages, tools, toolChoice } = buildStoryboardPlanPrompt(request.brief);
-  const argumentsString = await callMinimaxChat(messages, { tools, toolChoice });
-  return { plan: parseStoryboardPlanToolCallArguments(argumentsString) };
+  let validationError: string | undefined;
+  let previousInvalidOutput: string | undefined;
+
+  for (let attempt = 0; attempt <= MAX_STORYBOARD_PLAN_REPAIR_ATTEMPTS; attempt++) {
+    const { messages, tools, toolChoice } = buildStoryboardPlanPrompt({
+      ...request,
+      previousInvalidOutput,
+      validationError,
+    });
+    const argumentsString = await callMinimaxChat(messages, { tools, toolChoice });
+
+    try {
+      return {
+        attempts: attempt + 1,
+        plan: parseStoryboardPlanToolCallArguments(argumentsString),
+        repaired: attempt > 0,
+      };
+    } catch (error) {
+      if (!(error instanceof StoryboardPlanParseError)) {
+        throw error;
+      }
+      if (attempt >= MAX_STORYBOARD_PLAN_REPAIR_ATTEMPTS) {
+        throw error;
+      }
+      validationError = error.message;
+      previousInvalidOutput = error.raw;
+    }
+  }
+
+  throw new Error("Storyboard planning exhausted repair attempts.");
 };
 
 export type MinimaxGenerateRevisedSegmentPlanResult = {
+  attempts: number;
   plan: StoryboardPlan;
+  repaired: boolean;
+};
+
+const parseOneSegmentStoryboardPlan = (
+  argumentsString: string,
+  segmentId: string,
+): StoryboardPlan => {
+  const plan = parseStoryboardPlanToolCallArguments(argumentsString);
+  if (plan.segments.length !== 1) {
+    throw new StoryboardPlanParseError(
+      `Generated revised storyboard plan must contain exactly one segment for "${segmentId}", but received ${plan.segments.length}.`,
+      argumentsString,
+    );
+  }
+  return plan;
 };
 
 export const minimaxGenerateRevisedSegmentPlan = async (
   request: MinimaxSegmentPlanRevisionRequest,
 ): Promise<MinimaxGenerateRevisedSegmentPlanResult> => {
-  const { messages, tools, toolChoice } = buildSegmentPlanRevisionPrompt(request);
-  const argumentsString = await callMinimaxChat(messages, { tools, toolChoice });
-  const plan = parseStoryboardPlanToolCallArguments(argumentsString);
-  const [segment] = plan.segments;
+  let validationError: string | undefined;
+  let previousInvalidOutput: string | undefined;
 
-  return {
-    plan: {
-      ...plan,
-      segments: [
-        {
-          ...segment,
-          id: request.segmentId,
-          order: 1,
+  for (let attempt = 0; attempt <= MAX_STORYBOARD_PLAN_REPAIR_ATTEMPTS; attempt++) {
+    const { messages, tools, toolChoice } = buildSegmentPlanRevisionPrompt({
+      ...request,
+      previousInvalidOutput,
+      validationError,
+    });
+    const argumentsString = await callMinimaxChat(messages, { tools, toolChoice });
+
+    try {
+      const plan = parseOneSegmentStoryboardPlan(argumentsString, request.segmentId);
+      const [segment] = plan.segments;
+
+      return {
+        attempts: attempt + 1,
+        plan: {
+          ...plan,
+          segments: [
+            {
+              ...segment,
+              id: request.segmentId,
+              order: 1,
+            },
+          ],
         },
-      ],
-    },
-  };
+        repaired: attempt > 0,
+      };
+    } catch (error) {
+      if (!(error instanceof StoryboardPlanParseError)) {
+        throw error;
+      }
+      if (attempt >= MAX_STORYBOARD_PLAN_REPAIR_ATTEMPTS) {
+        throw error;
+      }
+      validationError = error.message;
+      previousInvalidOutput = error.raw;
+    }
+  }
+
+  throw new Error("Storyboard segment planning exhausted repair attempts.");
 };
 
 export type MinimaxCompileTemplateImplementationResult = {

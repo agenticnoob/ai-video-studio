@@ -50,6 +50,10 @@ export async function POST(request: Request) {
         plan: result.plan,
         project: result.project,
         diagnostics: {
+          planner: {
+            attempts: result.plannerAttempts,
+            repaired: result.plannerRepaired,
+          },
           compiler: [
             {
               attempts: result.compilerAttempts,
@@ -79,6 +83,13 @@ export async function POST(request: Request) {
       plan: result.plan,
       project: result.project,
       diagnostics: {
+        planner:
+          result.plannerAttempts === undefined || result.plannerRepaired === undefined
+            ? undefined
+            : {
+                attempts: result.plannerAttempts,
+                repaired: result.plannerRepaired,
+              },
         compiler: result.segments.map((segment) => ({
           attempts: segment.compilerAttempts,
           repaired: segment.repaired,

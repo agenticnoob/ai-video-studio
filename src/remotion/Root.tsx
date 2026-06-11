@@ -12,6 +12,7 @@ import {
 import { getProjectDuration, videoProjectSchema, type VideoProject } from "../lib/project-schema";
 import { getVideoDuration, videoSpecSchema, type VideoSpec } from "../lib/video-schema";
 import { sampleProject, sampleVideo } from "../lib/sample-video";
+import { mixedTemplateStagedProject } from "../lib/staged-smoke-fixtures";
 import { MetaBallsDemo } from "./demos/MetaBallsDemo";
 import { Main } from "./MyComp/Main";
 import { NextLogo } from "./MyComp/NextLogo";
@@ -40,6 +41,25 @@ export const RemotionRoot: FC = () => {
         fps={sampleProject.meta.fps}
         width={sampleProject.meta.width}
         height={sampleProject.meta.height}
+        calculateMetadata={({ props }) => {
+          const project = videoProjectSchema.parse(props) as VideoProject;
+          return {
+            durationInFrames: getProjectDuration(project),
+            fps: project.meta.fps,
+            width: project.meta.width,
+            height: project.meta.height,
+          };
+        }}
+      />
+      <Composition
+        id="StagedSmokeMixedTemplateProject"
+        component={ProjectVideo}
+        schema={videoProjectSchema}
+        defaultProps={mixedTemplateStagedProject}
+        durationInFrames={getProjectDuration(mixedTemplateStagedProject)}
+        fps={mixedTemplateStagedProject.meta.fps}
+        width={mixedTemplateStagedProject.meta.width}
+        height={mixedTemplateStagedProject.meta.height}
         calculateMetadata={({ props }) => {
           const project = videoProjectSchema.parse(props) as VideoProject;
           return {

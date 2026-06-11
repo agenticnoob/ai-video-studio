@@ -1,8 +1,77 @@
 # Iteration Status
 
-Last updated: latest documentation alignment
+Last updated: latest staged smoke fixture hardening
 
-## Latest continuation — project structure cleanup and runtime config alignment
+## Latest continuation — deterministic mixed-template staged smoke fixtures
+
+- Added deterministic staged smoke fixtures for the registered template mix:
+  - a two-segment `StoryboardPlan` with out-of-order input segments that
+    normalizes to `scripted` then `spotlight`
+  - fixture narration assets for both segments
+  - schema-validated compiled `VideoSegment` objects for both registered
+    templates
+  - assembled `VideoProject` with project-level narration audio layers
+  - selected-segment replacement fixture that verifies the target narration
+    layer is regenerated at the correct timeline start while non-target
+    segment data is preserved
+- Added a Remotion composition, `StagedSmokeMixedTemplateProject`, using the
+  fixture project as `defaultProps` so Remotion CLI / Studio can load and
+  inspect the mixed-template staged output directly.
+- Added `npm run smoke:staged-fixtures`, which lists Remotion compositions and
+  bundles the smoke composition through `src/remotion/index.ts`.
+- Kept the product model unchanged:
+  - `VideoProject` remains the preview/edit/export boundary.
+  - one primary `templateId` still determines each segment's
+    template-specific `implementation`.
+  - narration audio remains template-external project media layer data.
+- Validation performed for this slice:
+  - Docker `npx tsc --noEmit`
+  - Docker `npm run lint`
+  - Docker `npm run build`
+  - Docker `npx remotion compositions src/remotion/index.ts`
+  - `git diff --check`
+
+Current readiness:
+- the repo now has a deterministic, no-provider smoke artifact for mixed
+  registered templates, narration layer timeline assembly, and selected
+  segment narration replacement.
+
+Remaining next slices:
+- live multi-segment staged smoke with configured providers
+- richer progress UX beyond idle / rendering / success / failure
+- persistence/history only after the staged loop is stable
+
+## Previous continuation — bounded storyboard planner repair
+
+- Hardened the active staged planner path without changing the product model:
+  - invalid MiniMax `StoryboardPlan` tool-call arguments now throw a dedicated
+    `StoryboardPlanParseError` that preserves the rejected raw output.
+  - full-project staged planning retries once with bounded repair context when
+    planner JSON parsing or `StoryboardPlan` schema validation fails.
+  - selected-segment staged regeneration uses the same planner repair path and
+    additionally requires the repaired plan to contain exactly one segment
+    before the code reassigns the target `segmentId` and `order = 1`.
+  - repair prompts include validation errors and the previous invalid planner
+    output while keeping the output contract limited to `StoryboardPlan`.
+  - staged API diagnostics now expose planner attempts and whether planner
+    repair was used for generated-brief and selected-segment paths.
+- Kept the product model unchanged:
+  - `VideoProject` remains the preview/edit/export boundary.
+  - `StoryboardPlan` remains the planner-stage boundary.
+  - `templateId` still determines template-specific `implementation`.
+  - selected-segment regeneration remains scoped to the target segment plan,
+    TTS audio, compiler output, and narration layer replacement.
+- Validation performed for this slice:
+  - Docker `npx tsc --noEmit`
+  - Docker `npm run lint`
+
+Current readiness:
+- staged full-project generation and selected-segment regeneration now have
+  bounded planner repair before TTS and selected-template compilation.
+- invalid planner output fails as a clear upstream generation error after the
+  repair attempt instead of silently falling through to unrelated content.
+
+## Previous continuation — project structure cleanup and runtime config alignment
 
 - Performed a behavior-preserving structure cleanup after the staged loop was
   manually validated:
@@ -44,12 +113,6 @@ Current readiness:
 - the next implementation slices can now add planner repair, fixtures, and
   progress visibility without further inflating `page.tsx` or the staged API
   route.
-
-Remaining next slices:
-- planner repair for invalid `StoryboardPlan` output
-- broader multi-template smoke fixtures
-- richer progress UX beyond idle / rendering / success / failure
-- persistence/history only after the staged loop is stable
 
 ## Previous continuation — staged preview, segment regeneration, and export hardening
 

@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { TemplateImplementationParseError } from "./minimax/parse-template-implementation";
+import { StoryboardPlanParseError } from "./minimax/parse-storyboard-plan";
 import { videoProjectSchema } from "./project-schema";
 import { storyboardPlanSchema } from "./storyboard-plan-schema";
 
@@ -42,7 +43,9 @@ export type StagedGenerateRequest = z.infer<typeof stagedGenerateRequestSchema>;
 export const getStagedGenerationErrorStatus = (error: unknown): number => {
   const message = error instanceof Error ? error.message : "";
 
-  return error instanceof TemplateImplementationParseError || upstreamErrorPattern.test(message)
+  return error instanceof StoryboardPlanParseError ||
+    error instanceof TemplateImplementationParseError ||
+    upstreamErrorPattern.test(message)
     ? 502
     : 500;
 };
