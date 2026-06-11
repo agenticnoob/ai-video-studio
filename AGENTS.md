@@ -66,6 +66,13 @@ The first staged-generation groundwork is also in place:
   support so Remotion Player can seek audio during pause/resume.
 - Local export rewrites route media URLs to a Next API origin before Remotion
   rendering so `/api/tts/assets/...` audio can be downloaded during export.
+- Page generation state is now split out of `src/app/page.tsx` into
+  `src/helpers/use-project-generation.ts`, with `GenerationPanel` and
+  `PreviewPanel` owning the brief/generation controls and Remotion Player
+  preview sections.
+- Staged request validation/error classification lives in
+  `src/lib/staged-generation-api.ts`; staged assembly and narration-layer
+  replacement helpers live in `src/lib/staged-project-assembly.ts`.
 
 This repo is past the upstream starter-demo stage.
 Do not describe it as an untouched scaffold.
@@ -127,14 +134,19 @@ Current product modeling decision:
 ## Important implementation files
 
 - `src/app/page.tsx`
+- `src/components/project/GenerationPanel.tsx`
+- `src/components/project/PreviewPanel.tsx`
 - `src/app/api/generate/route.ts`
 - `src/app/api/render/route.ts`
 - `src/app/api/render/latest/route.ts`
 - `src/app/api/render/[renderId]/route.ts`
 - `src/helpers/use-rendering.ts`
+- `src/helpers/use-project-generation.ts`
 - `src/lib/render-project.ts`
 - `src/lib/project-schema.ts`
 - `src/lib/storyboard-plan-schema.ts`
+- `src/lib/staged-generation-api.ts`
+- `src/lib/staged-project-assembly.ts`
 - `src/templates/*`
 - `src/templates/registered-definitions.ts`
 - `src/templates/registered-bundles.ts`
@@ -179,6 +191,10 @@ Use the Docker wrappers documented in `README.md` for app runtime:
 ./scripts/studio.sh
 ./scripts/render.sh
 ```
+
+The Docker Compose `web` and `studio` services use
+`restart: unless-stopped`. Next dev origins include the local LAN origins and
+`ez.zzzxc.com`.
 
 The host `node_modules` directory may be absent, incomplete, or owned by a
 different user because dependencies are intended to live in the Docker volume.

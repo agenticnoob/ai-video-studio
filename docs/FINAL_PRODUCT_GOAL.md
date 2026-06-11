@@ -551,6 +551,9 @@ Implemented:
 - TTS asset route supports byte ranges for Remotion Player seek behavior
 - local `/api/render` resolves route media such as `/api/tts/assets/...` to a
   Next app origin before Remotion export
+- page generation state, staged API request/error boundaries, and staged
+  project assembly helpers are split into focused modules so further staged
+  hardening can happen without concentrating logic in the page or route entry
 
 Remaining:
 

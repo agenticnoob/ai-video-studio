@@ -45,6 +45,11 @@ Current implementation status:
 - staged selected-segment regeneration reruns the target segment's planning,
   TTS, selected-template compilation, and narration media-layer replacement
   while preserving non-target segments
+- the main page has been split into a thin layout entry plus focused project
+  generation, generation controls, and preview modules so the staged loop can
+  keep growing without concentrating all logic in `src/app/page.tsx`
+- staged API request validation/error classification and staged project
+  assembly helpers are separated from route dispatch and pipeline orchestration
 - in-app export resolves route media such as `/api/tts/assets/...` through the
   Next app origin before Remotion rendering so generated narration audio is
   included in the exported file
@@ -148,6 +153,12 @@ Current code checkpoint:
 - selected-template compiler groundwork: internal compiler functions and
   `POST /api/generate/staged` can assemble a staged project
 - staged selected-segment regeneration is wired for the active page path
+- page generation state now lives in `src/helpers/use-project-generation.ts`,
+  with `GenerationPanel` and `PreviewPanel` handling the corresponding UI
+  sections
+- staged route request parsing/error classification lives in
+  `src/lib/staged-generation-api.ts`; staged assembly and narration-layer
+  replacement helpers live in `src/lib/staged-project-assembly.ts`
 - route media export hardening is in place for generated narration audio
 - not implemented yet: planner repair, persistence/history, and broad
   media-layer editing
@@ -173,6 +184,12 @@ cd /data/projects/labs/ai-video-studio
 ```
 Then open:
 - http://localhost:3000
+
+The Docker Compose `web` and `studio` services use
+`restart: unless-stopped`, so local containers can survive workstation restarts
+until they are explicitly stopped with `docker compose down` or equivalent.
+Next dev requests are allowed from `localhost`, the configured LAN origins, and
+`ez.zzzxc.com`.
 
 The Docker startup path runs `npm run remotion:ensure-browser` before starting
 the app. This checks for Remotion's Chrome Headless Shell and downloads it

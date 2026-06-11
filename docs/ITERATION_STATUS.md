@@ -2,7 +2,56 @@
 
 Last updated: latest documentation alignment
 
-## Latest continuation — staged preview, segment regeneration, and export hardening
+## Latest continuation — project structure cleanup and runtime config alignment
+
+- Performed a behavior-preserving structure cleanup after the staged loop was
+  manually validated:
+  - `src/app/page.tsx` now acts as the page layout/composition entry instead
+    of owning all generation and preview state directly.
+  - `src/helpers/use-project-generation.ts` owns brief state, staged/shortcut
+    generation, selected-segment regeneration, segment selection, and direct
+    segment updates.
+  - `src/components/project/GenerationPanel.tsx` owns the brief and generation
+    controls.
+  - `src/components/project/PreviewPanel.tsx` owns Remotion Player preview
+    wiring.
+  - `src/lib/staged-generation-api.ts` owns staged generation request schema
+    parsing and upstream error status classification.
+  - `src/lib/staged-project-assembly.ts` owns staged `VideoProject` assembly,
+    ordered plan segment traversal, and target narration layer replacement
+    during segment regeneration.
+- Kept the product model unchanged:
+  - `VideoProject` remains the preview/edit/export boundary.
+  - `VideoSegment` remains the selected editing unit.
+  - `templateId` still determines template-specific `implementation`.
+  - the one-shot `/api/generate` path remains available as a fallback
+    shortcut.
+- Runtime configuration alignment:
+  - Docker `web` and `studio` services now use `restart: unless-stopped` for
+    workstation-friendly local runtime behavior.
+  - Next dev origins now include `ez.zzzxc.com` in addition to the local LAN
+    origins already configured.
+- Validation performed for this slice:
+  - Docker `npx tsc --noEmit`
+  - Docker `npm run lint`
+  - Docker `npm run build`
+  - `git diff --check`
+
+Current readiness:
+- staged full-project generation and staged selected-segment regeneration keep
+  the same behavior, but the page, route, and staged pipeline are split into
+  smaller ownership units.
+- the next implementation slices can now add planner repair, fixtures, and
+  progress visibility without further inflating `page.tsx` or the staged API
+  route.
+
+Remaining next slices:
+- planner repair for invalid `StoryboardPlan` output
+- broader multi-template smoke fixtures
+- richer progress UX beyond idle / rendering / success / failure
+- persistence/history only after the staged loop is stable
+
+## Previous continuation — staged preview, segment regeneration, and export hardening
 
 - Hardened the user-facing staged preview / edit / export loop.
 - `POST /api/generate/staged` now supports selected-segment regeneration:

@@ -6,6 +6,7 @@ services:
     image: ai-video-studio:local
     working_dir: /workspace
     user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    restart: unless-stopped
     environment:
       HOME: /tmp/hermes-home
       NEXT_TELEMETRY_DISABLED: "1"
@@ -32,6 +33,7 @@ services:
       dockerfile: Dockerfile
     working_dir: /workspace
     user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    restart: unless-stopped
     environment:
       HOME: /tmp/hermes-home
       NEXT_TELEMETRY_DISABLED: "1"

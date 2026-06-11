@@ -1,7 +1,5 @@
 import { createNarrationAudioLayer } from "./narration-media";
 import {
-  getSegmentDuration,
-  getSegmentStart,
   normalizeProject,
   videoSegmentSchema,
   type VideoProject,
@@ -21,13 +19,12 @@ import {
 import { getTemplateDefinition } from "./template-registry";
 import type { AudioMediaLayer } from "./media-layer-schema";
 import type { SegmentNarrationAsset } from "./narration-asset-schema";
-import { preserveMediaLayersForSegmentRevision } from "./project-media";
-
-const DEFAULT_PROJECT_META = {
-  fps: 30,
-  width: 1280,
-  height: 720,
-} as const;
+import {
+  assembleStagedProject,
+  getNextNarrationStartFrame,
+  orderPlanSegments,
+  replaceSegmentAndNarrationLayer,
+} from "./staged-project-assembly";
 
 export type CompilePlannedSegmentRequest = {
   narration: SegmentNarrationAsset;
@@ -106,10 +103,6 @@ export type GenerateStagedSegmentRevisionResult = {
   segment: VideoSegment;
 };
 
-const orderPlanSegments = (plan: StoryboardPlan): StoryboardSegmentPlan[] => {
-  return [...plan.segments].sort((a, b) => a.order - b.order);
-};
-
 export const generateStagedProjectFromPlan = async ({
   plan: rawPlan,
   voiceId,
@@ -138,20 +131,14 @@ export const generateStagedProjectFromPlan = async ({
         startFrame,
       }),
     );
-    startFrame += getSegmentDuration(compiled.segment);
+    startFrame = getNextNarrationStartFrame(startFrame, compiled.segment);
     compiledSegments.push(compiled);
   }
 
-  const project = normalizeProject({
-    meta: {
-      ...DEFAULT_PROJECT_META,
-      title: plan.title,
-    },
-    brief: plan.brief,
-    media: {
-      layers: narrationLayers,
-    },
-    segments: compiledSegments.map((compiled) => compiled.segment),
+  const project = assembleStagedProject({
+    compiledSegments,
+    narrationLayers,
+    plan,
   });
 
   return {
@@ -192,30 +179,12 @@ export const generateStagedSegmentRevision = async ({
     plan,
     segment: plannedSegment,
   });
-  const segments = project.segments.map((segment) =>
-    segment.id === segmentId ? compiled.segment : segment,
-  );
-  const revisedProjectWithoutMedia = normalizeProject({
-    ...project,
-    segments,
-  });
-  const targetStartFrame = getSegmentStart(revisedProjectWithoutMedia, segmentIndex);
-  const targetNarrationLayer = createNarrationAudioLayer({
+  const revisedProject = replaceSegmentAndNarrationLayer({
     narration,
+    project,
+    segment: compiled.segment,
     segmentId,
-    startFrame: targetStartFrame,
-  });
-  const carriedLayers =
-    project.media?.layers.filter((layer) => layer.id !== targetNarrationLayer.id) ?? [];
-  const revisedProjectWithMedia = normalizeProject({
-    ...revisedProjectWithoutMedia,
-    media: {
-      layers: [...carriedLayers, targetNarrationLayer],
-    },
-  });
-  const revisedProject = preserveMediaLayersForSegmentRevision({
-    originalProject: revisedProjectWithMedia,
-    revisedProject: revisedProjectWithMedia,
+    segmentIndex,
   });
 
   return {

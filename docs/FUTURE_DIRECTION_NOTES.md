@@ -7,6 +7,9 @@ Status: partially resumed.
 - 最终生成目标和 roadmap 上游依据以 `docs/FINAL_PRODUCT_GOAL.md` 为准：
   用户提示词 -> 分镜计划 -> 每个分镜 TTS -> 按真实音频时长编译所选模版
   参数 -> 组装完整 `VideoProject`。
+- staged 主链路已经做过一轮结构整理：页面生成状态、生成控制面板、预览面板、
+  staged API request/error 边界、以及 staged project assembly 边界已经拆开；
+  这是为了继续 harden staged loop，不代表产品模型变化。
 - 本文件保留“更后续方向”的判断，不再代表当前实现是否已开始。
 - 产品模型已收敛为：一个 segment 对应一个 primary template；`templateId` 决定 `implementation` 的 schema；当前注册模板包括 `scripted` 和 `spotlight`；`scripted` 的 `implementation` 是 `VideoSpec`，其中 `scenes` 是 scripted 专有的内部序列字段；`spotlight` 的 `implementation` 是 `SpotlightSpec`，其中 `callouts` 是 spotlight 专有内容字段；已有视频、图片、音频或纯色素材通过 project-level / segment-level `media.layers[]` 表达；旧的 `baseLayer` 概念作为媒体层 role，而不是单独字段。
 

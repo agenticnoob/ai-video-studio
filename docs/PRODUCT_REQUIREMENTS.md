@@ -415,6 +415,13 @@ Current implementation note:
   compiler helpers, and `POST /api/generate/staged` provide the staged
   assembly path
 - the page defaults to `POST /api/generate/staged` for top-level generation
+- page-level generation state has been moved into
+  `src/helpers/use-project-generation.ts`, with `GenerationPanel` and
+  `PreviewPanel` owning the brief/generation controls and Remotion Player
+  preview sections
+- staged route request parsing/error classification and staged project assembly
+  helpers are split into `src/lib/staged-generation-api.ts` and
+  `src/lib/staged-project-assembly.ts`
 - the shipped `POST /api/generate` path still returns a validated one-shot
   `VideoProject` directly and remains available as a fallback
 
