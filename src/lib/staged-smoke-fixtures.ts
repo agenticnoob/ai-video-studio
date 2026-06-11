@@ -1,4 +1,5 @@
 import { segmentNarrationFromAsset, type SegmentNarrationAsset } from "./narration-asset-schema";
+import { normalizeSegmentCaptions } from "./captions";
 import { videoSegmentSchema, type VideoProject, type VideoSegment } from "./project-schema";
 import {
   assembleStagedProject,
@@ -24,6 +25,11 @@ const createNarrationAsset = ({
   voiceId: "smoke-voice",
   provider: "fixture",
   format: "mp3",
+  captions: normalizeSegmentCaptions({
+    durationInFrames,
+    language: "en",
+    text,
+  }),
 });
 
 export const mixedTemplateStoryboardPlan: StoryboardPlan = storyboardPlanSchema.parse({
@@ -202,6 +208,12 @@ const assertMixedTemplateFixture = (): void => {
   ) {
     throw new Error("Mixed-template smoke fixture expected segment-owned narration audio.");
   }
+  if (
+    !firstSegment.narration?.captions?.cues.length ||
+    !secondSegment.narration?.captions?.cues.length
+  ) {
+    throw new Error("Mixed-template smoke fixture expected segment-owned captions.");
+  }
   if (mixedTemplateStagedProject.media?.layers.some((layer) => layer.kind === "narration")) {
     throw new Error("Mixed-template smoke fixture should not use project-level narration layers.");
   }
@@ -213,6 +225,9 @@ const assertMixedTemplateFixture = (): void => {
     "Only the target segment gets fresh narration and template parameters."
   ) {
     throw new Error("Mixed-template smoke fixture should replace target segment narration.");
+  }
+  if (!revisedSecondSegment.narration?.captions?.cues.length) {
+    throw new Error("Mixed-template smoke fixture should replace target segment captions.");
   }
 };
 
@@ -226,5 +241,8 @@ export const mixedTemplateSmokeFixtureSummary = {
   ),
   revisedNarrationAudioSources: mixedTemplateSegmentRevisionProject.segments.map(
     (segment) => segment.narration?.audio?.src,
+  ),
+  captionCueCounts: mixedTemplateStagedProject.segments.map(
+    (segment) => segment.narration?.captions?.cues.length ?? 0,
   ),
 };

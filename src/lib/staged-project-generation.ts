@@ -12,6 +12,7 @@ import {
   type StoryboardSegmentPlan,
 } from "./storyboard-plan-schema";
 import { generateSegmentNarrationAsset, StoryboardSegmentNotFoundError } from "./tts";
+import type { TtsProviderId } from "./tts/config";
 import {
   minimaxCompileTemplateImplementation,
   minimaxGenerateRevisedSegmentPlan,
@@ -78,6 +79,7 @@ export const compilePlannedSegment = async ({
 
 export type GenerateStagedProjectFromPlanRequest = {
   plan: StoryboardPlan;
+  provider?: TtsProviderId;
   voiceId?: string;
 };
 
@@ -92,6 +94,7 @@ export type GenerateStagedProjectResult = {
 
 export type GenerateStagedSegmentRevisionRequest = {
   project: VideoProject;
+  provider?: TtsProviderId;
   revisionPrompt: string;
   segmentId: string;
   voiceId?: string;
@@ -109,6 +112,7 @@ export type GenerateStagedSegmentRevisionResult = {
 };
 
 export const generateStagedProjectFromPlan = async ({
+  provider,
   plan: rawPlan,
   voiceId,
 }: GenerateStagedProjectFromPlanRequest): Promise<GenerateStagedProjectResult> => {
@@ -120,6 +124,7 @@ export const generateStagedProjectFromPlan = async ({
   for (const segmentPlan of orderPlanSegments(plan)) {
     const narration = await generateSegmentNarrationAsset({
       plan,
+      provider,
       segmentId: segmentPlan.id,
       voiceId,
     });
@@ -156,6 +161,7 @@ export const generateStagedProjectFromPlan = async ({
 
 export const generateStagedSegmentRevision = async ({
   project: rawProject,
+  provider,
   revisionPrompt,
   segmentId,
   voiceId,
@@ -180,6 +186,7 @@ export const generateStagedSegmentRevision = async ({
   const [plannedSegment] = plan.segments;
   const narration = await generateSegmentNarrationAsset({
     plan,
+    provider,
     segmentId,
     voiceId,
   });
@@ -209,11 +216,13 @@ export const generateStagedSegmentRevision = async ({
 
 export type GenerateStagedProjectFromBriefRequest = {
   brief: string;
+  provider?: TtsProviderId;
   voiceId?: string;
 };
 
 export const generateStagedProjectFromBrief = async ({
   brief,
+  provider,
   voiceId,
 }: GenerateStagedProjectFromBriefRequest): Promise<GenerateStagedProjectResult> => {
   const {
@@ -223,7 +232,7 @@ export const generateStagedProjectFromBrief = async ({
   } = await minimaxGenerateStoryboardPlan({
     brief,
   });
-  const result = await generateStagedProjectFromPlan({ plan, voiceId });
+  const result = await generateStagedProjectFromPlan({ plan, provider, voiceId });
   return {
     ...result,
     plannerAttempts,

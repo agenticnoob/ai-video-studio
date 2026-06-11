@@ -41,6 +41,7 @@ export async function POST(request: Request) {
     if (parsedRequest.data.mode === "segment") {
       const result = await generateStagedSegmentRevision({
         project: parsedRequest.data.project,
+        provider: parsedRequest.data.provider,
         revisionPrompt: parsedRequest.data.revisionPrompt,
         segmentId: parsedRequest.data.segmentId,
         voiceId: parsedRequest.data.voiceId,
@@ -62,7 +63,9 @@ export async function POST(request: Request) {
               templateId: result.segment.templateId,
             },
           ],
+          captionSegmentCount: result.segment.narration?.captions?.cues.length ? 1 : 0,
           narrationSegmentCount: result.segment.narration?.audio ? 1 : 0,
+          narrationProviders: result.narration.provider ? [result.narration.provider] : [],
           narrationLayerCount: 1,
           segmentCount: 1,
         },
@@ -73,10 +76,12 @@ export async function POST(request: Request) {
       parsedRequest.data.mode === "brief"
         ? await generateStagedProjectFromBrief({
             brief: parsedRequest.data.brief,
+            provider: parsedRequest.data.provider,
             voiceId: parsedRequest.data.voiceId,
           })
         : await generateStagedProjectFromPlan({
             plan: parsedRequest.data.plan,
+            provider: parsedRequest.data.provider,
             voiceId: parsedRequest.data.voiceId,
           });
 
@@ -97,8 +102,18 @@ export async function POST(request: Request) {
           segmentId: segment.segment.id,
           templateId: segment.segment.templateId,
         })),
+        captionSegmentCount: result.segments.filter(
+          (segment) => segment.segment.narration?.captions?.cues.length,
+        ).length,
         narrationSegmentCount: result.segments.filter((segment) => segment.segment.narration?.audio)
           .length,
+        narrationProviders: Array.from(
+          new Set(
+            result.segments
+              .map((segment) => segment.narration.provider)
+              .filter((provider): provider is string => Boolean(provider)),
+          ),
+        ),
         narrationLayerCount: result.narrationLayers.length,
         segmentCount: result.segments.length,
       },

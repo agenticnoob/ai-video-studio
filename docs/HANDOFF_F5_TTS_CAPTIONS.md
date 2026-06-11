@@ -1,6 +1,7 @@
 # Handoff: Segment-Owned Narration, F5-TTS, And Captions
 
-Status: implementation handoff for the next conversation.
+Status: implementation handoff; captions/provider adapter implemented,
+runtime service planned next.
 
 Use this document when starting the next implementation slice. It supersedes
 the earlier idea of adding top-level `VideoProject.captions` first. The updated
@@ -101,7 +102,8 @@ service, but this repo owns:
 - fallback behavior when provider captions are missing
 - preview/export rendering of shared segment caption data
 
-MiniMax TTS remains the current working provider/fallback while F5-TTS lands.
+MiniMax TTS remains the current working provider/fallback while the local
+F5-TTS runtime service lands.
 
 ## Current Implementation State
 
@@ -138,17 +140,50 @@ Current transitional behavior:
 - Generic project-level media remains reserved for true full-video assets such
   as background music, ambience, watermarks, or global overlays.
 
-Not implemented yet:
+Implemented in the F5/captions slice:
 
 - caption normalization helpers and fallback caption splitter.
-- F5-TTS provider module.
+- F5-TTS provider module behind the existing TTS boundary.
 - provider selection/config for F5-TTS.
 - caption normalization from provider alignment into segment-local cues.
 - Remotion flattening/rendering for segment-owned captions.
-- selected-segment caption replacement.
+- selected-segment caption replacement through `VideoSegment.narration`.
 - caption coverage in staged smoke fixtures.
 
+Still not implemented yet:
+
+- a bundled F5-TTS runtime/container in this repo.
+- provider-backed live smoke against a real F5 service.
+- caption editing UI beyond rendering generated cues.
+
 ## Recommended Implementation Order
+
+The original implementation order below is now mostly completed. The next
+implementation slice should follow
+[`docs/providers/f5-tts-service-plan.md`](providers/f5-tts-service-plan.md) and
+create the optional local F5-TTS runtime service.
+
+### Next: Add The F5-TTS Runtime Service
+
+Suggested files:
+
+- `services/f5-tts/Dockerfile`
+- `services/f5-tts/app/main.py`
+- `services/f5-tts/app/schemas.py`
+- `services/f5-tts/app/synthesize.py`
+- `services/f5-tts/requirements.txt`
+- `docker-compose.f5.yml`
+- `scripts/f5-tts-smoke.sh`
+
+Rules:
+
+- keep model checkpoints and private reference voices out of Git
+- expose `GET /health` and `POST /synthesize`
+- satisfy the HTTP contract already consumed by `src/lib/tts/f5.ts`
+- keep the service opt-in so normal `web` and `studio` development do not
+  require F5 model downloads or GPU support
+- keep MiniMax fallback available until provider-backed F5 live smoke passes
+- do not move narration or captions into template-specific `implementation`
 
 ### 1. Add Caption Normalization Helpers
 
@@ -203,11 +238,15 @@ Suggested files:
 - `src/lib/tts/index.ts`
 - `docs/providers/f5-tts.md`
 
-Expected env shape:
+Implemented env shape:
 
+- `TTS_PROVIDER=f5-tts` or `AI_VIDEO_STUDIO_TTS_PROVIDER=f5-tts`
 - `F5_TTS_BASE_URL`
+- `F5_TTS_ENDPOINT`
 - `F5_TTS_VOICE_ID`
-- optional reference-audio settings
+- `F5_TTS_FORMAT`
+- `F5_TTS_REFERENCE_AUDIO`
+- `F5_TTS_FALLBACK_TO_MINIMAX`
 
 The exact F5-TTS runtime API can be adapted during implementation. Normalize
 whatever the runtime returns into the shared segment narration and caption cue

@@ -64,6 +64,8 @@ Current implementation status:
 - product requirements live in `docs/PRODUCT_REQUIREMENTS.md`
 - F5-TTS / aligned captions provider target lives in
   `docs/providers/f5-tts.md`
+- F5-TTS local runtime service plan lives in
+  `docs/providers/f5-tts-service-plan.md`
 - implementation handoff for that slice lives in
   `docs/HANDOFF_F5_TTS_CAPTIONS.md`
 - agent/new-task startup notes live in `AGENTS.md`
@@ -104,10 +106,15 @@ Current modeling direction:
   `implementation` fields; the target home is segment-owned
   `VideoSegment.narration`, and the scripted scene schema no longer exposes an
   audio field to generation providers
-- the next narration-provider direction is an in-project F5-TTS provider that
-  returns local audio plus aligned caption cues when available
+- the in-project F5-TTS provider adapter is the preferred local narration path
+  when `F5_TTS_BASE_URL` points at a running service
 - caption cues should be stored with segment narration data using segment-local
   timing, then rendered by shared project preview/export code
+- F5-TTS can be selected with `TTS_PROVIDER=f5-tts` or by setting
+  `F5_TTS_BASE_URL`; when F5 does not return alignment, the project normalizes
+  deterministic fallback captions from narration text and real audio duration
+- the next F5-TTS implementation slice is the optional local runtime service
+  described in `docs/providers/f5-tts-service-plan.md`
 - future existing video, image, audio, or color inputs should be modeled as
   project-level or segment-level `media.layers[]` data; `baseLayer` is now a
   media-layer role, not a separate project field
@@ -177,8 +184,8 @@ Current code checkpoint:
 - basic bounded planner repair is in place for invalid `StoryboardPlan`
   output
 - deterministic staged smoke fixtures cover a mixed `scripted` + `spotlight`
-  project with segment-owned narration audio and selected-segment narration
-  replacement; the next fixture update should cover segment-owned captions;
+  project with segment-owned narration audio/captions and selected-segment
+  narration/caption replacement;
   Remotion Studio exposes the current fixture as
   `StagedSmokeMixedTemplateProject`
 - not implemented yet: persistence/history and broad media-layer editing
@@ -188,10 +195,10 @@ Best next bounded slice:
 - use `StoryboardPlan` as the planner-stage contract
 - continue from `VideoSegment.narration` as the target home for generated
   narration text, audio metadata, and segment-local caption cues
-- add caption normalization and caption rendering on top of the existing
-  segment-owned narration flattening path
-- add the in-project F5-TTS provider and caption normalization after the
-  segment-owned narration contract is in place
+- add the optional local F5-TTS runtime service behind the existing
+  `src/lib/tts/f5.ts` adapter
+- add provider-backed live smoke for the F5 service once a local model/runtime
+  is available
 - avoid persistence/history, generic media-layer compositing, and
   multi-template-per-segment orchestration unless explicitly reopened
 

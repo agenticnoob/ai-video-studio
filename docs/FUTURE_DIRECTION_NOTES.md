@@ -14,10 +14,11 @@ Status: partially resumed.
 - 本文件保留“更后续方向”的判断，不再代表当前实现是否已开始。
 - 产品模型已收敛为：一个 segment 对应一个 primary template；`templateId` 决定 `implementation` 的 schema；当前注册模板包括 `scripted` 和 `spotlight`；`scripted` 的 `implementation` 是 `VideoSpec`，其中 `scenes` 是 scripted 专有的内部序列字段；`spotlight` 的 `implementation` 是 `SpotlightSpec`，其中 `callouts` 是 spotlight 专有内容字段；已有视频、图片、音频或纯色素材通过 project-level / segment-level `media.layers[]` 表达；旧的 `baseLayer` 概念作为媒体层 role，而不是单独字段。
 - 最新模型决策：当前 TTS 音频已经迁入 `VideoSegment.narration.audio`，
-  并通过 render-time flatten 播放和导出。`VideoProject.media.layers[]`
-  保留给真正的全视频资产以及旧 narration layer 的兼容路径。下一步应在
-  `VideoSegment.narration.captions` 上补齐 caption cue normalization 和
-  共享字幕渲染；project 继续负责 segment 顺序和全局 timeline flatten。
+  字幕已经进入 `VideoSegment.narration.captions`，二者都通过
+  render-time flatten 预览和导出。`VideoProject.media.layers[]` 保留给真正的
+  全视频资产以及旧 narration layer 的兼容路径。下一步应按
+  `docs/providers/f5-tts-service-plan.md` 增加可选的本地 F5-TTS runtime
+  service；project 继续负责 segment 顺序和全局 timeline flatten。
 
 此前判断（保留为背景）：
 - 不要一开始就把 `ai-video-studio` 扩成完整 AI 视频产品。
@@ -144,7 +145,8 @@ Current likely sequence:
   cues
 - keep MiniMax TTS as a working provider/fallback while the F5-TTS path lands
 - render caption cues consistently in preview and export
-- status: planned next direction
+- status: implemented for the Next-side adapter and shared caption path; the
+  next slice is the optional local F5-TTS runtime service plan
 
 4. Add duration-aware segment compiler
 - provide only the selected template schema and rules

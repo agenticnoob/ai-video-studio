@@ -418,13 +418,14 @@ Current implementation note:
 - `src/lib/minimax/*` contains an internal MiniMax storyboard-planner prompt,
   tool schema, parser, and `minimaxGenerateStoryboardPlan()` facade
 - `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`,
-  and `/api/tts/assets/...` provide the first internal TTS asset boundary for
-  one planned segment, with local audio artifacts and measured duration; the
-  next provider direction is an in-project F5-TTS provider that also returns
-  aligned captions
-- generated narration audio is now carried by `VideoSegment.narration.audio`
-  and flattened for preview/export; the target next slice is to add
-  segment-owned caption cues and shared caption rendering
+  and `/api/tts/assets/...` provide the internal TTS asset boundary for one
+  planned segment, with local audio artifacts, measured duration, provider
+  selection, F5 adapter support, and fallback captions
+- generated narration audio is now carried by `VideoSegment.narration.audio`;
+  generated captions are carried by `VideoSegment.narration.captions`; both
+  are flattened for preview/export
+- the next provider implementation slice is the optional local F5-TTS runtime
+  service in `docs/providers/f5-tts-service-plan.md`
 - `src/lib/staged-project-generation.ts`, the MiniMax selected-template
   compiler helpers, and `POST /api/generate/staged` provide the staged
   assembly path

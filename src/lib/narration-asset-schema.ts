@@ -15,6 +15,7 @@ export const segmentNarrationAssetSchema = z
     voiceId: z.string().trim().min(1).max(160).optional(),
     provider: z.string().trim().min(1).max(80).optional(),
     format: narrationAudioFormatSchema.optional(),
+    captions: segmentCaptionsSchema.optional(),
   })
   .strict();
 
@@ -53,6 +54,7 @@ export const segmentNarrationFromAsset = (narration: SegmentNarrationAsset): Seg
       provider: narration.provider,
       format: narration.format,
     },
+    captions: narration.captions,
   });
 };
 

@@ -13,6 +13,7 @@ export const dynamic = "force-dynamic";
 
 const ttsRequestSchema = z.object({
   plan: storyboardPlanSchema,
+  provider: z.enum(["f5-tts", "minimax"]).optional(),
   segmentId: z.string().trim().min(1, "Segment id is required"),
   voiceId: z.string().trim().min(1).max(160).optional(),
 });

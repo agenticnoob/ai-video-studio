@@ -157,11 +157,11 @@ exists behind `POST /api/generate/staged`; the main page uses that staged path
 by default while keeping the shipped v1 `POST /api/generate` route as a
 fallback.
 
-The next narration-provider direction is an in-project F5-TTS provider that
-returns audio plus aligned caption cues from the same segment narration
-request. F5-TTS should not become a template concern: the repo-owned provider
-adapter normalizes audio/caption artifacts before the selected-template
-compiler runs.
+The in-project F5-TTS provider adapter returns or normalizes audio plus aligned
+caption cues from the same segment narration request. F5-TTS should not become
+a template concern: the repo-owned provider adapter normalizes audio/caption
+artifacts before the selected-template compiler runs. The next service slice is
+the optional local runtime in `docs/providers/f5-tts-service-plan.md`.
 
 The final provider workflow has two roles.
 

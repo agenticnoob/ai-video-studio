@@ -1,6 +1,52 @@
 # Iteration Status
 
-Last updated: segment-owned narration audio implementation
+Last updated: F5-TTS service plan alignment
+
+## Latest continuation — F5-TTS runtime service plan
+
+- Added `docs/providers/f5-tts-service-plan.md` as the next implementation
+  plan for an opt-in local F5-TTS runtime service.
+- Clarified that the current repo already owns the Next.js-side F5 adapter,
+  provider selection, local artifact handling, caption normalization,
+  fallback captions, and shared preview/export caption rendering.
+- Defined the next service boundary:
+  - optional Docker Compose service named `f5-tts`
+  - stable `/health` and `/synthesize` HTTP contract
+  - local model/reference-voice directories outside Git
+  - service smoke script and provider-backed staged smoke before declaring the
+    runtime integrated
+- Kept MiniMax TTS as the working default/fallback while the F5 runtime service
+  is not running.
+
+Current readiness:
+- The next implementation slice should create the F5-TTS runtime service
+  described in `docs/providers/f5-tts-service-plan.md`.
+- Do not restart from caption normalization or provider adapter work; that
+  boundary is already in place.
+
+## Latest continuation — F5-TTS provider boundary and segment-owned captions
+
+- Added shared caption normalization and deterministic fallback splitting for
+  segment-local `VideoSegment.narration.captions`.
+- Updated narration asset conversion so generated captions travel with
+  `VideoSegment.narration`, alongside narration text and audio metadata.
+- Added shared Remotion caption flattening/rendering for segment-owned captions
+  so preview and export consume the same project data.
+- Added an F5-TTS adapter under the existing TTS boundary:
+  - provider selection through `TTS_PROVIDER` /
+    `AI_VIDEO_STUDIO_TTS_PROVIDER`
+  - automatic F5 selection when `F5_TTS_BASE_URL` is configured
+  - local `out/tts/...` artifact writing and duration measurement
+  - provider alignment/caption normalization when returned
+  - MiniMax fallback when F5 fails, unless disabled
+- Kept MiniMax TTS as the working default when F5 is not configured.
+- Updated staged diagnostics and deterministic mixed-template smoke fixtures
+  to cover segment-owned caption cues and selected-segment caption replacement.
+
+Current readiness:
+- The data/render path for segment-owned captions is in place.
+- The repo owns the F5 provider adapter contract, but a bundled F5 runtime or
+  provider-backed live smoke against a real F5 service is still a later slice.
 
 ## Latest continuation — segment-owned narration audio implementation
 
@@ -23,10 +69,10 @@ Last updated: segment-owned narration audio implementation
   segment-owned narration audio and selected-segment narration replacement.
 
 Current readiness:
-- The next slice can add caption normalization/fallback cues and render shared
-  segment-owned captions.
-- F5-TTS provider integration should still come after the shared caption
-  contracts and normalization path are hardened.
+- Superseded by the latest F5/captions slice: caption normalization/fallback
+  cues, shared caption rendering, and the Next-side F5 provider adapter are
+  now in place.
+- The next slice should add the optional local F5-TTS runtime service.
 
 ## Previous continuation — segment-owned narration/captions handoff alignment
 
@@ -55,9 +101,10 @@ Current readiness:
   implementation plan under `docs/plans/`.
 
 Current readiness:
-- Superseded by the latest continuation: `VideoSegment.narration.audio` now
-  owns generated audio, and the next slice should add caption normalization,
-  shared caption rendering, and then F5-TTS provider integration.
+- Superseded by the latest continuations: `VideoSegment.narration.audio` and
+  `VideoSegment.narration.captions` now own generated narration data, and the
+  Next-side F5 provider adapter is in place.
+- The next slice should add the optional local F5-TTS runtime service.
 - Do not start by adding top-level `VideoProject.captions`.
 
 ## Latest continuation — F5-TTS aligned-captions target alignment

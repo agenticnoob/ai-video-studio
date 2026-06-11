@@ -17,8 +17,8 @@ target maps onto the codebase.
 3. The planner returns a validated storyboard plan: ordered segments, selected
    `templateId` values, narration text, segment purpose, and visual briefs.
 4. For each planned segment, the system runs narration synthesis from the
-   narration text. The preferred next provider is an in-project F5-TTS
-   provider that returns both audio and aligned caption cues.
+   narration text. The preferred local provider is the in-project F5-TTS
+   adapter backed by an optional runtime service.
 5. The system measures or normalizes the generated audio duration and
    normalizes provider-returned caption timing.
 6. For each segment, the compiler receives only the selected template's full
@@ -36,9 +36,9 @@ target maps onto the codebase.
 
 The current MiniMax-backed one-call `POST /api/generate` path is a shipped v1
 shortcut. It can stay while useful, but the active page flow now defaults to
-the staged planner -> TTS -> compiler -> assembly pipeline. The next target
-extends that staged path so narration synthesis returns audio plus aligned
-captions before template compilation.
+the staged planner -> TTS -> compiler -> assembly pipeline. Segment-owned
+narration audio/captions and the Next-side F5 adapter are in place; the next
+target is an optional local F5-TTS runtime service.
 
 Current implementation snapshot:
 
@@ -55,10 +55,10 @@ Current implementation snapshot:
   and `/api/tts/assets/...` provide the first internal TTS asset boundary for
   planned segment narration, including local artifact writing and ffprobe
   duration measurement.
-- The next provider direction is an in-project F5-TTS provider boundary. The
-  repo should own its request/response contract, config, artifact handling,
-  caption normalization, and fallback behavior, even if the F5-TTS runtime is
-  served by a local process or container.
+- The in-project F5-TTS provider boundary lives under `src/lib/tts/`. The repo
+  owns its request/response contract, config, artifact handling, caption
+  normalization, and fallback behavior. The next service step is documented in
+  `docs/providers/f5-tts-service-plan.md`.
 - `src/lib/staged-project-generation.ts`, the MiniMax template compiler
   helpers, and `POST /api/generate/staged` provide the staged assembly path
   from brief or plan input to `VideoProject`.
@@ -135,11 +135,12 @@ flattens it to the project timeline for preview/export. Project-level narration
 media layers are retained only as a transitional compatibility path.
 
 Captions are also part of the narration pipeline, not template-private visual
-fields. The preferred path is for the in-project F5-TTS provider to return
-audio plus alignment/caption cues from the same segment narration request.
-Those cues should be normalized into segment-owned, segment-local caption data
-so preview and export render the same subtitles across all registered
-templates after flattening.
+fields. The in-project F5-TTS adapter accepts audio plus alignment/caption cues
+from the same segment narration request. Those cues are normalized into
+segment-owned, segment-local caption data so preview and export render the same
+subtitles across all registered templates after flattening. If a runtime only
+returns audio, fallback captions are generated from narration text and measured
+audio duration.
 
 ## Generation Context Boundaries
 

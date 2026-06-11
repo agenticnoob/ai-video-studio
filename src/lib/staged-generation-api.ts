@@ -5,15 +5,19 @@ import { StoryboardPlanParseError } from "./minimax/parse-storyboard-plan";
 import { videoProjectSchema } from "./project-schema";
 import { storyboardPlanSchema } from "./storyboard-plan-schema";
 
+const ttsProviderSchema = z.enum(["f5-tts", "minimax"]);
+
 const stagedBriefRequestSchema = z.object({
   mode: z.literal("brief"),
   brief: z.string().trim().min(1, "Brief is required").max(4000, "Brief is too long"),
+  provider: ttsProviderSchema.optional(),
   voiceId: z.string().trim().min(1).max(160).optional(),
 });
 
 const stagedPlanRequestSchema = z.object({
   mode: z.literal("plan"),
   plan: storyboardPlanSchema,
+  provider: ttsProviderSchema.optional(),
   voiceId: z.string().trim().min(1).max(160).optional(),
 });
 
@@ -26,6 +30,7 @@ const stagedSegmentRequestSchema = z.object({
     .trim()
     .min(1, "Revision prompt is required")
     .max(4000, "Revision prompt is too long"),
+  provider: ttsProviderSchema.optional(),
   voiceId: z.string().trim().min(1).max(160).optional(),
 });
 

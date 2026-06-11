@@ -11,7 +11,9 @@ Before planning or editing, read these files in order:
 4. `docs/FUTURE_DIRECTION_NOTES.md`
 5. `docs/HANDOFF_F5_TTS_CAPTIONS.md` when the task involves F5-TTS,
    captions/subtitles, or narration provider work
-6. `README.md`
+6. `docs/providers/f5-tts-service-plan.md` when the task involves the local
+   F5-TTS runtime service or Docker service setup
+7. `README.md`
 
 These files together explain:
 - authoritative final generation goal
@@ -21,6 +23,7 @@ These files together explain:
 - deferred scope
 - product direction
 - F5-TTS / aligned captions handoff when relevant
+- F5-TTS runtime service plan when relevant
 - Docker-first local workflow
 
 When editing Remotion rendering code or template-internal animation
@@ -58,8 +61,9 @@ The first staged-generation groundwork is also in place:
   compiler helpers provide the first staged assembly path:
   StoryboardPlan -> per-segment TTS -> selected-template compile -> assembled
   `VideoProject`. Generated narration audio is now owned by
-  `VideoSegment.narration.audio`; the next target extends this narration
-  boundary to captions and F5-TTS.
+  `VideoSegment.narration.audio`; the current continuation also extends this
+  narration boundary to segment-owned captions and the Next-side F5-TTS
+  provider adapter.
 - `POST /api/generate/staged` is available as the staged endpoint for either a
   brief, an existing `StoryboardPlan`, or one selected segment regeneration.
 - The main page now defaults to staged generation; `POST /api/generate` remains
@@ -85,8 +89,8 @@ The first staged-generation groundwork is also in place:
 - Bounded planner repair is in place for invalid `StoryboardPlan` output in
   both full-brief and selected-segment staged planner paths.
 - Deterministic staged smoke fixtures cover a mixed `scripted` + `spotlight`
-  project with segment-owned narration audio and selected-segment narration
-  replacement. The next fixture update should cover segment-owned captions.
+  project with segment-owned narration audio/captions and selected-segment
+  narration/caption replacement.
   Remotion exposes this fixture as
   `StagedSmokeMixedTemplateProject`, and `npm run smoke:staged-fixtures`
   bundles/loads it through `src/remotion/index.ts`.
@@ -129,11 +133,10 @@ Keep the next iteration focused on:
 2. keep the existing StoryboardPlan contract as the planner-stage boundary
 3. keep the bounded planner repair path active and visible in diagnostics
 4. keep generated narration audio in `VideoSegment.narration.audio`
-5. add segment-owned `VideoSegment.narration.captions` normalization and
-   shared caption rendering
-6. add the in-project F5-TTS provider boundary for narration synthesis,
-   including audio artifacts, measured duration, and aligned captions when
-   available
+5. keep segment-owned `VideoSegment.narration.captions` normalization and
+   shared caption rendering active
+6. add the optional local F5-TTS runtime service behind the existing
+   in-project provider adapter, including health/smoke coverage
 7. keep narration audio and subtitle/caption cues outside template-specific
    `implementation`
 8. use real audio duration plus the selected template context to generate
@@ -181,6 +184,7 @@ Current product modeling decision:
 - `src/lib/staged-generation-api.ts`
 - `src/lib/staged-project-assembly.ts`
 - `docs/providers/f5-tts.md`
+- `docs/providers/f5-tts-service-plan.md`
 - `src/templates/*`
 - `src/templates/registered-definitions.ts`
 - `src/templates/registered-bundles.ts`

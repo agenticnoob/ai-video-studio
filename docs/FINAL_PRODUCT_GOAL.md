@@ -526,8 +526,9 @@ Current compatibility notes:
 - `VideoProject.media.layers[]` still supports project-level audio layers,
   including old narration layers as a transitional compatibility path, but it
   is no longer the primary generated narration ownership model.
-- The remaining target work is segment-owned `VideoSegment.narration.captions`,
-  with caption cues flattened to the project timeline for preview and export.
+- Segment-owned `VideoSegment.narration.captions` now carries generated or
+  fallback caption cues, with caption cues flattened to the project timeline
+  for preview and export.
 - Narration metadata should stay separated from template implementation data so
   the system can distinguish spoken text, generated audio, voice, timing, and
   provider.
@@ -564,9 +565,8 @@ Known limitation:
   shortcut
 - the active staged page path now uses planner -> TTS -> compiler -> assembly,
   with bounded planner repair and deterministic mixed-template smoke fixtures;
-  F5-TTS narration synthesis and aligned captions are newly added final-target
-  work that still needs implementation and integration into this path;
-  provider-backed live smoke coverage still needs hardening
+  segment-owned narration audio/captions and the Next-side F5 adapter are in
+  place; provider-backed live smoke coverage still needs hardening
 
 ### Milestone 1: Authoritative Goal And Contracts
 
@@ -637,10 +637,10 @@ Deliverables:
 
 Remaining:
 
-- add an in-project F5-TTS provider path that can return audio plus aligned
-  captions for planned segment narration
-- add caption normalization/fallback cues into `VideoSegment.narration.captions`
-- harden provider-specific failure handling and retry behavior
+- add the optional local F5-TTS runtime service described in
+  `docs/providers/f5-tts-service-plan.md`
+- harden provider-specific failure handling and retry behavior against a real
+  F5 runtime
 - add richer voice selection when the basic loop is stable
 
 Initial scope:
@@ -687,7 +687,7 @@ Implemented:
 
 Remaining:
 
-- segment-owned caption normalization and render-time caption flattening
+- optional local F5-TTS runtime service
 - provider-backed live multi-segment staged smoke
 - richer progress/error UX for multi-stage generation
 
@@ -746,6 +746,7 @@ Deliverables:
 - in-project F5-TTS provider integration for audio plus aligned captions
 - segment-owned narration/caption contracts and render-time flattening
 - preview/export rendering for captions
+- optional local F5-TTS runtime service with health and synthesize endpoints
 - segment-level caption editing and regeneration
 - per-segment voice selection
 - optional project-level narration consistency

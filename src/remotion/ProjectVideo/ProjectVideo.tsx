@@ -3,6 +3,7 @@ import { Sequence } from "remotion";
 
 import { getSegmentDuration, getSegmentStart, type VideoProject } from "../../lib/project-schema";
 import { renderRegisteredSegment } from "../template-component-registry";
+import { ProjectCaptionLayers } from "./ProjectCaptionLayers";
 import { ProjectMediaLayers } from "./ProjectMediaLayers";
 import { ProjectNarrationLayers } from "./ProjectNarrationLayers";
 
@@ -32,6 +33,7 @@ export const ProjectVideo: React.FC<VideoProject> = (project) => {
           {renderRegisteredSegment(segment)}
         </Sequence>
       ))}
+      <ProjectCaptionLayers project={project} />
     </>
   );
 };
