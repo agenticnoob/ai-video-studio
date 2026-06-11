@@ -28,7 +28,7 @@ with this target.
    provider 生成当前分镜语音和对齐字幕。
 2. 读取或归一化当前语音的真实时长。
 3. 基于 provider 返回的 alignment 生成字幕数据；如果 provider 暂时不返回
-   alignment，再使用 narration 和语音时长生成 fallback 字幕。
+   alignment，再使用 narration、标点切分规则和语音时长生成 fallback 字幕。
 4. 把真实时长、当前分镜选择的模版信息、当前分镜大致内容、台词、
    全局风格上下文交给 LLM。
 5. LLM 只返回该模版需要的 schema-valid 参数。
@@ -529,6 +529,10 @@ Current compatibility notes:
 - Segment-owned `VideoSegment.narration.captions` now carries generated or
   fallback caption cues, with caption cues flattened to the project timeline
   for preview and export.
+- The current fallback caption path uses sentence punctuation as a hard split,
+  comma punctuation as a soft split, merges short comma chunks forward for
+  readability, and saves the normalized caption payload beside generated audio
+  under `out/tts/...` as `<audio-name>.captions.json`.
 - Narration metadata should stay separated from template implementation data so
   the system can distinguish spoken text, generated audio, voice, timing, and
   provider.

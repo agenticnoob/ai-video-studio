@@ -30,7 +30,7 @@ process.stdout.write(JSON.stringify({
   segmentId,
   plan: {
     title: "F5 Next Provider Smoke",
-    brief: "Verify the Next-side F5-TTS provider adapter using the local contract-smoke runtime.",
+    brief: "Verify the Next-side F5-TTS provider adapter using the local runtime.",
     language: "en",
     globalStyle: "Technical smoke test.",
     segments: [

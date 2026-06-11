@@ -38,7 +38,7 @@ export const readMinimaxConfig = (): MinimaxConfig => {
   const apiKey = process.env.MINIMAX_API_KEY;
   if (!apiKey || apiKey.trim().length === 0) {
     throw new MinimaxConfigError(
-      "MINIMAX_API_KEY is not configured. Set it in .env.local to enable real generation.",
+      "MINIMAX_API_KEY is not configured. Set it in .env to enable real generation.",
     );
   }
 

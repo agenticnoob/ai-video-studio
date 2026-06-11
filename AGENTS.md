@@ -26,6 +26,14 @@ These files together explain:
 - F5-TTS runtime service plan when relevant
 - Docker-first local workflow
 
+Local configuration is now unified around one tracked template and one ignored
+local file:
+- `.env.example` is the only configuration template.
+- `.env` is the local working configuration read by Docker Compose and the
+  Next app.
+- `.env.local` may still exist for legacy Next.js compatibility, but new setup
+  should prefer `.env`.
+
 When editing Remotion rendering code or template-internal animation
 components, also consult
 `.agents/skills/remotion-best-practices/SKILL.md`. Treat it as the repo-local
@@ -77,6 +85,11 @@ The first staged-generation groundwork is also in place:
   path for older/current projects.
 - Generated TTS assets are served from `/api/tts/assets/...` with byte-range
   support so Remotion Player can seek audio during pause/resume.
+- Normalized caption payloads are written beside generated audio artifacts
+  under `out/tts/...` as `<audio-name>.captions.json`.
+- When the F5 runtime has no real alignment data, its fallback caption path
+  splits on sentence punctuation, can split on comma punctuation, and merges
+  short comma chunks forward for readability.
 - Local export rewrites route media URLs to a Next API origin before Remotion
   rendering so `/api/tts/assets/...` audio can be downloaded during export.
 - Page generation state is now split out of `src/app/page.tsx` into
@@ -98,6 +111,11 @@ The first staged-generation groundwork is also in place:
   and real `F5_TTS_SERVICE_MODE=f5` mode. The GPU overlay has been validated
   locally with the downloaded checkpoint, vocab, and Vocos vocoder under
   `models/f5-tts/`.
+- For user-facing F5 narration checks on this workstation, start or refresh the
+  real runtime with `scripts/f5-tts-real.sh up` or
+  `scripts/f5-tts-real.sh up-build`. Do not use the plain
+  `docker-compose.f5.yml` overlay for that path; it defaults to
+  `contract-smoke`.
 - Real F5 validation has passed direct service smoke, Next `/api/tts` adapter
   smoke, deterministic staged mixed-template smoke, and deterministic staged
   export smoke.

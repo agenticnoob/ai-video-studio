@@ -440,7 +440,7 @@ check('"truncated by max_tokens" → 502', () => {
 
 check("MinimaxConfigError → 500", () => {
   const got = classifyError(
-    "MINIMAX_API_KEY is not configured. Set it in .env.local to enable real generation.",
+    "MINIMAX_API_KEY is not configured. Set it in .env to enable real generation.",
   );
   if (got !== 500) throw new Error(`expected 500, got ${got}`);
 });

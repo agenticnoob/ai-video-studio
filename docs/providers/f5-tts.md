@@ -92,12 +92,16 @@ segment regeneration, and export.
   - `F5_TTS_FALLBACK_TO_MINIMAX=false` disables MiniMax fallback when F5 fails.
 - Write generated audio to local project artifacts, consistent with the current
   `out/tts/...` path.
+- Write the final normalized caption payload beside the generated audio under
+  `out/tts/...` as `<audio-name>.captions.json`.
 - Serve generated audio through `/api/tts/assets/...` with byte-range support.
 - Normalize provider captions/alignment into segment-owned caption data with
   segment-local timing.
 - If F5-TTS does not return usable captions for a request, fall back to a
-  deterministic caption splitter based on narration text and real audio
-  duration.
+  deterministic punctuation-aware caption splitter based on narration text and
+  real audio duration. The current F5 runtime fallback treats sentence-ending
+  punctuation as a hard boundary, may split on commas, and merges short comma
+  chunks forward for readability.
 - Keep template implementations free of provider-specific audio or subtitle
   fields.
 
@@ -155,7 +159,8 @@ Current runtime note:
 
 - `services/f5-tts/` exposes the expected HTTP endpoints in `contract-smoke`
   mode.
-- Contract-smoke mode returns generated WAV test audio and fallback captions.
+- Contract-smoke mode returns generated WAV test audio and punctuation-split
+  fallback captions.
 - `scripts/f5-tts-next-smoke.sh` calls `POST /api/tts` against a running Next
   app to verify the Next adapter, local audio artifact creation, duration
   probing, caption normalization, and `/api/tts/assets/...` byte-range serving.
@@ -164,9 +169,10 @@ Current runtime note:
 - `F5_TTS_SERVICE_MODE=f5` switches the service to the local checkpoint path.
   The service reports `modelLoaded: false` until the first real `/synthesize`
   request loads the model.
-- GPU real mode is enabled through `docker-compose.f5.gpu.yml`, which sets
-  `F5_TTS_DEVICE=cuda` and requests Docker GPU access. CPU should be treated as
-  a diagnostic fallback, not the preferred runtime.
+- GPU real mode is enabled through `scripts/f5-tts-real.sh`, which applies
+  `docker-compose.f5.gpu.yml`, forces `F5_TTS_SERVICE_MODE=f5`, defaults
+  `F5_TTS_DEVICE=cuda`, and requests Docker GPU access. CPU should be treated
+  as a diagnostic fallback, not the preferred runtime.
 - The local GPU overlay has been validated with container-side PyTorch, and
   real F5 synthesis has passed with the local checkpoint, vocab, and Vocos
   vocoder under `models/f5-tts/`.

@@ -1,6 +1,113 @@
 # Iteration Status
 
-Last updated: F5-TTS GPU real-mode validation
+Last updated: F5 real-mode env guard
+
+## Latest continuation — F5 real-mode env guard
+
+- Root cause for the continuous beep after config restart: `.env` explicitly
+  set `F5_TTS_SERVICE_MODE="contract-smoke"`, so it overrode the GPU overlay's
+  real-mode default and the service returned synthetic contract-test audio.
+- Changed the local `.env` and tracked `.env.example` default to
+  `F5_TTS_SERVICE_MODE="f5"` for real local narration.
+- Updated `scripts/f5-tts-real.sh` to export `F5_TTS_SERVICE_MODE=f5` and a
+  default `F5_TTS_DEVICE=cuda` before invoking Docker Compose, so the real-mode
+  helper cannot be accidentally downgraded by a stale `.env` value.
+- Recreated `f5-tts` through `scripts/f5-tts-real.sh up`.
+- Verified `scripts/f5-tts-real.sh health` returns `mode=f5` and
+  `modelConfigured=true`.
+- Verified direct synthesis with Chinese smoke text returns `mode=f5`,
+  `modelLoaded=true`, `format=wav`, `cueCount=2`, and non-empty WAV audio.
+
+Current readiness:
+- The local F5 runtime is back in real synthesis mode.
+- Use `contract-smoke` only for HTTP-contract checks; it is expected to sound
+  like a test tone rather than narration.
+
+## Latest continuation — Unified local env template
+
+- Consolidated local configuration guidance around one tracked template:
+  `.env.example`.
+- Removed `.env.docker.example`; Docker Compose and the Next app should now use
+  the ignored local `.env` file for workstation configuration.
+- `.env.example` now includes Docker-facing values such as `HOST_UID`,
+  `HOST_GID`, `APP_PORT`, `STUDIO_PORT`, and `F5_TTS_PORT`, alongside provider
+  credentials and TTS/runtime settings.
+- Updated README and agent startup notes so new setup is:
+  `cp .env.example .env`.
+- `.env.local` remains tolerated by Next.js for legacy local setups, but it is
+  no longer the recommended project configuration file.
+
+Current readiness:
+- New local setup only needs `.env`; existing `.env.local` files can be
+  migrated manually by copying their secrets into `.env`.
+
+## Latest continuation — Chinese TTS env example annotations
+
+- Expanded `.env.example` with Chinese comments for the TTS-related
+  configuration surface.
+- Covered provider selection, MiniMax TTS, Next-side F5 adapter config, F5
+  runtime/model/GPU/reference-audio config, and render asset origin.
+- The example now explicitly warns that plain `docker-compose.f5.yml` is
+  `contract-smoke` only, while user-facing real F5 checks should use
+  `scripts/f5-tts-real.sh` and the GPU overlay.
+
+Current readiness:
+- No runtime behavior changed in this slice; this is configuration
+  documentation alignment only.
+
+## Latest continuation — F5-TTS real-mode runtime recovery and CJK smoke duration fix
+
+- Root cause for very short narration/subtitle timing: the running `f5-tts`
+  container had been restarted with only `docker-compose.f5.yml`, which
+  defaults to `F5_TTS_SERVICE_MODE=contract-smoke`.
+- In `contract-smoke`, the old duration estimator counted `text.split()` words;
+  Chinese narration without spaces collapsed to one token and produced roughly
+  one second of synthetic audio.
+- Recovered the live runtime by recreating `f5-tts` with the GPU overlay:
+  `scripts/f5-tts-real.sh up`.
+- Added `scripts/f5-tts-real.sh` so future real-mode refreshes use
+  `docker-compose.f5.gpu.yml` and only touch the `f5-tts` service instead of
+  accidentally rebuilding the web image.
+- Updated the contract-smoke duration estimator to consider English words, CJK
+  characters, and a character-count fallback. This keeps smoke-mode Chinese
+  captions/audio timing from collapsing to one second if the runtime is ever
+  accidentally started in smoke mode again.
+- Revalidated the Next-side F5 path with Chinese text:
+  `durationInSeconds=9.717333`, `durationInFrames=292`, `cueCount=3`, and
+  `/api/tts/assets/...` byte-range serving returned `206`.
+
+Current readiness:
+- The live `f5-tts` service is back in `mode=f5` with `F5_TTS_DEVICE=cuda`.
+- Plain `docker-compose.f5.yml` remains valid only for HTTP-contract smoke
+  checks; user-facing narration checks should use `scripts/f5-tts-real.sh`.
+
+## Latest continuation — F5-TTS punctuation fallback captions and caption artifacts
+
+- Updated the F5-TTS runtime fallback captions so provider output is no longer
+  a single whole-segment cue when alignment is unavailable.
+- Fallback caption cue generation now:
+  - splits on Chinese/English sentence-ending punctuation as a hard boundary
+    (`.`, `。`, `!`, `！`, `?`, `？`)
+  - can split on Chinese/English commas (`，`, `,`)
+  - merges short comma chunks forward until they reach a readable minimum
+    length or a sentence-ending punctuation boundary
+  - assigns cue timing proportionally from generated audio duration and cue
+    text length
+- The Next-side TTS path now writes the final normalized caption payload next
+  to the generated audio artifact under `out/tts/...` as
+  `<audio-name>.captions.json`.
+- The saved caption artifact reflects the same `VideoSegment.narration.captions`
+  data used by preview/export, including MiniMax fallback captions when the
+  active provider is not F5.
+- Shared Remotion caption rendering has been reduced in visual size so
+  generated subtitles occupy less of the frame.
+
+Current readiness:
+- F5 still does not provide real forced alignment in the local wrapper; the new
+  sentence/comma splitter is a deterministic fallback until provider-returned
+  alignment or a separate forced-alignment step is added.
+- Existing adapter support for provider-returned `captions` /
+  `alignment.*` remains the preferred path when such timing data is available.
 
 ## Latest continuation — F5-TTS GPU real-mode validation
 

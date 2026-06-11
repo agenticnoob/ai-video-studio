@@ -146,6 +146,11 @@ Implemented in the F5/captions/runtime slices:
 - F5-TTS provider module behind the existing TTS boundary.
 - provider selection/config for F5-TTS.
 - caption normalization from provider alignment into segment-local cues.
+- punctuation-aware F5 fallback cues when real alignment is unavailable:
+  sentence punctuation is a hard split, comma punctuation is a soft split, and
+  short comma chunks merge forward for readability.
+- sidecar caption artifact writing under `out/tts/...` as
+  `<audio-name>.captions.json` after final Next-side caption normalization.
 - Remotion flattening/rendering for segment-owned captions.
 - selected-segment caption replacement through `VideoSegment.narration`.
 - caption coverage in staged smoke fixtures.

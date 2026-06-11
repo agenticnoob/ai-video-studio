@@ -37,16 +37,16 @@ const positionStyles: Record<CaptionCueProps["position"], React.CSSProperties> =
 };
 
 const captionTextStyle: React.CSSProperties = {
-  maxWidth: "78%",
-  padding: "14px 22px",
+  maxWidth: "72%",
+  padding: "10px 18px",
   borderRadius: 8,
   backgroundColor: "rgba(8, 13, 24, 0.78)",
   boxShadow: "0 12px 32px rgba(0, 0, 0, 0.26)",
   color: "#f8fafc",
   fontFamily: "Inter, Arial, sans-serif",
-  fontSize: 34,
+  fontSize: 26,
   fontWeight: 700,
-  lineHeight: 1.18,
+  lineHeight: 1.22,
   textAlign: "center",
   textShadow: "0 1px 2px rgba(0, 0, 0, 0.45)",
   whiteSpace: "normal",

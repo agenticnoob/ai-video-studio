@@ -35,8 +35,9 @@ Current implementation status:
   compact registered-template manifest, and internal MiniMax planner facade
 - the first TTS asset boundary is in place for planned segments:
   `SegmentNarrationAsset`, internal `POST /api/tts`, local `out/tts/...`
-  artifacts, `/api/tts/assets/...` serving with byte-range support, and
-  ffprobe duration measurement
+  audio artifacts, sidecar `<audio-name>.captions.json` caption artifacts,
+  `/api/tts/assets/...` serving with byte-range support, and ffprobe duration
+  measurement
 - generated narration audio is attached to `VideoSegment.narration.audio` and
   flattened to the project timeline for preview/export; project-level
   narration media layers remain supported only as a transitional compatibility
@@ -115,7 +116,8 @@ Current modeling direction:
   timing, then rendered by shared project preview/export code
 - F5-TTS can be selected with `TTS_PROVIDER=f5-tts` or by setting
   `F5_TTS_BASE_URL`; when F5 does not return alignment, the project normalizes
-  deterministic fallback captions from narration text and real audio duration
+  deterministic punctuation-split fallback captions from narration text and
+  real audio duration
 - F5 runtime setup and validation details live in
   `docs/providers/f5-tts-service-plan.md`
 - future existing video, image, audio, or color inputs should be modeled as
@@ -303,13 +305,20 @@ available:
 
 ```bash
 cd /data/projects/labs/ai-video-studio
-docker compose -f docker-compose.yml -f docker-compose.f5.yml -f docker-compose.f5.gpu.yml up -d --build f5-tts web
+scripts/f5-tts-real.sh up-build
 scripts/f5-tts-smoke.sh
 ```
 
-The GPU overlay sets `F5_TTS_SERVICE_MODE=f5`, `F5_TTS_DEVICE=cuda`, and
-requests all visible GPUs. It still requires the local F5 checkpoint, vocab,
-and Vocos vocoder under `models/f5-tts/`.
+`scripts/f5-tts-real.sh` applies `docker-compose.f5.gpu.yml`, rebuilds only the
+`f5-tts` image when requested, and recreates only the `f5-tts` container. The
+helper forces `F5_TTS_SERVICE_MODE=f5`, defaults `F5_TTS_DEVICE=cuda`, and the
+GPU overlay requests all visible GPUs. It still requires the local F5
+checkpoint, vocab, and Vocos vocoder under `models/f5-tts/`.
+
+Do not use the plain `docker-compose.f5.yml` overlay for user-facing F5
+narration checks. That overlay intentionally defaults to `contract-smoke`;
+that mode returns synthetic contract-test audio and can sound like a continuous
+beep instead of real F5 narration.
 
 On this workstation the GPU path has been validated with:
 - direct service smoke: `F5_TTS_BASE_URL=http://127.0.0.1:7865 scripts/f5-tts-smoke.sh`
@@ -365,10 +374,23 @@ docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm
 - `Dockerfile`
 - `docker-compose.yml`
 - `.dockerignore`
-- `.env.docker.example`
 - `scripts/dev.sh`
 - `scripts/studio.sh`
 - `scripts/render.sh`
+
+## Local configuration
+
+Use one local config file:
+
+```bash
+cp .env.example .env
+```
+
+`.env.example` is the only tracked template. `.env` is ignored by Git and is
+used for both Docker Compose interpolation and Next/provider runtime config.
+Older `.env.local` files are still tolerated by Next.js, but new local setup
+should prefer `.env` so Docker ports, provider credentials, TTS settings, and
+render origins are managed in one place.
 
 ## Notes
 - `node_modules` is intended to live in the Docker volume path on this workstation.
@@ -383,7 +405,7 @@ docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm
 
 ### Environment variables
 
-Add to `.env.local` (see `.env.example`):
+Add to `.env` (see `.env.example`):
 
 | Variable | Required | Default | Purpose |
 |---|---|---|---|
@@ -412,7 +434,7 @@ Local render/export also supports:
 
 ### What happens if the key is missing
 
-The provider throws `MinimaxConfigError("MINIMAX_API_KEY is not configured. Set it in .env.local to enable real generation.")` on the first call, and `POST /api/generate` translates that into a `500` with the same message in the `error` field. The UI surfaces it as the generation error state — there is no silent mock fallback to the local mock anymore.
+The provider throws `MinimaxConfigError("MINIMAX_API_KEY is not configured. Set it in .env to enable real generation.")` on the first call, and `POST /api/generate` translates that into a `500` with the same message in the `error` field. The UI surfaces it as the generation error state — there is no silent mock fallback to the local mock anymore.
 
 ### Failure → HTTP status mapping
 
@@ -436,11 +458,11 @@ Then smoke test the missing-key path from another terminal (returns 500):
 
 ```bash
 cd /data/projects/labs/ai-video-studio
-# ensure .env.local does NOT export MINIMAX_API_KEY
+# ensure .env does NOT export MINIMAX_API_KEY
 curl -s -X POST http://127.0.0.1:3000/api/generate \
   -H 'content-type: application/json' \
   -d '{"mode":"project","brief":"hello world"}'
-# -> {"error":"MINIMAX_API_KEY is not configured. Set it in .env.local to enable real generation."} (status 500)
+# -> {"error":"MINIMAX_API_KEY is not configured. Set it in .env to enable real generation."} (status 500)
 ```
 
 Run static validation inside Docker on this workstation; host `node_modules`

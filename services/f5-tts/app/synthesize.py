@@ -5,6 +5,7 @@ import io
 import math
 import os
 from pathlib import Path
+import re
 import tempfile
 import wave
 
@@ -13,11 +14,23 @@ from .schemas import CaptionCue
 SAMPLE_RATE = 24_000
 MIN_DURATION_SECONDS = 1.2
 MAX_DURATION_SECONDS = 12.0
+MIN_CAPTION_CHARS = 8
+SECONDS_PER_CJK_CHAR = 0.22
+SECONDS_PER_FALLBACK_CHAR = 0.08
+SECONDS_PER_WORD = 0.38
 
 
 def estimate_duration_seconds(text: str) -> float:
-    word_count = max(1, len(text.split()))
-    return min(MAX_DURATION_SECONDS, max(MIN_DURATION_SECONDS, word_count * 0.38))
+    cleaned_text = " ".join(text.split())
+    word_count = len(re.findall(r"[A-Za-z0-9]+(?:[-'][A-Za-z0-9]+)?", cleaned_text))
+    cjk_char_count = len(re.findall(r"[\u3400-\u9fff]", cleaned_text))
+    fallback_char_count = len(strip_caption_punctuation(cleaned_text))
+    estimated_duration = max(
+        word_count * SECONDS_PER_WORD,
+        cjk_char_count * SECONDS_PER_CJK_CHAR,
+        fallback_char_count * SECONDS_PER_FALLBACK_CHAR,
+    )
+    return min(MAX_DURATION_SECONDS, max(MIN_DURATION_SECONDS, estimated_duration))
 
 
 def create_contract_smoke_wav(duration_seconds: float) -> bytes:
@@ -42,14 +55,69 @@ def create_fallback_caption_cues(text: str, duration_seconds: float) -> list[Cap
     if not cleaned_text:
         cleaned_text = "Narration"
 
-    return [
-        CaptionCue(
-            id="cue-1",
-            text=cleaned_text,
-            startSeconds=0.0,
-            endSeconds=round(duration_seconds, 3),
+    chunks = split_caption_text(cleaned_text)
+    total_weight = sum(max(1, len(chunk)) for chunk in chunks)
+    cursor = 0.0
+    cues: list[CaptionCue] = []
+
+    for index, chunk in enumerate(chunks):
+        if index == len(chunks) - 1:
+            end_seconds = duration_seconds
+        else:
+            cue_duration = duration_seconds * (max(1, len(chunk)) / total_weight)
+            end_seconds = min(duration_seconds, cursor + cue_duration)
+
+        cues.append(
+            CaptionCue(
+                id=f"cue-{index + 1}",
+                text=chunk,
+                startSeconds=round(cursor, 3),
+                endSeconds=round(end_seconds, 3),
+            )
         )
-    ]
+        cursor = end_seconds
+
+    return cues
+
+
+def split_caption_text(text: str) -> list[str]:
+    parts = re.findall(r"[^,，.。!?！？]+[,，.。!?！？]?", text)
+    chunks: list[str] = []
+    pending = ""
+
+    for raw_part in parts:
+        part = raw_part.strip()
+        if not part:
+            continue
+
+        pending = append_caption_part(pending, part)
+        if is_sentence_terminal(part) or len(strip_caption_punctuation(pending)) >= MIN_CAPTION_CHARS:
+            chunks.append(pending)
+            pending = ""
+
+    if pending:
+        if chunks and len(strip_caption_punctuation(pending)) < MIN_CAPTION_CHARS:
+            chunks[-1] = f"{chunks[-1]}{pending}"
+        else:
+            chunks.append(pending)
+
+    return chunks or [text]
+
+
+def append_caption_part(current: str, part: str) -> str:
+    if not current:
+        return part
+    if current[-1] in {",", ".", "!", "?"}:
+        return f"{current} {part}"
+    return f"{current}{part}"
+
+
+def is_sentence_terminal(text: str) -> bool:
+    return bool(re.search(r"[.。!?！？]$", text))
+
+
+def strip_caption_punctuation(text: str) -> str:
+    return re.sub(r"[\s,，.。!?！？]", "", text)
 
 
 def synthesize_contract_smoke_audio(text: str) -> tuple[str, float, list[CaptionCue]]:

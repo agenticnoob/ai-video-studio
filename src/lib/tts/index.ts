@@ -1,3 +1,6 @@
+import { writeFile } from "node:fs/promises";
+import path from "node:path";
+
 import {
   storyboardPlanSchema,
   type StoryboardPlan,
@@ -62,6 +65,17 @@ export const generateSegmentNarrationAsset = async (
       language: plan.language,
       text: segment.narration.text,
     });
+  await writeSegmentCaptionArtifact({
+    audioOutputPath: result.outputPath,
+    audioSrc: result.audioSrc,
+    captions,
+    durationInFrames: result.durationInFrames,
+    durationInSeconds: result.durationInSeconds,
+    provider: result.provider,
+    segmentId: segment.id,
+    text: segment.narration.text,
+    voiceId: result.voiceId,
+  });
 
   return segmentNarrationAssetSchema.parse({
     text: segment.narration.text,
@@ -73,6 +87,54 @@ export const generateSegmentNarrationAsset = async (
     format: result.format,
     captions,
   });
+};
+
+const getCaptionArtifactOutputPath = (audioOutputPath: string): string => {
+  const parsedPath = path.parse(audioOutputPath);
+  return path.join(parsedPath.dir, `${parsedPath.name}.captions.json`);
+};
+
+const writeSegmentCaptionArtifact = async ({
+  audioOutputPath,
+  audioSrc,
+  captions,
+  durationInFrames,
+  durationInSeconds,
+  provider,
+  segmentId,
+  text,
+  voiceId,
+}: {
+  audioOutputPath: string;
+  audioSrc: string;
+  captions: SegmentNarrationAsset["captions"];
+  durationInFrames: number;
+  durationInSeconds: number;
+  provider: string;
+  segmentId: string;
+  text: string;
+  voiceId?: string;
+}): Promise<void> => {
+  const captionOutputPath = getCaptionArtifactOutputPath(audioOutputPath);
+  await writeFile(
+    captionOutputPath,
+    `${JSON.stringify(
+      {
+        segmentId,
+        text,
+        audio: {
+          src: audioSrc,
+          durationInFrames,
+          durationInSeconds,
+          provider,
+          voiceId,
+        },
+        captions,
+      },
+      null,
+      2,
+    )}\n`,
+  );
 };
 
 type F5SpeechWithFallbackRequest = {

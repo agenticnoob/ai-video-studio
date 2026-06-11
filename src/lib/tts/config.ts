@@ -117,7 +117,7 @@ export const readMinimaxTtsConfig = (): MinimaxTtsConfig => {
   const apiKey = process.env.MINIMAX_API_KEY;
   if (!apiKey || apiKey.trim().length === 0) {
     throw new TtsConfigError(
-      "MINIMAX_API_KEY is not configured. Set it in .env.local to enable TTS generation.",
+      "MINIMAX_API_KEY is not configured. Set it in .env to enable TTS generation.",
     );
   }
 

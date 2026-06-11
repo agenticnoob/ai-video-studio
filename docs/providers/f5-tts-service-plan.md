@@ -52,8 +52,8 @@ Current first service:
 - mounted reference-voice directory for local voice profiles
 - generated response returned to the Next app as JSON with base64 audio
 - health endpoint for startup checks and smoke tests
-- default `contract-smoke` mode returns a generated WAV and fallback caption
-  cue; it does not run a real F5-TTS checkpoint yet
+- default `contract-smoke` mode returns a generated WAV and deterministic
+  fallback caption cues; it does not run a real F5-TTS checkpoint yet
 - real `f5` mode loads `F5_TTS_MODEL_PATH` and `F5_TTS_VOCAB_PATH` lazily on
   the first `/synthesize` request
 - real `f5` mode uses `F5_TTS_VOCODER_PATH` for the local Vocos vocoder and
@@ -148,8 +148,16 @@ Accepted response alternatives:
   `alignment.cues`, `alignment.words`, or `alignment.segments`
 
 If the service cannot return alignment yet, it should still return valid audio.
-The Next adapter already creates deterministic fallback captions from narration
-text and measured audio duration.
+The runtime fallback splits captions by Chinese/English sentence punctuation
+and comma punctuation, merging short comma chunks forward for readability.
+The Next adapter then normalizes those cues, or creates deterministic fallback
+captions from narration text and measured audio duration when the runtime
+returns no usable cues.
+
+The Next TTS path also saves the final normalized caption payload next to the
+generated audio under `out/tts/...` as `<audio-name>.captions.json`, so the
+artifact on disk matches the `VideoSegment.narration.captions` data used by
+preview/export.
 
 In the current contract-smoke wrapper, the returned audio is synthetic test WAV
 data and `modelLoaded` is false. Do not treat this as real F5 synthesis.
@@ -193,12 +201,20 @@ docker compose -f docker-compose.yml -f docker-compose.f5.yml up f5-tts web
 GPU mode is an additional explicit overlay:
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.f5.yml -f docker-compose.f5.gpu.yml up -d --build f5-tts web
+scripts/f5-tts-real.sh up-build
 ```
 
-The GPU overlay sets `F5_TTS_SERVICE_MODE=f5`, `F5_TTS_DEVICE=cuda`, requests
-all visible GPUs, and requires a working host NVIDIA driver plus Docker NVIDIA
-runtime. Use CPU only for diagnostics or systems without GPU access.
+`scripts/f5-tts-real.sh` applies `docker-compose.f5.gpu.yml`, rebuilds only the
+`f5-tts` image when requested, and recreates only the `f5-tts` container. The
+helper forces `F5_TTS_SERVICE_MODE=f5`, defaults `F5_TTS_DEVICE=cuda`, and the
+GPU overlay requests all visible GPUs. It requires a working host NVIDIA driver
+plus Docker NVIDIA runtime. Use CPU only for diagnostics or systems without GPU
+access.
+
+Do not use the plain `docker-compose.f5.yml` overlay for user-facing F5
+narration checks. That overlay intentionally defaults to `contract-smoke`, so
+it is useful for HTTP-contract validation but not for real narration timing or
+sound quality.
 
 Validated local state:
 
@@ -237,6 +253,8 @@ Validated local state:
 8. Add a live provider-backed staged route smoke for `POST /api/generate/staged`
    when MiniMax planner/compiler configuration is available, and confirm:
    - generated audio lands under `out/tts/...`
+   - generated normalized caption JSON lands beside the audio as
+     `<audio-name>.captions.json`
    - `/api/tts/assets/...` serves the audio with byte-range support
    - generated project segments contain narration audio and captions
    - `/api/render` can export a project using the F5-generated audio
