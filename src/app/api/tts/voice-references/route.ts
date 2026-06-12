@@ -26,9 +26,6 @@ export async function POST(request: Request) {
   if (!(audio instanceof File)) {
     return NextResponse.json({ error: "Reference audio file is required." }, { status: 400 });
   }
-  if (typeof referenceText !== "string" || !referenceText.trim()) {
-    return NextResponse.json({ error: "Reference text is required." }, { status: 400 });
-  }
   if (audio.size <= 0) {
     return NextResponse.json({ error: "Reference audio file is empty." }, { status: 400 });
   }
@@ -61,6 +58,8 @@ export async function POST(request: Request) {
     referenceId,
     originalName: audio.name,
     format,
-    referenceText: referenceText.trim(),
+    ...(typeof referenceText === "string" && referenceText.trim()
+      ? { referenceText: referenceText.trim() }
+      : {}),
   });
 }

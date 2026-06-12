@@ -422,8 +422,8 @@ Current implementation note:
   planned segment, with local audio artifacts, measured duration, provider
   selection, F5 adapter support, and fallback captions
 - staged generation now exposes page-level F5 voice cloning through uploaded
-  reference audio plus matching reference text, while the default voice path
-  remains unchanged when cloning is disabled
+  reference audio plus matching reference text supplied before generation,
+  while the default voice path remains unchanged when cloning is disabled
 - generated narration audio is now carried by `VideoSegment.narration.audio`;
   generated captions are carried by `VideoSegment.narration.captions`; both
   are flattened for preview/export

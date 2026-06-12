@@ -20,8 +20,8 @@ Status: partially resumed.
   service 已经落地，并通过 GPU real-mode direct / Next adapter /
   deterministic staged / staged export smoke；project 继续负责 segment 顺序和
   全局 timeline flatten。页面级 F5 声音克隆也已经暴露在 staged 生成设置中：
-  用户上传参考音频并填写匹配文本，系统在全项目生成和选中分段重生成时复用
-  该克隆音色；关闭后继续使用默认 F5 语音路径。
+  用户可先上传参考音频，生成前填写匹配文本，系统在全项目生成和选中分段
+  重生成时复用该克隆音色；关闭后继续使用默认 F5 语音路径。
 
 此前判断（保留为背景）：
 - 不要一开始就把 `ai-video-studio` 扩成完整 AI 视频产品。

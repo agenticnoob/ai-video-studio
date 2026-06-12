@@ -88,18 +88,12 @@ export const useProjectGeneration = () => {
   };
 
   const uploadVoiceReference = async (file: File) => {
-    if (!voiceClone.referenceText.trim()) {
-      setVoiceReferenceError("请先填写参考音频对应文本。");
-      return;
-    }
-
     setIsUploadingVoiceReference(true);
     setVoiceReferenceError(null);
 
     try {
       const formData = new FormData();
       formData.append("audio", file);
-      formData.append("referenceText", voiceClone.referenceText.trim());
 
       const response = await fetch("/api/tts/voice-references", {
         method: "POST",

@@ -338,11 +338,12 @@ text. For a custom voice, set both `F5_TTS_DEFAULT_REFERENCE_AUDIO` and
 `F5_TTS_DEFAULT_REFERENCE_TEXT`.
 
 The page also exposes F5 voice cloning for staged generation. Enable
-`声音克隆`, enter the transcript that matches the reference audio, then upload
-a `.wav`, `.mp3`, `.m4a`, or `.aac` file. The Next app stores the uploaded
-reference under ignored `out/voice-references/`; the F5 overlay mounts that
-directory read-only at `/voice-references`. When cloning is disabled, staged
-generation falls back to the configured default F5 voice/reference behavior.
+`声音克隆`, upload a `.wav`, `.mp3`, `.m4a`, or `.aac` reference file, and
+enter the transcript that matches the reference audio before generation. The
+Next app stores the uploaded reference under ignored `out/voice-references/`;
+the F5 overlay mounts that directory read-only at `/voice-references`. When
+cloning is disabled, staged generation falls back to the configured default F5
+voice/reference behavior.
 
 Important distinction:
 - `./scripts/render.sh` is still the default/sample composition render path from the Docker wrapper

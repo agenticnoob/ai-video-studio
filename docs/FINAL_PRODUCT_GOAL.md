@@ -530,9 +530,9 @@ Current compatibility notes:
   fallback caption cues, with caption cues flattened to the project timeline
   for preview and export.
 - Page-level F5 voice cloning is now exposed for staged generation: uploaded
-  reference audio is stored under `out/voice-references/`, paired with user
-  supplied reference text, and reused for full-project generation plus
-  selected-segment regeneration when cloning is enabled.
+  reference audio is stored under `out/voice-references/`, then paired with
+  user supplied reference text at generation time and reused for full-project
+  generation plus selected-segment regeneration when cloning is enabled.
 - The current fallback caption path uses sentence punctuation as a hard split,
   comma punctuation as a soft split, merges short comma chunks forward for
   readability, and saves the normalized caption payload beside generated audio
