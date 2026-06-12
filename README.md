@@ -38,6 +38,9 @@ Current implementation status:
   audio artifacts, sidecar `<audio-name>.captions.json` caption artifacts,
   `/api/tts/assets/...` serving with byte-range support, and ffprobe duration
   measurement
+- generated TTS audio assets are served through streamed byte ranges with
+  immutable artifact caching, and Remotion preview pauses the timeline while
+  narration audio is buffering
 - generated narration audio is attached to `VideoSegment.narration.audio` and
   flattened to the project timeline for preview/export; project-level
   narration media layers remain supported only as a transitional compatibility

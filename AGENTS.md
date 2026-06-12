@@ -85,6 +85,9 @@ The first staged-generation groundwork is also in place:
   path for older/current projects.
 - Generated TTS assets are served from `/api/tts/assets/...` with byte-range
   support so Remotion Player can seek audio during pause/resume.
+- The TTS asset route streams requested byte ranges instead of reading the full
+  file into memory, uses immutable artifact caching, and segment-owned
+  narration `<Audio>` pauses the Remotion preview timeline while buffering.
 - Normalized caption payloads are written beside generated audio artifacts
   under `out/tts/...` as `<audio-name>.captions.json`.
 - Page-level F5 voice cloning is exposed for staged generation. Users upload a

@@ -1,5 +1,7 @@
-import { readFile, stat } from "node:fs/promises";
+import { createReadStream } from "node:fs";
+import { stat } from "node:fs/promises";
 import path from "node:path";
+import { Readable } from "node:stream";
 import { NextResponse } from "next/server";
 import {
   getTtsArtifactAbsolutePath,
@@ -74,11 +76,28 @@ const createTtsAssetHeaders = ({
     "accept-ranges": "bytes",
     "access-control-allow-origin": "*",
     "access-control-expose-headers": "Accept-Ranges, Content-Length, Content-Range",
-    "cache-control": "no-store",
+    "cache-control": "public, max-age=31536000, immutable",
     "content-disposition": `inline; filename="${fileName}"`,
     "content-length": String(contentLength),
     "content-type": getTtsAssetContentType(assetPath),
   };
+};
+
+const createFileResponseBody = (
+  absoluteOutputPath: string,
+  range?: { end: number; start: number },
+): ReadableStream<Uint8Array> => {
+  const stream = createReadStream(
+    absoluteOutputPath,
+    range
+      ? {
+          end: range.end,
+          start: range.start,
+        }
+      : undefined,
+  );
+
+  return Readable.toWeb(stream) as ReadableStream<Uint8Array>;
 };
 
 export async function GET(
@@ -108,17 +127,13 @@ export async function GET(
       });
     }
 
-    const buffer = await readFile(absoluteOutputPath);
-
     if (byteRange) {
-      const chunk = buffer.subarray(byteRange.start, byteRange.end + 1);
-
-      return new Response(new Uint8Array(chunk), {
+      return new Response(createFileResponseBody(absoluteOutputPath, byteRange), {
         status: 206,
         headers: {
           ...createTtsAssetHeaders({
             assetPath,
-            contentLength: chunk.length,
+            contentLength: byteRange.end - byteRange.start + 1,
             fileName,
           }),
           "content-range": `bytes ${byteRange.start}-${byteRange.end}/${outputStats.size}`,
@@ -126,7 +141,7 @@ export async function GET(
       });
     }
 
-    return new Response(new Uint8Array(buffer), {
+    return new Response(createFileResponseBody(absoluteOutputPath), {
       headers: {
         ...createTtsAssetHeaders({
           assetPath,

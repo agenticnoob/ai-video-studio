@@ -29,7 +29,7 @@ const renderSegmentNarration = (
       from={getSegmentStart(project, index)}
       durationInFrames={Math.min(audio.durationInFrames, getSegmentDuration(segment))}
     >
-      <Audio src={audio.src} />
+      <Audio pauseWhenBuffering src={audio.src} />
     </Sequence>
   );
 };

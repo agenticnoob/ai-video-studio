@@ -1,6 +1,28 @@
 # Iteration Status
 
-Last updated: F5 page voice cloning
+Last updated: Narration audio playback buffering hardening
+
+## Latest continuation — Narration audio playback buffering hardening
+
+- Root cause for perceived audio/video drift risk: preview playback uses
+  browser media buffering for `/api/tts/assets/...`; if an audio range request
+  is slow, video frames can advance before the audio is ready unless Remotion
+  buffers the timeline.
+- Added `pauseWhenBuffering` to segment-owned narration `<Audio>` rendering so
+  Remotion Player pauses timeline advancement while narration media buffers.
+- Changed `/api/tts/assets/...` from full-file `readFile()` plus in-memory
+  slicing to `createReadStream()` with byte-range `start` / `end`, reducing
+  first-byte and seek overhead for generated narration audio.
+- Changed generated TTS asset responses to
+  `Cache-Control: public, max-age=31536000, immutable`; run-id based asset URLs
+  are unique artifacts, so browser caching is safe and repeat playback/seek no
+  longer needs to refetch unchanged audio.
+
+Current readiness:
+- The generated narration route remains seekable with `Accept-Ranges`,
+  `206 Partial Content`, and `Content-Range`.
+- Preview is now more conservative: if narration audio is not buffered, the
+  visual timeline waits instead of drifting ahead.
 
 ## Latest continuation — F5 page voice cloning
 

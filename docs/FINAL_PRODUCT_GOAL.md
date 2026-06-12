@@ -537,6 +537,9 @@ Current compatibility notes:
   comma punctuation as a soft split, merges short comma chunks forward for
   readability, and saves the normalized caption payload beside generated audio
   under `out/tts/...` as `<audio-name>.captions.json`.
+- Generated narration audio is served as seekable streamed byte ranges with
+  immutable artifact caching, and Remotion preview pauses timeline advancement
+  while narration audio is buffering.
 - Narration metadata should stay separated from template implementation data so
   the system can distinguish spoken text, generated audio, voice, timing, and
   provider.
