@@ -2,10 +2,12 @@ import { NextResponse } from "next/server";
 
 import { MinimaxConfigError } from "../../../../lib/minimax/provider";
 import {
+  buildStagedProjectDiagnostics,
+  buildStagedSegmentRevisionDiagnostics,
   generateStagedProjectFromBrief,
   generateStagedProjectFromPlan,
   generateStagedSegmentRevision,
-} from "../../../../lib/staged-project-generation";
+} from "../../../../lib/staged-generation";
 import {
   getStagedGenerationErrorStatus,
   stagedGenerateRequestSchema,
@@ -51,25 +53,7 @@ export async function POST(request: Request) {
       return NextResponse.json({
         plan: result.plan,
         project: result.project,
-        diagnostics: {
-          planner: {
-            attempts: result.plannerAttempts,
-            repaired: result.plannerRepaired,
-          },
-          compiler: [
-            {
-              attempts: result.compilerAttempts,
-              repaired: result.repaired,
-              segmentId: result.segment.id,
-              templateId: result.segment.templateId,
-            },
-          ],
-          captionSegmentCount: result.segment.narration?.captions?.cues.length ? 1 : 0,
-          narrationSegmentCount: result.segment.narration?.audio ? 1 : 0,
-          narrationProviders: result.narration.provider ? [result.narration.provider] : [],
-          narrationLayerCount: 1,
-          segmentCount: 1,
-        },
+        diagnostics: buildStagedSegmentRevisionDiagnostics(result),
       });
     }
 
@@ -91,35 +75,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       plan: result.plan,
       project: result.project,
-      diagnostics: {
-        planner:
-          result.plannerAttempts === undefined || result.plannerRepaired === undefined
-            ? undefined
-            : {
-                attempts: result.plannerAttempts,
-                repaired: result.plannerRepaired,
-              },
-        compiler: result.segments.map((segment) => ({
-          attempts: segment.compilerAttempts,
-          repaired: segment.repaired,
-          segmentId: segment.segment.id,
-          templateId: segment.segment.templateId,
-        })),
-        captionSegmentCount: result.segments.filter(
-          (segment) => segment.segment.narration?.captions?.cues.length,
-        ).length,
-        narrationSegmentCount: result.segments.filter((segment) => segment.segment.narration?.audio)
-          .length,
-        narrationProviders: Array.from(
-          new Set(
-            result.segments
-              .map((segment) => segment.narration.provider)
-              .filter((provider): provider is string => Boolean(provider)),
-          ),
-        ),
-        narrationLayerCount: result.narrationLayers.length,
-        segmentCount: result.segments.length,
-      },
+      diagnostics: buildStagedProjectDiagnostics(result),
     });
   } catch (error) {
     if (error instanceof StoryboardSegmentNotFoundError) {

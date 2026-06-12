@@ -1,6 +1,3 @@
-import { writeFile } from "node:fs/promises";
-import path from "node:path";
-
 import {
   storyboardPlanSchema,
   type StoryboardPlan,
@@ -10,10 +7,11 @@ import { normalizeSegmentCaptions } from "../captions";
 import { segmentNarrationAssetSchema, type SegmentNarrationAsset } from "../narration-asset-schema";
 import { StoryboardSegmentNotFoundError } from "./errors";
 import { createTtsRunId } from "./artifacts";
-import { readF5TtsConfig, readTtsProviderId, type TtsProviderId } from "./config";
-import { synthesizeF5Speech } from "./f5";
-import { synthesizeMinimaxSpeech } from "./minimax";
-import { resolveVoiceCloneReference, type VoiceCloneRequest } from "./voice-references";
+import type { TtsProviderId } from "./config";
+import { writeSegmentCaptionArtifact } from "./caption-artifacts";
+import { resolveTtsProvider } from "./provider-selection";
+import { synthesizeSegmentNarration } from "./synthesis";
+import type { VoiceCloneRequest } from "./voice-references";
 
 export { StoryboardSegmentNotFoundError, TtsConfigError, TtsProviderError } from "./errors";
 
@@ -43,26 +41,21 @@ export const generateSegmentNarrationAsset = async (
   const plan = storyboardPlanSchema.parse(request.plan);
   const segment = getStoryboardSegmentPlan(plan, request.segmentId);
   const runId = createTtsRunId();
-  const voiceCloneReference = await resolveVoiceCloneReference(request.voiceClone);
-  const provider = voiceCloneReference ? "f5-tts" : request.provider ?? readTtsProviderId();
-  const result =
-    provider === "f5-tts"
-      ? await synthesizeF5SpeechWithFallback({
-          language: plan.language,
-          referenceAudioPath: voiceCloneReference?.referenceAudioPath,
-          referenceText: voiceCloneReference?.referenceText,
-          runId,
-          segmentId: segment.id,
-          text: segment.narration.text,
-          voiceId: request.voiceId,
-          fallbackToMinimax: !voiceCloneReference,
-        })
-      : await synthesizeMinimaxSpeech({
-          text: segment.narration.text,
-          segmentId: segment.id,
-          runId,
-          voiceId: request.voiceId,
-        });
+  const providerSelection = await resolveTtsProvider({
+    provider: request.provider,
+    voiceClone: request.voiceClone,
+  });
+  const result = await synthesizeSegmentNarration({
+    fallbackToMinimax: providerSelection.fallbackToMinimax,
+    language: plan.language,
+    provider: providerSelection.provider,
+    referenceAudioPath: providerSelection.voiceCloneReference?.referenceAudioPath,
+    referenceText: providerSelection.voiceCloneReference?.referenceText,
+    runId,
+    segmentId: segment.id,
+    text: segment.narration.text,
+    voiceId: request.voiceId,
+  });
   const providerCaptions = "captions" in result ? result.captions : undefined;
   const captions =
     providerCaptions ??
@@ -93,92 +86,4 @@ export const generateSegmentNarrationAsset = async (
     format: result.format,
     captions,
   });
-};
-
-const getCaptionArtifactOutputPath = (audioOutputPath: string): string => {
-  const parsedPath = path.parse(audioOutputPath);
-  return path.join(parsedPath.dir, `${parsedPath.name}.captions.json`);
-};
-
-const writeSegmentCaptionArtifact = async ({
-  audioOutputPath,
-  audioSrc,
-  captions,
-  durationInFrames,
-  durationInSeconds,
-  provider,
-  segmentId,
-  text,
-  voiceId,
-}: {
-  audioOutputPath: string;
-  audioSrc: string;
-  captions: SegmentNarrationAsset["captions"];
-  durationInFrames: number;
-  durationInSeconds: number;
-  provider: string;
-  segmentId: string;
-  text: string;
-  voiceId?: string;
-}): Promise<void> => {
-  const captionOutputPath = getCaptionArtifactOutputPath(audioOutputPath);
-  await writeFile(
-    captionOutputPath,
-    `${JSON.stringify(
-      {
-        segmentId,
-        text,
-        audio: {
-          src: audioSrc,
-          durationInFrames,
-          durationInSeconds,
-          provider,
-          voiceId,
-        },
-        captions,
-      },
-      null,
-      2,
-    )}\n`,
-  );
-};
-
-type F5SpeechWithFallbackRequest = {
-  fallbackToMinimax: boolean;
-  language?: string;
-  referenceAudioPath?: string;
-  referenceText?: string;
-  runId: string;
-  segmentId: string;
-  text: string;
-  voiceId?: string;
-};
-
-const shouldFallbackToMinimax = (): boolean => {
-  try {
-    return readF5TtsConfig().fallbackToMinimax;
-  } catch {
-    return false;
-  }
-};
-
-const synthesizeF5SpeechWithFallback = async (request: F5SpeechWithFallbackRequest) => {
-  try {
-    return await synthesizeF5Speech(request);
-  } catch (error) {
-    if (!request.fallbackToMinimax || !shouldFallbackToMinimax()) {
-      throw error;
-    }
-
-    console.warn("F5-TTS synthesis failed; falling back to MiniMax TTS.", {
-      message: error instanceof Error ? error.message : String(error),
-      segmentId: request.segmentId,
-    });
-    return synthesizeMinimaxSpeech({
-      text: request.text,
-      segmentId: request.segmentId,
-      runId: request.runId,
-      voiceId: request.voiceId,
-    });
-  }
 };

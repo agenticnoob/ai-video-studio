@@ -13,7 +13,10 @@ Before planning or editing, read these files in order:
    captions/subtitles, or narration provider work
 6. `docs/providers/f5-tts-service-plan.md` when the task involves the local
    F5-TTS runtime service or Docker service setup
-7. `README.md`
+7. `docs/STRUCTURE_REFACTOR_PLAN.md` and
+   `docs/HANDOFF_STRUCTURE_REFACTOR.md` when the task is behavior-preserving
+   structure cleanup, modularization, or Subagent-Driven refactor work
+8. `README.md`
 
 These files together explain:
 - authoritative final generation goal
@@ -24,6 +27,7 @@ These files together explain:
 - product direction
 - F5-TTS / aligned captions handoff when relevant
 - F5-TTS runtime service plan when relevant
+- structure refactor plan and handoff when relevant
 - Docker-first local workflow
 
 Local configuration is now unified around one tracked template and one ignored
@@ -65,8 +69,8 @@ The first staged-generation groundwork is also in place:
   `/api/tts/assets/...` provide the first internal TTS asset boundary for one
   planned segment's narration, including local audio artifacts and measured
   duration.
-- `src/lib/staged-project-generation.ts` and the MiniMax selected-template
-  compiler helpers provide the first staged assembly path:
+- `src/lib/staged-generation/*` and the MiniMax selected-template compiler
+  helpers provide the staged assembly path:
   StoryboardPlan -> per-segment TTS -> selected-template compile -> assembled
   `VideoProject`. Generated narration audio is now owned by
   `VideoSegment.narration.audio`; the current continuation also extends this
@@ -100,13 +104,14 @@ The first staged-generation groundwork is also in place:
   short comma chunks forward for readability.
 - Local export rewrites route media URLs to a Next API origin before Remotion
   rendering so `/api/tts/assets/...` audio can be downloaded during export.
-- Page generation state is now split out of `src/app/page.tsx` into
-  `src/helpers/use-project-generation.ts`, with `GenerationPanel` and
-  `PreviewPanel` owning the brief/generation controls and Remotion Player
-  preview sections.
+- Page generation state is now split out of `src/app/page.tsx` under
+  `src/helpers/project-generation/`; `src/helpers/use-project-generation.ts`
+  remains a compatibility export, with `GenerationPanel` and `PreviewPanel`
+  owning the brief/generation controls and Remotion Player preview sections.
 - Staged request validation/error classification lives in
-  `src/lib/staged-generation-api.ts`; staged assembly and narration-layer
-  replacement helpers live in `src/lib/staged-project-assembly.ts`.
+  `src/lib/staged-generation-api.ts`; staged orchestration, one-segment
+  narration/compile work, diagnostics, assembly, and selected-segment
+  replacement helpers live in `src/lib/staged-generation/*`.
 - Bounded planner repair is in place for invalid `StoryboardPlan` output in
   both full-brief and selected-segment staged planner paths.
 - Deterministic staged smoke fixtures cover a mixed `scripted` + `spotlight`
@@ -214,12 +219,15 @@ Current product modeling decision:
 - `src/app/api/render/[renderId]/route.ts`
 - `src/helpers/use-rendering.ts`
 - `src/helpers/use-project-generation.ts`
+- `src/helpers/project-generation/*`
 - `src/lib/render-project.ts`
 - `src/lib/project-schema.ts`
+- `src/lib/project-timeline.ts`
 - `src/lib/storyboard-plan-schema.ts`
 - `src/lib/narration-asset-schema.ts`
 - `src/lib/tts/*`
 - `src/app/api/tts/voice-references/route.ts`
+- `src/lib/staged-generation/*`
 - `src/lib/staged-generation-api.ts`
 - `src/lib/staged-project-assembly.ts`
 - `docs/providers/f5-tts.md`

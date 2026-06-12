@@ -429,17 +429,17 @@ Current implementation note:
   are flattened for preview/export
 - the next provider implementation slice is the optional local F5-TTS runtime
   service in `docs/providers/f5-tts-service-plan.md`
-- `src/lib/staged-project-generation.ts`, the MiniMax selected-template
-  compiler helpers, and `POST /api/generate/staged` provide the staged
-  assembly path
+- `src/lib/staged-generation/*`, the MiniMax selected-template compiler
+  helpers, and `POST /api/generate/staged` provide the staged assembly path
 - the page defaults to `POST /api/generate/staged` for top-level generation
-- page-level generation state has been moved into
-  `src/helpers/use-project-generation.ts`, with `GenerationPanel` and
-  `PreviewPanel` owning the brief/generation controls and Remotion Player
-  preview sections
-- staged route request parsing/error classification and staged project assembly
-  helpers are split into `src/lib/staged-generation-api.ts` and
-  `src/lib/staged-project-assembly.ts`
+- page-level generation state has been moved under
+  `src/helpers/project-generation/`, with `src/helpers/use-project-generation.ts`
+  kept as a compatibility export; `GenerationPanel` and `PreviewPanel` own the
+  brief/generation controls and Remotion Player preview sections
+- staged route request parsing/error classification lives in
+  `src/lib/staged-generation-api.ts`; staged orchestration, one-segment
+  narration/compile work, diagnostics, assembly, and selected-segment
+  replacement helpers live under `src/lib/staged-generation/`
 - the shipped `POST /api/generate` path still returns a validated one-shot
   `VideoProject` directly and remains available as a fallback
 

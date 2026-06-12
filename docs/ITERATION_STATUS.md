@@ -1,6 +1,110 @@
 # Iteration Status
 
-Last updated: Voice reference upload text decoupling
+Last updated: Structure refactor implementation complete
+
+## Latest continuation — Structure refactor implementation complete
+
+- Completed the behavior-preserving structure refactor plan across the staged
+  generation path, TTS/F5 boundary, frontend generation state, Remotion
+  timeline flattening, and smoke entrypoints.
+- TTS/F5 provider boundary now separates provider selection, provider dispatch
+  and fallback, and caption sidecar artifact persistence:
+  - `src/lib/tts/provider-selection.ts` forces voice clone requests to F5 and
+    disables MiniMax fallback for clone requests.
+  - `src/lib/tts/synthesis.ts` owns F5 dispatch and configured non-clone
+    MiniMax fallback.
+  - `src/lib/tts/caption-artifacts.ts` writes sidecar caption JSON from the
+    same normalized captions returned in `SegmentNarrationAsset`.
+- Frontend generation state now lives under
+  `src/helpers/project-generation/`, split into project state, voice clone
+  upload/validation, generation actions, and a stable facade. The old
+  `src/helpers/use-project-generation.ts` path remains a compatibility export.
+- Remotion timeline flattening now uses `src/lib/project-timeline.ts` for
+  segment windows, segment-owned narration layers, segment-owned caption
+  layers, and compatibility suppression of old project-level narration media
+  layers.
+- Added `scripts/staged-live-smoke.mjs` and `npm run smoke:staged-live` for a
+  provider-backed live `POST /api/generate/staged` smoke. It skips with exit 0
+  when `MINIMAX_API_KEY` or `F5_TTS_BASE_URL` is missing, and otherwise
+  validates segment-owned F5 narration audio, captions, diagnostics, and
+  `/api/tts/assets/...` byte-range serving.
+
+Current readiness:
+- All phases in `docs/STRUCTURE_REFACTOR_PLAN.md` are implemented.
+- Product behavior is intended to stay stable: `VideoProject` remains the
+  preview/edit/export boundary, segment-owned narration remains the target
+  model, and `POST /api/generate/staged` remains the default page path.
+- Next recommended work is validation hardening or a separate product slice;
+  do not reopen persistence, broad media-layer editing, or
+  multi-template-per-segment orchestration unless explicitly requested.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc 'MINIMAX_API_KEY= F5_TTS_BASE_URL= npm run smoke:staged-live'`
+- `scripts/f5-tts-real.sh health`
+- `scripts/f5-tts-next-smoke.sh`
+- `docker compose exec -T web npm run smoke:f5-staged`
+- `docker compose exec -T web npm run smoke:staged-live`
+- `git diff --check`
+
+## Latest continuation — Structure refactor Phase 1 staged pipeline cleanup
+
+- Root cause for this cleanup: the active staged route still concentrated
+  orchestration, one-segment narration/compile work, project assembly, and
+  response diagnostics in transitional modules even though segment-owned
+  narration is now the target model.
+- Added `src/lib/staged-generation/` as the staged pipeline boundary:
+  - `pipeline.ts` owns brief/plan/segment orchestration.
+  - `segment.ts` owns one planned segment's narration asset generation and
+    selected-template compilation.
+  - `assembly.ts` owns staged `VideoProject` assembly and selected-segment
+    replacement helpers.
+  - `diagnostics.ts` owns staged route response diagnostics.
+  - `index.ts` provides the public module export.
+- Kept `src/lib/staged-project-generation.ts` and
+  `src/lib/staged-project-assembly.ts` as compatibility re-exports so older
+  imports keep working.
+- Removed `narrationLayers` from the core staged generation result shape.
+  `diagnostics.narrationLayerCount` is now derived from segment-owned
+  narration audio instead of generated project-level narration media layers.
+- Updated `POST /api/generate/staged` so the route handles request dispatch
+  and errors, while diagnostics are built by the staged-generation module.
+
+Current readiness:
+- Phase 1 from `docs/STRUCTURE_REFACTOR_PLAN.md` is implemented.
+- `mode: "brief"`, `mode: "plan"`, and `mode: "segment"` public behavior is
+  intended to stay unchanged.
+- Later phases have since been implemented; use the latest continuation above
+  for current structure refactor status.
+
+Validation performed:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+
+## Previous continuation — Structure refactor plan and handoff
+
+- Root cause for the next cleanup need: the staged prompt-to-video path is now
+  usable, but some modules still reflect earlier transitional states. In
+  particular, staged generation orchestration, diagnostics, TTS/F5 provider
+  behavior, frontend generation state, Remotion timeline flattening, and smoke
+  entrypoints can be made more cohesive without changing product behavior.
+- Added `docs/STRUCTURE_REFACTOR_PLAN.md` as the authoritative plan for the
+  behavior-preserving structure cleanup.
+- Added `docs/HANDOFF_STRUCTURE_REFACTOR.md` so a new conversation or
+  Subagent-Driven run can start directly from scoped inspection and then
+  implement one bounded slice at a time.
+- The recommended first implementation slice is staged pipeline cleanup:
+  separate orchestration, one-segment narration/compile work, diagnostics, and
+  assembly while keeping `POST /api/generate/staged` behavior stable.
+
+Current readiness:
+- This was the documentation-only setup slice for the structure refactor.
+- Phase 1 has since been implemented; use the latest continuation above for
+  current staged pipeline status.
 
 ## Latest continuation — Voice reference upload text decoupling
 

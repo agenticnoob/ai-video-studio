@@ -69,9 +69,9 @@ Out of scope for this provider pass:
 - `src/lib/narration-asset-schema.ts` defines the generated narration asset metadata contract.
 - `src/lib/narration-asset-schema.ts` also defines segment-owned narration
   audio and caption contracts.
-- `src/lib/staged-project-generation.ts` assembles staged planner/TTS/compiler output into `VideoProject`.
-- `src/lib/staged-project-assembly.ts` preserves non-target segment narration
-  data when one segment is regenerated.
+- `src/lib/staged-generation/*` assembles staged planner/TTS/compiler output
+  into `VideoProject` and preserves non-target segment narration data when one
+  segment is regenerated.
 - `src/remotion/ProjectVideo/ProjectNarrationLayers.tsx` flattens
   segment-owned narration audio during preview/export.
 - `src/app/api/generate/staged/route.ts` runs the staged pipeline.

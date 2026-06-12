@@ -72,6 +72,10 @@ Current implementation status:
   `docs/providers/f5-tts-service-plan.md`
 - implementation handoff for that slice lives in
   `docs/HANDOFF_F5_TTS_CAPTIONS.md`
+- behavior-preserving structure refactor planning lives in
+  `docs/STRUCTURE_REFACTOR_PLAN.md`
+- handoff for the structure refactor lives in
+  `docs/HANDOFF_STRUCTURE_REFACTOR.md`
 - agent/new-task startup notes live in `AGENTS.md`
 
 ## Current product flow
@@ -169,6 +173,9 @@ Current top-level boundaries:
 Start from:
 - `docs/FINAL_PRODUCT_GOAL.md`
 - `docs/ITERATION_STATUS.md`
+- `docs/STRUCTURE_REFACTOR_PLAN.md` when the task is structural cleanup
+- `docs/HANDOFF_STRUCTURE_REFACTOR.md` when handing structure cleanup to a new
+  conversation or Subagent-Driven run
 - `docs/PRODUCT_REQUIREMENTS.md`
 - `docs/FUTURE_DIRECTION_NOTES.md`
 - `README.md`
@@ -185,12 +192,14 @@ Current code checkpoint:
 - selected-template compiler groundwork: internal compiler functions and
   `POST /api/generate/staged` can assemble a staged project
 - staged selected-segment regeneration is wired for the active page path
-- page generation state now lives in `src/helpers/use-project-generation.ts`,
-  with `GenerationPanel` and `PreviewPanel` handling the corresponding UI
-  sections
+- page generation state now lives under `src/helpers/project-generation/`;
+  `src/helpers/use-project-generation.ts` remains a compatibility export, with
+  `GenerationPanel` and `PreviewPanel` handling the corresponding UI sections
 - staged route request parsing/error classification lives in
-  `src/lib/staged-generation-api.ts`; staged assembly and narration-layer
-  replacement helpers live in `src/lib/staged-project-assembly.ts`
+  `src/lib/staged-generation-api.ts`; staged pipeline orchestration,
+  one-segment narration/compile work, diagnostics, assembly, and
+  selected-segment replacement helpers live under `src/lib/staged-generation/`
+  with old staged module paths kept as compatibility re-exports
 - route media export hardening is in place for generated narration audio
 - basic bounded planner repair is in place for invalid `StoryboardPlan`
   output
@@ -211,8 +220,13 @@ Best next bounded slice:
 - use `StoryboardPlan` as the planner-stage contract
 - continue from `VideoSegment.narration` as the target home for generated
   narration text, audio metadata, and segment-local caption cues
-- add a provider-backed `POST /api/generate/staged` live smoke that combines
-  MiniMax planner/compiler with real F5 narration
+- behavior-preserving structure cleanup now has dedicated module boundaries for
+  staged generation, TTS/F5 provider selection and fallback, frontend
+  generation state, Remotion timeline flattening, and smoke entrypoints
+- use `npm run smoke:staged-live` for the provider-backed
+  `POST /api/generate/staged` live smoke that combines MiniMax
+  planner/compiler with real F5 narration; it skips when required credentials
+  are missing
 - avoid persistence/history, generic media-layer compositing, and
   multi-template-per-segment orchestration unless explicitly reopened
 
@@ -306,6 +320,23 @@ each generated narration asset. To also export the assembled project through
 F5_TTS_STAGED_SMOKE_RENDER=true npm run smoke:f5-staged
 ```
 
+Validate the live staged route with MiniMax planner/compiler plus F5
+narration:
+
+```bash
+npm run smoke:staged-live
+```
+
+This command calls `POST /api/generate/staged`, checks segment-owned narration
+audio and captions, validates diagnostics, and verifies byte-range serving for
+generated `/api/tts/assets/...` audio. It exits successfully with a skip
+message when `MINIMAX_API_KEY` or `F5_TTS_BASE_URL` is missing. To also export
+the generated project through `POST /api/render`, run:
+
+```bash
+npm run smoke:staged-live:render
+```
+
 Run the real F5 runtime on GPU when the host NVIDIA driver/runtime is
 available:
 
@@ -331,6 +362,7 @@ On this workstation the GPU path has been validated with:
 - Next adapter smoke: `NEXT_ORIGIN=http://127.0.0.1:3000 scripts/f5-tts-next-smoke.sh`
 - staged assembly smoke: `docker compose -f docker-compose.yml -f docker-compose.f5.yml -f docker-compose.f5.gpu.yml exec -T web npm run smoke:f5-staged`
 - staged export smoke: `docker compose -f docker-compose.yml -f docker-compose.f5.yml -f docker-compose.f5.gpu.yml exec -T web bash -lc 'F5_TTS_STAGED_SMOKE_RENDER=true npm run smoke:f5-staged'`
+- live staged route smoke: `docker compose -f docker-compose.yml -f docker-compose.f5.yml -f docker-compose.f5.gpu.yml exec -T web npm run smoke:staged-live`
 
 If `F5_TTS_DEFAULT_REFERENCE_AUDIO` is unset, the service uses the default
 English reference WAV bundled with `f5-tts` plus the upstream example reference

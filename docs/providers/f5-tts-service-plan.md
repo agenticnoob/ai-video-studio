@@ -258,6 +258,8 @@ Validated local state:
    Status: implemented by `npm run smoke:f5-staged`.
 8. Add a live provider-backed staged route smoke for `POST /api/generate/staged`
    when MiniMax planner/compiler configuration is available, and confirm:
+   Status: implemented by `npm run smoke:staged-live`; the command skips with
+   exit 0 when `MINIMAX_API_KEY` or `F5_TTS_BASE_URL` is missing.
    - generated audio lands under `out/tts/...`
    - generated normalized caption JSON lands beside the audio as
      `<audio-name>.captions.json`
@@ -283,6 +285,7 @@ scripts/f5-tts-smoke.sh
 docker compose -f docker-compose.yml -f docker-compose.f5.yml up -d web
 scripts/f5-tts-next-smoke.sh
 npm run smoke:f5-staged
+npm run smoke:staged-live
 docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'
 docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'
 docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'
@@ -290,10 +293,12 @@ docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm
 git diff --check
 ```
 
-Provider-backed live smoke against `POST /api/generate/staged` still depends on
-MiniMax planner/compiler configuration. Until that route smoke is added, the
-deterministic staged smoke is the bounded no-MiniMax validation path for real
-F5 narration, captions, asset serving, and export.
+Provider-backed live smoke against `POST /api/generate/staged` is implemented
+as `npm run smoke:staged-live`. It still depends on MiniMax planner/compiler
+configuration and `F5_TTS_BASE_URL`; when either is missing, it prints a clear
+skip reason and exits successfully. The deterministic staged smoke remains the
+bounded no-MiniMax validation path for real F5 narration, captions, asset
+serving, and export.
 
 ## Non-Goals
 

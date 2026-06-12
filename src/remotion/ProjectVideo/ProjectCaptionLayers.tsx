@@ -2,12 +2,8 @@ import React from "react";
 import { AbsoluteFill, Easing, interpolate, Sequence, useCurrentFrame } from "remotion";
 
 import type { SegmentCaptionCue, SegmentCaptions } from "../../lib/caption-schema";
-import {
-  getSegmentDuration,
-  getSegmentStart,
-  type VideoProject,
-  type VideoSegment,
-} from "../../lib/project-schema";
+import { getSegmentCaptionLayers } from "../../lib/project-timeline";
+import type { VideoProject } from "../../lib/project-schema";
 
 type ProjectCaptionLayersProps = {
   project: VideoProject;
@@ -79,46 +75,18 @@ const CaptionCue: React.FC<CaptionCueProps> = ({ cue, position }) => {
   );
 };
 
-const renderSegmentCaptions = (
-  project: VideoProject,
-  segment: VideoSegment,
-  index: number,
-): React.ReactNode[] => {
-  const captions = segment.narration?.captions;
-  if (!captions?.cues.length) {
-    return [];
-  }
-
-  const segmentStart = getSegmentStart(project, index);
-  const segmentDuration = getSegmentDuration(segment);
-  const position = captions.style?.position ?? "bottom";
-
-  return captions.cues.flatMap((cue) => {
-    if (cue.startFrame >= segmentDuration) {
-      return [];
-    }
-
-    const durationInFrames = Math.min(cue.durationInFrames, segmentDuration - cue.startFrame);
-    if (durationInFrames <= 0) {
-      return [];
-    }
-
-    return (
-      <Sequence
-        key={`${segment.id}-${cue.id}`}
-        from={segmentStart + cue.startFrame}
-        durationInFrames={durationInFrames}
-      >
-        <CaptionCue cue={{ ...cue, durationInFrames }} position={position} />
-      </Sequence>
-    );
-  });
-};
-
 export const ProjectCaptionLayers: React.FC<ProjectCaptionLayersProps> = ({ project }) => {
   return (
     <>
-      {project.segments.flatMap((segment, index) => renderSegmentCaptions(project, segment, index))}
+      {getSegmentCaptionLayers(project).map((layer) => (
+        <Sequence
+          key={layer.key}
+          from={layer.startFrame}
+          durationInFrames={layer.durationInFrames}
+        >
+          <CaptionCue cue={layer.cue} position={layer.position} />
+        </Sequence>
+      ))}
     </>
   );
 };

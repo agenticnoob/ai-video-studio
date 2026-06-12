@@ -63,9 +63,9 @@ Current implementation snapshot:
   runtime supports contract-smoke mode and real `F5_TTS_SERVICE_MODE=f5`
   synthesis; the GPU overlay has been validated with the local checkpoint,
   vocab, and Vocos vocoder under `models/f5-tts/`.
-- `src/lib/staged-project-generation.ts`, the MiniMax template compiler
-  helpers, and `POST /api/generate/staged` provide the staged assembly path
-  from brief or plan input to `VideoProject`.
+- `src/lib/staged-generation/*`, the MiniMax template compiler helpers, and
+  `POST /api/generate/staged` provide the staged assembly path from brief or
+  plan input to `VideoProject`.
 - The active page generation flow defaults to `/api/generate/staged`; the
   shipped v1 `/api/generate` shortcut remains available through a fallback
   toggle.
