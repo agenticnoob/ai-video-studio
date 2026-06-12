@@ -13,6 +13,7 @@ import {
 } from "./storyboard-plan-schema";
 import { generateSegmentNarrationAsset, StoryboardSegmentNotFoundError } from "./tts";
 import type { TtsProviderId } from "./tts/config";
+import type { VoiceCloneRequest } from "./tts/voice-references";
 import {
   minimaxCompileTemplateImplementation,
   minimaxGenerateRevisedSegmentPlan,
@@ -81,6 +82,7 @@ export type GenerateStagedProjectFromPlanRequest = {
   plan: StoryboardPlan;
   provider?: TtsProviderId;
   voiceId?: string;
+  voiceClone?: VoiceCloneRequest;
 };
 
 export type GenerateStagedProjectResult = {
@@ -98,6 +100,7 @@ export type GenerateStagedSegmentRevisionRequest = {
   revisionPrompt: string;
   segmentId: string;
   voiceId?: string;
+  voiceClone?: VoiceCloneRequest;
 };
 
 export type GenerateStagedSegmentRevisionResult = {
@@ -115,6 +118,7 @@ export const generateStagedProjectFromPlan = async ({
   provider,
   plan: rawPlan,
   voiceId,
+  voiceClone,
 }: GenerateStagedProjectFromPlanRequest): Promise<GenerateStagedProjectResult> => {
   const plan = storyboardPlanSchema.parse(rawPlan);
   const compiledSegments: CompilePlannedSegmentResult[] = [];
@@ -127,6 +131,7 @@ export const generateStagedProjectFromPlan = async ({
       provider,
       segmentId: segmentPlan.id,
       voiceId,
+      voiceClone,
     });
     const compiled = await compilePlannedSegment({
       plan,
@@ -165,6 +170,7 @@ export const generateStagedSegmentRevision = async ({
   revisionPrompt,
   segmentId,
   voiceId,
+  voiceClone,
 }: GenerateStagedSegmentRevisionRequest): Promise<GenerateStagedSegmentRevisionResult> => {
   const project = normalizeProject(rawProject);
   const segmentIndex = project.segments.findIndex((segment) => segment.id === segmentId);
@@ -189,6 +195,7 @@ export const generateStagedSegmentRevision = async ({
     provider,
     segmentId,
     voiceId,
+    voiceClone,
   });
   const compiled = await compilePlannedSegment({
     narration,
@@ -218,12 +225,14 @@ export type GenerateStagedProjectFromBriefRequest = {
   brief: string;
   provider?: TtsProviderId;
   voiceId?: string;
+  voiceClone?: VoiceCloneRequest;
 };
 
 export const generateStagedProjectFromBrief = async ({
   brief,
   provider,
   voiceId,
+  voiceClone,
 }: GenerateStagedProjectFromBriefRequest): Promise<GenerateStagedProjectResult> => {
   const {
     attempts: plannerAttempts,
@@ -232,7 +241,7 @@ export const generateStagedProjectFromBrief = async ({
   } = await minimaxGenerateStoryboardPlan({
     brief,
   });
-  const result = await generateStagedProjectFromPlan({ plan, provider, voiceId });
+  const result = await generateStagedProjectFromPlan({ plan, provider, voiceId, voiceClone });
   return {
     ...result,
     plannerAttempts,

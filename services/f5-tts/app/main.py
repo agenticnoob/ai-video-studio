@@ -39,6 +39,7 @@ def synthesize(request: SynthesizeRequest) -> SynthesizeResponse:
         try:
             audio_base64, _, cues = synthesize_real_f5_audio(
                 reference_audio=request.referenceAudio,
+                reference_text=request.referenceText,
                 text=request.text,
             )
         except Exception as error:

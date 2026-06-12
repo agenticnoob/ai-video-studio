@@ -45,6 +45,7 @@ export async function POST(request: Request) {
         revisionPrompt: parsedRequest.data.revisionPrompt,
         segmentId: parsedRequest.data.segmentId,
         voiceId: parsedRequest.data.voiceId,
+        voiceClone: parsedRequest.data.voiceClone,
       });
 
       return NextResponse.json({
@@ -78,11 +79,13 @@ export async function POST(request: Request) {
             brief: parsedRequest.data.brief,
             provider: parsedRequest.data.provider,
             voiceId: parsedRequest.data.voiceId,
+            voiceClone: parsedRequest.data.voiceClone,
           })
         : await generateStagedProjectFromPlan({
             plan: parsedRequest.data.plan,
             provider: parsedRequest.data.provider,
             voiceId: parsedRequest.data.voiceId,
+            voiceClone: parsedRequest.data.voiceClone,
           });
 
     return NextResponse.json({

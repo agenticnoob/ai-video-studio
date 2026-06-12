@@ -7,6 +7,7 @@ import {
   TtsConfigError,
   TtsProviderError,
 } from "../../../lib/tts";
+import { voiceCloneRequestSchema } from "../../../lib/tts/voice-references";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,6 +17,7 @@ const ttsRequestSchema = z.object({
   provider: z.enum(["f5-tts", "minimax"]).optional(),
   segmentId: z.string().trim().min(1, "Segment id is required"),
   voiceId: z.string().trim().min(1).max(160).optional(),
+  voiceClone: voiceCloneRequestSchema.optional(),
 });
 
 export async function POST(request: Request) {

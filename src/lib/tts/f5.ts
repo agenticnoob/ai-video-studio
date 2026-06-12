@@ -23,6 +23,8 @@ export type F5SpeechSynthesisRequest = {
   segmentId: string;
   runId?: string;
   voiceId?: string;
+  referenceAudioPath?: string;
+  referenceText?: string;
 };
 
 export type F5SpeechSynthesisResult = {
@@ -160,11 +162,13 @@ const extractAudioBuffer = async (json: F5TtsJsonResponse): Promise<Buffer> => {
 const callF5Tts = async ({
   language,
   referenceAudioPath,
+  referenceText,
   text,
   voiceId,
 }: {
   language?: string;
   referenceAudioPath?: string;
+  referenceText?: string;
   text: string;
   voiceId?: string;
 }): Promise<{ audioBuffer: Buffer; json?: F5TtsJsonResponse }> => {
@@ -174,6 +178,7 @@ const callF5Tts = async ({
     ...(language ? { language } : {}),
     ...(voiceId ? { voiceId, voice_id: voiceId } : {}),
     ...(referenceAudioPath ? { referenceAudio: referenceAudioPath } : {}),
+    ...(referenceText ? { referenceText } : {}),
   };
 
   let response: Response;
@@ -216,7 +221,8 @@ export const synthesizeF5Speech = async (
   const runId = request.runId ?? createTtsRunId();
   const { audioBuffer, json } = await callF5Tts({
     language: request.language,
-    referenceAudioPath: config.referenceAudioPath,
+    referenceAudioPath: request.referenceAudioPath ?? config.referenceAudioPath,
+    referenceText: request.referenceText,
     text: request.text,
     voiceId,
   });

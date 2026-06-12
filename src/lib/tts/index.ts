@@ -13,6 +13,7 @@ import { createTtsRunId } from "./artifacts";
 import { readF5TtsConfig, readTtsProviderId, type TtsProviderId } from "./config";
 import { synthesizeF5Speech } from "./f5";
 import { synthesizeMinimaxSpeech } from "./minimax";
+import { resolveVoiceCloneReference, type VoiceCloneRequest } from "./voice-references";
 
 export { StoryboardSegmentNotFoundError, TtsConfigError, TtsProviderError } from "./errors";
 
@@ -21,6 +22,7 @@ export type GenerateSegmentNarrationAssetRequest = {
   segmentId: string;
   provider?: TtsProviderId;
   voiceId?: string;
+  voiceClone?: VoiceCloneRequest;
 };
 
 export const getStoryboardSegmentPlan = (
@@ -41,15 +43,19 @@ export const generateSegmentNarrationAsset = async (
   const plan = storyboardPlanSchema.parse(request.plan);
   const segment = getStoryboardSegmentPlan(plan, request.segmentId);
   const runId = createTtsRunId();
-  const provider = request.provider ?? readTtsProviderId();
+  const voiceCloneReference = await resolveVoiceCloneReference(request.voiceClone);
+  const provider = voiceCloneReference ? "f5-tts" : request.provider ?? readTtsProviderId();
   const result =
     provider === "f5-tts"
       ? await synthesizeF5SpeechWithFallback({
           language: plan.language,
+          referenceAudioPath: voiceCloneReference?.referenceAudioPath,
+          referenceText: voiceCloneReference?.referenceText,
           runId,
           segmentId: segment.id,
           text: segment.narration.text,
           voiceId: request.voiceId,
+          fallbackToMinimax: !voiceCloneReference,
         })
       : await synthesizeMinimaxSpeech({
           text: segment.narration.text,
@@ -138,7 +144,10 @@ const writeSegmentCaptionArtifact = async ({
 };
 
 type F5SpeechWithFallbackRequest = {
+  fallbackToMinimax: boolean;
   language?: string;
+  referenceAudioPath?: string;
+  referenceText?: string;
   runId: string;
   segmentId: string;
   text: string;
@@ -157,7 +166,7 @@ const synthesizeF5SpeechWithFallback = async (request: F5SpeechWithFallbackReque
   try {
     return await synthesizeF5Speech(request);
   } catch (error) {
-    if (!shouldFallbackToMinimax()) {
+    if (!request.fallbackToMinimax || !shouldFallbackToMinimax()) {
       throw error;
     }
 

@@ -87,6 +87,11 @@ The first staged-generation groundwork is also in place:
   support so Remotion Player can seek audio during pause/resume.
 - Normalized caption payloads are written beside generated audio artifacts
   under `out/tts/...` as `<audio-name>.captions.json`.
+- Page-level F5 voice cloning is exposed for staged generation. Users upload a
+  `.wav`, `.mp3`, `.m4a`, or `.aac` reference audio file and provide matching
+  reference text; the upload is stored under ignored `out/voice-references/`
+  and reused for full-project generation plus selected-segment regeneration
+  when `voiceClone.enabled` is true.
 - When the F5 runtime has no real alignment data, its fallback caption path
   splits on sentence punctuation, can split on comma punctuation, and merges
   short comma chunks forward for readability.
@@ -119,6 +124,9 @@ The first staged-generation groundwork is also in place:
 - Real F5 validation has passed direct service smoke, Next `/api/tts` adapter
   smoke, deterministic staged mixed-template smoke, and deterministic staged
   export smoke.
+- The F5 Docker overlay mounts `out/voice-references/` read-only into
+  `/voice-references` so uploaded voice-clone references are reachable by the
+  runtime.
 
 This repo is past the upstream starter-demo stage.
 Do not describe it as an untouched scaffold.
@@ -208,6 +216,7 @@ Current product modeling decision:
 - `src/lib/storyboard-plan-schema.ts`
 - `src/lib/narration-asset-schema.ts`
 - `src/lib/tts/*`
+- `src/app/api/tts/voice-references/route.ts`
 - `src/lib/staged-generation-api.ts`
 - `src/lib/staged-project-assembly.ts`
 - `docs/providers/f5-tts.md`

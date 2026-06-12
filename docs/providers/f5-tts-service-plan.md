@@ -82,6 +82,7 @@ Git. Use ignored local directories such as:
 models/f5-tts/
 voices/f5-tts/
 out/tts/
+out/voice-references/
 ```
 
 ## HTTP Contract
@@ -112,7 +113,8 @@ Request:
   "language": "en",
   "voiceId": "default",
   "voice_id": "default",
-  "referenceAudio": "/voices/f5-tts/default.wav"
+  "referenceAudio": "/voices/f5-tts/default.wav",
+  "referenceText": "Transcript that matches the reference audio"
 }
 ```
 
@@ -176,6 +178,7 @@ F5_TTS_ENDPOINT=http://f5-tts:7865/synthesize
 F5_TTS_VOICE_ID=default
 F5_TTS_FORMAT=wav
 F5_TTS_REFERENCE_AUDIO=/voices/f5-tts/default.wav
+F5_TTS_VOICE_REFERENCE_RUNTIME_DIR=/voice-references
 F5_TTS_FALLBACK_TO_MINIMAX=true
 F5_TTS_SERVICE_MODE=f5
 F5_TTS_MODEL_PATH=/models/f5-tts/model_1250000.safetensors
@@ -222,6 +225,9 @@ Validated local state:
 - `models/f5-tts/model_1250000.safetensors`, `models/f5-tts/vocab.txt`, and
   `models/f5-tts/vocos-mel-24khz/` are sufficient for local real-mode
   validation.
+- `out/voice-references/` is mounted read-only into the F5 container at
+  `/voice-references` so page-uploaded voice clone references can be used by
+  real-mode synthesis.
 - `scripts/f5-tts-smoke.sh` passed against real `mode=f5` output with
   `modelLoaded=true`.
 - `scripts/f5-tts-next-smoke.sh` passed against the Next `/api/tts` adapter,

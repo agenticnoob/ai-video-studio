@@ -17,6 +17,21 @@ type GenerateResponse = {
 
 export type GenerationPipeline = "staged" | "shortcut";
 
+export type VoiceCloneSettings = {
+  enabled: boolean;
+  referenceId?: string;
+  referenceText: string;
+  originalName?: string;
+};
+
+type VoiceReferenceUploadResponse = {
+  error?: string;
+  format?: string;
+  originalName?: string;
+  referenceId?: string;
+  referenceText?: string;
+};
+
 const defaultBrief =
   "为 AI Video Studio 生成一条简洁的产品演示视频：展示用户如何输入创意 brief、获得分段项目、逐段微调，并预览完整成片。";
 
@@ -32,6 +47,12 @@ export const useProjectGeneration = () => {
   );
   const [revisionPrompt, setRevisionPrompt] = useState("");
   const [generationPipeline, setGenerationPipeline] = useState<GenerationPipeline>("staged");
+  const [voiceClone, setVoiceClone] = useState<VoiceCloneSettings>({
+    enabled: false,
+    referenceText: "",
+  });
+  const [isUploadingVoiceReference, setIsUploadingVoiceReference] = useState(false);
+  const [voiceReferenceError, setVoiceReferenceError] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isRegeneratingSegment, setIsRegeneratingSegment] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,16 +68,75 @@ export const useProjectGeneration = () => {
   );
   const isStagedGeneration = generationPipeline === "staged";
 
+  const getVoiceClonePayload = () => {
+    if (!isStagedGeneration || !voiceClone.enabled) {
+      return undefined;
+    }
+
+    if (!voiceClone.referenceId) {
+      throw new Error("请先上传声音克隆参考音频。");
+    }
+    if (!voiceClone.referenceText.trim()) {
+      throw new Error("请输入参考音频对应文本。");
+    }
+
+    return {
+      enabled: true,
+      referenceId: voiceClone.referenceId,
+      referenceText: voiceClone.referenceText.trim(),
+    };
+  };
+
+  const uploadVoiceReference = async (file: File) => {
+    if (!voiceClone.referenceText.trim()) {
+      setVoiceReferenceError("请先填写参考音频对应文本。");
+      return;
+    }
+
+    setIsUploadingVoiceReference(true);
+    setVoiceReferenceError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("audio", file);
+      formData.append("referenceText", voiceClone.referenceText.trim());
+
+      const response = await fetch("/api/tts/voice-references", {
+        method: "POST",
+        body: formData,
+      });
+      const data = (await response.json()) as VoiceReferenceUploadResponse;
+
+      if (!response.ok || !data.referenceId) {
+        throw new Error(data.error ?? "上传参考音频失败。");
+      }
+
+      setVoiceClone((current) => ({
+        ...current,
+        originalName: data.originalName ?? file.name,
+        referenceId: data.referenceId,
+        referenceText: data.referenceText ?? current.referenceText,
+      }));
+    } catch (caughtError) {
+      setVoiceReferenceError(caughtError instanceof Error ? caughtError.message : "上传参考音频失败。");
+    } finally {
+      setIsUploadingVoiceReference(false);
+    }
+  };
+
   const generateProject = async () => {
     setIsGenerating(true);
     setError(null);
 
     try {
+      const voiceClonePayload = getVoiceClonePayload();
       const response = await fetch(isStagedGeneration ? "/api/generate/staged" : "/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(
-          isStagedGeneration ? { mode: "brief", brief } : { mode: "project", brief },
+          isStagedGeneration
+            ? { mode: "brief", brief, voiceClone: voiceClonePayload }
+            : { mode: "project", brief },
         ),
       });
       const data = (await response.json()) as GenerateResponse;
@@ -91,6 +171,7 @@ export const useProjectGeneration = () => {
     setError(null);
 
     try {
+      const voiceClonePayload = getVoiceClonePayload();
       const response = await fetch(isStagedGeneration ? "/api/generate/staged" : "/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -99,6 +180,7 @@ export const useProjectGeneration = () => {
           project: normalizedProject,
           segmentId: selectedSegmentId,
           revisionPrompt,
+          ...(isStagedGeneration && voiceClonePayload ? { voiceClone: voiceClonePayload } : {}),
         }),
       });
       const data = (await response.json()) as GenerateResponse;
@@ -138,6 +220,11 @@ export const useProjectGeneration = () => {
     );
   };
 
+  const updateVoiceClone = (nextVoiceClone: VoiceCloneSettings) => {
+    setVoiceClone(nextVoiceClone);
+    setVoiceReferenceError(null);
+  };
+
   return {
     brief,
     durationInFrames,
@@ -146,16 +233,21 @@ export const useProjectGeneration = () => {
     isGenerating,
     isRegeneratingSegment,
     isStagedGeneration,
+    isUploadingVoiceReference,
     normalizedProject,
     revisionPrompt,
     selectedSegment,
     selectedSegmentId,
+    voiceClone,
+    voiceReferenceError,
     generateProject,
     regenerateSelectedSegment,
     selectSegment,
     setBrief,
     setGenerationPipeline,
     setRevisionPrompt,
+    uploadVoiceReference,
     updateSegment,
+    updateVoiceClone,
   };
 };

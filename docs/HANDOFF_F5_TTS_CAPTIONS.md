@@ -156,6 +156,10 @@ Implemented in the F5/captions/runtime slices:
 - caption coverage in staged smoke fixtures.
 - optional `services/f5-tts/` FastAPI runtime with `contract-smoke` and real
   `F5_TTS_SERVICE_MODE=f5` modes.
+- page-level F5 voice cloning for staged generation: uploaded references are
+  stored under `out/voice-references/`, passed through
+  `voiceClone: { enabled, referenceId, referenceText }`, and used as
+  `referenceAudio` / `referenceText` by the F5 runtime.
 - Docker overlays for the F5 service and explicit GPU runtime.
 - direct service smoke, Next `/api/tts` provider smoke, deterministic staged
   smoke, and deterministic staged export smoke.

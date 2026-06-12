@@ -263,16 +263,17 @@ def read_wav_duration_seconds(wav_path: Path) -> float:
 def synthesize_real_f5_audio(
     *,
     reference_audio: str | None,
+    reference_text: str | None,
     text: str,
 ) -> tuple[str, float, list[CaptionCue]]:
     engine = get_f5_engine()
-    reference_audio_path, reference_text = (
-        (reference_audio, os.getenv("F5_TTS_DEFAULT_REFERENCE_TEXT", "").strip())
+    reference_audio_path, resolved_reference_text = (
+        (reference_audio, (reference_text or os.getenv("F5_TTS_DEFAULT_REFERENCE_TEXT", "")).strip())
         if reference_audio
         else get_default_reference_audio()
     )
 
-    if not reference_text:
+    if not resolved_reference_text:
         raise RuntimeError(
             "F5 reference text is required. Set F5_TTS_DEFAULT_REFERENCE_TEXT or omit custom referenceAudio to use the package default."
         )
@@ -281,7 +282,7 @@ def synthesize_real_f5_audio(
         output_path = Path(temp_dir) / "synthesis.wav"
         engine.infer(
             ref_file=reference_audio_path,
-            ref_text=reference_text,
+            ref_text=resolved_reference_text,
             gen_text=text,
             file_wave=str(output_path),
             nfe_step=get_nfe_step(),

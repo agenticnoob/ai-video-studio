@@ -41,7 +41,8 @@ Input:
 - language
 - segment id and project id for deterministic artifacts
 - optional voice id / speaker profile
-- optional reference audio when local F5-TTS voice cloning is configured
+- optional uploaded reference audio and matching reference text when page-level
+  F5-TTS voice cloning is enabled
 - optional caption style or alignment detail level
 
 Output:
@@ -89,6 +90,8 @@ segment regeneration, and export.
     `wav`.
   - `F5_TTS_REFERENCE_AUDIO` optionally points to reference audio for a local
     voice-cloning runtime.
+  - `F5_TTS_VOICE_REFERENCE_RUNTIME_DIR` points to the F5-container path for
+    page-uploaded voice clone references and defaults to `/voice-references`.
   - `F5_TTS_FALLBACK_TO_MINIMAX=false` disables MiniMax fallback when F5 fails.
 - Write generated audio to local project artifacts, consistent with the current
   `out/tts/...` path.
@@ -126,9 +129,27 @@ Request body sent to the runtime:
   "language": "en",
   "voiceId": "optional voice id",
   "voice_id": "optional voice id",
-  "referenceAudio": "optional local reference audio path"
+  "referenceAudio": "optional local reference audio path",
+  "referenceText": "optional transcript matching the reference audio"
 }
 ```
+
+Page-level voice cloning uses this runtime contract:
+
+1. `POST /api/tts/voice-references` accepts multipart `audio` plus
+   `referenceText`, validates `.wav`, `.mp3`, `.m4a`, or `.aac`, and stores the
+   file under ignored `out/voice-references/`.
+2. `/api/tts` and `/api/generate/staged` accept optional
+   `voiceClone: { enabled, referenceId, referenceText }`.
+3. When `voiceClone.enabled` is true, the TTS boundary forces `f5-tts`, resolves
+   `referenceId` to the F5 runtime mount path, and sends both `referenceAudio`
+   and `referenceText` to `/synthesize`.
+4. When cloning is disabled or omitted, the existing default F5
+   reference-audio behavior remains unchanged.
+
+Voice clone requests do not silently fall back to MiniMax, because MiniMax
+would generate a non-cloned voice while the UI indicates cloning is enabled.
+Normal non-clone F5 requests can still use `F5_TTS_FALLBACK_TO_MINIMAX`.
 
 ## Non-Goals For The First Slice
 
@@ -183,3 +204,6 @@ Current runtime note:
   package default English reference WAV plus the upstream example reference
   text. For custom voices, set both `F5_TTS_DEFAULT_REFERENCE_AUDIO` and
   `F5_TTS_DEFAULT_REFERENCE_TEXT`.
+- The Docker F5 overlay mounts page-uploaded references from
+  `out/voice-references/` into `/voice-references` so real-mode cloning can
+  use files uploaded through the Next UI.

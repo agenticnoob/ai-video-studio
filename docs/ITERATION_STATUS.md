@@ -1,6 +1,31 @@
 # Iteration Status
 
-Last updated: F5 real-mode env guard
+Last updated: F5 page voice cloning
+
+## Latest continuation — F5 page voice cloning
+
+- Root cause for missing voice cloning in the page: the F5 runtime could accept
+  reference audio, but the product path only exposed env-level
+  `F5_TTS_REFERENCE_AUDIO`; staged generation had no upload UI or request-level
+  reference text.
+- Added `POST /api/tts/voice-references` for page-uploaded `.wav`, `.mp3`,
+  `.m4a`, and `.aac` reference audio plus required matching reference text.
+- Uploaded references are stored under ignored `out/voice-references/`; the F5
+  Docker overlay mounts that directory read-only at `/voice-references`.
+- Extended `/api/tts` and `/api/generate/staged` with
+  `voiceClone: { enabled, referenceId, referenceText }`.
+- When `voiceClone.enabled` is true, the TTS boundary forces `f5-tts` and sends
+  request-level `referenceAudio` / `referenceText` to the F5 runtime. Clone
+  requests do not silently fall back to MiniMax, because that would produce a
+  non-cloned voice.
+- Added staged-page UI controls for a global cloned voice used by both
+  full-project generation and selected-segment regeneration. Shortcut
+  generation does not receive voice clone settings.
+
+Current readiness:
+- Default F5 generation remains unchanged when voice cloning is disabled.
+- Real cloning requires the F5 real-mode runtime and the uploaded reference
+  mount from `docker-compose.f5.yml`.
 
 ## Latest continuation — F5 real-mode env guard
 

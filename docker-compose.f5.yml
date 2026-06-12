@@ -16,9 +16,11 @@ services:
       F5_TTS_NFE_STEP: "${F5_TTS_NFE_STEP:-16}"
       F5_TTS_DEFAULT_REFERENCE_AUDIO: "${F5_TTS_DEFAULT_REFERENCE_AUDIO:-}"
       F5_TTS_DEFAULT_REFERENCE_TEXT: "${F5_TTS_DEFAULT_REFERENCE_TEXT:-}"
+      F5_TTS_VOICE_REFERENCE_RUNTIME_DIR: "${F5_TTS_VOICE_REFERENCE_RUNTIME_DIR:-/voice-references}"
     volumes:
       - ./models/f5-tts:/models/f5-tts:ro
       - ./voices/f5-tts:/voices/f5-tts:ro
+      - ./out/voice-references:/voice-references:ro
     ports:
       - "${F5_TTS_PORT:-7865}:7865"
 
@@ -32,4 +34,5 @@ services:
       F5_TTS_VOICE_ID: "${F5_TTS_VOICE_ID:-default}"
       F5_TTS_FORMAT: "${F5_TTS_FORMAT:-wav}"
       F5_TTS_REFERENCE_AUDIO: "${F5_TTS_REFERENCE_AUDIO:-}"
+      F5_TTS_VOICE_REFERENCE_RUNTIME_DIR: "${F5_TTS_VOICE_REFERENCE_RUNTIME_DIR:-/voice-references}"
       F5_TTS_FALLBACK_TO_MINIMAX: "${F5_TTS_FALLBACK_TO_MINIMAX:-true}"

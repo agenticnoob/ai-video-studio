@@ -529,6 +529,10 @@ Current compatibility notes:
 - Segment-owned `VideoSegment.narration.captions` now carries generated or
   fallback caption cues, with caption cues flattened to the project timeline
   for preview and export.
+- Page-level F5 voice cloning is now exposed for staged generation: uploaded
+  reference audio is stored under `out/voice-references/`, paired with user
+  supplied reference text, and reused for full-project generation plus
+  selected-segment regeneration when cloning is enabled.
 - The current fallback caption path uses sentence punctuation as a hard split,
   comma punctuation as a soft split, merges short comma chunks forward for
   readability, and saves the normalized caption payload beside generated audio
@@ -644,12 +648,13 @@ Deliverables:
   `docs/providers/f5-tts-service-plan.md`
 - GPU real-mode smoke coverage for the F5 runtime, Next adapter,
   deterministic staged assembly, and staged export
+- page-uploaded F5 voice clone references for staged generation
 
 Remaining:
 
 - harden provider-specific failure handling and retry behavior across full
   `POST /api/generate/staged` live requests
-- add richer voice selection when the basic loop is stable
+- add richer voice selection/profile management when the basic loop is stable
 
 Initial scope:
 

@@ -17,6 +17,7 @@ class SynthesizeRequest(BaseModel):
     voice_id: str | None = None
     voiceId: str | None = None
     referenceAudio: str | None = None
+    referenceText: str | None = None
 
 
 class CaptionCue(BaseModel):
