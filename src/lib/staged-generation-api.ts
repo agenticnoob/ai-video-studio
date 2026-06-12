@@ -7,10 +7,12 @@ import { storyboardPlanSchema } from "./storyboard-plan-schema";
 import { voiceCloneRequestSchema } from "./tts/voice-references";
 
 const ttsProviderSchema = z.enum(["f5-tts", "minimax"]);
+const progressIdSchema = z.string().trim().min(1).max(160).optional();
 
 const stagedBriefRequestSchema = z.object({
   mode: z.literal("brief"),
   brief: z.string().trim().min(1, "Brief is required").max(4000, "Brief is too long"),
+  progressId: progressIdSchema,
   provider: ttsProviderSchema.optional(),
   voiceId: z.string().trim().min(1).max(160).optional(),
   voiceClone: voiceCloneRequestSchema.optional(),
@@ -19,6 +21,7 @@ const stagedBriefRequestSchema = z.object({
 const stagedPlanRequestSchema = z.object({
   mode: z.literal("plan"),
   plan: storyboardPlanSchema,
+  progressId: progressIdSchema,
   provider: ttsProviderSchema.optional(),
   voiceId: z.string().trim().min(1).max(160).optional(),
   voiceClone: voiceCloneRequestSchema.optional(),
@@ -27,6 +30,7 @@ const stagedPlanRequestSchema = z.object({
 const stagedSegmentRequestSchema = z.object({
   mode: z.literal("segment"),
   project: videoProjectSchema,
+  progressId: progressIdSchema,
   segmentId: z.string().trim().min(1, "Segment id is required"),
   revisionPrompt: z
     .string()

@@ -18,6 +18,11 @@ import {
   TtsConfigError,
   TtsProviderError,
 } from "../../../../lib/tts";
+import {
+  finishTaskProgress,
+  startTaskProgress,
+  updateTaskProgressStep,
+} from "../../../../lib/task-progress";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -40,10 +45,32 @@ export async function POST(request: Request) {
     );
   }
 
+  const progressId = parsedRequest.data.progressId;
+  if (progressId) {
+    startTaskProgress({
+      id: progressId,
+      steps: [
+        { id: "planner", label: "分析内容" },
+        { id: "narration", label: "生成素材" },
+        { id: "compiler", label: "生成画面" },
+        { id: "assembly", label: "整理结果" },
+      ],
+    });
+  }
+
+  const onProgress = (
+    stepId: "planner" | "narration" | "compiler" | "assembly",
+    status: "running" | "success" | "failure",
+    detail?: string,
+  ) => {
+    updateTaskProgressStep({ detail, id: progressId, status, stepId });
+  };
+
   try {
     const responseBody = await runWithConcurrencyLimit("generation", async () => {
       if (parsedRequest.data.mode === "segment") {
         const result = await generateStagedSegmentRevision({
+          onProgress,
           project: parsedRequest.data.project,
           provider: parsedRequest.data.provider,
           revisionPrompt: parsedRequest.data.revisionPrompt,
@@ -63,11 +90,13 @@ export async function POST(request: Request) {
         parsedRequest.data.mode === "brief"
           ? await generateStagedProjectFromBrief({
               brief: parsedRequest.data.brief,
+              onProgress,
               provider: parsedRequest.data.provider,
               voiceId: parsedRequest.data.voiceId,
               voiceClone: parsedRequest.data.voiceClone,
             })
           : await generateStagedProjectFromPlan({
+              onProgress,
               plan: parsedRequest.data.plan,
               provider: parsedRequest.data.provider,
               voiceId: parsedRequest.data.voiceId,
@@ -81,8 +110,15 @@ export async function POST(request: Request) {
       };
     });
 
+    finishTaskProgress({ id: progressId, status: "success" });
     return NextResponse.json(responseBody);
   } catch (error) {
+    finishTaskProgress({
+      error: error instanceof Error ? error.message : "Staged generation request failed.",
+      id: progressId,
+      status: "failure",
+    });
+
     if (error instanceof ConcurrencyBusyError) {
       return NextResponse.json({ error: error.message }, { status: 429 });
     }

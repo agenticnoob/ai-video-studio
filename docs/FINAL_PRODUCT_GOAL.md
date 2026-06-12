@@ -697,6 +697,9 @@ Implemented:
 - TTS asset route supports byte ranges for Remotion Player seek behavior
 - local `/api/render` resolves route media such as `/api/tts/assets/...` to a
   Next app origin before Remotion export
+- the page can show process-local backend progress nodes for staged
+  generation, selected-segment regeneration, and local render export through a
+  client `progressId` and `/api/progress/[progressId]`
 - page generation state, staged API request/error boundaries, and staged
   project assembly helpers are split into focused modules so further staged
   hardening can happen without concentrating logic in the page or route entry
@@ -705,7 +708,8 @@ Remaining:
 
 - provider-backed live multi-segment staged smoke through
   `POST /api/generate/staged`
-- richer progress/error UX for multi-stage generation
+- richer persistent progress history, cancellation, or multi-process job
+  progress remains out of scope for the current private single-process stage
 
 Success criteria:
 

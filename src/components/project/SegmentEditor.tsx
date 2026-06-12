@@ -14,7 +14,9 @@ type SegmentEditorProps = {
 };
 
 const inputClassName =
-  "mt-2 w-full rounded-geist border border-unfocused-border-color bg-background px-3 py-2 text-sm outline-none focus:border-focused-border-color";
+  "mt-1 w-full rounded-geist border border-unfocused-border-color bg-background px-2 py-1.5 text-sm outline-none focus:border-focused-border-color";
+
+const fieldClassName = "block text-xs font-medium text-foreground";
 
 const parsePositiveInteger = (value: string, fallback: number, min: number, max: number) => {
   const parsed = Number(value);
@@ -45,9 +47,9 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
 }) => {
   if (!segment) {
     return (
-      <section className="rounded-geist border border-unfocused-border-color bg-background p-5">
+      <section className="bg-background p-1">
         <h2 className="text-base font-semibold text-foreground">当前分段</h2>
-        <p className="mt-3 text-sm text-neutral-600">请选择一个分段后再编辑详情。</p>
+        <p className="mt-3 text-sm text-foreground">请选择一个分段后再编辑详情。</p>
       </section>
     );
   }
@@ -82,28 +84,28 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
   };
 
   return (
-    <section className="rounded-geist border border-unfocused-border-color bg-background p-5">
+    <section className="bg-background p-1">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-base font-semibold text-foreground">当前分段</h2>
-          <div className="mt-1 text-xs text-neutral-500">{segment.id}</div>
+          <div className="mt-1 text-xs text-foreground">{segment.id}</div>
         </div>
-        <div className="rounded-geist border border-unfocused-border-color px-3 py-1 text-xs uppercase text-neutral-500">
+        <div className="bg-foreground px-3 py-1 text-xs uppercase text-background">
           {getTemplateLabel(segment.templateId)}
         </div>
       </div>
 
-      <label className="mt-4 block text-sm font-medium text-foreground">
+      <label className={`${fieldClassName} mt-4`}>
         自然语言修改指令
         <textarea
-          className={`${inputClassName} min-h-24 resize-y`}
+          className={`${inputClassName} min-h-16 resize-y`}
           placeholder="描述这个分段下一次重生成时应如何调整。"
           value={revisionPrompt}
           onChange={(event) => onRevisionPromptChange(event.currentTarget.value)}
         />
       </label>
       <button
-        className="mt-3 rounded-geist border border-foreground bg-foreground px-4 py-2 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-2 rounded-geist border border-foreground bg-foreground px-3 py-1.5 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-60"
         disabled={!revisionPrompt.trim() || isRegenerating}
         onClick={onRegenerateSegment}
         type="button"
@@ -111,32 +113,36 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
         {isRegenerating ? "正在重生成分段..." : "重生成当前分段"}
       </button>
 
-      <div className="mt-6 border-t border-unfocused-border-color pt-5">
+      <div className="mt-5 pt-2">
         <h3 className="text-sm font-semibold text-foreground">分段详情</h3>
-        <label className="mt-3 block text-sm font-medium text-foreground">
-          标题
-          <input
-            className={inputClassName}
-            value={segment.title}
-            onChange={(event) => updateTitle(event.currentTarget.value)}
-          />
-        </label>
-        <label className="mt-3 block text-sm font-medium text-foreground">
-          意图说明
-          <textarea
-            className={`${inputClassName} min-h-20`}
-            value={segment.intent}
-            onChange={(event) => onSegmentChange({ ...segment, intent: event.currentTarget.value })}
-          />
-        </label>
+        <div className="mt-3 grid gap-3 lg:grid-cols-[minmax(220px,0.8fr)_minmax(260px,1.2fr)]">
+          <label className={fieldClassName}>
+            标题
+            <input
+              className={inputClassName}
+              value={segment.title}
+              onChange={(event) => updateTitle(event.currentTarget.value)}
+            />
+          </label>
+          <label className={fieldClassName}>
+            意图说明
+            <textarea
+              className={`${inputClassName} min-h-16`}
+              value={segment.intent}
+              onChange={(event) =>
+                onSegmentChange({ ...segment, intent: event.currentTarget.value })
+              }
+            />
+          </label>
+        </div>
       </div>
 
-      <div className="mt-6 border-t border-unfocused-border-color pt-5">
+      <div className="mt-5 pt-2">
         <h3 className="text-sm font-semibold text-foreground">模板主题</h3>
-        <div className="mt-3 grid grid-cols-2 gap-3">
+        <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-6">
           {(["background", "panel", "primary", "secondary", "text", "muted"] as const).map(
             (key) => (
-              <label key={key} className="block text-sm font-medium capitalize text-foreground">
+              <label key={key} className={`${fieldClassName} capitalize`}>
                 {themeLabelMap[key]}
                 <input
                   className={inputClassName}

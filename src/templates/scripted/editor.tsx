@@ -30,26 +30,26 @@ export const ScriptedEditor: FC<TemplateEditorProps<ScriptedSegment>> = ({
   segment,
   onSegmentChange,
 }) => {
+  const fieldClassName = "block text-xs font-medium text-foreground";
+
   return (
-    <div className="mt-6 border-t border-unfocused-border-color pt-5">
+    <div className="mt-5 pt-2">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className="text-sm font-semibold text-foreground">Scripted 场景</h3>
-        <div className="text-sm text-neutral-500">
-          {segment.implementation.scenes.length} 个场景
-        </div>
+        <div className="text-sm text-foreground">{segment.implementation.scenes.length} 个场景</div>
       </div>
 
-      <div className="mt-4 space-y-4">
+      <div className="mt-3 space-y-3">
         {segment.implementation.scenes.map((scene, index) => (
-          <div key={scene.id} className="rounded-geist border border-unfocused-border-color p-4">
+          <div key={scene.id} className="p-2">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <div className="text-sm font-semibold text-foreground">
                   场景 {index + 1}：{sceneTypeLabelMap[scene.type]}
                 </div>
-                <div className="text-xs text-neutral-500">{scene.id}</div>
+                <div className="text-xs text-foreground">{scene.id}</div>
               </div>
-              <label className="w-32 text-sm font-medium text-foreground">
+              <label className="w-28 text-xs font-medium text-foreground">
                 帧数
                 <input
                   className={inputClassName}
@@ -72,7 +72,7 @@ export const ScriptedEditor: FC<TemplateEditorProps<ScriptedSegment>> = ({
               </label>
             </div>
 
-            <label className="mt-3 block text-sm font-medium text-foreground">
+            <label className={`${fieldClassName} mt-2`}>
               前导文案
               <input
                 className={inputClassName}
@@ -86,8 +86,8 @@ export const ScriptedEditor: FC<TemplateEditorProps<ScriptedSegment>> = ({
             </label>
 
             {scene.type === "title" ? (
-              <>
-                <label className="mt-3 block text-sm font-medium text-foreground">
+              <div className="mt-2 grid gap-2 md:grid-cols-2">
+                <label className={fieldClassName}>
                   标题
                   <input
                     className={inputClassName}
@@ -102,10 +102,10 @@ export const ScriptedEditor: FC<TemplateEditorProps<ScriptedSegment>> = ({
                     }
                   />
                 </label>
-                <label className="mt-3 block text-sm font-medium text-foreground">
+                <label className={fieldClassName}>
                   副标题
                   <textarea
-                    className={`${inputClassName} min-h-20`}
+                    className={`${inputClassName} min-h-14`}
                     value={scene.subtitle ?? ""}
                     onChange={(event) =>
                       onSegmentChange(
@@ -117,12 +117,12 @@ export const ScriptedEditor: FC<TemplateEditorProps<ScriptedSegment>> = ({
                     }
                   />
                 </label>
-              </>
+              </div>
             ) : null}
 
             {scene.type === "bullets" ? (
-              <>
-                <label className="mt-3 block text-sm font-medium text-foreground">
+              <div className="mt-2 grid gap-2 md:grid-cols-[minmax(200px,0.8fr)_minmax(260px,1.2fr)]">
+                <label className={fieldClassName}>
                   标题
                   <input
                     className={inputClassName}
@@ -137,10 +137,10 @@ export const ScriptedEditor: FC<TemplateEditorProps<ScriptedSegment>> = ({
                     }
                   />
                 </label>
-                <label className="mt-3 block text-sm font-medium text-foreground">
+                <label className={fieldClassName}>
                   要点列表
                   <textarea
-                    className={`${inputClassName} min-h-28`}
+                    className={`${inputClassName} min-h-16`}
                     value={scene.bullets.join("\n")}
                     onChange={(event) => {
                       const bullets = event.currentTarget.value
@@ -156,15 +156,15 @@ export const ScriptedEditor: FC<TemplateEditorProps<ScriptedSegment>> = ({
                     }}
                   />
                 </label>
-              </>
+              </div>
             ) : null}
 
             {scene.type === "quote" ? (
-              <>
-                <label className="mt-3 block text-sm font-medium text-foreground">
+              <div className="mt-2 grid gap-2 md:grid-cols-[minmax(260px,1.2fr)_minmax(180px,0.8fr)]">
+                <label className={fieldClassName}>
                   引语
                   <textarea
-                    className={`${inputClassName} min-h-24`}
+                    className={`${inputClassName} min-h-16`}
                     value={scene.quote}
                     onChange={(event) =>
                       onSegmentChange(
@@ -176,7 +176,7 @@ export const ScriptedEditor: FC<TemplateEditorProps<ScriptedSegment>> = ({
                     }
                   />
                 </label>
-                <label className="mt-3 block text-sm font-medium text-foreground">
+                <label className={fieldClassName}>
                   作者
                   <input
                     className={inputClassName}
@@ -191,7 +191,7 @@ export const ScriptedEditor: FC<TemplateEditorProps<ScriptedSegment>> = ({
                     }
                   />
                 </label>
-              </>
+              </div>
             ) : null}
           </div>
         ))}

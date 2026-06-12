@@ -165,8 +165,8 @@ Current likely sequence:
 - preview and export the assembled `VideoProject`
 - regenerate only the smallest affected scope
 - status: implemented for the active page path, with deterministic
-  mixed-template smoke fixtures; continue hardening live multi-segment smoke
-  and progress UX
+  mixed-template smoke fixtures and process-local backend progress nodes;
+  continue hardening live multi-segment smoke
 
 6. Later media-layer and persistence work
 - add existing image/video/audio/color layers after generated narration is

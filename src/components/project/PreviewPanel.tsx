@@ -11,7 +11,7 @@ type PreviewPanelProps = {
 
 export const PreviewPanel: FC<PreviewPanelProps> = ({ durationInFrames, project }) => {
   return (
-    <section className="overflow-hidden rounded-geist border border-unfocused-border-color bg-background shadow-[0_0_120px_rgba(0,0,0,0.10)]">
+    <section className="overflow-hidden bg-background">
       <Player
         acknowledgeRemotionLicense
         component={ProjectVideo}

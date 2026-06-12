@@ -1,15 +1,9 @@
 import { normalizeProject, type VideoProject, type VideoSegment } from "../project-schema";
-import {
-  storyboardPlanSchema,
-  type StoryboardPlan,
-} from "../storyboard-plan-schema";
+import { storyboardPlanSchema, type StoryboardPlan } from "../storyboard-plan-schema";
 import { StoryboardSegmentNotFoundError, generateSegmentNarrationAsset } from "../tts";
 import type { TtsProviderId } from "../tts/config";
 import type { VoiceCloneRequest } from "../tts/voice-references";
-import {
-  minimaxGenerateRevisedSegmentPlan,
-  minimaxGenerateStoryboardPlan,
-} from "../minimax";
+import { minimaxGenerateRevisedSegmentPlan, minimaxGenerateStoryboardPlan } from "../minimax";
 import {
   assembleStagedProject,
   orderPlanSegments,
@@ -23,6 +17,7 @@ import {
 import type { SegmentNarrationAsset } from "../narration-asset-schema";
 
 export type GenerateStagedProjectFromPlanRequest = {
+  onProgress?: StagedGenerationProgressReporter;
   plan: StoryboardPlan;
   provider?: TtsProviderId;
   voiceClone?: VoiceCloneRequest;
@@ -38,6 +33,7 @@ export type GenerateStagedProjectResult = {
 };
 
 export type GenerateStagedSegmentRevisionRequest = {
+  onProgress?: StagedGenerationProgressReporter;
   project: VideoProject;
   provider?: TtsProviderId;
   revisionPrompt: string;
@@ -57,7 +53,14 @@ export type GenerateStagedSegmentRevisionResult = {
   segment: VideoSegment;
 };
 
+export type StagedGenerationProgressReporter = (
+  stepId: "planner" | "narration" | "compiler" | "assembly",
+  status: "running" | "success" | "failure",
+  detail?: string,
+) => void;
+
 export const generateStagedProjectFromPlan = async ({
+  onProgress,
   provider,
   plan: rawPlan,
   voiceClone,
@@ -69,6 +72,7 @@ export const generateStagedProjectFromPlan = async ({
   for (const segment of orderPlanSegments(plan)) {
     compiledSegments.push(
       await generateAndCompilePlannedSegment({
+        onProgress,
         plan,
         provider,
         segment,
@@ -78,10 +82,12 @@ export const generateStagedProjectFromPlan = async ({
     );
   }
 
+  onProgress?.("assembly", "running", "Assembling compiled segments into VideoProject.");
   const project = assembleStagedProject({
     compiledSegments,
     plan,
   });
+  onProgress?.("assembly", "success", "VideoProject assembled.");
 
   return {
     plan,
@@ -91,6 +97,7 @@ export const generateStagedProjectFromPlan = async ({
 };
 
 export const generateStagedSegmentRevision = async ({
+  onProgress,
   project: rawProject,
   provider,
   revisionPrompt,
@@ -105,35 +112,61 @@ export const generateStagedSegmentRevision = async ({
     throw new StoryboardSegmentNotFoundError(segmentId);
   }
 
-  const {
-    attempts: plannerAttempts,
-    plan: rawPlan,
-    repaired: plannerRepaired,
-  } = await minimaxGenerateRevisedSegmentPlan({
-    project,
-    revisionPrompt,
-    segmentId,
-  });
+  onProgress?.("planner", "running", "Planning revised segment.");
+  let plannerResult: Awaited<ReturnType<typeof minimaxGenerateRevisedSegmentPlan>>;
+  try {
+    plannerResult = await minimaxGenerateRevisedSegmentPlan({
+      project,
+      revisionPrompt,
+      segmentId,
+    });
+    onProgress?.("planner", "success", "Revised segment plan generated.");
+  } catch (error) {
+    onProgress?.("planner", "failure", error instanceof Error ? error.message : undefined);
+    throw error;
+  }
+
+  const { attempts: plannerAttempts, plan: rawPlan, repaired: plannerRepaired } = plannerResult;
   const plan = storyboardPlanSchema.parse(rawPlan);
   const [plannedSegment] = plan.segments;
-  const narration = await generateSegmentNarrationAsset({
-    plan,
-    provider,
-    segmentId,
-    voiceId,
-    voiceClone,
-  });
-  const compiled = await compilePlannedSegment({
-    narration,
-    plan,
-    segment: plannedSegment,
-  });
+  onProgress?.("narration", "running", `Generating narration for ${segmentId}.`);
+  let narration: SegmentNarrationAsset;
+  try {
+    narration = await generateSegmentNarrationAsset({
+      plan,
+      provider,
+      segmentId,
+      voiceId,
+      voiceClone,
+    });
+    onProgress?.("narration", "success", `Narration generated for ${segmentId}.`);
+  } catch (error) {
+    onProgress?.("narration", "failure", error instanceof Error ? error.message : undefined);
+    throw error;
+  }
+
+  onProgress?.("compiler", "running", `Compiling template for ${segmentId}.`);
+  let compiled: CompilePlannedSegmentResult;
+  try {
+    compiled = await compilePlannedSegment({
+      narration,
+      plan,
+      segment: plannedSegment,
+    });
+    onProgress?.("compiler", "success", `Template compiled for ${segmentId}.`);
+  } catch (error) {
+    onProgress?.("compiler", "failure", error instanceof Error ? error.message : undefined);
+    throw error;
+  }
+
+  onProgress?.("assembly", "running", "Replacing selected segment in VideoProject.");
   const revisedProject = replaceSegmentAndNarrationLayer({
     narration,
     project,
     segment: compiled.segment,
     segmentId,
   });
+  onProgress?.("assembly", "success", "Selected segment replaced.");
 
   return {
     compilerAttempts: compiled.compilerAttempts,
@@ -149,6 +182,7 @@ export const generateStagedSegmentRevision = async ({
 
 export type GenerateStagedProjectFromBriefRequest = {
   brief: string;
+  onProgress?: StagedGenerationProgressReporter;
   provider?: TtsProviderId;
   voiceClone?: VoiceCloneRequest;
   voiceId?: string;
@@ -156,18 +190,31 @@ export type GenerateStagedProjectFromBriefRequest = {
 
 export const generateStagedProjectFromBrief = async ({
   brief,
+  onProgress,
   provider,
   voiceClone,
   voiceId,
 }: GenerateStagedProjectFromBriefRequest): Promise<GenerateStagedProjectResult> => {
-  const {
-    attempts: plannerAttempts,
+  onProgress?.("planner", "running", "Generating storyboard plan from brief.");
+  let plannerResult: Awaited<ReturnType<typeof minimaxGenerateStoryboardPlan>>;
+  try {
+    plannerResult = await minimaxGenerateStoryboardPlan({
+      brief,
+    });
+    onProgress?.("planner", "success", "Storyboard plan generated.");
+  } catch (error) {
+    onProgress?.("planner", "failure", error instanceof Error ? error.message : undefined);
+    throw error;
+  }
+
+  const { attempts: plannerAttempts, plan, repaired: plannerRepaired } = plannerResult;
+  const result = await generateStagedProjectFromPlan({
+    onProgress,
     plan,
-    repaired: plannerRepaired,
-  } = await minimaxGenerateStoryboardPlan({
-    brief,
+    provider,
+    voiceClone,
+    voiceId,
   });
-  const result = await generateStagedProjectFromPlan({ plan, provider, voiceClone, voiceId });
   return {
     ...result,
     plannerAttempts,

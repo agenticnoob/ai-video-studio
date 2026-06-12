@@ -440,6 +440,13 @@ Current implementation note:
   `src/lib/staged-generation-api.ts`; staged orchestration, one-segment
   narration/compile work, diagnostics, assembly, and selected-segment
   replacement helpers live under `src/lib/staged-generation/`
+- generation/regeneration/export requests now support process-local backend
+  progress nodes through `progressId`, `src/lib/task-progress.ts`, and
+  `/api/progress/[progressId]`; this is request feedback, not persistence or a
+  durable queue
+- the current page UI separates whole-video generation/preview/export from
+  segment editing, uses a horizontal segment strip, and keeps structured
+  segment/template fields compact
 - the shipped `POST /api/generate` path still returns a validated one-shot
   `VideoProject` directly and remains available as a fallback
 

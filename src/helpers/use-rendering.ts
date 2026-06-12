@@ -1,24 +1,33 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { normalizeProject, type VideoProject } from "../lib/project-schema";
+import { createProgressId } from "./create-progress-id";
 
 export type State =
   | {
       status: "idle";
     }
   | {
+      progressId: string;
+      startedAt: number;
       status: "rendering";
     }
   | {
+      finishedAt: number;
       downloadUrl: string;
       latestDownloadUrl: string;
       latestOutputPath: string;
       outputPath: string;
       renderId: string;
+      progressId: string;
       sizeInBytes: number;
+      startedAt: number;
       status: "success";
     }
   | {
       error: string;
+      finishedAt: number;
+      progressId: string;
+      startedAt: number;
       status: "failure";
     };
 
@@ -77,15 +86,17 @@ export const useRendering = (project: VideoProject) => {
     const requestSignature = projectSignature;
     const renderAttempt = renderAttemptRef.current + 1;
     const abortController = new AbortController();
+    const startedAt = Date.now();
+    const progressId = createProgressId();
 
     activeRenderAbortControllerRef.current?.abort();
     activeRenderAbortControllerRef.current = abortController;
     renderAttemptRef.current = renderAttempt;
-    setState({ status: "rendering" });
+    setState({ progressId, startedAt, status: "rendering" });
 
     try {
       const response = await fetch("/api/render", {
-        body: JSON.stringify({ project: normalizedProject }),
+        body: JSON.stringify({ progressId, project: normalizedProject }),
         headers: { "Content-Type": "application/json" },
         method: "POST",
         signal: abortController.signal,
@@ -105,11 +116,14 @@ export const useRendering = (project: VideoProject) => {
 
       setState({
         downloadUrl: data.downloadUrl,
+        finishedAt: Date.now(),
         latestDownloadUrl: data.latestDownloadUrl,
         latestOutputPath: data.latestOutputPath,
         outputPath: data.outputPath,
+        progressId,
         renderId: data.renderId,
         sizeInBytes: data.sizeInBytes,
+        startedAt,
         status: "success",
       });
     } catch (error) {
@@ -126,6 +140,9 @@ export const useRendering = (project: VideoProject) => {
 
       setState({
         error: error instanceof Error ? error.message : "视频导出失败。",
+        finishedAt: Date.now(),
+        progressId,
+        startedAt,
         status: "failure",
       });
     } finally {

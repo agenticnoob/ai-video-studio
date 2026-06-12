@@ -1,8 +1,62 @@
 # Iteration Status
 
-Last updated: Private-team heavy-task concurrency guard
+Last updated: Two-color workspace UI pass follow-up
 
-## Latest continuation — Private-team heavy-task concurrency guard
+## Latest continuation — Two-color workspace UI pass
+
+- Updated the page UI to use the requested two-color palette:
+  `#142334` as the background color and `#baccd9` as the foreground, border,
+  and interaction color.
+- Removed the previous neutral / warning / success / error accent colors from
+  the main page workspace, project panels, segment panels, and the scripted
+  segment editor text that appears inside the current segment property panel.
+- Reworked the page information architecture into two explicit parent areas:
+  - `VideoProject` / 视频导出工作台 for brief input, whole-video preview,
+    project summary, generation status, and local export.
+  - `Segments` / 分镜编辑器 for segment navigation and the selected segment's
+    editable properties.
+- Moved the segment list to the top of the segment editor and changed it into
+  a horizontally scrollable strip. Pointer dragging scrolls the strip so the
+  same navigation pattern works better on narrow viewports and mobile.
+- Replaced the fake-looking progress bar with a request status panel for
+  generation and export. The UI now records real client-side request
+  start/end timestamps, shows elapsed time, and describes the exact backend
+  request currently being awaited. It still avoids fake percentages because the
+  current APIs do not stream server-side progress.
+- Replaced the estimated node strip with real backend progress nodes. The
+  frontend now sends a `progressId` with generation and render requests, the
+  backend writes node status into an in-process progress store, and the page
+  polls `/api/progress/[progressId]` while the request is running. Current real
+  nodes cover staged planning, narration generation, template compilation,
+  project assembly, render preparation, Remotion bundling, composition
+  selection, mp4 rendering, and artifact writing. This remains process-local
+  progress state, not a persistent job queue.
+- Added a client-safe progress id helper so browsers without
+  `crypto.randomUUID()` fall back to `crypto.getRandomValues()` or a
+  timestamp-based id instead of failing before the request is sent.
+- Simplified user-facing progress labels so the UI shows generic task phases
+  instead of exposing internal generation workflow details. Segment strip
+  selection was also fixed by removing pointer capture from the drag-scroll
+  container and selecting only when pointer movement stays under the drag
+  threshold.
+- Tightened the selected-segment property editor density: smaller field
+  padding, shorter textareas, tighter section spacing, and grid layouts for
+  segment details, theme fields, scripted scene fields, and spotlight content
+  fields so a single option no longer consumes a full-width large block when it
+  does not need to.
+- Reduced visual noise from excessive card borders: kept the main workspace
+  grouping but removed most nested panel/card borders from generation, render,
+  project summary, segment list, selected-segment editing, progress nodes, and
+  template-specific editors. Hierarchy is now carried mostly by spacing,
+  headings, and foreground/background inversion for selected states.
+- Updated the primitives preview page so the long primitive list scrolls inside
+  its own panel while the selected video preview stays sticky and visible on
+  desktop-sized screens.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx prettier src/app/page.tsx src/components/project/GenerationPanel.tsx src/components/project/PreviewPanel.tsx src/components/project/ProjectSummary.tsx src/components/project/SegmentEditor.tsx src/components/project/SegmentList.tsx src/components/ui/RenderControls.tsx src/components/ui/ActivityProgress.tsx src/templates/scripted/editor.tsx styles/global.css --write'`
+
+## Previous continuation — Private-team heavy-task concurrency guard
 
 - Added a small in-process concurrency guard for private-team deployments that
   may have a few simultaneous users but do not use a database or persistent job

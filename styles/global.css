@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fff;
-  --foreground: #000;
-  --unfocused-border-color: #eaeaea;
-  --focused-border-color: #666;
+  --background: #142334;
+  --foreground: #baccd9;
+  --unfocused-border-color: #baccd9;
+  --focused-border-color: #baccd9;
 
-  --button-disabled-color: #fafafa;
-  --disabled-text-color: #999;
+  --button-disabled-color: #142334;
+  --disabled-text-color: #baccd9;
 
   --geist-border-radius: 5px;
   --geist-quarter-pad: 6px;
@@ -17,21 +17,9 @@
     "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", "Microsoft YaHei", "PingFang SC",
     Inter, system-ui, sans-serif;
 
-  --geist-error: #e00;
+  --geist-error: #baccd9;
 
-  --subtitle: #666;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #000000;
-    --unfocused-border-color: #333;
-    --focused-border-color: #888;
-    --foreground: #fff;
-    --button-disabled-color: #111;
-    --geist-error: red;
-    --subtitle: #8d8d8d;
-  }
+  --subtitle: #baccd9;
 }
 
 @theme {

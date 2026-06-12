@@ -62,6 +62,12 @@ Current implementation status:
 - in-app export resolves route media such as `/api/tts/assets/...` through the
   Next app origin before Remotion rendering so generated narration audio is
   included in the exported file
+- generation and local export requests can attach a client `progressId`; the
+  Next process records backend task nodes in memory and the page polls
+  `/api/progress/[progressId]` while the request runs
+- the main workspace UI now uses the two-color product palette, separates the
+  whole-video export workspace from the segment editor, uses a horizontal
+  drag-scroll segment strip, and keeps the selected-segment form compact
 - roadmap decisions should use `docs/FINAL_PRODUCT_GOAL.md` as the top-level
   source
 - current progress and next-step notes live in `docs/ITERATION_STATUS.md`
@@ -87,11 +93,13 @@ Current implementation status:
 4. page renders assembled preview via `ProjectVideo`
 5. user edits a selected segment and can regenerate only that segment; staged
    regeneration reruns that segment's narration/TTS/template compile chain
-6. user exports the current edited project through `POST /api/render`
-7. successful render writes:
+6. generation/regeneration and export show process-local backend progress
+   nodes while the request is running
+7. user exports the current edited project through `POST /api/render`
+8. successful render writes:
    - unique artifact: `out/renders/render-<timestamp>-<id>.mp4`
    - stable artifact: `out/renders/latest.mp4`
-8. download routes:
+9. download routes:
    - unique artifact: `/api/render/[renderId]`
    - stable latest artifact: `/api/render/latest`
 
@@ -201,6 +209,12 @@ Current code checkpoint:
   selected-segment replacement helpers live under `src/lib/staged-generation/`
   with old staged module paths kept as compatibility re-exports
 - route media export hardening is in place for generated narration audio
+- process-local backend progress tracking is in place for generation and
+  render requests through `progressId`, `src/lib/task-progress.ts`, and
+  `/api/progress/[progressId]`
+- the active page UI is organized into a whole-video workspace and a segment
+  editor; the segment editor uses a horizontal drag-scroll segment strip plus
+  compact selected-segment forms
 - basic bounded planner repair is in place for invalid `StoryboardPlan`
   output
 - deterministic staged smoke fixtures cover a mixed `scripted` + `spotlight`

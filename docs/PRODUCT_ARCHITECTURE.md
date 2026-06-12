@@ -67,6 +67,10 @@ Current implementation snapshot:
   TTS/F5 synthesis, and local render export. These guards protect the
   Docker-first single-web-process workflow; they are not database-backed
   durable queues or global locks for multi-replica deployments.
+- Generation, selected-segment regeneration, and render export can report
+  process-local task progress through `progressId` and
+  `/api/progress/[progressId]`. This is a lightweight in-memory status surface
+  for the active browser request, not a persistent job model.
 - `src/lib/staged-generation/*`, the MiniMax template compiler helpers, and
   `POST /api/generate/staged` provide the staged assembly path from brief or
   plan input to `VideoProject`.
@@ -80,6 +84,9 @@ Current implementation snapshot:
 - `/api/tts/assets/...` supports byte-range requests for Remotion Player
   seeking, and `/api/render` resolves route media to an absolute Next app
   origin before Remotion export.
+- The product page UI separates the whole-video generation/preview/export
+  workspace from selected-segment editing, uses a horizontal drag-scroll
+  segment strip, and keeps segment/template editing controls compact.
 
 ## Composition Model
 

@@ -6,6 +6,7 @@ import type { TtsProviderId } from "../tts/config";
 import type { VoiceCloneRequest } from "../tts/voice-references";
 import { minimaxCompileTemplateImplementation } from "../minimax";
 import { getTemplateDefinition } from "../template-registry";
+import type { StagedGenerationProgressReporter } from "./pipeline";
 
 export type CompilePlannedSegmentRequest = {
   narration: SegmentNarrationAsset;
@@ -21,6 +22,7 @@ export type CompilePlannedSegmentResult = {
 };
 
 export type GenerateAndCompilePlannedSegmentRequest = {
+  onProgress?: StagedGenerationProgressReporter;
   plan: StoryboardPlan;
   provider?: TtsProviderId;
   segment: StoryboardSegmentPlan;
@@ -66,23 +68,40 @@ export const compilePlannedSegment = async ({
 };
 
 export const generateAndCompilePlannedSegment = async ({
+  onProgress,
   plan,
   provider,
   segment,
   voiceClone,
   voiceId,
 }: GenerateAndCompilePlannedSegmentRequest): Promise<CompilePlannedSegmentResult> => {
-  const narration = await generateSegmentNarrationAsset({
-    plan,
-    provider,
-    segmentId: segment.id,
-    voiceId,
-    voiceClone,
-  });
+  onProgress?.("narration", "running", `Generating narration for ${segment.id}.`);
+  let narration: SegmentNarrationAsset;
+  try {
+    narration = await generateSegmentNarrationAsset({
+      plan,
+      provider,
+      segmentId: segment.id,
+      voiceId,
+      voiceClone,
+    });
+    onProgress?.("narration", "success", `Narration generated for ${segment.id}.`);
+  } catch (error) {
+    onProgress?.("narration", "failure", error instanceof Error ? error.message : undefined);
+    throw error;
+  }
 
-  return compilePlannedSegment({
-    narration,
-    plan,
-    segment,
-  });
+  onProgress?.("compiler", "running", `Compiling template for ${segment.id}.`);
+  try {
+    const compiled = await compilePlannedSegment({
+      narration,
+      plan,
+      segment,
+    });
+    onProgress?.("compiler", "success", `Template compiled for ${segment.id}.`);
+    return compiled;
+  } catch (error) {
+    onProgress?.("compiler", "failure", error instanceof Error ? error.message : undefined);
+    throw error;
+  }
 };

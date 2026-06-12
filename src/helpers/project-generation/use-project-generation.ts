@@ -4,6 +4,7 @@ import { useGenerationActions } from "./use-generation-actions";
 import { useProjectState } from "./use-project-state";
 import { useVoiceClone } from "./use-voice-clone";
 
+export type { GenerationOperation } from "./use-generation-actions";
 export type { GenerationPipeline } from "./use-project-state";
 export type { VoiceCloneSettings } from "./use-voice-clone";
 
@@ -27,6 +28,7 @@ export const useProjectGeneration = () => {
     brief: projectState.brief,
     durationInFrames: projectState.durationInFrames,
     error: generationActions.error,
+    generationOperation: generationActions.generationOperation,
     generationPipeline: projectState.generationPipeline,
     isGenerating: generationActions.isGenerating,
     isRegeneratingSegment: generationActions.isRegeneratingSegment,

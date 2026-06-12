@@ -58,6 +58,12 @@ export type ProjectRenderResult = {
   sizeInBytes: number;
 };
 
+export type ProjectRenderProgressReporter = (
+  stepId: "prepare" | "bundle" | "composition" | "render" | "artifact",
+  status: "running" | "success" | "failure",
+  detail?: string,
+) => void;
+
 const createRenderId = (): string => {
   const timestamp = new Date().toISOString().replaceAll(":", "-").replaceAll(".", "-");
   return `render-${timestamp}-${randomUUID().slice(0, 8)}`.toLowerCase();
@@ -140,12 +146,16 @@ export {
 
 export const renderProjectVideo = async (
   projectInput: VideoProject,
+  options: { onProgress?: ProjectRenderProgressReporter } = {},
 ): Promise<ProjectRenderResult> => {
+  options.onProgress?.("prepare", "running", "Loading Remotion renderer modules.");
   const [{ bundle }, { renderMedia, selectComposition }, { webpackOverride }] = await Promise.all([
     importAtRuntime<RemotionBundlerModule>("@remotion/bundler"),
     importAtRuntime<RemotionRendererModule>("@remotion/renderer"),
     importAtRuntime<WebpackOverrideModule>(webpackOverrideModuleUrl),
   ]);
+  options.onProgress?.("prepare", "success", "Remotion renderer modules loaded.");
+
   const project = resolveRouteMediaForRender(normalizeProject(projectInput));
   const renderId = createRenderId();
   const outputPath = getRenderArtifactOutputPath(renderId);
@@ -154,17 +164,22 @@ export const renderProjectVideo = async (
 
   await mkdir(path.dirname(absoluteOutputPath), { recursive: true });
 
+  options.onProgress?.("bundle", "running", "Bundling Remotion project.");
   const bundledProject = await bundle({
     entryPoint: remotionEntryPoint,
     webpackOverride,
   });
+  options.onProgress?.("bundle", "success", "Remotion project bundled.");
 
+  options.onProgress?.("composition", "running", "Selecting ProjectVideo composition.");
   const composition = await selectComposition({
     id: PROJECT_VIDEO_COMPOSITION_ID,
     inputProps: project,
     serveUrl: bundledProject,
   });
+  options.onProgress?.("composition", "success", "ProjectVideo composition selected.");
 
+  options.onProgress?.("render", "running", "Rendering mp4 file.");
   await renderMedia({
     codec: "h264",
     composition,
@@ -173,10 +188,13 @@ export const renderProjectVideo = async (
     overwrite: false,
     serveUrl: bundledProject,
   });
+  options.onProgress?.("render", "success", "Mp4 render completed.");
 
+  options.onProgress?.("artifact", "running", "Writing latest render artifact.");
   await copyFile(absoluteOutputPath, latestAbsoluteOutputPath);
 
   const outputStats = await stat(absoluteOutputPath);
+  options.onProgress?.("artifact", "success", "Render artifact ready.");
 
   return {
     absoluteOutputPath,
