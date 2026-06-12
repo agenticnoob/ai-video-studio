@@ -17,6 +17,7 @@ services:
       F5_TTS_DEFAULT_REFERENCE_AUDIO: "${F5_TTS_DEFAULT_REFERENCE_AUDIO:-}"
       F5_TTS_DEFAULT_REFERENCE_TEXT: "${F5_TTS_DEFAULT_REFERENCE_TEXT:-}"
       F5_TTS_VOICE_REFERENCE_RUNTIME_DIR: "${F5_TTS_VOICE_REFERENCE_RUNTIME_DIR:-/voice-references}"
+      F5_TTS_RUNTIME_CONCURRENCY: "${F5_TTS_RUNTIME_CONCURRENCY:-1}"
     volumes:
       - ./models/f5-tts:/models/f5-tts:ro
       - ./voices/f5-tts:/voices/f5-tts:ro

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { ConcurrencyBusyError, runWithConcurrencyLimit } from "../../../../lib/concurrency-limits";
 import { MinimaxConfigError } from "../../../../lib/minimax/provider";
 import {
   buildStagedProjectDiagnostics,
@@ -40,44 +41,51 @@ export async function POST(request: Request) {
   }
 
   try {
-    if (parsedRequest.data.mode === "segment") {
-      const result = await generateStagedSegmentRevision({
-        project: parsedRequest.data.project,
-        provider: parsedRequest.data.provider,
-        revisionPrompt: parsedRequest.data.revisionPrompt,
-        segmentId: parsedRequest.data.segmentId,
-        voiceId: parsedRequest.data.voiceId,
-        voiceClone: parsedRequest.data.voiceClone,
-      });
+    const responseBody = await runWithConcurrencyLimit("generation", async () => {
+      if (parsedRequest.data.mode === "segment") {
+        const result = await generateStagedSegmentRevision({
+          project: parsedRequest.data.project,
+          provider: parsedRequest.data.provider,
+          revisionPrompt: parsedRequest.data.revisionPrompt,
+          segmentId: parsedRequest.data.segmentId,
+          voiceId: parsedRequest.data.voiceId,
+          voiceClone: parsedRequest.data.voiceClone,
+        });
 
-      return NextResponse.json({
+        return {
+          plan: result.plan,
+          project: result.project,
+          diagnostics: buildStagedSegmentRevisionDiagnostics(result),
+        };
+      }
+
+      const result =
+        parsedRequest.data.mode === "brief"
+          ? await generateStagedProjectFromBrief({
+              brief: parsedRequest.data.brief,
+              provider: parsedRequest.data.provider,
+              voiceId: parsedRequest.data.voiceId,
+              voiceClone: parsedRequest.data.voiceClone,
+            })
+          : await generateStagedProjectFromPlan({
+              plan: parsedRequest.data.plan,
+              provider: parsedRequest.data.provider,
+              voiceId: parsedRequest.data.voiceId,
+              voiceClone: parsedRequest.data.voiceClone,
+            });
+
+      return {
         plan: result.plan,
         project: result.project,
-        diagnostics: buildStagedSegmentRevisionDiagnostics(result),
-      });
-    }
-
-    const result =
-      parsedRequest.data.mode === "brief"
-        ? await generateStagedProjectFromBrief({
-            brief: parsedRequest.data.brief,
-            provider: parsedRequest.data.provider,
-            voiceId: parsedRequest.data.voiceId,
-            voiceClone: parsedRequest.data.voiceClone,
-          })
-        : await generateStagedProjectFromPlan({
-            plan: parsedRequest.data.plan,
-            provider: parsedRequest.data.provider,
-            voiceId: parsedRequest.data.voiceId,
-            voiceClone: parsedRequest.data.voiceClone,
-          });
-
-    return NextResponse.json({
-      plan: result.plan,
-      project: result.project,
-      diagnostics: buildStagedProjectDiagnostics(result),
+        diagnostics: buildStagedProjectDiagnostics(result),
+      };
     });
+
+    return NextResponse.json(responseBody);
   } catch (error) {
+    if (error instanceof ConcurrencyBusyError) {
+      return NextResponse.json({ error: error.message }, { status: 429 });
+    }
     if (error instanceof StoryboardSegmentNotFoundError) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }

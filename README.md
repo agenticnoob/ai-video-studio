@@ -438,6 +438,38 @@ Older `.env.local` files are still tolerated by Next.js, but new local setup
 should prefer `.env` so Docker ports, provider credentials, TTS settings, and
 render origins are managed in one place.
 
+### Private-team concurrency guard
+
+This project is designed for private deployment and does not require a database
+or production job queue for the current stage. It still protects expensive
+server-side tasks because a private deployment may be used by a few people at
+the same time.
+
+Configured limits in `.env.example`:
+
+| Variable | Default | Purpose |
+|---|---:|---|
+| `AI_VIDEO_STUDIO_RENDER_CONCURRENCY` | `1` | Maximum concurrent `/api/render` exports in this Next process. Keep this at `1` while `out/renders/latest.mp4` remains a shared stable alias. |
+| `AI_VIDEO_STUDIO_GENERATION_CONCURRENCY` | `1` | Maximum concurrent `/api/generate/staged` and fallback `/api/generate` requests in this Next process. |
+| `AI_VIDEO_STUDIO_TTS_CONCURRENCY` | `1` | Maximum concurrent TTS provider synthesis calls, including local F5 runtime calls. |
+| `AI_VIDEO_STUDIO_BUSY_MODE` | `reject` | `reject` returns HTTP `429` when the task type is busy; `queue` waits inside the HTTP request. |
+| `AI_VIDEO_STUDIO_QUEUE_TIMEOUT_MS` | `300000` | Maximum wait time for `queue` mode. |
+| `F5_TTS_RUNTIME_CONCURRENCY` | `1` | Maximum concurrent direct `/synthesize` calls inside the optional F5 runtime service. |
+
+Recommended private-team defaults:
+- keep render, generation, TTS, and F5 runtime concurrency at `1`
+- keep `AI_VIDEO_STUDIO_BUSY_MODE=reject` so another user gets an immediate
+  "busy, retry later" response instead of a long hanging request
+- use `queue` only for trusted local workflows where keeping the browser
+  request open is acceptable
+- do not raise render concurrency while `out/renders/latest.mp4` remains a
+  shared "last completed render" alias
+
+The guard is process-local. It is enough for the Docker-first private-team
+workflow, but it is not a global lock across multiple Next replicas. If this
+project is deployed with multiple app instances, use an external lock or a real
+job system before treating these limits as global.
+
 ## Notes
 - `node_modules` is intended to live in the Docker volume path on this workstation.
 - output files are written under `/data/projects/labs/ai-video-studio/out`.

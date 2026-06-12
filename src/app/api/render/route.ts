@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { ConcurrencyBusyError, runWithConcurrencyLimit } from "../../../lib/concurrency-limits";
 import { renderProjectVideo } from "../../../lib/render-project";
 import { videoProjectSchema } from "../../../lib/project-schema";
 
@@ -29,7 +30,9 @@ export async function POST(request: Request) {
   }
 
   try {
-    const renderResult = await renderProjectVideo(parsedRequest.data.project);
+    const renderResult = await runWithConcurrencyLimit("render", () =>
+      renderProjectVideo(parsedRequest.data.project),
+    );
 
     return NextResponse.json({
       downloadUrl: renderResult.downloadUrl,
@@ -40,6 +43,10 @@ export async function POST(request: Request) {
       sizeInBytes: renderResult.sizeInBytes,
     });
   } catch (error) {
+    if (error instanceof ConcurrencyBusyError) {
+      return NextResponse.json({ error: error.message }, { status: 429 });
+    }
+
     const message = error instanceof Error ? error.message : "Render failed.";
 
     console.error("Project render failed", error);

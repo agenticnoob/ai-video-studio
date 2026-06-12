@@ -1,8 +1,44 @@
 # Iteration Status
 
-Last updated: Structure refactor implementation complete
+Last updated: Private-team heavy-task concurrency guard
 
-## Latest continuation — Structure refactor implementation complete
+## Latest continuation — Private-team heavy-task concurrency guard
+
+- Added a small in-process concurrency guard for private-team deployments that
+  may have a few simultaneous users but do not use a database or persistent job
+  queue.
+- The guard wraps expensive server-side task boundaries:
+  - `POST /api/render` through `AI_VIDEO_STUDIO_RENDER_CONCURRENCY`.
+  - `POST /api/generate/staged` and the fallback `POST /api/generate` through
+    `AI_VIDEO_STUDIO_GENERATION_CONCURRENCY`.
+  - TTS provider synthesis, including F5 runtime calls, through
+    `AI_VIDEO_STUDIO_TTS_CONCURRENCY`.
+  - Direct F5 runtime `/synthesize` calls through
+    `F5_TTS_RUNTIME_CONCURRENCY`.
+- Default behavior is conservative: each limit defaults to `1`, and
+  `AI_VIDEO_STUDIO_BUSY_MODE=reject` returns HTTP `429` when that task type is
+  already running.
+- `AI_VIDEO_STUDIO_BUSY_MODE=queue` is available for small local queues inside
+  the current HTTP request, with `AI_VIDEO_STUDIO_QUEUE_TIMEOUT_MS` controlling
+  the maximum wait. This is still not a durable job system.
+- The guard is process-local. It protects the normal Docker-first private
+  deployment path, but multi-replica deployments still need an external lock or
+  job queue before treating concurrency limits as global.
+- `out/renders/latest.mp4` remains a shared stable alias for the last completed
+  render, so render concurrency should stay at `1` unless that product
+  contract is changed.
+- This slice does not add project persistence, render history, job ids,
+  cancellation, or richer progress UX.
+
+Validation performed so far:
+- `python -m py_compile services/f5-tts/app/main.py services/f5-tts/app/synthesize.py services/f5-tts/app/schemas.py`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `docker compose -f docker-compose.yml -f docker-compose.f5.yml config f5-tts`
+- `git diff --check`
+
+## Previous continuation — Structure refactor implementation complete
 
 - Completed the behavior-preserving structure refactor plan across the staged
   generation path, TTS/F5 boundary, frontend generation state, Remotion

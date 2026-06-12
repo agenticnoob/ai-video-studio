@@ -63,6 +63,10 @@ Current implementation snapshot:
   runtime supports contract-smoke mode and real `F5_TTS_SERVICE_MODE=f5`
   synthesis; the GPU overlay has been validated with the local checkpoint,
   vocab, and Vocos vocoder under `models/f5-tts/`.
+- Private-team deployment uses process-local heavy-task guards for generation,
+  TTS/F5 synthesis, and local render export. These guards protect the
+  Docker-first single-web-process workflow; they are not database-backed
+  durable queues or global locks for multi-replica deployments.
 - `src/lib/staged-generation/*`, the MiniMax template compiler helpers, and
   `POST /api/generate/staged` provide the staged assembly path from brief or
   plan input to `VideoProject`.

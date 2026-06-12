@@ -70,6 +70,16 @@ scripts/f5-tts-real.sh up-build
 GPU access. CPU mode is useful for diagnostics, but GPU is the preferred
 runtime for real synthesis.
 
+The runtime service also accepts:
+
+```bash
+F5_TTS_RUNTIME_CONCURRENCY=1
+```
+
+Keep this at `1` for real GPU synthesis. It protects the FastAPI `/synthesize`
+endpoint even when someone calls the F5 service directly instead of going
+through the Next app's TTS boundary.
+
 If `F5_TTS_DEFAULT_REFERENCE_AUDIO` is unset, the service uses the default
 English reference WAV bundled with the `f5-tts` Python package plus the
 upstream example reference text. For a local voice, mount

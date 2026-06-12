@@ -1,4 +1,5 @@
 import type { SegmentCaptions } from "../caption-schema";
+import { runWithConcurrencyLimit } from "../concurrency-limits";
 import type { NarrationAudioFormat } from "../narration-asset-schema";
 import { readF5TtsConfig, type TtsProviderId } from "./config";
 import { synthesizeF5Speech } from "./f5";
@@ -61,14 +62,16 @@ const synthesizeF5SpeechWithFallback = async (
 export const synthesizeSegmentNarration = async (
   request: SegmentNarrationSynthesisRequest,
 ): Promise<SegmentNarrationSynthesisResult> => {
-  if (request.provider === "f5-tts") {
-    return synthesizeF5SpeechWithFallback(request);
-  }
+  return runWithConcurrencyLimit("tts", async () => {
+    if (request.provider === "f5-tts") {
+      return synthesizeF5SpeechWithFallback(request);
+    }
 
-  return synthesizeMinimaxSpeech({
-    text: request.text,
-    segmentId: request.segmentId,
-    runId: request.runId,
-    voiceId: request.voiceId,
+    return synthesizeMinimaxSpeech({
+      text: request.text,
+      segmentId: request.segmentId,
+      runId: request.runId,
+      voiceId: request.voiceId,
+    });
   });
 };

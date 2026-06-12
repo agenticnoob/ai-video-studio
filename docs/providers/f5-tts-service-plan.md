@@ -186,7 +186,14 @@ F5_TTS_VOCAB_PATH=/models/f5-tts/vocab.txt
 F5_TTS_VOCODER_PATH=/models/f5-tts/vocos-mel-24khz
 F5_TTS_ALLOW_VOCODER_DOWNLOAD=false
 F5_TTS_NFE_STEP=16
+F5_TTS_RUNTIME_CONCURRENCY=1
 ```
+
+`F5_TTS_RUNTIME_CONCURRENCY` limits direct `/synthesize` requests inside the
+FastAPI runtime. Keep it at `1` for real GPU synthesis unless you have verified
+the model, GPU memory, and latency under higher load. This runtime guard is
+separate from the Next-side `AI_VIDEO_STUDIO_TTS_CONCURRENCY` limit, which
+protects staged generation and `POST /api/tts` calls.
 
 Suggested host smoke env:
 

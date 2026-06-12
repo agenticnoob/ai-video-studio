@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { ConcurrencyBusyError, runWithConcurrencyLimit } from "../../../lib/concurrency-limits";
 import { videoProjectSchema } from "../../../lib/project-schema";
 import { MinimaxConfigError } from "../../../lib/minimax/provider";
 import { minimaxGenerateProject, minimaxReviseSegment } from "../../../lib/minimax";
@@ -51,19 +52,23 @@ export async function POST(request: Request) {
   }
 
   try {
-    const result =
+    const result = await runWithConcurrencyLimit("generation", () =>
       parsedRequest.data.mode === "project"
-        ? await minimaxGenerateProject({ brief: parsedRequest.data.brief })
-        : await minimaxReviseSegment({
+        ? minimaxGenerateProject({ brief: parsedRequest.data.brief })
+        : minimaxReviseSegment({
             project: parsedRequest.data.project,
             segmentId: parsedRequest.data.segmentId,
             revisionPrompt: parsedRequest.data.revisionPrompt,
-          });
+          }),
+    );
 
     return NextResponse.json({
       project: result.project,
     });
   } catch (error) {
+    if (error instanceof ConcurrencyBusyError) {
+      return NextResponse.json({ error: error.message }, { status: 429 });
+    }
     if (error instanceof MinimaxConfigError) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }

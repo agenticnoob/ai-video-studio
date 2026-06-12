@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { ConcurrencyBusyError } from "../../../lib/concurrency-limits";
 import { storyboardPlanSchema } from "../../../lib/storyboard-plan-schema";
 import {
   generateSegmentNarrationAsset,
@@ -43,6 +44,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ narration });
   } catch (error) {
+    if (error instanceof ConcurrencyBusyError) {
+      return NextResponse.json({ error: error.message }, { status: 429 });
+    }
     if (error instanceof StoryboardSegmentNotFoundError) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }

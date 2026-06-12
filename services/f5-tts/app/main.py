@@ -1,5 +1,6 @@
 import os
 import logging
+import threading
 
 from fastapi import FastAPI
 from fastapi import HTTPException
@@ -15,6 +16,22 @@ from .synthesize import (
 MODE = os.getenv("F5_TTS_SERVICE_MODE", "contract-smoke")
 REAL_MODES = {"f5", "real", "model"}
 LOGGER = logging.getLogger("f5_tts_service")
+
+
+def read_positive_int_env(name: str, fallback: int) -> int:
+    raw_value = os.getenv(name, "").strip()
+    if not raw_value:
+        return fallback
+    try:
+        value = int(raw_value)
+    except ValueError as error:
+        raise RuntimeError(f"{name} must be a positive integer.") from error
+    if value <= 0:
+        raise RuntimeError(f"{name} must be a positive integer.")
+    return value
+
+
+SYNTHESIS_SEMAPHORE = threading.Semaphore(read_positive_int_env("F5_TTS_RUNTIME_CONCURRENCY", 1))
 
 app = FastAPI(
     title="AI Video Studio F5-TTS Runtime",
@@ -35,29 +52,38 @@ def health() -> HealthResponse:
 
 @app.post("/synthesize", response_model=SynthesizeResponse, response_model_by_alias=True)
 def synthesize(request: SynthesizeRequest) -> SynthesizeResponse:
-    if MODE in REAL_MODES:
-        try:
-            audio_base64, _, cues = synthesize_real_f5_audio(
-                reference_audio=request.referenceAudio,
-                reference_text=request.referenceText,
-                text=request.text,
-            )
-        except Exception as error:
-            LOGGER.exception("F5-TTS real synthesis failed")
-            detail = error.args[0] if error.args else str(error)
-            raise HTTPException(status_code=503, detail=detail) from error
-        model_loaded = True
-    elif MODE == "contract-smoke":
-        audio_base64, _, cues = synthesize_contract_smoke_audio(request.text)
-        model_loaded = False
-    else:
-        raise HTTPException(status_code=400, detail=f"Unsupported F5_TTS_SERVICE_MODE: {MODE}")
+    if not SYNTHESIS_SEMAPHORE.acquire(blocking=False):
+        raise HTTPException(
+            status_code=429,
+            detail="Another F5-TTS synthesis request is already running.",
+        )
 
-    return SynthesizeResponse(
-        audio_base64=audio_base64,
-        format="wav",
-        language=request.language,
-        captions=Captions(cues=cues),
-        mode=MODE,
-        model_loaded=model_loaded,
-    )
+    try:
+        if MODE in REAL_MODES:
+            try:
+                audio_base64, _, cues = synthesize_real_f5_audio(
+                    reference_audio=request.referenceAudio,
+                    reference_text=request.referenceText,
+                    text=request.text,
+                )
+            except Exception as error:
+                LOGGER.exception("F5-TTS real synthesis failed")
+                detail = error.args[0] if error.args else str(error)
+                raise HTTPException(status_code=503, detail=detail) from error
+            model_loaded = True
+        elif MODE == "contract-smoke":
+            audio_base64, _, cues = synthesize_contract_smoke_audio(request.text)
+            model_loaded = False
+        else:
+            raise HTTPException(status_code=400, detail=f"Unsupported F5_TTS_SERVICE_MODE: {MODE}")
+
+        return SynthesizeResponse(
+            audio_base64=audio_base64,
+            format="wav",
+            language=request.language,
+            captions=Captions(cues=cues),
+            mode=MODE,
+            model_loaded=model_loaded,
+        )
+    finally:
+        SYNTHESIS_SEMAPHORE.release()

@@ -257,6 +257,16 @@ Still not implemented unless the new task explicitly asks for them:
 - browser automation acceptance
 - end-user render progress UX beyond idle / rendering / success / failure
 
+Private-team deployment note:
+- Heavy generation/export work is protected by process-local concurrency
+  limits configured in `.env.example`. The current guard covers staged
+  generation, TTS/F5 synthesis, and local render export without introducing a
+  database or durable job queue.
+- Treat these limits as private Docker deployment protection, not as
+  production multi-replica scheduling. Do not expand this into persistent
+  queues, project history, multi-tenant auth, or full progress systems unless a
+  task explicitly asks for that scope.
+
 ## Validation workflow
 
 This project is Docker-first on this workstation. Default to containerized

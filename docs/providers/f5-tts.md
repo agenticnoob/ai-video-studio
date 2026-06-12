@@ -194,6 +194,11 @@ Current runtime note:
   `docker-compose.f5.gpu.yml`, forces `F5_TTS_SERVICE_MODE=f5`, defaults
   `F5_TTS_DEVICE=cuda`, and requests Docker GPU access. CPU should be treated
   as a diagnostic fallback, not the preferred runtime.
+- `F5_TTS_RUNTIME_CONCURRENCY` limits direct `/synthesize` requests inside the
+  optional F5 runtime service. Keep it at `1` for real GPU mode unless the
+  local model and GPU have been validated for higher concurrency. The Next app
+  also has `AI_VIDEO_STUDIO_TTS_CONCURRENCY` for staged generation and
+  `POST /api/tts` calls.
 - The local GPU overlay has been validated with container-side PyTorch, and
   real F5 synthesis has passed with the local checkpoint, vocab, and Vocos
   vocoder under `models/f5-tts/`.
