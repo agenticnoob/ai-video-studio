@@ -1,6 +1,40 @@
 # Iteration Status
 
-Last updated: Narration audio playback buffering hardening
+Last updated: Voice reference upload text decoupling
+
+## Latest continuation — Voice reference upload text decoupling
+
+- Root cause for the awkward voice-clone upload flow: the page upload route
+  required the reference transcript during file upload, even though the F5
+  runtime only needs `referenceAudio` and `referenceText` together when
+  staged generation synthesizes narration.
+- Changed page-level reference upload so selecting an audio file only stores
+  the file under `out/voice-references/` and returns a `referenceId`.
+- Kept generation-time validation unchanged: when `voiceClone.enabled` is
+  true, staged generation still requires both an uploaded `referenceId` and a
+  non-empty `referenceText` before calling F5.
+
+Current readiness:
+- Users can upload reference audio before typing the matching transcript.
+- Users must still provide the matching transcript before full-project
+  generation or selected-segment regeneration with voice cloning enabled.
+
+## Latest continuation — Voice reference upload retry fix
+
+- Root cause for voice reference upload getting stuck after a missing-text
+  error: the file input kept the selected file value after the frontend
+  rejected the upload for an empty reference transcript. After the user filled
+  the transcript, choosing the same file again did not fire a new `change`
+  event, so the upload handler was not called.
+- The reference audio file input now clears its DOM value immediately after
+  reading the selected file. This allows the same file to be selected again
+  after any upload-side validation or network error.
+
+Current readiness:
+- Page-level F5 voice cloning now allows reference audio upload before the
+  matching transcript is filled in.
+- Upload-side errors no longer leave the file input in a state where retrying
+  with the same audio file is ignored.
 
 ## Latest continuation — Narration audio playback buffering hardening
 

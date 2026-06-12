@@ -114,6 +114,7 @@ export const GenerationPanel: FC<GenerationPanelProps> = ({
                   type="file"
                   onChange={(event) => {
                     const file = event.currentTarget.files?.[0];
+                    event.currentTarget.value = "";
                     if (file) {
                       onVoiceReferenceUpload(file);
                     }

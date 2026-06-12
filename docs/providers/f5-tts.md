@@ -136,9 +136,9 @@ Request body sent to the runtime:
 
 Page-level voice cloning uses this runtime contract:
 
-1. `POST /api/tts/voice-references` accepts multipart `audio` plus
-   `referenceText`, validates `.wav`, `.mp3`, `.m4a`, or `.aac`, and stores the
-   file under ignored `out/voice-references/`.
+1. `POST /api/tts/voice-references` accepts multipart `audio`, validates
+   `.wav`, `.mp3`, `.m4a`, or `.aac`, and stores the file under ignored
+   `out/voice-references/`.
 2. `/api/tts` and `/api/generate/staged` accept optional
    `voiceClone: { enabled, referenceId, referenceText }`.
 3. When `voiceClone.enabled` is true, the TTS boundary forces `f5-tts`, resolves
