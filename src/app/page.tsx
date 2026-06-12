@@ -6,6 +6,7 @@ import { PreviewPanel } from "../components/project/PreviewPanel";
 import { ProjectSummary } from "../components/project/ProjectSummary";
 import { SegmentEditor } from "../components/project/SegmentEditor";
 import { SegmentList } from "../components/project/SegmentList";
+import { Card } from "../components/ui/Card";
 import { RenderControls } from "../components/ui/RenderControls";
 import { useProjectGeneration } from "../helpers/use-project-generation";
 import { useRendering } from "../helpers/use-rendering";
@@ -24,7 +25,7 @@ const Home: NextPage = () => {
   return (
     <main className="mx-auto max-w-screen-2xl px-4 py-8 text-foreground">
       <div className="space-y-6">
-        <section className="rounded-geist border border-foreground bg-background p-4">
+        <Card as="section" tone="workspace">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
               <div className="text-xs uppercase tracking-[0.22em]">VideoProject</div>
@@ -70,12 +71,12 @@ const Home: NextPage = () => {
               <ProjectSummary project={generation.normalizedProject} />
             </div>
           </div>
-        </section>
+        </Card>
 
-        <section
-          className={`rounded-geist border border-foreground bg-background p-4 ${
-            isRendering ? "pointer-events-none opacity-70" : ""
-          }`}
+        <Card
+          as="section"
+          className={isRendering ? "pointer-events-none opacity-70" : undefined}
+          tone="workspace"
         >
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -101,7 +102,7 @@ const Home: NextPage = () => {
               onSegmentChange={generation.updateSegment}
             />
           </div>
-        </section>
+        </Card>
       </div>
     </main>
   );

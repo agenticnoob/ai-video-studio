@@ -1,5 +1,6 @@
 import type { FC } from "react";
 
+import { Card } from "../../components/ui/Card";
 import type { TemplateEditorProps } from "../editor-types";
 import type { SpotlightSegment } from "./schema";
 
@@ -12,7 +13,7 @@ export const SpotlightEditor: FC<TemplateEditorProps<SpotlightSegment>> = ({
   const fieldClassName = "block text-xs font-medium text-foreground";
 
   return (
-    <div className="mt-5 pt-2">
+    <Card className="mt-5" tone="nested">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className="text-sm font-semibold text-foreground">Spotlight 内容</h3>
         <label className="w-28 text-xs font-medium text-foreground">
@@ -111,6 +112,6 @@ export const SpotlightEditor: FC<TemplateEditorProps<SpotlightSegment>> = ({
           />
         </label>
       </div>
-    </div>
+    </Card>
   );
 };

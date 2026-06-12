@@ -6,6 +6,7 @@ import type {
   VoiceCloneSettings,
 } from "../../helpers/use-project-generation";
 import { useTaskProgress } from "../../helpers/use-task-progress";
+import { Card } from "../ui/Card";
 import { ActivityProgress } from "../ui/ActivityProgress";
 
 type GenerationPanelProps = {
@@ -27,9 +28,7 @@ type GenerationPanelProps = {
 };
 
 const inputClassName =
-  "mt-2 w-full rounded-geist border border-unfocused-border-color bg-background px-3 py-2 text-sm outline-none focus:border-focused-border-color";
-
-const sectionClassName = "bg-background p-1";
+  "mt-2 w-full rounded-geist border border-field-border-color bg-field-surface-color px-3 py-2 text-sm outline-none transition-colors focus:border-field-focus-border-color";
 
 export const GenerationPanel: FC<GenerationPanelProps> = ({
   brief,
@@ -54,7 +53,7 @@ export const GenerationPanel: FC<GenerationPanelProps> = ({
   );
 
   return (
-    <section className={sectionClassName}>
+    <Card as="section" tone="panel">
       <div className="text-xs uppercase tracking-[0.22em] text-foreground">AI Video Studio</div>
       <h1 className="mt-3 text-2xl font-bold text-foreground">分段优先工作台</h1>
       <p className="mt-3 text-sm leading-6 text-foreground">
@@ -122,7 +121,7 @@ export const GenerationPanel: FC<GenerationPanelProps> = ({
                 参考音频
                 <input
                   accept=".wav,.mp3,.m4a,.aac,audio/wav,audio/mpeg,audio/mp3,audio/m4a,audio/aac"
-                  className={`${inputClassName} file:mr-3 file:rounded-geist file:border-0 file:bg-foreground file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-background`}
+                  className={`${inputClassName} file:mr-3 file:rounded-geist file:border file:border-panel-border-color file:bg-foreground file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-background`}
                   disabled={disabled || isUploadingVoiceReference}
                   type="file"
                   onChange={(event) => {
@@ -206,6 +205,6 @@ export const GenerationPanel: FC<GenerationPanelProps> = ({
       </div>
 
       {error ? <div className="mt-4 text-sm font-medium text-foreground">{error}</div> : null}
-    </section>
+    </Card>
   );
 };

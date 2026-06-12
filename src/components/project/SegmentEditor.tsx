@@ -3,6 +3,7 @@ import type { FC } from "react";
 import type { VideoSegment } from "../../lib/project-schema";
 import { getTemplateLabel } from "../../lib/template-registry";
 import { getTemplateEditor } from "../../templates/component-registry";
+import { Card } from "../ui/Card";
 
 type SegmentEditorProps = {
   isRegenerating: boolean;
@@ -14,7 +15,7 @@ type SegmentEditorProps = {
 };
 
 const inputClassName =
-  "mt-1 w-full rounded-geist border border-unfocused-border-color bg-background px-2 py-1.5 text-sm outline-none focus:border-focused-border-color";
+  "mt-1 w-full rounded-geist border border-field-border-color bg-field-surface-color px-2 py-1.5 text-sm outline-none transition-colors focus:border-field-focus-border-color";
 
 const fieldClassName = "block text-xs font-medium text-foreground";
 
@@ -47,10 +48,10 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
 }) => {
   if (!segment) {
     return (
-      <section className="bg-background p-1">
+      <Card as="section" tone="panel">
         <h2 className="text-base font-semibold text-foreground">当前分段</h2>
         <p className="mt-3 text-sm text-foreground">请选择一个分段后再编辑详情。</p>
-      </section>
+      </Card>
     );
   }
 
@@ -84,7 +85,7 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
   };
 
   return (
-    <section className="bg-background p-1">
+    <Card as="section" tone="panel">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-base font-semibold text-foreground">当前分段</h2>
@@ -95,25 +96,27 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
         </div>
       </div>
 
-      <label className={`${fieldClassName} mt-4`}>
-        自然语言修改指令
-        <textarea
-          className={`${inputClassName} min-h-16 resize-y`}
-          placeholder="描述这个分段下一次重生成时应如何调整。"
-          value={revisionPrompt}
-          onChange={(event) => onRevisionPromptChange(event.currentTarget.value)}
-        />
-      </label>
-      <button
-        className="mt-2 rounded-geist border border-foreground bg-foreground px-3 py-1.5 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-60"
-        disabled={!revisionPrompt.trim() || isRegenerating}
-        onClick={onRegenerateSegment}
-        type="button"
-      >
-        {isRegenerating ? "正在重生成分段..." : "重生成当前分段"}
-      </button>
+      <Card className="mt-4" tone="nested">
+        <label className={fieldClassName}>
+          自然语言修改指令
+          <textarea
+            className={`${inputClassName} min-h-16 resize-y`}
+            placeholder="描述这个分段下一次重生成时应如何调整。"
+            value={revisionPrompt}
+            onChange={(event) => onRevisionPromptChange(event.currentTarget.value)}
+          />
+        </label>
+        <button
+          className="mt-2 rounded-geist border border-foreground bg-foreground px-3 py-1.5 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-60"
+          disabled={!revisionPrompt.trim() || isRegenerating}
+          onClick={onRegenerateSegment}
+          type="button"
+        >
+          {isRegenerating ? "正在重生成分段..." : "重生成当前分段"}
+        </button>
+      </Card>
 
-      <div className="mt-5 pt-2">
+      <Card className="mt-5" tone="nested">
         <h3 className="text-sm font-semibold text-foreground">分段详情</h3>
         <div className="mt-3 grid gap-3 lg:grid-cols-[minmax(220px,0.8fr)_minmax(260px,1.2fr)]">
           <label className={fieldClassName}>
@@ -135,9 +138,9 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
             />
           </label>
         </div>
-      </div>
+      </Card>
 
-      <div className="mt-5 pt-2">
+      <Card className="mt-5" tone="nested">
         <h3 className="text-sm font-semibold text-foreground">模板主题</h3>
         <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-6">
           {(["background", "panel", "primary", "secondary", "text", "muted"] as const).map(
@@ -153,7 +156,7 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
             ),
           )}
         </div>
-      </div>
+      </Card>
 
       <TemplateEditor
         inputClassName={inputClassName}
@@ -161,6 +164,6 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
         segment={segment}
         onSegmentChange={onSegmentChange}
       />
-    </section>
+    </Card>
   );
 };

@@ -4,6 +4,23 @@ Last updated: Two-color workspace UI pass follow-up
 
 ## Latest continuation — Two-color workspace UI pass
 
+- Restored explicit card containers for the major workspace subpanels after
+  the previous border-reduction pass made the layout feel too flat.
+- Split visual hierarchy between container cards and form controls:
+  card borders now use a stronger translucent foreground stroke, while text
+  inputs and textareas use a lighter border plus a slightly stronger focus
+  border so form fields no longer visually merge with their parent cards.
+- Completed the card restoration pass by putting the same card treatment back
+  on the export controls and adding a slightly stronger shadow to the two top-
+  level workspace shells, so the parent work areas and their inner cards now
+  read as separate layers again.
+- Restored the nested cards inside the selected-segment editor as well, so the
+  rewrite prompt, segment details, theme fields, template editor group, and
+  each scripted scene now read as explicit inner panels instead of flat
+  stacked content.
+- Replaced the repeated ad-hoc card class strings with a reusable shared card
+  primitive so workspace shells, panels, nested groups, and segment-strip item
+  cards all use the same border + shadow system.
 - Updated the page UI to use the requested two-color palette:
   `#142334` as the background color and `#baccd9` as the foreground, border,
   and interaction color.

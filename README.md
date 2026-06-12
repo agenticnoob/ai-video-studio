@@ -67,7 +67,10 @@ Current implementation status:
   `/api/progress/[progressId]` while the request runs
 - the main workspace UI now uses the two-color product palette, separates the
   whole-video export workspace from the segment editor, uses a horizontal
-  drag-scroll segment strip, and keeps the selected-segment form compact
+  drag-scroll segment strip, keeps the selected-segment form compact, and now
+  restores explicit card hierarchy through a shared reusable card primitive so
+  workspace shells, panels, nested editor groups, and segment-strip items all
+  share the same border and shadow system
 - roadmap decisions should use `docs/FINAL_PRODUCT_GOAL.md` as the top-level
   source
 - current progress and next-step notes live in `docs/ITERATION_STATUS.md`

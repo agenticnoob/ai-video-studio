@@ -1,5 +1,6 @@
 import type { FC } from "react";
 
+import { Card } from "../../components/ui/Card";
 import type { VideoScene } from "../../lib/video-schema";
 import type { TemplateEditorProps } from "../editor-types";
 import type { ScriptedSegment } from "./schema";
@@ -33,7 +34,7 @@ export const ScriptedEditor: FC<TemplateEditorProps<ScriptedSegment>> = ({
   const fieldClassName = "block text-xs font-medium text-foreground";
 
   return (
-    <div className="mt-5 pt-2">
+    <Card className="mt-5" tone="nested">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className="text-sm font-semibold text-foreground">Scripted 场景</h3>
         <div className="text-sm text-foreground">{segment.implementation.scenes.length} 个场景</div>
@@ -41,7 +42,7 @@ export const ScriptedEditor: FC<TemplateEditorProps<ScriptedSegment>> = ({
 
       <div className="mt-3 space-y-3">
         {segment.implementation.scenes.map((scene, index) => (
-          <div key={scene.id} className="p-2">
+          <Card key={scene.id} className="p-3" tone="item">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <div className="text-sm font-semibold text-foreground">
@@ -193,9 +194,9 @@ export const ScriptedEditor: FC<TemplateEditorProps<ScriptedSegment>> = ({
                 </label>
               </div>
             ) : null}
-          </div>
+          </Card>
         ))}
       </div>
-    </div>
+    </Card>
   );
 };

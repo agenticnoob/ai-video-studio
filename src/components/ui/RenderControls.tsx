@@ -3,6 +3,7 @@ import { useTaskProgress } from "../../helpers/use-task-progress";
 import type { State } from "../../helpers/use-rendering";
 import { ActivityProgress } from "./ActivityProgress";
 import { Button } from "./Button";
+import { Card } from "./Card";
 
 const formatSize = (sizeInBytes: number): string => {
   return `${(sizeInBytes / (1024 * 1024)).toFixed(2)} MB`;
@@ -21,7 +22,7 @@ export const RenderControls: React.FC<{
   );
 
   return (
-    <section className="bg-background p-1">
+    <Card as="section" tone="panel">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-base font-semibold text-foreground">本地导出</h2>
@@ -114,6 +115,6 @@ export const RenderControls: React.FC<{
           </div>
         </div>
       ) : null}
-    </section>
+    </Card>
   );
 };

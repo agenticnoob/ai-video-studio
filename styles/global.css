@@ -5,6 +5,11 @@
   --foreground: #baccd9;
   --unfocused-border-color: #baccd9;
   --focused-border-color: #baccd9;
+  --panel-border-color: rgb(186 204 217 / 0.48);
+  --field-border-color: rgb(186 204 217 / 0.2);
+  --field-focus-border-color: rgb(186 204 217 / 0.78);
+  --panel-surface-color: rgb(20 35 52 / 0.94);
+  --field-surface-color: rgb(186 204 217 / 0.03);
 
   --button-disabled-color: #142334;
   --disabled-text-color: #baccd9;
@@ -27,6 +32,11 @@
   --color-background: var(--background);
   --color-unfocused-border-color: var(--unfocused-border-color);
   --color-focused-border-color: var(--focused-border-color);
+  --color-panel-border-color: var(--panel-border-color);
+  --color-field-border-color: var(--field-border-color);
+  --color-field-focus-border-color: var(--field-focus-border-color);
+  --color-panel-surface-color: var(--panel-surface-color);
+  --color-field-surface-color: var(--field-surface-color);
   --color-button-disabled-color: var(--button-disabled-color);
   --color-disabled-text-color: var(--disabled-text-color);
   --color-geist-error: var(--geist-error);

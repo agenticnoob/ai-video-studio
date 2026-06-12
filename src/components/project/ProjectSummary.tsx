@@ -2,6 +2,7 @@ import type { FC } from "react";
 
 import { getProjectDuration, type VideoProject } from "../../lib/project-schema";
 import { getTemplateLabel } from "../../lib/template-registry";
+import { Card } from "../ui/Card";
 
 type ProjectSummaryProps = {
   project: VideoProject;
@@ -22,7 +23,7 @@ export const ProjectSummary: FC<ProjectSummaryProps> = ({ project }) => {
   const durationInFrames = getProjectDuration(project);
 
   return (
-    <section className="bg-background p-1">
+    <Card as="section" tone="panel">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-base font-semibold text-foreground">{project.meta.title}</h2>
@@ -53,6 +54,6 @@ export const ProjectSummary: FC<ProjectSummaryProps> = ({ project }) => {
           <div className="mt-1 font-medium text-foreground">{formatTemplateSummary(project)}</div>
         </div>
       </div>
-    </section>
+    </Card>
   );
 };

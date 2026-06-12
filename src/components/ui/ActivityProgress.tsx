@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type FC } from "react";
 import type { TaskProgress } from "../../lib/task-progress";
+import { Card } from "./Card";
 
 type ActivityProgressProps = {
   detail: string;
@@ -64,7 +65,7 @@ export const ActivityProgress: FC<ActivityProgressProps> = ({
   }, [finishedAt, now, startedAt]);
 
   return (
-    <div className="bg-background text-foreground">
+    <Card className="text-foreground" tone="panel">
       <div className="flex flex-wrap items-center justify-between gap-3 text-sm font-medium">
         <span>{status === "idle" ? idleLabel : label}</span>
         <span className="bg-foreground px-2 py-1 text-xs uppercase text-background">
@@ -109,6 +110,6 @@ export const ActivityProgress: FC<ActivityProgressProps> = ({
       {status === "running" ? (
         <div className="mt-3 text-xs leading-5">正在等待后台任务返回结果。</div>
       ) : null}
-    </div>
+    </Card>
   );
 };

@@ -3,6 +3,7 @@ import type { FC } from "react";
 
 import type { VideoProject } from "../../lib/project-schema";
 import { ProjectVideo } from "../../remotion/ProjectVideo/ProjectVideo";
+import { Card } from "../ui/Card";
 
 type PreviewPanelProps = {
   durationInFrames: number;
@@ -11,7 +12,7 @@ type PreviewPanelProps = {
 
 export const PreviewPanel: FC<PreviewPanelProps> = ({ durationInFrames, project }) => {
   return (
-    <section className="overflow-hidden bg-background">
+    <Card as="section" className="overflow-hidden" tone="panel">
       <Player
         acknowledgeRemotionLicense
         component={ProjectVideo}
@@ -24,6 +25,6 @@ export const PreviewPanel: FC<PreviewPanelProps> = ({ durationInFrames, project 
         loop
         style={{ width: "100%" }}
       />
-    </section>
+    </Card>
   );
 };

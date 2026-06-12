@@ -4,6 +4,7 @@ import { useRef, type FC, type PointerEvent } from "react";
 
 import { getSegmentDuration, type VideoProject } from "../../lib/project-schema";
 import { getTemplateLabel } from "../../lib/template-registry";
+import { Card, CardButton } from "../ui/Card";
 
 type SegmentListProps = {
   project: VideoProject;
@@ -53,7 +54,7 @@ export const SegmentList: FC<SegmentListProps> = ({
   };
 
   return (
-    <section className="bg-background p-1">
+    <Card as="section" tone="panel">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-base font-semibold text-foreground">分段列表</h2>
         <div className="text-sm text-foreground">共 {project.segments.length} 段</div>
@@ -70,13 +71,10 @@ export const SegmentList: FC<SegmentListProps> = ({
           const isSelected = segment.id === selectedSegmentId;
 
           return (
-            <button
+            <CardButton
+              selected={isSelected}
               key={segment.id}
-              className={`min-w-[260px] max-w-[320px] p-3 text-left transition sm:min-w-[300px] ${
-                isSelected
-                  ? "bg-foreground text-background"
-                  : "bg-background text-foreground hover:bg-foreground hover:text-background"
-              }`}
+              className="min-w-[260px] max-w-[320px] text-left transition hover:border-foreground hover:bg-foreground hover:text-background sm:min-w-[300px]"
               onPointerUp={(event) => {
                 const deltaX = Math.abs(event.clientX - dragStateRef.current.startX);
 
@@ -89,7 +87,6 @@ export const SegmentList: FC<SegmentListProps> = ({
                   onSelectSegment(segment.id);
                 }
               }}
-              type="button"
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
@@ -111,10 +108,10 @@ export const SegmentList: FC<SegmentListProps> = ({
                 </div>
               </div>
               <p className="mt-2 line-clamp-2 text-sm leading-5">{segment.intent}</p>
-            </button>
+            </CardButton>
           );
         })}
       </div>
-    </section>
+    </Card>
   );
 };
