@@ -22,6 +22,18 @@ Status: partially resumed.
   全局 timeline flatten。页面级 F5 声音克隆也已经暴露在 staged 生成设置中：
   用户可先上传参考音频，生成前填写匹配文本，系统在全项目生成和选中分段
   重生成时复用该克隆音色；关闭后继续使用默认 F5 语音路径。
+- 最新视觉方向判断：当前固定注册模版能验证 staged pipeline，但视觉上限偏低，
+  容易生成像动态卡片或 dashboard 的成片。方向不是继续堆更多完整模板，而是
+  把模板降级为 macro / preset，把 `scene-graph` 演进成受控 Visual IR
+  compiler。下一步应按 `docs/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md` 做视觉质量
+  slice：先用 deterministic fixture 证明 primitives + layout presets +
+  motion grammar 能明显降低 PPT 感，再接 LLM 生成 Visual IR。不要把主路径改成
+  无限制 LLM 直接写 TSX。
+- 完整路线图已沉淀到 `docs/VISUAL_IR_COMPILER_ROADMAP.md`。它把后续阶段拆为
+  Visual IR Generation v1、Render Strategy Decision v1、Procedural Generator
+  v1、Asset Plan / Media Composite v1、Review / Repair Loop v1、future
+  restricted Generated Component escape hatch、以及更后续的 micro-template
+  memory。
 
 此前判断（保留为背景）：
 - 不要一开始就把 `ai-video-studio` 扩成完整 AI 视频产品。
@@ -73,8 +85,14 @@ When implementation resumes, the preferred strategy is:
 - keep the F5 runtime as an opt-in service boundary; use deterministic smoke
   for no-MiniMax validation and add full staged-route live smoke before
   widening scope
-- express richer segment visuals through template-specific implementation fields,
-  internal components, and media-layer props first
+- express richer segment visuals through a controlled Visual IR layer first:
+  render strategy, primitives, layout presets, motion grammar, and deterministic
+  renderer quality checks
+- treat registered templates as stable macro/preset paths; use `scene-graph`
+  as the first general Visual IR compiler path instead of adding endless fixed
+  card templates
+- keep generated Remotion source code as a future restricted escape hatch only,
+  not as the default path
 
 In short:
 - `ai-video-studio` provides the product shell

@@ -8,6 +8,7 @@ export {
   getTemplateDefinition,
   getTemplateLabel,
   registeredTemplateIds,
+  SCENE_GRAPH_TEMPLATE_ID,
   SCRIPTED_TEMPLATE_ID,
   SPOTLIGHT_TEMPLATE_ID,
   STATS_DASHBOARD_TEMPLATE_ID,

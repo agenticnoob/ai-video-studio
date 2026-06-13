@@ -49,8 +49,14 @@ component list.
 | `QuoteScene` | `src/remotion/primitives/scenes/QuoteScene.tsx` | Large quote text with optional author; optimized for testimonial, insight, or emotional emphasis. | `scripted` |
 | `PoppingText` | `src/remotion/primitives/text/PoppingText.tsx` | Spring-based character pop entrance for short emphatic text. | Primitive catalog showcase |
 | `CrossDissolve` | `src/remotion/primitives/transitions/CrossDissolve.tsx` | Classic opacity dissolve between two full-frame scene nodes. | Primitive catalog showcase |
-| `useEntranceProgress` | `src/remotion/primitives/transitions/useEntranceProgress.ts` | Frame-driven spring progress helper returning `0..1` for entrance animation. | `scripted`, `spotlight` |
+| `useEntranceProgress` | `src/remotion/primitives/transitions/useEntranceProgress.ts` | Frame-driven spring progress helper returning `0..1` for entrance animation. | `scripted`, `spotlight`, `scene-graph` |
 | `RemotionTheme` | `src/remotion/primitives/theme.ts` | Shared theme shape used by primitives: background, panel, primary, secondary, text, muted. | primitives and templates |
+| `NodeGraphLayer` | `src/templates/scene-graph/primitives.tsx` | Scene-graph internal node/edge visualization with bounded node lanes and frame-driven path drawing. | `scene-graph` Visual IR v1 |
+| `LinePathLayer` | `src/templates/scene-graph/primitives.tsx` | Scene-graph internal polyline path treatment with bounded normalized points and optional labels. | `scene-graph` Visual IR v1 |
+| `CodePanelLayer` | `src/templates/scene-graph/primitives.tsx` | Scene-graph internal code panel with bounded line count, highlight lines, and frame-driven line reveal. | `scene-graph` Visual IR v1 |
+| `TerminalPanelLayer` | `src/templates/scene-graph/primitives.tsx` | Scene-graph internal terminal/status panel with bounded log lines and status coloring. | `scene-graph` Visual IR v1 |
+| `BrowserWindowLayer` | `src/templates/scene-graph/primitives.tsx` | Scene-graph internal browser-window placeholder treatment; it does not ingest real URLs or media. | `scene-graph` Visual IR v1 |
+| `CursorLayer` | `src/templates/scene-graph/primitives.tsx` | Scene-graph internal cursor playback over bounded normalized points with an optional click pulse. | `scene-graph` Visual IR v1 |
 
 RVE porting baseline:
 

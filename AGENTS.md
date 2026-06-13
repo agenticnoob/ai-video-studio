@@ -9,14 +9,28 @@ Before planning or editing, read these files in order:
 2. `docs/ITERATION_STATUS.md`
 3. `docs/PRODUCT_REQUIREMENTS.md`
 4. `docs/FUTURE_DIRECTION_NOTES.md`
-5. `docs/HANDOFF_F5_TTS_CAPTIONS.md` when the task involves F5-TTS,
+5. `docs/VISUAL_IR_COMPILER_ROADMAP.md` when the task involves long-term
+   visual generation architecture, render strategies, Visual IR generation,
+   procedural generators, asset composition, review/repair, or codegen escape
+   hatch decisions
+6. `docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md` when the task involves template
+   direction, shot language, visual flexibility, generated scenes, or visual
+   quality beyond the current registered templates
+7. `docs/GOAL_SCENE_GRAPH_MVP.md` and
+   `docs/HANDOFF_SCENE_GRAPH_SUBAGENT.md` when the task asks to implement the
+   first scene graph registered-template landing
+8. `docs/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md` and
+   `docs/HANDOFF_SCENE_GRAPH_VISUAL_IR_SUBAGENT.md` when the task asks to make
+   scene-graph output less PPT-like, add Visual IR primitives, or continue the
+   Visual IR compiler direction
+9. `docs/HANDOFF_F5_TTS_CAPTIONS.md` when the task involves F5-TTS,
    captions/subtitles, or narration provider work
-6. `docs/providers/f5-tts-service-plan.md` when the task involves the local
+10. `docs/providers/f5-tts-service-plan.md` when the task involves the local
    F5-TTS runtime service or Docker service setup
-7. `docs/STRUCTURE_REFACTOR_PLAN.md` and
+11. `docs/STRUCTURE_REFACTOR_PLAN.md` and
    `docs/HANDOFF_STRUCTURE_REFACTOR.md` when the task is behavior-preserving
    structure cleanup, modularization, or Subagent-Driven refactor work
-8. `README.md`
+12. `README.md`
 
 These files together explain:
 - authoritative final generation goal
@@ -25,6 +39,14 @@ These files together explain:
 - roadmap direction
 - deferred scope
 - product direction
+- full Visual IR compiler roadmap when visual generation architecture or later
+  phases are in scope
+- scene graph / shot-language direction when visual template flexibility is
+  relevant
+- scene graph MVP goal, boundaries, and Subagent-Driven handoff when
+  implementation starts
+- scene graph Visual IR v1 goal and Subagent-Driven handoff when improving
+  visual quality beyond the current card-like MVP renderer
 - F5-TTS / aligned captions handoff when relevant
 - F5-TTS runtime service plan when relevant
 - structure refactor plan and handoff when relevant
@@ -116,9 +138,27 @@ The first staged-generation groundwork is also in place:
 - Deterministic staged smoke fixtures cover a mixed `scripted` + `spotlight`
   project with segment-owned narration audio/captions and selected-segment
   narration/caption replacement.
-  Remotion exposes this fixture as
-  `StagedSmokeMixedTemplateProject`, and `npm run smoke:staged-fixtures`
+- Deterministic scene graph smoke fixtures cover three `scene-graph` segments
+  with project-level `ShotLanguagePlan`, segment-owned narration/captions, and
+  opener/process/closing visual rhythms. Remotion exposes
+  `SceneGraphTemplatePreview`, and `npm run smoke:staged-fixtures`
   bundles/loads it through `src/remotion/index.ts`.
+- Local export selects the generic `ProjectVideo` Remotion composition. Keep
+  this composition registered even when adding or hiding template preview
+  compositions.
+- Current visual-quality direction: treat fixed registered templates as
+  stable macro/preset paths. `scene-graph` now has the first bounded Visual IR
+  deterministic compiler path with `primitive_scene_graph`, composition/layout
+  presets, motion presets, and internal primitives for full-bleed title, node
+  graph, line path, code panel, terminal panel, browser-window placeholder,
+  cursor, and lockup treatments. Provider-backed Visual IR generation/repair
+  is the next slice; unrestricted generated TSX remains out of scope.
+- Scene graph provider-output hardening is intentionally bounded: selected
+  template parsing can unwrap one `implementation` / `result` / `data` field
+  and parse JSON-string payloads, while the SceneGraph schema normalizes only
+  known primitive aliases/defaults before final validation. This is not a
+  generic free-form repair system.
+  `docs/VISUAL_IR_COMPILER_ROADMAP.md` is the full multi-phase roadmap.
 - The optional `f5-tts` Docker service is implemented with contract-smoke mode
   and real `F5_TTS_SERVICE_MODE=f5` mode. The GPU overlay has been validated
   locally with the downloaded checkpoint, vocab, and Vocos vocoder under
@@ -156,6 +196,9 @@ inside a segment:
     `subheadline`, `callouts`, and `durationInFrames`
   - `stats-dashboard`: data-statistics implementation with `layout`,
     dashboard `blocks`, optional `timeline`, and `durationInFrames`
+  - `scene-graph`: validated `SceneGraph` Visual IR implementation with
+    bounded render strategy, composition/layout/motion presets, layers, beats,
+    camera movement, transitions, and a `UniversalSceneRenderer`
 
 ## Current highest-priority next milestone
 
@@ -197,7 +240,11 @@ Current product modeling decision:
 - `templateId` determines the schema of `implementation`
 - `implementation` is template-specific; current registered templates are
   `scripted` (`VideoSpec`), `spotlight` (`SpotlightSpec`), and
-  `stats-dashboard` (`StatsDashboardSpec`)
+  `stats-dashboard` (`StatsDashboardSpec`), plus `scene-graph` (`SceneGraph`)
+- Product direction: templates provide stability as macro/preset paths;
+  `scene-graph` should provide broader expression through validated Visual IR
+  primitives. Do not solve visual variety by adding unbounded full-segment
+  templates or by letting the LLM write unrestricted TSX.
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
 - treat generated narration/TTS as part of the main generation pipeline, not
   as a generic media-layer feature to solve first

@@ -117,6 +117,9 @@ Current modeling direction:
     `callouts`, and `durationInFrames`
   - `stats-dashboard`: `StatsDashboardSpec` with `layout`, dashboard
     `blocks`, optional `timeline`, and `durationInFrames`
+  - `scene-graph`: bounded `SceneGraph` Visual IR with render strategy,
+    composition/layout/motion presets, technical-video primitives, camera
+    movement, transitions, and a `UniversalSceneRenderer`
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
 - generated narration audio should be carried outside template-specific
   `implementation` fields; the target home is segment-owned
@@ -141,6 +144,28 @@ Current modeling direction:
 - future existing video, image, audio, or color inputs should be modeled as
   project-level or segment-level `media.layers[]` data; `baseLayer` is now a
   media-layer role, not a separate project field
+- the active visual-quality direction is a controlled scene graph layer:
+  future LLM work should generate `ShotLanguagePlan` and per-segment
+  `SceneGraph` data, while the app compiles that data through a stable
+  Remotion renderer instead of relying only on fixed card-like templates or
+  unrestricted generated TSX. See `docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md`.
+- the concrete first landing for that direction is documented in
+  `docs/GOAL_SCENE_GRAPH_MVP.md`; Subagent-Driven execution boundaries live in
+  `docs/HANDOFF_SCENE_GRAPH_SUBAGENT.md`.
+- the first Scene Graph Visual IR v1 deterministic slice is implemented:
+  existing templates remain macro/preset paths, while `scene-graph` now has a
+  bounded `primitive_scene_graph` compiler path with full-bleed, node graph,
+  line path, code panel, terminal panel, browser-window placeholder, cursor,
+  and lockup treatments. LLM Visual IR generation/repair is the next slice;
+  unrestricted generated TSX remains out of scope. See
+  `docs/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md` and
+  `docs/HANDOFF_SCENE_GRAPH_VISUAL_IR_SUBAGENT.md`.
+- the full expert-derived visual architecture roadmap lives in
+  `docs/VISUAL_IR_COMPILER_ROADMAP.md`. It defines the complete phased target:
+  `template_macro`, `primitive_scene_graph`, `procedural_generator`,
+  `media_asset_composite`, future restricted `generated_component`,
+  review/repair, and eventual micro-template memory. The next recommended
+  bounded phase is Visual IR Generation v1 for `primitive_scene_graph`.
 
 Current top-level boundaries:
 1. `/src/app/page.tsx`
@@ -218,8 +243,12 @@ Current code checkpoint:
 - deterministic staged smoke fixtures cover a mixed `scripted` + `spotlight`
   project with segment-owned narration audio/captions and selected-segment
   narration/caption replacement;
-  Remotion Studio exposes the current fixture as
-  `StagedSmokeMixedTemplateProject`
+- deterministic scene graph smoke fixtures cover three `scene-graph` segments
+  with a project-level `ShotLanguagePlan` and Visual IR v1 full-bleed,
+  node-graph/path/code/terminal, and lockup treatments; Remotion Studio exposes
+  `SceneGraphTemplatePreview`
+- local export uses the generic `ProjectVideo` Remotion composition; template
+  preview compositions remain available for focused Studio checks
 - optional local F5 runtime service is implemented with contract-smoke and
   real GPU-backed `F5_TTS_SERVICE_MODE=f5` modes
 - real F5 validation has passed direct service smoke, Next `/api/tts` adapter
@@ -235,7 +264,9 @@ Best next bounded slice:
 - behavior-preserving structure cleanup now has dedicated module boundaries for
   staged generation, TTS/F5 provider selection and fallback, frontend
   generation state, Remotion timeline flattening, and smoke entrypoints
-- use `npm run smoke:staged-live` for the provider-backed
+- add provider-backed Visual IR generation and bounded repair for
+  `primitive_scene_graph`, using the deterministic renderer vocabulary already
+  in place
   `POST /api/generate/staged` live smoke that combines MiniMax
   planner/compiler with real F5 narration; it skips when required credentials
   are missing
@@ -319,6 +350,14 @@ List Remotion compositions and load the deterministic staged smoke fixtures:
 ```bash
 cd /data/projects/labs/ai-video-studio
 docker compose run --rm web npm run smoke:staged-fixtures
+```
+
+Render representative scene graph stills:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts SceneGraphTemplatePreview /workspace/out/scene-graph-opener.png --frame=90 --scale=0.5'
+docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts SceneGraphTemplatePreview /workspace/out/scene-graph-process.png --frame=215 --scale=0.5'
+docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts SceneGraphTemplatePreview /workspace/out/scene-graph-closing.png --frame=340 --scale=0.5'
 ```
 
 Start the optional F5-TTS contract-smoke runtime:

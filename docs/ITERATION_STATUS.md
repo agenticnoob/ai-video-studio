@@ -1,6 +1,218 @@
 # Iteration Status
 
-Last updated: Stats dashboard template implementation
+Last updated: Scene graph provider output hardening
+
+## Latest continuation — Scene graph provider output hardening
+
+- Hardened MiniMax selected-template implementation parsing for provider
+  responses that wrap the implementation in a single `implementation`,
+  `result`, or `data` field. If the wrapped value is a JSON string, the parser
+  strips optional JSON fences and parses it before applying the selected
+  template schema.
+- Added bounded SceneGraph input normalization for common provider near-misses
+  while keeping final schema validation as the gate:
+  - `browser-window` placeholder layers receive bounded default `title` and
+    `url` values when omitted.
+  - invalid `browser-window` layout values fall back to `center`.
+  - `node-graph` layer layout aliases such as `node-graph` and
+    `path-horizontal` normalize to `pipeline`.
+  - `line-path.path` normalizes to `line-path.points`.
+  - `code-panel` and `terminal-panel` receive bounded fallback titles when
+    omitted.
+- Kept the repair bounded: no arbitrary style objects, generated TSX, imports,
+  package installation, filesystem/network/env access, or eval path was added.
+- Adjusted `normalizeProject()` typing so the `scene-graph` Zod preprocess
+  does not widen template implementation input types into unsafe object
+  spreads.
+
+Validation performed:
+- `docker compose run --rm web bash -lc 'npx prettier src/lib/minimax/parse-template-implementation.ts src/lib/project-schema.ts src/lib/scene-graph-schema.ts --write'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `git diff --check`
+
+## Previous continuation — Visual IR compiler full roadmap
+
+- Added `docs/VISUAL_IR_COMPILER_ROADMAP.md` as the full expert-derived target
+  plan, beyond the bounded Scene Graph Visual IR v1 deterministic slice.
+- The roadmap defines the complete phased architecture:
+  - templates as `template_macro`
+  - `scene-graph` as `primitive_scene_graph` / Visual IR compiler path
+  - future `procedural_generator`
+  - future `media_asset_composite`
+  - future restricted `generated_component` escape hatch
+  - review/repair loop
+  - eventual micro-template memory
+- Updated `AGENTS.md`, `README.md`, `docs/FINAL_PRODUCT_GOAL.md`,
+  `docs/FUTURE_DIRECTION_NOTES.md`, and
+  `docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md` to point to the full roadmap.
+- Clarified that the next recommended bounded phase after deterministic Visual
+  IR v1 is Visual IR Generation v1 for `primitive_scene_graph` only, before
+  broader render strategy routing or codegen escape hatches.
+
+Validation performed for this documentation slice:
+- `docker compose run --rm web bash -lc 'npx prettier AGENTS.md README.md docs/FINAL_PRODUCT_GOAL.md docs/FUTURE_DIRECTION_NOTES.md docs/ITERATION_STATUS.md docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md docs/VISUAL_IR_COMPILER_ROADMAP.md --write'`
+- `git diff --check`
+
+## Latest continuation — Scene graph Visual IR v1 deterministic slice
+
+- Implemented the bounded Scene Graph Visual IR v1 deterministic visual-quality
+  slice without adding provider-backed LLM generation, media ingestion,
+  timeline editing, persistence, or unrestricted generated TSX.
+- Extended `src/lib/scene-graph-schema.ts` with the first render strategy
+  vocabulary, composition/layout presets, motion presets, and bounded
+  technical-video layer primitives. The active accepted strategy for this
+  template remains `primitive_scene_graph`; roadmap strategies such as
+  `generated_component` are not executable in this slice.
+- Added scene-graph internal runtime primitives under
+  `src/templates/scene-graph/primitives.tsx` for `NodeGraph`, `LinePath`,
+  `CodePanel`, `TerminalPanel`, `BrowserWindow`, and `Cursor`, plus runtime
+  handling for text, rich text, shape, and placeholder image-plane layers.
+  These are template internals, not new registered templates.
+- Reworked the deterministic `SceneGraphTemplatePreview` fixture so opener,
+  process, and closing shots use full-bleed/beam/path/cursor, node-graph plus
+  code/terminal, and final lockup treatments instead of the previous shared
+  card-panel look.
+- Kept `SceneGraphTemplatePreview` rendering through the shared `ProjectVideo`
+  composition path and kept the generic `ProjectVideo` export composition
+  registered.
+- Updated scene-graph template metadata and editor controls for the new Visual
+  IR vocabulary while keeping segment-owned narration audio/captions outside
+  template `implementation`.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc 'npx prettier src/lib/scene-graph-schema.ts src/templates/scene-graph/definition.ts src/templates/scene-graph/editor.tsx src/templates/scene-graph/runtime.tsx src/templates/scene-graph/primitives.tsx src/lib/staged-smoke-fixtures.ts src/remotion/Root.tsx --write'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts SceneGraphTemplatePreview /workspace/out/scene-graph-opener.png --frame=90 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts SceneGraphTemplatePreview /workspace/out/scene-graph-process.png --frame=215 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts SceneGraphTemplatePreview /workspace/out/scene-graph-closing.png --frame=340 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion render src/remotion/index.ts ProjectVideo /workspace/out/project-video-export-smoke.mp4 --log=error'`
+- `git diff --check`
+
+Next recommended bounded slice:
+- add provider-backed Visual IR generation and bounded repair for
+  `primitive_scene_graph` only, using the new presets and layer vocabulary.
+- keep `generated_component` as a future restricted escape hatch, not the
+  current path.
+
+## Previous continuation — Scene graph Visual IR v1 planning
+
+- Reframed the next visual-quality direction around the expert conclusion that
+  templates provide stability but cannot cover open-ended expression.
+- Updated the roadmap so fixed registered templates are treated as
+  macro/preset paths, while `scene-graph` becomes the first bounded Visual IR
+  compiler path.
+- Added `docs/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md` as the next Goal-mode target:
+  improve the current card-like `scene-graph` renderer with render strategy
+  vocabulary, layout/motion presets, and technical-video primitives such as
+  `NodeGraph`, `LinePath`, `CodePanel`, `TerminalPanel`, and `BrowserWindow`.
+- Added `docs/HANDOFF_SCENE_GRAPH_VISUAL_IR_SUBAGENT.md` for
+  Subagent-Driven execution of that next slice.
+- Kept the next slice explicitly bounded: no provider-backed LLM generation,
+  no media library, no timeline editor, no persistence, and no unrestricted
+  generated TSX.
+
+Suggested next Goal-mode objective:
+
+```txt
+Implement the Scene Graph Visual IR v1 goal described in
+docs/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md: upgrade the existing scene-graph
+renderer from a card-like MVP into a bounded Visual IR compiler path with
+renderStrategy vocabulary, layout/motion presets, technical-video primitives
+such as NodeGraph/LinePath/CodePanel/TerminalPanel, and deterministic
+opener/process/closing fixture stills that look visibly less like PPT, while
+preserving VideoProject preview/export compatibility and avoiding LLM
+generation, media library work, timeline editing, persistence, and unrestricted
+generated TSX.
+```
+
+Validation performed for this documentation slice:
+- `docker compose run --rm web bash -lc 'npx prettier AGENTS.md README.md docs/FINAL_PRODUCT_GOAL.md docs/FUTURE_DIRECTION_NOTES.md docs/ITERATION_STATUS.md docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md docs/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md docs/HANDOFF_SCENE_GRAPH_VISUAL_IR_SUBAGENT.md --write'`
+- `git diff --check`
+
+## Latest continuation — Scene graph MVP implementation
+
+- Implemented the bounded Scene Graph MVP without adding LLM generation,
+  persistence, media-library, timeline-editor, or unrestricted TSX paths.
+- Added `src/lib/scene-graph-schema.ts` with validated `ShotLanguagePlan`,
+  `SceneGraph`, `SceneLayer`, `SceneBeat`, and `SceneTransition` contracts.
+  The schema keeps layer counts bounded, text fields capped, beat targets tied
+  to layer ids, and frame values segment-local.
+- Added a registered `scene-graph` template under
+  `src/templates/scene-graph/` with server-safe metadata, JSON schema,
+  compact editor, and runtime bundle registration through the existing
+  `ids` / `registered-definitions` / `registered-bundles` architecture.
+- Added a `UniversalSceneRenderer` MVP that renders bounded scene graph data
+  with frame-driven Remotion motion, depth backgrounds, kinetic titles,
+  callouts, metric highlights, process steps, camera movement, and
+  caption-safe reserve layers. It does not evaluate generated code.
+- Added optional project-level `visualLanguage` on `VideoProject` as the small
+  home for `ShotLanguagePlan`, while keeping segment narration audio and
+  captions outside template-specific `implementation`.
+- Added deterministic scene graph fixture coverage in
+  `src/lib/staged-smoke-fixtures.ts`: three `scene-graph` segments
+  (opener/process/closing), project-level `ShotLanguagePlan`, and
+  segment-owned narration/captions.
+- Added `SceneGraphTemplatePreview` in `src/remotion/Root.tsx` so preview,
+  still rendering, and export selection continue to use the same
+  `VideoProject` payload path through `ProjectVideo`.
+- Restored the generic `ProjectVideo` Remotion composition used by local
+  export after the Studio preview list had been narrowed to template-specific
+  preview compositions.
+- Used Subagent-Driven only for bounded read-only audits:
+  - template wiring map
+  - fixture/smoke/docs consistency audit
+  Main-agent implementation, architecture decisions, visual review, and
+  validation remained centralized.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc 'npx prettier src/lib/scene-graph-schema.ts src/lib/project-schema.ts src/lib/template-registry.ts src/lib/staged-smoke-fixtures.ts src/templates/ids.ts src/templates/registry.ts src/templates/registered-definitions.ts src/templates/registered-bundles.ts src/templates/scene-graph/schema.ts src/templates/scene-graph/definition.ts src/templates/scene-graph/index.ts src/templates/scene-graph/editor.tsx src/templates/scene-graph/runtime.tsx src/remotion/Root.tsx --write'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion render src/remotion/index.ts ProjectVideo /workspace/out/project-video-export-smoke.mp4 --log=error'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts SceneGraphTemplatePreview /workspace/out/scene-graph-opener.png --frame=90 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts SceneGraphTemplatePreview /workspace/out/scene-graph-process.png --frame=215 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts SceneGraphTemplatePreview /workspace/out/scene-graph-closing.png --frame=340 --scale=0.5'`
+
+Next recommended bounded slice:
+- add a scene graph compiler facade only after keeping deterministic renderer
+  quality stable
+- pass `ShotLanguagePlan`, segment context, real narration duration, and
+  allowed layer/transition schema to the provider
+- keep bounded validation/repair/fallback diagnostics visible
+
+## Previous continuation — Scene graph video language plan
+
+- Documented the next proposed visual-quality direction in
+  `docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md`.
+- The plan responds to the current template ceiling: the staged pipeline is
+  structurally useful, but fixed registered templates can still produce video
+  that feels like animated cards or dashboards.
+- Recommended direction:
+  - keep `VideoProject`, `VideoSegment`, segment-owned narration audio, and
+    segment-owned captions as stable product boundaries
+  - keep existing registered templates as fallback and specialized paths
+  - add a controlled `ShotLanguagePlan` for full-video visual continuity
+  - add per-segment `SceneGraph` payloads for shot composition, camera motion,
+    layers, beats, and transitions
+  - compile validated scene graphs through a stable Remotion renderer instead
+    of letting the LLM write unrestricted TSX
+- Synchronized the top-level roadmap entry in `docs/FINAL_PRODUCT_GOAL.md`,
+  the future-direction notes, and the README product-direction summary.
+- Added `docs/GOAL_SCENE_GRAPH_MVP.md` as the concrete first implementation
+  target and `docs/HANDOFF_SCENE_GRAPH_SUBAGENT.md` as the Subagent-Driven
+  execution handoff.
+- This is a documentation/planning slice only; no runtime schema, renderer, or
+  generation code has been changed yet.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc 'npx prettier AGENTS.md README.md docs/ITERATION_STATUS.md docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md docs/GOAL_SCENE_GRAPH_MVP.md docs/HANDOFF_SCENE_GRAPH_SUBAGENT.md --write'`
+- `git diff --check`
 
 ## Latest continuation — Stats dashboard template implementation
 

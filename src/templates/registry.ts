@@ -1,10 +1,20 @@
-import { SCRIPTED_TEMPLATE_ID, SPOTLIGHT_TEMPLATE_ID, STATS_DASHBOARD_TEMPLATE_ID } from "./ids";
+import {
+  SCENE_GRAPH_TEMPLATE_ID,
+  SCRIPTED_TEMPLATE_ID,
+  SPOTLIGHT_TEMPLATE_ID,
+  STATS_DASHBOARD_TEMPLATE_ID,
+} from "./ids";
 import {
   registeredTemplateDefinitions,
   type RegisteredTemplateDefinition,
 } from "./registered-definitions";
 
-export { SCRIPTED_TEMPLATE_ID, SPOTLIGHT_TEMPLATE_ID, STATS_DASHBOARD_TEMPLATE_ID };
+export {
+  SCENE_GRAPH_TEMPLATE_ID,
+  SCRIPTED_TEMPLATE_ID,
+  SPOTLIGHT_TEMPLATE_ID,
+  STATS_DASHBOARD_TEMPLATE_ID,
+};
 
 export type TemplateId = RegisteredTemplateDefinition["id"];
 

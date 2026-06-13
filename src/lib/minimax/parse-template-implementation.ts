@@ -2,6 +2,11 @@ import type { z } from "zod";
 
 import { getTemplateDefinition, type TemplateId } from "../template-registry";
 
+const FENCE_PATTERN = /^```(?:json)?\s*|^```\s*$/gm;
+const WRAPPED_IMPLEMENTATION_KEYS = ["implementation", "result", "data"] as const;
+
+const stripFences = (raw: string): string => raw.replace(FENCE_PATTERN, "").trim();
+
 const formatIssues = (issues: z.ZodIssue[]): string =>
   issues
     .slice(0, 5)
@@ -18,13 +23,37 @@ export class TemplateImplementationParseError extends Error {
   }
 }
 
+const parseStringCandidate = (value: string): unknown | null => {
+  const trimmed = stripFences(value);
+  if (!trimmed.startsWith("{")) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    return null;
+  }
+};
+
 const unwrapImplementationCandidate = (value: unknown): unknown | null => {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
     return null;
   }
 
   const record = value as Record<string, unknown>;
-  return record["implementation"] ?? null;
+  for (const key of WRAPPED_IMPLEMENTATION_KEYS) {
+    const candidate = record[key];
+    if (candidate === undefined) {
+      continue;
+    }
+    if (typeof candidate === "string") {
+      return parseStringCandidate(candidate);
+    }
+    return candidate;
+  }
+
+  return null;
 };
 
 export const parseTemplateImplementationToolCallArguments = (

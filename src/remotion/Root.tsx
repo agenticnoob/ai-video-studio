@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import { Composition } from "remotion";
 import { getProjectDuration, videoProjectSchema, type VideoProject } from "../lib/project-schema";
+import { sceneGraphSmokeProject } from "../lib/staged-smoke-fixtures";
 import { ProjectVideo } from "./ProjectVideo/ProjectVideo";
 
 const calculateVideoProjectMetadata = ({ props }: { props: VideoProject }) => {
@@ -17,6 +18,59 @@ const calculateVideoProjectMetadata = ({ props }: { props: VideoProject }) => {
 export const RemotionRoot: FC = () => {
   return (
     <>
+      <Composition
+        id="ProjectVideo"
+        component={ProjectVideo}
+        schema={videoProjectSchema}
+        defaultProps={{
+          meta: {
+            title: "Project Video",
+            fps: 30,
+            width: 1280,
+            height: 720,
+          },
+          brief: "Generic ProjectVideo render entrypoint.",
+          segments: [
+            {
+              id: "segment-1",
+              title: "Project render",
+              intent: "Provide the generic ProjectVideo composition used by local export.",
+              templateId: "scripted",
+              durationInFrames: 120,
+              implementation: {
+                meta: {
+                  title: "Project render",
+                  fps: 30,
+                  width: 1280,
+                  height: 720,
+                },
+                theme: {
+                  background: "#0f172a",
+                  panel: "rgba(255,255,255,0.08)",
+                  primary: "#38bdf8",
+                  secondary: "#f59e0b",
+                  text: "#f8fafc",
+                  muted: "#cbd5e1",
+                },
+                scenes: [
+                  {
+                    id: "project-render-title",
+                    type: "title",
+                    title: "ProjectVideo",
+                    subtitle: "Generic preview and export composition.",
+                    duration: 120,
+                  },
+                ],
+              },
+            },
+          ],
+        }}
+        durationInFrames={120}
+        fps={30}
+        width={1280}
+        height={720}
+        calculateMetadata={calculateVideoProjectMetadata}
+      />
       <Composition
         id="ScriptedTemplatePreview"
         component={ProjectVideo}
@@ -254,6 +308,17 @@ export const RemotionRoot: FC = () => {
           ],
         }}
         durationInFrames={180}
+        fps={30}
+        width={1280}
+        height={720}
+        calculateMetadata={calculateVideoProjectMetadata}
+      />
+      <Composition
+        id="SceneGraphTemplatePreview"
+        component={ProjectVideo}
+        schema={videoProjectSchema}
+        defaultProps={sceneGraphSmokeProject}
+        durationInFrames={390}
         fps={30}
         width={1280}
         height={720}

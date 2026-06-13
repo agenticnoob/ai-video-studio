@@ -406,6 +406,55 @@ The assembled `VideoProject` remains the top-level boundary for:
 
 The final architecture should use two levels of template context.
 
+The visual-quality direction is documented in
+`docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md`, with the full multi-phase roadmap in
+`docs/VISUAL_IR_COMPILER_ROADMAP.md` and the first deterministic implementation
+slice recorded in `docs/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md`.
+That plan does not replace this pipeline. It refines Stage D by treating
+registered templates as stable macro/preset paths and evolving `scene-graph`
+into the first bounded Visual IR compiler path. The aim is to compile
+structured shot language, layout presets, motion grammar, and video primitives
+into Remotion instead of limiting every expressive segment to fixed card-like
+template schemas or letting the LLM emit unrestricted TSX.
+
+In that direction, the system still preserves the same top-level contracts:
+
+- `VideoProject` remains the preview/edit/export boundary.
+- `VideoSegment` remains the editable unit.
+- narration audio and captions stay under segment-owned narration data.
+- real narration duration still drives visual timing.
+- existing registered templates remain valid fallback and specialized paths.
+
+The visual implementation target becomes:
+
+```txt
+StoryboardPlan + ShotLanguagePlan + narration duration
+  -> render strategy decision
+  -> template macro or primitive SceneGraph / Visual IR
+  -> bounded Remotion compiler
+```
+
+Initial render strategy vocabulary:
+
+- `template_macro`: stable registered templates such as `scripted`,
+  `spotlight`, and `stats-dashboard`.
+- `primitive_scene_graph`: the `scene-graph` Visual IR path for flexible
+  validated primitives. The deterministic v1 slice includes full-bleed, node
+  graph, path, code panel, terminal panel, browser-window placeholder, cursor,
+  and lockup treatments.
+- `procedural_generator`: future bounded modules for node graphs, paths, code
+  diffs, terminals, and other programmatic visuals.
+- `media_asset_composite`: future asset-backed compositions for screenshots,
+  images, videos, and generated media.
+- `generated_component`: future restricted escape hatch only; not the default
+  product path.
+
+The next recommended bounded phase after deterministic Visual IR v1 is Visual
+IR Generation v1 for `primitive_scene_graph` only. Render strategy routing,
+procedural generators, media asset composition, review/repair, and generated
+component escape hatch should land as later bounded phases in the order
+defined by `docs/VISUAL_IR_COMPILER_ROADMAP.md`.
+
 ### 4.1 Planner Template Manifest
 
 The planner receives a compact manifest for all registered templates.
