@@ -17,6 +17,25 @@ const boundedTextFallback = (value: unknown, fallback: string): string => {
   return trimmed ? trimmed.slice(0, 120) : fallback;
 };
 
+const normalizeBeat = (value: unknown): unknown => {
+  if (!isRecord(value)) {
+    return value;
+  }
+
+  const beat = { ...value };
+  if (
+    beat.action !== "reveal-layer" &&
+    beat.action !== "emphasize-text" &&
+    beat.action !== "advance-step" &&
+    beat.action !== "change-camera" &&
+    beat.action !== "exit-layer"
+  ) {
+    beat.action = "reveal-layer";
+  }
+
+  return beat;
+};
+
 const normalizeLayer = (value: unknown): unknown => {
   if (!isRecord(value) || typeof value.type !== "string") {
     return value;
@@ -32,7 +51,7 @@ const normalizeLayer = (value: unknown): unknown => {
   }
 
   if (layer.type === "node-graph") {
-    if (layer.layout === "node-graph" || layer.layout === "path-horizontal") {
+    if (layer.layout !== "horizontal" && layer.layout !== "radial" && layer.layout !== "pipeline") {
       layer.layout = "pipeline";
     }
   }
@@ -43,8 +62,31 @@ const normalizeLayer = (value: unknown): unknown => {
     }
   }
 
-  if (layer.type === "code-panel" || layer.type === "terminal-panel") {
+  if (layer.type === "code-panel") {
     layer.title = boundedTextFallback(layer.title ?? layer.label ?? layer.text, "Panel");
+    if (layer.layout !== "left" && layer.layout !== "right" && layer.layout !== "wide") {
+      layer.layout = "wide";
+    }
+  }
+
+  if (layer.type === "terminal-panel") {
+    layer.title = boundedTextFallback(layer.title ?? layer.label ?? layer.text, "Panel");
+    if (
+      layer.layout !== "left" &&
+      layer.layout !== "right" &&
+      layer.layout !== "bottom" &&
+      layer.layout !== "wide"
+    ) {
+      layer.layout = "wide";
+    }
+    if (
+      layer.status !== "idle" &&
+      layer.status !== "running" &&
+      layer.status !== "success" &&
+      layer.status !== "error"
+    ) {
+      layer.status = "running";
+    }
   }
 
   return layer;
@@ -61,6 +103,7 @@ const normalizeSceneGraphCandidate = (value: unknown): unknown => {
   return {
     ...value,
     layers: value.layers.map(normalizeLayer),
+    beats: Array.isArray(value.beats) ? value.beats.map(normalizeBeat) : value.beats,
   };
 };
 

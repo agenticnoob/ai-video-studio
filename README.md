@@ -32,7 +32,8 @@ Current implementation status:
   `docs/VISUAL_IR_COMPILER_ROADMAP.md`, with stable generation boundaries in
   `docs/FINAL_PRODUCT_GOAL.md`
 - the first storyboard-planning contract is in place as a server-safe schema,
-  compact registered-template manifest, and internal MiniMax planner facade
+  compact registered-template manifest, validated render strategy decisions,
+  and internal MiniMax planner facade
 - the first TTS asset boundary is in place for planned segments:
   `SegmentNarrationAsset`, internal `POST /api/tts`, local TTS audio artifacts
   under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts`, sidecar
@@ -48,6 +49,13 @@ Current implementation status:
 - the selected-template compiler and staged endpoint use planned segment
   narration, real TTS duration, and only the selected visual path's
   schema/rules to compile schema-valid `implementation`
+- planner-stage render strategy decisions are now explicit on each
+  `StoryboardSegmentPlan`: current executable strategies are bounded to
+  `template_macro` and `primitive_scene_graph`, with staged diagnostics showing
+  both the planned decision and the actual post-fallback render path
+- the first procedural-generator groundwork exists as a non-executable
+  `node-graph-flow` schema and diagnostics helper; it is not yet selectable by
+  planner/provider generation
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration
 - staged selected-segment regeneration reruns the target segment's planning,
@@ -108,6 +116,12 @@ Current modeling direction:
 - final generation should plan segments first, generate narration audio plus
   aligned captions per segment second, then compile the segment's selected
   visual implementation from the real audio duration and segment visual brief
+- each planned segment should carry an explicit `strategyDecision` before
+  compilation; future strategies remain roadmap-only until their compiler paths
+  are implemented
+- `procedural_generator` work should start from bounded deterministic module
+  contracts such as `node-graph-flow`, then add compiler/renderer execution
+  before exposing the strategy to planner output
 - `implementation` is template-specific; current registered templates are:
   - `scripted`: `VideoSpec` with internal `scenes`
   - `spotlight`: `SpotlightSpec` with `headline`, `subheadline`,
@@ -157,8 +171,10 @@ Current modeling direction:
   `docs/VISUAL_IR_COMPILER_ROADMAP.md`. It defines the complete phased target:
   `template_macro`, `primitive_scene_graph`, `procedural_generator`,
   `media_asset_composite`, future restricted `generated_component`,
-  review/repair, and eventual micro-template memory. The next recommended
-  bounded phase is Visual IR Generation v1 for `primitive_scene_graph`.
+  review/repair, and eventual micro-template memory. The current bounded
+  landing starts Procedural Generator v1 with non-executable
+  `node-graph-flow` schema groundwork while active generation remains limited
+  to executable `template_macro` and `primitive_scene_graph` paths.
 - `docs/FINAL_PRODUCT_GOAL.md` now documents the stable generation-pipeline
   contracts that support the Visual IR compiler roadmap; it is not the primary
   roadmap source.
@@ -211,7 +227,8 @@ Start from:
 Current code checkpoint:
 - active page generation uses `POST /api/generate/staged`
 - staged-generation groundwork: `StoryboardPlan` schema, planner manifest, and
-  internal MiniMax planner facade are implemented
+  internal MiniMax planner facade are implemented, including validated
+  per-segment strategy decisions
 - TTS groundwork: internal `POST /api/tts` can generate and serve a
   `SegmentNarrationAsset` for one planned segment when MiniMax TTS is
   configured

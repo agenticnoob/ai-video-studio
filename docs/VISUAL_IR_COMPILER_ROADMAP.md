@@ -196,6 +196,9 @@ Current landing:
 
 ### Phase 3: Render Strategy Decision v1
 
+Status: implemented as a bounded planner decision layer for currently
+executable strategies.
+
 Add a planner/compiler decision layer:
 
 ```ts
@@ -224,7 +227,25 @@ Acceptance:
 - diagnostics explain why a strategy was selected
 - no unsupported strategy silently falls through
 
+Current landing:
+
+- `StoryboardSegmentPlan.strategyDecision` records validated `strategy`,
+  `confidence`, `reason`, and `fallbackStrategy` data for every planned
+  segment.
+- The current executable strategy schema is intentionally limited to
+  `template_macro` and `primitive_scene_graph`.
+- `scene-graph` must choose `primitive_scene_graph` with an explicit
+  `template_macro` fallback; registered macro templates must choose
+  `template_macro`.
+- staged compiler diagnostics expose both the planner `strategyDecision` and
+  the actual post-fallback `renderStrategy`.
+- future strategies such as `procedural_generator`,
+  `media_asset_composite`, and `generated_component` remain roadmap vocabulary
+  until their compiler paths are implemented.
+
 ### Phase 4: Procedural Generator v1
+
+Status: started as non-executable schema groundwork for `node-graph-flow`.
 
 Add deterministic modules for recurring complex visuals that are too specific
 for generic layers but too useful to be full templates.
@@ -238,6 +259,25 @@ Candidate generators:
 - `timeline-sequence`
 - `data-flow-map`
 - `status-loop`
+
+Current groundwork:
+
+- `src/lib/procedural-generator-schema.ts` defines the first bounded
+  `node-graph-flow` generator contract.
+- The contract carries `renderStrategy: "procedural_generator"`, generator id,
+  duration, caption-safe intent, nodes, edges, beats, and explicit fallback
+  strategy.
+- deterministic smoke fixtures validate the schema and diagnostics helper.
+- This is not connected to planner strategy selection, provider compilation,
+  Remotion rendering, or export yet. Active generation still accepts only
+  `template_macro` and `primitive_scene_graph`.
+
+Next acceptance before enabling execution:
+
+- add a deterministic compiler/renderer path for `node-graph-flow`
+- expose diagnostics that distinguish planned generator output from fallback
+- define a bounded fallback to `primitive_scene_graph`, then `template_macro`
+- only then allow `procedural_generator` in `StoryboardPlan.strategyDecision`
 
 These modules should output bounded Visual IR or render through controlled
 runtime components, not arbitrary code.

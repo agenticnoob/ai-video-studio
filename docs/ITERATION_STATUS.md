@@ -1,6 +1,87 @@
 # Iteration Status
 
-Last updated: Visual IR Generation v1 Phase 2 landing
+Last updated: Procedural Generator v1 Phase 4 schema groundwork
+
+## Latest continuation — Procedural Generator v1 Phase 4 schema groundwork
+
+- Started Phase 4 with a bounded, non-executable procedural generator contract
+  instead of widening planner/provider generation.
+- Added `src/lib/procedural-generator-schema.ts` with the first
+  `node-graph-flow` generator schema:
+  - `renderStrategy: "procedural_generator"`
+  - deterministic `generatorId`
+  - duration and caption-safe metadata
+  - bounded nodes, edges, and beat actions
+  - explicit fallback strategy
+  - reference validation for unique node ids, edge endpoints, and beat targets
+- Added a small diagnostics helper that marks procedural generator payloads as
+  `executable: false` until a compiler/renderer path exists.
+- Added a deterministic smoke fixture for `node-graph-flow` so schema and
+  diagnostics shape are covered by `npm run smoke:staged-fixtures`.
+- Kept active generation unchanged: `StoryboardPlan.strategyDecision` still
+  accepts only `template_macro` and `primitive_scene_graph`; provider-backed
+  planner/compiler paths still cannot emit executable `procedural_generator`.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc 'npx prettier src/lib/procedural-generator-schema.ts src/lib/staged-smoke-fixtures.ts docs/VISUAL_IR_COMPILER_ROADMAP.md docs/ITERATION_STATUS.md docs/PRODUCT_ARCHITECTURE.md docs/FINAL_PRODUCT_GOAL.md docs/PRODUCT_REQUIREMENTS.md README.md --write'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `git diff --check`
+
+## Latest continuation — Render Strategy Decision v1 Phase 3 bounded landing
+
+- Added a validated planner-stage `strategyDecision` to every
+  `StoryboardSegmentPlan`, carrying `strategy`, `confidence`, `reason`, and
+  `fallbackStrategy`.
+- Kept the current executable strategy set intentionally bounded to
+  `template_macro` and `primitive_scene_graph`. Future roadmap strategies
+  (`procedural_generator`, `media_asset_composite`, and `generated_component`)
+  are still not accepted by the active schema or compiler path.
+- Added schema consistency checks so `scene-graph` segments must choose
+  `primitive_scene_graph`, while registered macro templates must choose
+  `template_macro`. This prevents unsupported or mismatched strategies from
+  silently falling through to template compilation.
+- Updated MiniMax storyboard planning and segment-revision prompts/tool schema
+  so provider-backed plans emit explicit strategy decisions before narration
+  and visual compilation.
+- Extended staged compiler diagnostics with the planner `strategyDecision`
+  while preserving `renderStrategy` as the actual post-fallback render path.
+  This makes scene-graph fallback visible as planned
+  `primitive_scene_graph` but actual `template_macro`.
+- Updated deterministic and live smoke plans to include explicit strategy
+  decisions, and tightened the live scene-graph smoke to assert the decision
+  and fallback intent.
+- Live provider validation exposed common SceneGraph near-misses for
+  code/terminal panel layout, terminal status, node-graph layout, and beat
+  action names. Extended the existing bounded SceneGraph normalization to map
+  those known invalid values to safe defaults while keeping final schema
+  validation as the gate.
+- Improved wrapped template-implementation parse diagnostics so provider
+  responses under `implementation`, `result`, or `data` report the wrapped
+  schema issues instead of only the outer wrapper error.
+- Made the provider-backed scene-graph live smoke retry the forced
+  `mode: "plan"` request once. The smoke still fails unless the final accepted
+  response remains `scene-graph` with actual `primitive_scene_graph` and no
+  fallback.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc 'npx prettier src/lib/storyboard-plan-schema.ts src/lib/minimax/tool-schema.ts src/lib/minimax/prompts.ts src/lib/staged-generation/segment.ts src/lib/staged-generation/pipeline.ts src/lib/staged-generation/diagnostics.ts src/lib/staged-smoke-fixtures.ts scripts/f5-tts-staged-smoke.mjs scripts/staged-live-smoke.mjs docs/VISUAL_IR_COMPILER_ROADMAP.md docs/ITERATION_STATUS.md docs/FINAL_PRODUCT_GOAL.md docs/PRODUCT_ARCHITECTURE.md docs/PRODUCT_REQUIREMENTS.md README.md --write'`
+- `docker compose run --rm web bash -lc 'npx prettier src/lib/scene-graph-schema.ts --write'`
+- `docker compose run --rm web bash -lc 'npx prettier src/lib/minimax/parse-template-implementation.ts --write'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `docker compose run --rm web bash -lc 'npm run start >/tmp/ai-video-studio-next.log 2>&1 & server_pid=$!; ready=0; for i in $(seq 1 45); do node -e "fetch(\"http://127.0.0.1:3000\").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" && ready=1 && break; sleep 1; done; if [ "$ready" != "1" ]; then cat /tmp/ai-video-studio-next.log; kill $server_pid >/dev/null 2>&1 || true; exit 1; fi; npm run smoke:staged-live; status=$?; kill $server_pid >/dev/null 2>&1 || true; exit $status'`
+  - live smoke passed a normal brief request with F5 narration/captions,
+    planner `strategyDecision` diagnostics, compiler diagnostics, and range
+    audio
+  - live smoke passed a forced `mode: "plan"` scene-graph request with planned
+    `strategyDecision.strategy: "primitive_scene_graph"`, fallback intent
+    `template_macro`, actual `renderStrategy: "primitive_scene_graph"`, and no
+    fallback
 
 ## Latest continuation — Visual IR Generation v1 Phase 2 landing
 

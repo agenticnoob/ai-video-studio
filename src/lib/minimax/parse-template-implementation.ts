@@ -86,6 +86,12 @@ export const parseTemplateImplementationToolCallArguments = (
     if (retry.success) {
       return retry.data;
     }
+    throw new TemplateImplementationParseError(
+      `Generated "${templateId}" wrapped implementation failed schema validation: ${formatIssues(
+        retry.error.issues,
+      )}; raw=${head}`,
+      argumentsString,
+    );
   }
 
   throw new TemplateImplementationParseError(

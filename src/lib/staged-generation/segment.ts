@@ -1,6 +1,11 @@
 import { segmentNarrationFromAsset, type SegmentNarrationAsset } from "../narration-asset-schema";
 import { videoSegmentSchema, type VideoSegment } from "../project-schema";
-import type { StoryboardPlan, StoryboardSegmentPlan } from "../storyboard-plan-schema";
+import type {
+  RenderStrategy,
+  StoryboardPlan,
+  StoryboardSegmentPlan,
+  StrategyDecision,
+} from "../storyboard-plan-schema";
 import { generateSegmentNarrationAsset } from "../tts";
 import type { TtsProviderId } from "../tts/config";
 import type { VoiceCloneRequest } from "../tts/voice-references";
@@ -25,8 +30,9 @@ export type CompilePlannedSegmentResult = {
   compilerFallback?: CompilePlannedSegmentFallback;
   narration: SegmentNarrationAsset;
   repaired: boolean;
-  renderStrategy: "primitive_scene_graph" | "template_macro";
+  renderStrategy: RenderStrategy;
   segment: VideoSegment;
+  strategyDecision: StrategyDecision;
 };
 
 export type CompilePlannedSegmentFallback = {
@@ -52,9 +58,7 @@ const getTargetDurationInFrames = (
   return Math.max(narration.durationInFrames, recommended.min);
 };
 
-const getCompileRenderStrategy = (
-  templateId: TemplateId,
-): CompilePlannedSegmentResult["renderStrategy"] =>
+const getCompileRenderStrategy = (templateId: TemplateId): RenderStrategy =>
   templateId === SCENE_GRAPH_TEMPLATE_ID ? "primitive_scene_graph" : "template_macro";
 
 export const canFallbackToExistingSegment = (segment: StoryboardSegmentPlan): boolean =>
@@ -69,10 +73,12 @@ const getFallbackReason = (error: unknown, fallback: string): string =>
 export const createExistingSegmentCompileFallback = ({
   error,
   narration,
+  plannedSegment,
   segment,
 }: {
   error: unknown;
   narration: SegmentNarrationAsset;
+  plannedSegment: StoryboardSegmentPlan;
   segment: VideoSegment;
 }): CompilePlannedSegmentResult => {
   const attempts = getCompilerAttemptsFromError(error);
@@ -88,6 +94,7 @@ export const createExistingSegmentCompileFallback = ({
     repaired: attempts > 1,
     renderStrategy: getCompileRenderStrategy(segment.templateId),
     segment,
+    strategyDecision: plannedSegment.strategyDecision,
   };
 };
 
@@ -159,6 +166,7 @@ export const createTemplateMacroCompileFallback = ({
     repaired: attempts > 1,
     renderStrategy: "template_macro",
     segment: videoSegment,
+    strategyDecision: segment.strategyDecision,
   };
 };
 
@@ -188,6 +196,7 @@ export const compilePlannedSegment = async ({
     repaired: compiled.repaired,
     renderStrategy: getCompileRenderStrategy(segment.templateId),
     segment: videoSegment,
+    strategyDecision: segment.strategyDecision,
   };
 };
 

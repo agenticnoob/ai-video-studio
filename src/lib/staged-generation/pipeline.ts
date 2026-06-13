@@ -55,6 +55,7 @@ export type GenerateStagedSegmentRevisionResult = {
   repaired: boolean;
   renderStrategy: CompilePlannedSegmentResult["renderStrategy"];
   segment: VideoSegment;
+  strategyDecision: CompilePlannedSegmentResult["strategyDecision"];
 };
 
 export type StagedGenerationProgressReporter = (
@@ -163,6 +164,7 @@ export const generateStagedSegmentRevision = async ({
       compiled = createExistingSegmentCompileFallback({
         error,
         narration,
+        plannedSegment,
         segment: project.segments[segmentIndex],
       });
       onProgress?.(
@@ -202,6 +204,7 @@ export const generateStagedSegmentRevision = async ({
     repaired: compiled.repaired,
     renderStrategy: compiled.renderStrategy,
     segment: compiled.segment,
+    strategyDecision: compiled.strategyDecision,
   };
 };
 

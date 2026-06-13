@@ -41,6 +41,12 @@ process.stdout.write(JSON.stringify({
         purpose: "Verify F5-TTS narration provider integration.",
         templateId: "spotlight",
         templateReason: "Template choice is irrelevant for the TTS-only smoke.",
+        strategyDecision: {
+          strategy: "template_macro",
+          confidence: 0.8,
+          reason: "A stable macro template is enough for a TTS-only smoke.",
+          fallbackStrategy: "template_macro",
+        },
         narration: {
           text,
           tone: "clear",

@@ -151,6 +151,16 @@ const assertSceneGraphVisualIr = (body) => {
   if (compiler.renderStrategy !== "primitive_scene_graph") {
     fail(`Expected primitive_scene_graph diagnostics, received ${compiler.renderStrategy}`);
   }
+  if (compiler.strategyDecision?.strategy !== "primitive_scene_graph") {
+    fail(
+      `Expected primitive_scene_graph strategy decision, received ${compiler.strategyDecision?.strategy}`,
+    );
+  }
+  if (compiler.strategyDecision?.fallbackStrategy !== "template_macro") {
+    fail(
+      `Expected template_macro fallback decision, received ${compiler.strategyDecision?.fallbackStrategy}`,
+    );
+  }
   if (compiler.fallback) {
     fail(`SceneGraph smoke unexpectedly fell back: ${JSON.stringify(compiler.fallback)}`);
   }
@@ -173,6 +183,12 @@ const buildSceneGraphPlan = () => ({
       templateId: "scene-graph",
       templateReason:
         "This smoke must exercise provider-backed primitive_scene_graph generation rather than a macro template.",
+      strategyDecision: {
+        strategy: "primitive_scene_graph",
+        confidence: 0.95,
+        reason: "The smoke explicitly targets bounded Visual IR generation.",
+        fallbackStrategy: "template_macro",
+      },
       narration: {
         text: "The compiler turns a planned segment into a validated scene graph, then renders it through the same project video path.",
         tone: "clear",
@@ -184,6 +200,43 @@ const buildSceneGraphPlan = () => ({
     },
   ],
 });
+
+const requestSceneGraphSmoke = async () => {
+  let lastError;
+
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    const body = await requestJson(`${NEXT_ORIGIN}/api/generate/staged`, {
+      method: "POST",
+      body: JSON.stringify({
+        mode: "plan",
+        provider: "f5-tts",
+        plan: buildSceneGraphPlan(),
+      }),
+    });
+
+    try {
+      const segments = body.project?.segments;
+      if (!Array.isArray(segments) || segments.length !== 1) {
+        fail("SceneGraph smoke response did not include exactly one segment");
+      }
+      assertDiagnostics(body.diagnostics, 1);
+      assertSceneGraphVisualIr(body);
+      await assertSegmentNarration(segments[0]);
+      return { body, segments };
+    } catch (error) {
+      lastError = error;
+      if (attempt < 2) {
+        console.log(
+          `SceneGraph smoke attempt ${attempt} failed; retrying once: ${
+            error instanceof Error ? error.message : error
+          }`,
+        );
+      }
+    }
+  }
+
+  throw lastError;
+};
 
 const run = async () => {
   if (skipIfMissingConfig()) {
@@ -215,22 +268,7 @@ const run = async () => {
   }
 
   console.log("Requesting live scene-graph Visual IR staged project");
-  const sceneGraphBody = await requestJson(`${NEXT_ORIGIN}/api/generate/staged`, {
-    method: "POST",
-    body: JSON.stringify({
-      mode: "plan",
-      provider: "f5-tts",
-      plan: buildSceneGraphPlan(),
-    }),
-  });
-
-  const sceneGraphSegments = sceneGraphBody.project?.segments;
-  if (!Array.isArray(sceneGraphSegments) || sceneGraphSegments.length !== 1) {
-    fail("SceneGraph smoke response did not include exactly one segment");
-  }
-  assertDiagnostics(sceneGraphBody.diagnostics, 1);
-  assertSceneGraphVisualIr(sceneGraphBody);
-  await assertSegmentNarration(sceneGraphSegments[0]);
+  const { body: sceneGraphBody, segments: sceneGraphSegments } = await requestSceneGraphSmoke();
 
   const summary = {
     audioSources: segments.map((segment) => segment.narration.audio.src),
@@ -241,6 +279,7 @@ const run = async () => {
       audioSource: sceneGraphSegments[0].narration.audio.src,
       compiler: sceneGraphBody.diagnostics.compiler,
       renderStrategy: sceneGraphSegments[0].implementation.renderStrategy,
+      strategyDecision: sceneGraphBody.diagnostics.compiler[0]?.strategyDecision,
       templateId: sceneGraphSegments[0].templateId,
     },
     segmentCount: segments.length,

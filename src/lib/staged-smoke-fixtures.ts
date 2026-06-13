@@ -1,6 +1,10 @@
 import { segmentNarrationFromAsset, type SegmentNarrationAsset } from "./narration-asset-schema";
 import { normalizeSegmentCaptions } from "./captions";
 import {
+  buildProceduralGeneratorDiagnostics,
+  nodeGraphFlowGeneratorSchema,
+} from "./procedural-generator-schema";
+import {
   videoProjectSchema,
   videoSegmentSchema,
   type VideoProject,
@@ -43,6 +47,20 @@ const createNarrationAsset = ({
   }),
 });
 
+const templateMacroStrategyDecision = {
+  strategy: "template_macro",
+  confidence: 0.9,
+  reason: "A registered macro template is sufficient for this planned segment.",
+  fallbackStrategy: "template_macro",
+} as const;
+
+const primitiveSceneGraphStrategyDecision = {
+  strategy: "primitive_scene_graph",
+  confidence: 0.92,
+  reason: "This segment needs bounded Visual IR primitives instead of a fixed macro.",
+  fallbackStrategy: "template_macro",
+} as const;
+
 export const mixedTemplateStoryboardPlan: StoryboardPlan = storyboardPlanSchema.parse({
   title: "Mixed Template Staged Smoke",
   brief: "Show a two-part product update with an explanatory setup and a focused recap.",
@@ -56,6 +74,7 @@ export const mixedTemplateStoryboardPlan: StoryboardPlan = storyboardPlanSchema.
       purpose: "Emphasize the key takeaway after the setup.",
       templateId: SPOTLIGHT_TEMPLATE_ID,
       templateReason: "A focused card is best for a short memorable recap.",
+      strategyDecision: templateMacroStrategyDecision,
       narration: {
         text: "The result is a faster staged path that keeps edits local and exports cleanly.",
         tone: "confident",
@@ -70,6 +89,7 @@ export const mixedTemplateStoryboardPlan: StoryboardPlan = storyboardPlanSchema.
       purpose: "Explain why staged generation matters before the recap.",
       templateId: SCRIPTED_TEMPLATE_ID,
       templateReason: "A scripted sequence can introduce the idea with multiple beats.",
+      strategyDecision: templateMacroStrategyDecision,
       narration: {
         text: "Plan the segment, generate narration, compile the template, then assemble the project.",
         tone: "clear",
@@ -396,6 +416,53 @@ const assertStatsDashboardFixture = (): void => {
 };
 
 assertStatsDashboardFixture();
+
+export const nodeGraphFlowProceduralGeneratorFixture = nodeGraphFlowGeneratorSchema.parse({
+  generatorId: "node-graph-flow",
+  renderStrategy: "procedural_generator",
+  durationInFrames: 180,
+  captionSafeZone: true,
+  fallbackStrategy: "primitive_scene_graph",
+  fallbackReason: "Until procedural_generator is executable, fall back to scene-graph Visual IR.",
+  title: "Generation pipeline flow",
+  summary: "A deterministic node graph for recurring technical workflow visuals.",
+  direction: "left-to-right",
+  nodes: [
+    { id: "input", label: "Brief", detail: "user intent", lane: "input", status: "success" },
+    { id: "plan", label: "Plan", detail: "storyboard", lane: "plan", status: "success" },
+    { id: "voice", label: "Voice", detail: "F5 captions", lane: "build", status: "active" },
+    { id: "visual", label: "Visual", detail: "bounded output", lane: "build", status: "idle" },
+    { id: "export", label: "Export", detail: "ProjectVideo", lane: "output", status: "idle" },
+  ],
+  edges: [
+    { from: "input", to: "plan", status: "success" },
+    { from: "plan", to: "voice", status: "success" },
+    { from: "voice", to: "visual", status: "active" },
+    { from: "visual", to: "export", status: "idle" },
+  ],
+  beats: [
+    { atFrame: 0, nodeId: "input", action: "reveal" },
+    { atFrame: 32, nodeId: "plan", action: "complete" },
+    { atFrame: 68, nodeId: "voice", action: "activate" },
+    { atFrame: 112, nodeId: "visual", action: "activate" },
+  ],
+});
+
+const assertProceduralGeneratorFixture = (): void => {
+  const diagnostics = buildProceduralGeneratorDiagnostics(nodeGraphFlowProceduralGeneratorFixture);
+
+  if (nodeGraphFlowProceduralGeneratorFixture.renderStrategy !== "procedural_generator") {
+    throw new Error("Procedural generator fixture expected procedural_generator strategy.");
+  }
+  if (diagnostics.executable !== false) {
+    throw new Error("Procedural generator fixture should not be marked executable yet.");
+  }
+  if (diagnostics.fallbackStrategy !== "primitive_scene_graph") {
+    throw new Error("Procedural generator fixture expected primitive_scene_graph fallback.");
+  }
+};
+
+assertProceduralGeneratorFixture();
 
 export const sceneGraphShotLanguagePlan = {
   visualStyle: "Cinematic product explainer with deep blue surfaces and amber continuity marks.",
@@ -864,6 +931,7 @@ const assertSceneGraphCompilerDiagnosticsFixture = (): void => {
         repaired: true,
         renderStrategy: "primitive_scene_graph",
         segment: sceneGraphSmokeProject.segments[0],
+        strategyDecision: primitiveSceneGraphStrategyDecision,
       },
       {
         compilerAttempts: 2,
@@ -879,6 +947,7 @@ const assertSceneGraphCompilerDiagnosticsFixture = (): void => {
         repaired: true,
         renderStrategy: "template_macro",
         segment: templateMacroFallbackSegment,
+        strategyDecision: primitiveSceneGraphStrategyDecision,
       },
     ],
   });

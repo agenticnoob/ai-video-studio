@@ -1,10 +1,24 @@
 import { z } from "zod";
 
-import { registeredTemplateIds, type TemplateId } from "./template-registry";
+import {
+  SCENE_GRAPH_TEMPLATE_ID,
+  registeredTemplateIds,
+  type TemplateId,
+} from "./template-registry";
 
 export const MAX_STORYBOARD_SEGMENTS = 6;
 
 export const templateIdSchema = z.enum(registeredTemplateIds as [TemplateId, ...TemplateId[]]);
+export const renderStrategySchema = z.enum(["template_macro", "primitive_scene_graph"]);
+
+export const strategyDecisionSchema = z
+  .object({
+    strategy: renderStrategySchema,
+    confidence: z.number().min(0).max(1),
+    reason: z.string().trim().min(1).max(600),
+    fallbackStrategy: renderStrategySchema,
+  })
+  .strict();
 
 export const storyboardNarrationPlanSchema = z
   .object({
@@ -21,12 +35,33 @@ export const storyboardSegmentPlanSchema = z
     purpose: z.string().trim().min(1).max(1000),
     templateId: templateIdSchema,
     templateReason: z.string().trim().min(1).max(1000),
+    strategyDecision: strategyDecisionSchema,
     narration: storyboardNarrationPlanSchema,
     visualBrief: z.string().trim().min(1).max(1200),
     pacingHint: z.string().trim().min(1).max(300).optional(),
     expectedDurationSeconds: z.number().positive().max(120).optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((segment, ctx) => {
+    const expectedStrategy =
+      segment.templateId === SCENE_GRAPH_TEMPLATE_ID ? "primitive_scene_graph" : "template_macro";
+
+    if (segment.strategyDecision.strategy !== expectedStrategy) {
+      ctx.addIssue({
+        code: "custom",
+        message: `strategyDecision.strategy must be "${expectedStrategy}" for templateId "${segment.templateId}".`,
+        path: ["strategyDecision", "strategy"],
+      });
+    }
+
+    if (segment.strategyDecision.fallbackStrategy !== "template_macro") {
+      ctx.addIssue({
+        code: "custom",
+        message: 'strategyDecision.fallbackStrategy must be "template_macro" in this phase.',
+        path: ["strategyDecision", "fallbackStrategy"],
+      });
+    }
+  });
 
 export const storyboardPlanSchema = z
   .object({
@@ -76,5 +111,7 @@ export const storyboardPlanSchema = z
   });
 
 export type StoryboardNarrationPlan = z.infer<typeof storyboardNarrationPlanSchema>;
+export type RenderStrategy = z.infer<typeof renderStrategySchema>;
+export type StrategyDecision = z.infer<typeof strategyDecisionSchema>;
 export type StoryboardSegmentPlan = z.infer<typeof storyboardSegmentPlanSchema>;
 export type StoryboardPlan = z.infer<typeof storyboardPlanSchema>;

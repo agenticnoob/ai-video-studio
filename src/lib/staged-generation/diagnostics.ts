@@ -14,6 +14,12 @@ type CompilerDiagnostics = {
   repaired: boolean;
   renderStrategy: "primitive_scene_graph" | "template_macro";
   segmentId: string;
+  strategyDecision: {
+    confidence: number;
+    fallbackStrategy: "primitive_scene_graph" | "template_macro";
+    reason: string;
+    strategy: "primitive_scene_graph" | "template_macro";
+  };
   templateId: string;
 };
 
@@ -48,6 +54,7 @@ export const buildStagedProjectDiagnostics = (
       repaired: segment.repaired,
       renderStrategy: segment.renderStrategy,
       segmentId: segment.segment.id,
+      strategyDecision: segment.strategyDecision,
       templateId: segment.segment.templateId,
     })),
     captionSegmentCount: result.segments.filter(
@@ -83,6 +90,7 @@ export const buildStagedSegmentRevisionDiagnostics = (
         repaired: result.repaired,
         renderStrategy: result.renderStrategy,
         segmentId: result.segment.id,
+        strategyDecision: result.strategyDecision,
         templateId: result.segment.templateId,
       },
     ],

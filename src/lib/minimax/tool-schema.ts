@@ -79,6 +79,23 @@ export const EMIT_STORYBOARD_PLAN_TOOL: MinimaxTool = {
               purpose: { type: "string" },
               templateId: { type: "string", enum: templateIds },
               templateReason: { type: "string" },
+              strategyDecision: {
+                type: "object",
+                additionalProperties: false,
+                properties: {
+                  strategy: {
+                    type: "string",
+                    enum: ["template_macro", "primitive_scene_graph"],
+                  },
+                  confidence: { type: "number", minimum: 0, maximum: 1 },
+                  reason: { type: "string" },
+                  fallbackStrategy: {
+                    type: "string",
+                    enum: ["template_macro", "primitive_scene_graph"],
+                  },
+                },
+                required: ["strategy", "confidence", "reason", "fallbackStrategy"],
+              },
               narration: {
                 type: "object",
                 additionalProperties: false,
@@ -98,6 +115,7 @@ export const EMIT_STORYBOARD_PLAN_TOOL: MinimaxTool = {
               "purpose",
               "templateId",
               "templateReason",
+              "strategyDecision",
               "narration",
               "visualBrief",
             ],

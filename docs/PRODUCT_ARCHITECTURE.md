@@ -16,7 +16,8 @@ those targets map onto the codebase.
    templates: descriptions, capabilities, use cases, constraints, and
    recommended duration ranges.
 3. The planner returns a validated storyboard plan: ordered segments, selected
-   `templateId` values, narration text, segment purpose, and visual briefs.
+   `templateId` values, render strategy decisions, narration text, segment
+   purpose, and visual briefs.
 4. For each planned segment, the system runs narration synthesis from the
    narration text. The preferred local provider is the in-project F5-TTS
    adapter backed by an optional runtime service.
@@ -49,11 +50,22 @@ scene-graph compiler failure to a deterministic `spotlight` macro segment when
 there is no existing segment to preserve. `scripts/staged-live-smoke.mjs`
 includes a forced provider-backed `scene-graph` plan smoke with real F5
 narration before scope widens beyond `primitive_scene_graph`.
+The Render Strategy Decision v1 landing adds validated planner
+`strategyDecision` data for every segment and keeps the executable strategy set
+bounded to `template_macro` plus `primitive_scene_graph`; future procedural,
+media-composite, and generated-component strategies remain roadmap-only until
+their compiler paths exist.
+The first Phase 4 procedural-generator groundwork is schema-only:
+`src/lib/procedural-generator-schema.ts` defines a bounded non-executable
+`node-graph-flow` contract and diagnostics helper, but active generation still
+cannot select or compile `procedural_generator`.
 
 Current implementation snapshot:
 
 - `src/lib/storyboard-plan-schema.ts` defines the first validated
-  `StoryboardPlan` boundary.
+  `StoryboardPlan` boundary, including per-segment strategy decisions.
+- `src/lib/procedural-generator-schema.ts` defines the first non-executable
+  procedural generator contract for future deterministic generator modules.
 - `src/templates/registry.ts` derives the planner template manifest from
   server-safe registered template definitions.
 - `src/lib/minimax/prompts.ts`, `src/lib/minimax/tool-schema.ts`,
@@ -166,6 +178,12 @@ audio duration.
 Template context should be split by generation stage:
 
 - Planner context: compact metadata for all registered templates.
+- Strategy decision context: currently validated inside each planned segment as
+  `strategyDecision`, bounded to executable `template_macro` and
+  `primitive_scene_graph` paths.
+- Procedural generator context: currently schema groundwork only; generator
+  payloads must stay outside active planner/provider execution until a
+  deterministic compiler/renderer path exists.
 - Narration provider context: segment narration text, language, voice or
   speaker profile, and deterministic artifact identity; it should return audio
   metadata and aligned captions when available.

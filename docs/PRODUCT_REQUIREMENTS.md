@@ -42,6 +42,12 @@ Product direction:
 - AI should choose the most suitable existing template from registered
   template descriptions and usage guidance, then generate that template's
   structured parameters
+- AI should also emit an explicit render strategy decision for each planned
+  segment before compilation; current executable strategies are bounded to
+  `template_macro` and `primitive_scene_graph`
+- procedural generator work should be introduced as deterministic bounded
+  module contracts first; the current `node-graph-flow` groundwork is not
+  planner-selectable until compiler/renderer execution exists
 - final generation should be staged: storyboard planning first, per-segment
   TTS second, selected visual implementation compilation third, project
   assembly last
@@ -143,6 +149,8 @@ Product model:
 - `implementation` is the template-specific parameter payload, not a universal project-level structure
 - target generation separates segment planning, narration/TTS generation, and
   template-specific `implementation` compilation
+- target generation records the planner's render strategy decision separately
+  from the compiled implementation so fallback behavior is inspectable
 - a template can be internally composed from multiple Remotion components,
   scenes, renderers, layout primitives, transitions, and media helpers
 - a template may use template-local block contracts to describe how semantic

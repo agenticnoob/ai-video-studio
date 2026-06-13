@@ -20,6 +20,12 @@ const plan = {
       purpose: "Show that staged generation can attach provider-owned narration.",
       templateId: "scripted",
       templateReason: "A scripted segment can express the pipeline as sequential beats.",
+      strategyDecision: {
+        strategy: "template_macro",
+        confidence: 0.9,
+        reason: "A fixed scripted macro is enough to validate the provider boundary.",
+        fallbackStrategy: "template_macro",
+      },
       narration: {
         text: "The staged project requests narration through the local F5 provider boundary.",
         tone: "clear",
@@ -34,6 +40,12 @@ const plan = {
       purpose: "Confirm the assembled project keeps captions and audio on each segment.",
       templateId: "spotlight",
       templateReason: "A focused card is enough to validate segment-owned narration.",
+      strategyDecision: {
+        strategy: "template_macro",
+        confidence: 0.9,
+        reason: "A focused macro segment is enough for the assembly smoke.",
+        fallbackStrategy: "template_macro",
+      },
       narration: {
         text: "Audio and captions stay on the segment, while the project assembles the full timeline.",
         tone: "confident",
@@ -98,7 +110,10 @@ const assertNarrationAsset = (segmentId, narration) => {
   if (narration.format !== "wav") {
     fail(`Expected ${segmentId} wav format, received ${narration.format}`);
   }
-  if (typeof narration.audioSrc !== "string" || !narration.audioSrc.startsWith("/api/tts/assets/")) {
+  if (
+    typeof narration.audioSrc !== "string" ||
+    !narration.audioSrc.startsWith("/api/tts/assets/")
+  ) {
     fail(`Unexpected ${segmentId} audioSrc: ${narration.audioSrc}`);
   }
   if (!Number.isFinite(narration.durationInFrames) || narration.durationInFrames <= 0) {

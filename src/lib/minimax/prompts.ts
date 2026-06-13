@@ -93,6 +93,7 @@ The output must:
 - contain between 1 and 6 segments; prefer 1-3 unless the brief clearly needs more
 - use one primary template per segment
 - choose templateId from the registered template ids: ${templateIds.map((id) => `"${id}"`).join(", ")}
+- set strategyDecision for every segment with strategy, confidence, reason, and fallbackStrategy
 - set segment.order as contiguous integers starting at 1
 - use stable segment ids like "segment-1", "segment-2"
 - write narration.text as the spoken script for that segment
@@ -102,6 +103,15 @@ The output must:
 
 # Planner template manifest
 ${buildPlannerTemplateManifestPrompt()}
+
+# Render strategy decision v1
+- Current supported strategies are "template_macro" and "primitive_scene_graph".
+- Use "primitive_scene_graph" only when templateId is "scene-graph".
+- Use "template_macro" for scripted, spotlight, stats-dashboard, and any other fixed registered macro template.
+- Set fallbackStrategy to "template_macro" for scene-graph segments so the compiler can fall back to a stable macro if Visual IR validation fails.
+- Set fallbackStrategy to "template_macro" for template_macro segments.
+- Keep confidence between 0 and 1, and explain the strategy choice in reason.
+- Do not emit procedural_generator, media_asset_composite, or generated_component in this phase.
 
 # Planning boundaries
 - Do not generate implementation, scenes, callouts, theme, colors, or template props.
@@ -373,6 +383,8 @@ This is the planning stage only. Do not generate final template implementation f
 - Preserve the original language unless the revision request explicitly asks otherwise.
 - Choose one registered primary template from: ${templateIds.map((id) => `"${id}"`).join(", ")}.
 - Keep the current template unless the revision request clearly asks for a different presentation style.
+- Include strategyDecision. Use "primitive_scene_graph" only with templateId "scene-graph";
+  otherwise use "template_macro". Use fallbackStrategy "template_macro" for this phase.
 - Write narration.text as the actual spoken script for this segment, not as an instruction.
 - Keep narration concise enough for a short product-demo segment.
 - Describe visualBrief for this segment without inventing media URLs or Remotion source code.

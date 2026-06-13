@@ -112,6 +112,14 @@ The system should:
 This keeps the product segment-first, compiler-driven, voice-aware, and
 scalable as visual strategies grow beyond fixed templates.
 
+Current executable strategy note:
+
+- `template_macro` and `primitive_scene_graph` are the only active planner and
+  compiler strategies.
+- `procedural_generator` has started as schema groundwork for bounded
+  deterministic modules such as `node-graph-flow`, but it is not planner
+  selectable until a deterministic compiler/renderer path exists.
+
 ## 2. Authoritative Terminology
 
 Use these terms consistently.
@@ -199,6 +207,12 @@ type StoryboardSegmentPlan = {
   purpose: string;
   templateId: TemplateId;
   templateReason: string;
+  strategyDecision: {
+    strategy: "template_macro" | "primitive_scene_graph";
+    confidence: number;
+    reason: string;
+    fallbackStrategy: "template_macro" | "primitive_scene_graph";
+  };
   narration: {
     text: string;
     tone?: string;
@@ -214,6 +228,9 @@ Planner responsibilities:
 - decide how many segments the video needs
 - decide each segment's communication purpose
 - choose the best `templateId` from the template manifest
+- choose and explain the current render strategy for each segment before
+  compilation; this phase supports only `template_macro` and
+  `primitive_scene_graph`
 - write a narration draft for each segment
 - describe the visual content each segment should roughly show
 - preserve global continuity across all segments
