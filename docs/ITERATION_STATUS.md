@@ -1,6 +1,38 @@
 # Iteration Status
 
-Last updated: Production Docker service split from dev web service
+Last updated: Stats dashboard template roadmap and handoff
+
+## Latest continuation — Stats dashboard template roadmap and handoff
+
+- Captured the next bounded template slice as documentation only, with no
+  implementation started in this pass.
+- Confirmed that the repo already has reusable Remotion chart/layout
+  primitives suitable for a data-statistics template:
+  - `BarChart`
+  - `LineChart`
+  - `DonutChart`
+  - `ComparisonChart`
+  - `StatCounter`
+  - `VideoPanel`
+  - `Kicker`
+  - `CalloutGrid`
+- Locked the next template direction to one registered segment template,
+  tentatively named `stats-dashboard`, rather than a generic chart system or
+  multi-template segment composition.
+- Documented the recommended implementation order:
+  - parameterize demo-shaped chart primitives where needed
+  - add `src/templates/stats-dashboard/`
+  - register the template
+  - add the runtime/editor pair
+  - validate with the Docker-first workflow
+- Added a roadmap doc and an implementation handoff so the next conversation
+  can directly start the template work without re-discovering the current
+  Remotion primitive inventory or template-system boundaries.
+
+New docs:
+
+- `docs/plans/STATS_DASHBOARD_TEMPLATE_ROADMAP.md`
+- `docs/HANDOFF_STATS_DASHBOARD_TEMPLATE.md`
 
 ## Latest continuation — Production Docker service split from dev web service
 
