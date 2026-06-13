@@ -90,8 +90,9 @@ segment regeneration, and export.
     `wav`.
   - `F5_TTS_REFERENCE_AUDIO` optionally points to reference audio for a local
     voice-cloning runtime.
-  - `F5_TTS_VOICE_REFERENCE_RUNTIME_DIR` points to the F5-container path for
-    page-uploaded voice clone references and defaults to `/voice-references`.
+  - `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR` points to the shared reference-audio
+    directory used by both Next upload handling and F5 synthesis. The Docker
+    workflow defaults this to `/workspace/out/voice-references`.
   - `F5_TTS_FALLBACK_TO_MINIMAX=false` disables MiniMax fallback when F5 fails.
 - Write generated audio to local project artifacts, consistent with the current
   `out/tts/...` path.
@@ -138,11 +139,11 @@ Page-level voice cloning uses this runtime contract:
 
 1. `POST /api/tts/voice-references` accepts multipart `audio`, validates
    `.wav`, `.mp3`, `.m4a`, or `.aac`, and stores the file under ignored
-   `out/voice-references/`.
+   `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR`.
 2. `/api/tts` and `/api/generate/staged` accept optional
    `voiceClone: { enabled, referenceId, referenceText }`.
 3. When `voiceClone.enabled` is true, the TTS boundary forces `f5-tts`, resolves
-   `referenceId` to the F5 runtime mount path, and sends both `referenceAudio`
+   `referenceId` to the shared reference-audio path, and sends both `referenceAudio`
    and `referenceText` to `/synthesize`.
 4. When cloning is disabled or omitted, the existing default F5
    reference-audio behavior remains unchanged.
@@ -209,6 +210,7 @@ Current runtime note:
   package default English reference WAV plus the upstream example reference
   text. For custom voices, set both `F5_TTS_DEFAULT_REFERENCE_AUDIO` and
   `F5_TTS_DEFAULT_REFERENCE_TEXT`.
-- The Docker F5 overlay mounts page-uploaded references from
-  `out/voice-references/` into `/voice-references` so real-mode cloning can
-  use files uploaded through the Next UI.
+- The Docker F5 overlay mounts the configured
+  `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR` into the runtime at the same path so
+  real-mode cloning can use files uploaded through the Next UI without a
+  second runtime-path setting.

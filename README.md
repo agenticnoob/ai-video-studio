@@ -267,6 +267,33 @@ until they are explicitly stopped with `docker compose down` or equivalent.
 Next dev requests are allowed from `localhost`, the configured LAN origins, and
 `ez.zzzxc.com`.
 
+Start the separate production web service without changing the existing dev
+service:
+```bash
+cd /data/projects/labs/ai-video-studio
+cp .env.example .env.prod
+# fill prod credentials / origins in .env.prod before first real use
+bash scripts/prod-build.sh
+```
+
+`scripts/prod.sh` and `scripts/prod-build.sh` now explicitly load
+`.env.prod` via `docker compose --env-file .env.prod`, so prod no longer
+silently falls back to `.env` for Compose interpolation.
+
+Default production topology on this workstation:
+- `web` stays on the existing dev path (`npm run dev`)
+- `web-prod` runs `next build` + `next start`
+- `web-prod` binds `127.0.0.1:10001` by default
+- host-level Cloudflare Tunnel ingress should point at `http://127.0.0.1:10001`
+- export-time route media fetches inside the prod container must still use
+  `AI_VIDEO_STUDIO_RENDER_ASSET_ORIGIN=http://127.0.0.1:3000`
+- the optional real `f5-tts` GPU service is shared by dev and prod rather than
+  duplicated
+- the shared `f5-tts` host port stays local-only by default
+
+If the prod service should also be reachable directly from the LAN, change
+`PROD_APP_BIND` in `.env.prod` from `127.0.0.1` to `0.0.0.0`.
+
 The Docker startup path runs `npm run remotion:ensure-browser` before starting
 the app. This checks for Remotion's Chrome Headless Shell and downloads it
 upfront when missing, so the first in-app video export does not block on the
@@ -369,6 +396,11 @@ helper forces `F5_TTS_SERVICE_MODE=f5`, defaults `F5_TTS_DEVICE=cuda`, and the
 GPU overlay requests all visible GPUs. It still requires the local F5
 checkpoint, vocab, and Vocos vocoder under `models/f5-tts/`.
 
+The recommended workstation deployment is to keep exactly one real `f5-tts`
+service running and let both the dev `web` service and the prod `web-prod`
+service call the same internal `http://f5-tts:7865` endpoint. This keeps the
+GPU/model footprint small while the app-layer concurrency guards stay at `1`.
+
 Do not use the plain `docker-compose.f5.yml` overlay for user-facing F5
 narration checks. That overlay intentionally defaults to `contract-smoke`;
 that mode returns synthetic contract-test audio and can sound like a continuous
@@ -389,8 +421,11 @@ text. For a custom voice, set both `F5_TTS_DEFAULT_REFERENCE_AUDIO` and
 The page also exposes F5 voice cloning for staged generation. Enable
 `声音克隆`, upload a `.wav`, `.mp3`, `.m4a`, or `.aac` reference file, and
 enter the transcript that matches the reference audio before generation. The
-Next app stores the uploaded reference under ignored `out/voice-references/`;
-the F5 overlay mounts that directory read-only at `/voice-references`. When
+Next app stores the uploaded reference under
+`AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR`, which defaults to the ignored shared
+path `/workspace/out/voice-references` in the Docker workflow. The F5 overlay
+mounts the same directory read-only into the runtime, so upload and synthesis
+now use one shared file path instead of separate app/runtime path settings. When
 cloning is disabled, staged generation falls back to the configured default F5
 voice/reference behavior.
 
@@ -435,9 +470,13 @@ docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm
 
 ## Docker files added
 - `Dockerfile`
+- `Dockerfile.prod`
 - `docker-compose.yml`
+- `docker-compose.prod.yml`
 - `.dockerignore`
 - `scripts/dev.sh`
+- `scripts/prod.sh`
+- `scripts/prod-build.sh`
 - `scripts/studio.sh`
 - `scripts/render.sh`
 
@@ -454,6 +493,24 @@ used for both Docker Compose interpolation and Next/provider runtime config.
 Older `.env.local` files are still tolerated by Next.js, but new local setup
 should prefer `.env` so Docker ports, provider credentials, TTS settings, and
 render origins are managed in one place.
+
+For the separate production service on this workstation, create a second local
+ignored file from the same tracked template:
+
+```bash
+cp .env.example .env.prod
+```
+
+Recommended prod-specific overrides in `.env.prod`:
+- `PROD_APP_BIND=127.0.0.1`
+- `PROD_APP_PORT=10001`
+- `F5_TTS_HOST_BIND=127.0.0.1`
+- `AI_VIDEO_STUDIO_RENDER_ASSET_ORIGIN="http://127.0.0.1:3000"` for container-internal export fetches
+- `TTS_PROVIDER="f5-tts"`
+- `F5_TTS_BASE_URL="http://f5-tts:7865"`
+- keep `AI_VIDEO_STUDIO_RENDER_CONCURRENCY`,
+  `AI_VIDEO_STUDIO_GENERATION_CONCURRENCY`, `AI_VIDEO_STUDIO_TTS_CONCURRENCY`,
+  and `F5_TTS_RUNTIME_CONCURRENCY` at `1`
 
 ### Private-team concurrency guard
 

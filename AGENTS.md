@@ -96,9 +96,11 @@ The first staged-generation groundwork is also in place:
   under `out/tts/...` as `<audio-name>.captions.json`.
 - Page-level F5 voice cloning is exposed for staged generation. Users upload a
   `.wav`, `.mp3`, `.m4a`, or `.aac` reference audio file and provide matching
-  reference text; the upload is stored under ignored `out/voice-references/`
-  and reused for full-project generation plus selected-segment regeneration
-  when `voiceClone.enabled` is true.
+  reference text; the upload is stored under
+  `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR` and reused for full-project generation
+  plus selected-segment regeneration when `voiceClone.enabled` is true. In the
+  Docker workflow this defaults to the shared path
+  `/workspace/out/voice-references`.
 - When the F5 runtime has no real alignment data, its fallback caption path
   splits on sentence punctuation, can split on comma punctuation, and merges
   short comma chunks forward for readability.
@@ -132,9 +134,10 @@ The first staged-generation groundwork is also in place:
 - Real F5 validation has passed direct service smoke, Next `/api/tts` adapter
   smoke, deterministic staged mixed-template smoke, and deterministic staged
   export smoke.
-- The F5 Docker overlay mounts `out/voice-references/` read-only into
-  `/voice-references` so uploaded voice-clone references are reachable by the
-  runtime.
+- The F5 Docker overlay mounts the configured
+  `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR` read-only into the runtime at the same
+  path so uploaded voice-clone references are reachable without a second
+  runtime-path setting.
 
 This repo is past the upstream starter-demo stage.
 Do not describe it as an untouched scaffold.
@@ -284,14 +287,21 @@ docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm
 Use the Docker wrappers documented in `README.md` for app runtime:
 
 ```bash
-./scripts/dev.sh
-./scripts/studio.sh
-./scripts/render.sh
+bash scripts/dev.sh
+bash scripts/studio.sh
+bash scripts/prod.sh
+bash scripts/prod-build.sh
+bash scripts/render.sh
 ```
 
 The Docker Compose `web` and `studio` services use
 `restart: unless-stopped`. Next dev origins include the local LAN origins and
 `ez.zzzxc.com`.
+
+The production wrapper starts a separate `web-prod` service through
+`docker-compose.prod.yml`, keeps the existing dev `web` service unchanged, and
+binds the prod entrypoint to `127.0.0.1:10001` by default so host-level
+Cloudflare Tunnel ingress can target prod without repointing the dev port.
 
 The host `node_modules` directory may be absent, incomplete, or owned by a
 different user because dependencies are intended to live in the Docker volume.
@@ -335,3 +345,6 @@ host-local setup.
 - For local export, route media such as `/api/tts/assets/...` is resolved
   through `AI_VIDEO_STUDIO_RENDER_ASSET_ORIGIN` when set, otherwise
   `http://127.0.0.1:3000`.
+- In the separate `web-prod` container topology, keep
+  `AI_VIDEO_STUDIO_RENDER_ASSET_ORIGIN=http://127.0.0.1:3000` for export-time
+  self-fetches even though the host/Tunnel entrypoint is `127.0.0.1:10001`.

@@ -1,0 +1,49 @@
+services:
+  f5-tts:
+    ports: []
+
+  web-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    image: ai-video-studio:prod-local
+    working_dir: /workspace
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    restart: unless-stopped
+    environment:
+      HOME: /tmp/hermes-home
+      NEXT_TELEMETRY_DISABLED: "1"
+      NPM_CONFIG_CACHE: /tmp/npm-cache
+      PROD_APP_BIND: "${PROD_APP_BIND:-127.0.0.1}"
+      PROD_APP_PORT: "${PROD_APP_PORT:-10001}"
+      AI_VIDEO_STUDIO_RENDER_CONCURRENCY: "${AI_VIDEO_STUDIO_RENDER_CONCURRENCY:-1}"
+      AI_VIDEO_STUDIO_GENERATION_CONCURRENCY: "${AI_VIDEO_STUDIO_GENERATION_CONCURRENCY:-1}"
+      AI_VIDEO_STUDIO_TTS_CONCURRENCY: "${AI_VIDEO_STUDIO_TTS_CONCURRENCY:-1}"
+      AI_VIDEO_STUDIO_BUSY_MODE: "${AI_VIDEO_STUDIO_BUSY_MODE:-reject}"
+      AI_VIDEO_STUDIO_QUEUE_TIMEOUT_MS: "${AI_VIDEO_STUDIO_QUEUE_TIMEOUT_MS:-300000}"
+      AI_VIDEO_STUDIO_RENDER_ASSET_ORIGIN: "${AI_VIDEO_STUDIO_RENDER_ASSET_ORIGIN:-http://127.0.0.1:3000}"
+      MINIMAX_API_KEY: "${MINIMAX_API_KEY:-}"
+      MINIMAX_MODEL: "${MINIMAX_MODEL:-MiniMax-M2.7-highspeed}"
+      MINIMAX_BASE_URL: "${MINIMAX_BASE_URL:-https://api.minimaxi.com/v1}"
+      MINIMAX_GROUP_ID: "${MINIMAX_GROUP_ID:-}"
+      MINIMAX_TTS_ENDPOINT: "${MINIMAX_TTS_ENDPOINT:-}"
+      MINIMAX_TTS_MODEL: "${MINIMAX_TTS_MODEL:-speech-2.8-turbo}"
+      MINIMAX_TTS_VOICE_ID: "${MINIMAX_TTS_VOICE_ID:-male-qn-qingse}"
+      MINIMAX_TTS_EMOTION: "${MINIMAX_TTS_EMOTION:-}"
+      MINIMAX_TTS_SAMPLE_RATE: "${MINIMAX_TTS_SAMPLE_RATE:-32000}"
+      MINIMAX_TTS_BITRATE: "${MINIMAX_TTS_BITRATE:-128000}"
+      MINIMAX_TTS_CHANNEL: "${MINIMAX_TTS_CHANNEL:-1}"
+      TTS_PROVIDER: "${TTS_PROVIDER:-f5-tts}"
+      F5_TTS_BASE_URL: "${F5_TTS_BASE_URL:-http://f5-tts:7865}"
+      F5_TTS_ENDPOINT: "${F5_TTS_ENDPOINT:-http://f5-tts:7865/synthesize}"
+      F5_TTS_VOICE_ID: "${F5_TTS_VOICE_ID:-default}"
+      F5_TTS_FORMAT: "${F5_TTS_FORMAT:-wav}"
+      F5_TTS_REFERENCE_AUDIO: "${F5_TTS_REFERENCE_AUDIO:-}"
+      AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR: "${AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR:-/workspace/out/voice-references}"
+      F5_TTS_FALLBACK_TO_MINIMAX: "${F5_TTS_FALLBACK_TO_MINIMAX:-true}"
+      REMOTION_AWS_ACCESS_KEY_ID: "${REMOTION_AWS_ACCESS_KEY_ID:-}"
+      REMOTION_AWS_SECRET_ACCESS_KEY: "${REMOTION_AWS_SECRET_ACCESS_KEY:-}"
+    volumes:
+      - ./out:/workspace/out
+    ports:
+      - "${PROD_APP_BIND:-127.0.0.1}:${PROD_APP_PORT:-10001}:3000"

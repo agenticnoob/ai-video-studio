@@ -1,6 +1,46 @@
 # Iteration Status
 
-Last updated: Two-color workspace UI pass follow-up
+Last updated: Production Docker service split from dev web service
+
+## Latest continuation — Production Docker service split from dev web service
+
+- Added a separate production deployment path without changing the existing dev
+  `web` service.
+- Added `Dockerfile.prod` as a multistage production image path:
+  - build stage installs dependencies, ensures the Remotion browser, and runs
+    `npm run build`
+  - runner stage starts the app with `next start` instead of `next dev`
+- Added `docker-compose.prod.yml` with a dedicated `web-prod` service:
+  - no source bind mount
+  - persistent `./out:/workspace/out` artifact mount
+  - default bind `127.0.0.1:10001:3000`
+  - production env defaults keep render/generation/TTS concurrency conservative
+- Kept the local F5 GPU runtime as a single shared internal service rather than
+  splitting separate dev/prod TTS services. Both `web` and `web-prod` can use
+  `http://f5-tts:7865`.
+- Added `scripts/prod.sh` and `scripts/prod-build.sh` so workstation runtime is
+  explicit:
+  - `./scripts/prod.sh` starts `web-prod` plus the shared `f5-tts` service
+  - `./scripts/prod-build.sh` rebuilds before starting
+  - both scripts now require and explicitly load `.env.prod` for Compose
+    interpolation instead of silently inheriting `.env`
+- Updated `.env.example` with `PROD_APP_BIND`, `PROD_APP_PORT`, and local-only
+  F5 host bind defaults. For the separate production config path, export-time
+  route media should still resolve through container-local `http://127.0.0.1:3000`
+  even though the host/Tunnel entrypoint is port `10001`.
+- Hardened secret hygiene around Docker builds by ignoring `.env` and
+  `.env.prod` in `.dockerignore`, and ignoring local `.env.prod` in Git.
+- Updated `README.md` and `AGENTS.md` so future cold starts know that:
+  - dev stays on the existing `web` service
+  - prod enters through `web-prod`
+  - Cloudflare Tunnel should target `127.0.0.1:10001` by default
+
+Validation performed so far:
+- `docker compose -f docker-compose.yml -f docker-compose.f5.yml -f docker-compose.f5.gpu.yml -f docker-compose.prod.yml config`
+- `docker compose -f docker-compose.yml -f docker-compose.f5.yml -f docker-compose.f5.gpu.yml -f docker-compose.prod.yml build web-prod`
+- `docker compose -f docker-compose.yml -f docker-compose.f5.yml -f docker-compose.f5.gpu.yml -f docker-compose.prod.yml up -d f5-tts web-prod`
+- `curl -I http://127.0.0.1:10001`
+- `git diff --check`
 
 ## Latest continuation — Two-color workspace UI pass
 
@@ -220,7 +260,8 @@ Current readiness:
   runtime only needs `referenceAudio` and `referenceText` together when
   staged generation synthesizes narration.
 - Changed page-level reference upload so selecting an audio file only stores
-  the file under `out/voice-references/` and returns a `referenceId`.
+  the file under the configured voice-reference directory and returns a
+  `referenceId`.
 - Kept generation-time validation unchanged: when `voiceClone.enabled` is
   true, staged generation still requires both an uploaded `referenceId` and a
   non-empty `referenceText` before calling F5.
@@ -277,8 +318,9 @@ Current readiness:
   reference text.
 - Added `POST /api/tts/voice-references` for page-uploaded `.wav`, `.mp3`,
   `.m4a`, and `.aac` reference audio plus required matching reference text.
-- Uploaded references are stored under ignored `out/voice-references/`; the F5
-  Docker overlay mounts that directory read-only at `/voice-references`.
+- Uploaded references are stored under `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR`;
+  the Docker workflow defaults this to `/workspace/out/voice-references` and
+  mounts the same path read-only into the F5 container.
 - Extended `/api/tts` and `/api/generate/staged` with
   `voiceClone: { enabled, referenceId, referenceText }`.
 - When `voiceClone.enabled` is true, the TTS boundary forces `f5-tts` and sends

@@ -157,7 +157,7 @@ Implemented in the F5/captions/runtime slices:
 - optional `services/f5-tts/` FastAPI runtime with `contract-smoke` and real
   `F5_TTS_SERVICE_MODE=f5` modes.
 - page-level F5 voice cloning for staged generation: uploaded references are
-  stored under `out/voice-references/`, then paired with generation-time
+  stored under `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR`, then paired with generation-time
   `voiceClone: { enabled, referenceId, referenceText }`, and used as
   `referenceAudio` / `referenceText` by the F5 runtime.
 - Docker overlays for the F5 service and explicit GPU runtime.

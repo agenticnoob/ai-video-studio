@@ -6,8 +6,7 @@ import { z } from "zod";
 
 import { TtsConfigError } from "./errors";
 
-export const VOICE_REFERENCE_OUTPUT_DIRECTORY = "out/voice-references";
-export const DEFAULT_F5_VOICE_REFERENCE_RUNTIME_DIRECTORY = "/voice-references";
+export const DEFAULT_VOICE_REFERENCE_DIRECTORY = "/workspace/out/voice-references";
 
 const allowedVoiceReferenceExtensions = ["wav", "mp3", "m4a", "aac"] as const;
 const allowedVoiceReferenceMimeTypes = new Set([
@@ -61,14 +60,19 @@ export type ResolvedVoiceCloneReference = {
 };
 
 const getVoiceReferenceDirectory = (): string => {
-  return path.join(process.cwd(), VOICE_REFERENCE_OUTPUT_DIRECTORY);
-};
+  const configuredDirectory = (
+    process.env.AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR ?? ""
+  ).trim();
+  const normalizedDirectory = (configuredDirectory || DEFAULT_VOICE_REFERENCE_DIRECTORY).replace(
+    /\/+$/,
+    "",
+  );
 
-const getRuntimeVoiceReferenceDirectory = (): string => {
-  return (
-    (process.env.F5_TTS_VOICE_REFERENCE_RUNTIME_DIR ?? "").trim() ||
-    DEFAULT_F5_VOICE_REFERENCE_RUNTIME_DIRECTORY
-  ).replace(/\/+$/, "");
+  if (path.isAbsolute(normalizedDirectory)) {
+    return normalizedDirectory;
+  }
+
+  return path.join(/* turbopackIgnore: true */ process.cwd(), normalizedDirectory);
 };
 
 export const isAllowedVoiceReferenceMimeType = (mimeType: string): boolean => {
@@ -98,11 +102,6 @@ export const assertVoiceReferenceId = (referenceId: string): void => {
 export const getVoiceReferenceStoragePath = (referenceId: string): string => {
   assertVoiceReferenceId(referenceId);
   return path.join(getVoiceReferenceDirectory(), referenceId);
-};
-
-export const getVoiceReferenceRuntimePath = (referenceId: string): string => {
-  assertVoiceReferenceId(referenceId);
-  return `${getRuntimeVoiceReferenceDirectory()}/${referenceId}`;
 };
 
 export const writeVoiceReferenceFile = async ({
@@ -136,7 +135,7 @@ export const resolveVoiceCloneReference = async (
   }
 
   return {
-    referenceAudioPath: getVoiceReferenceRuntimePath(referenceId),
+    referenceAudioPath: getVoiceReferenceStoragePath(referenceId),
     referenceText: parsed.referenceText as string,
   };
 };
