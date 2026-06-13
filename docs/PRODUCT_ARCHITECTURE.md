@@ -55,17 +55,29 @@ The Render Strategy Decision v1 landing adds validated planner
 bounded to `template_macro` plus `primitive_scene_graph`; future procedural,
 media-composite, and generated-component strategies remain roadmap-only until
 their compiler paths exist.
-The first Phase 4 procedural-generator groundwork is schema-only:
-`src/lib/procedural-generator-schema.ts` defines a bounded non-executable
-`node-graph-flow` contract and diagnostics helper, but active generation still
-cannot select or compile `procedural_generator`.
+The first Phase 4 procedural-generator groundwork now includes a deterministic
+compile-to-SceneGraph path:
+`src/lib/procedural-generator-schema.ts` defines a bounded `node-graph-flow`
+contract and diagnostics helper. `src/lib/procedural-generator-compiler.ts`
+compiles generator payloads into normal `scene-graph` `VideoSegment` results
+with staged diagnostics for planned generator output, compiled render strategy,
+and bounded macro fallback. Guarded plan-mode requests can supply a bounded
+generator payload on a `scene-graph` segment, but provider-backed planning
+still cannot select `procedural_generator`.
 
 Current implementation snapshot:
 
 - `src/lib/storyboard-plan-schema.ts` defines the first validated
   `StoryboardPlan` boundary, including per-segment strategy decisions.
-- `src/lib/procedural-generator-schema.ts` defines the first non-executable
-  procedural generator contract for future deterministic generator modules.
+- `src/lib/procedural-generator-schema.ts` defines the first procedural
+  generator contract and compile diagnostics for future generator modules.
+- `src/lib/procedural-generator-compiler.ts` compiles `node-graph-flow` into a
+  `scene-graph` segment result without importing provider or Node-only staged
+  generation code.
+- `src/lib/storyboard-plan-schema.ts` accepts optional
+  `proceduralGenerator` payloads only for `scene-graph` segments; MiniMax
+  planner tool schema remains narrower until provider-facing generator
+  selection is intentionally enabled.
 - `src/templates/registry.ts` derives the planner template manifest from
   server-safe registered template definitions.
 - `src/lib/minimax/prompts.ts`, `src/lib/minimax/tool-schema.ts`,
@@ -181,9 +193,10 @@ Template context should be split by generation stage:
 - Strategy decision context: currently validated inside each planned segment as
   `strategyDecision`, bounded to executable `template_macro` and
   `primitive_scene_graph` paths.
-- Procedural generator context: currently schema groundwork only; generator
-  payloads must stay outside active planner/provider execution until a
-  deterministic compiler/renderer path exists.
+- Procedural generator context: guarded plan-mode requests may carry a bounded
+  generator payload on `scene-graph` segments, but provider-facing planner/tool
+  schemas stay closed until procedural generator selection is intentionally
+  enabled.
 - Narration provider context: segment narration text, language, voice or
   speaker profile, and deterministic artifact identity; it should return audio
   metadata and aligned captions when available.

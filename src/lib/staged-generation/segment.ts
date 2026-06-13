@@ -10,6 +10,7 @@ import { generateSegmentNarrationAsset } from "../tts";
 import type { TtsProviderId } from "../tts/config";
 import type { VoiceCloneRequest } from "../tts/voice-references";
 import { minimaxCompileTemplateImplementation } from "../minimax";
+import { compileProceduralGeneratorSegment } from "../procedural-generator-compiler";
 import {
   SCENE_GRAPH_TEMPLATE_ID,
   SPOTLIGHT_TEMPLATE_ID,
@@ -17,6 +18,7 @@ import {
   type TemplateId,
 } from "../template-registry";
 import { TemplateImplementationParseError } from "../minimax/parse-template-implementation";
+import type { ProceduralGeneratorDiagnostics } from "../procedural-generator-schema";
 import type { StagedGenerationProgressReporter } from "./pipeline";
 
 export type CompilePlannedSegmentRequest = {
@@ -29,6 +31,7 @@ export type CompilePlannedSegmentResult = {
   compilerAttempts: number;
   compilerFallback?: CompilePlannedSegmentFallback;
   narration: SegmentNarrationAsset;
+  proceduralGenerator?: ProceduralGeneratorDiagnostics;
   repaired: boolean;
   renderStrategy: RenderStrategy;
   segment: VideoSegment;
@@ -113,9 +116,11 @@ export const createTemplateMacroCompileFallback = ({
   error,
   narration,
   segment,
+  proceduralGenerator,
 }: {
   error: unknown;
   narration: SegmentNarrationAsset;
+  proceduralGenerator?: ProceduralGeneratorDiagnostics;
   segment: StoryboardSegmentPlan;
 }): CompilePlannedSegmentResult => {
   const attempts = getCompilerAttemptsFromError(error);
@@ -163,6 +168,7 @@ export const createTemplateMacroCompileFallback = ({
       type: "template_macro",
     },
     narration,
+    ...(proceduralGenerator ? { proceduralGenerator } : {}),
     repaired: attempts > 1,
     renderStrategy: "template_macro",
     segment: videoSegment,
@@ -175,6 +181,14 @@ export const compilePlannedSegment = async ({
   plan,
   segment,
 }: CompilePlannedSegmentRequest): Promise<CompilePlannedSegmentResult> => {
+  if (segment.proceduralGenerator) {
+    return compileProceduralGeneratorSegment({
+      generator: segment.proceduralGenerator,
+      narration,
+      segment,
+    });
+  }
+
   const compiled = await minimaxCompileTemplateImplementation({
     plan,
     segment,

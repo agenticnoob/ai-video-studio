@@ -1,4 +1,5 @@
 import type { GenerateStagedProjectResult, GenerateStagedSegmentRevisionResult } from "./pipeline";
+import type { ProceduralGeneratorDiagnostics } from "../procedural-generator-schema";
 
 type PlannerDiagnostics = {
   attempts: number;
@@ -11,6 +12,7 @@ type CompilerDiagnostics = {
     reason: string;
     type: "preserved_existing_segment" | "template_macro";
   };
+  proceduralGenerator?: ProceduralGeneratorDiagnostics;
   repaired: boolean;
   renderStrategy: "primitive_scene_graph" | "template_macro";
   segmentId: string;
@@ -51,6 +53,7 @@ export const buildStagedProjectDiagnostics = (
     compiler: result.segments.map((segment) => ({
       attempts: segment.compilerAttempts,
       fallback: segment.compilerFallback,
+      proceduralGenerator: segment.proceduralGenerator,
       repaired: segment.repaired,
       renderStrategy: segment.renderStrategy,
       segmentId: segment.segment.id,
@@ -87,6 +90,7 @@ export const buildStagedSegmentRevisionDiagnostics = (
       {
         attempts: result.compilerAttempts,
         fallback: result.compilerFallback,
+        proceduralGenerator: result.proceduralGenerator,
         repaired: result.repaired,
         renderStrategy: result.renderStrategy,
         segmentId: result.segment.id,

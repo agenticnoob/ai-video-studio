@@ -51,6 +51,7 @@ export type GenerateStagedSegmentRevisionResult = {
   plan: StoryboardPlan;
   plannerAttempts: number;
   plannerRepaired: boolean;
+  proceduralGenerator?: CompilePlannedSegmentResult["proceduralGenerator"];
   project: VideoProject;
   repaired: boolean;
   renderStrategy: CompilePlannedSegmentResult["renderStrategy"];
@@ -200,6 +201,7 @@ export const generateStagedSegmentRevision = async ({
     plan,
     plannerAttempts,
     plannerRepaired,
+    proceduralGenerator: compiled.proceduralGenerator,
     project: revisedProject,
     repaired: compiled.repaired,
     renderStrategy: compiled.renderStrategy,

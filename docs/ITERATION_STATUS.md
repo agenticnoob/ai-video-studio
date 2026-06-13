@@ -1,6 +1,76 @@
 # Iteration Status
 
-Last updated: Procedural Generator v1 Phase 4 schema groundwork
+Last updated: Procedural Generator v1 Phase 4 guarded staged execution
+
+## Latest continuation — Procedural Generator v1 guarded staged execution
+
+- Added optional `StoryboardSegmentPlan.proceduralGenerator` for bounded
+  generator payloads on `scene-graph` segments only.
+- Wired `compilePlannedSegment()` to execute a supplied procedural generator
+  payload through `src/lib/procedural-generator-compiler.ts` before falling
+  back to the MiniMax selected-template compiler path.
+- Kept planner/provider generation guarded: `StoryboardPlan.strategyDecision`
+  still accepts only `template_macro` and `primitive_scene_graph`, and the
+  MiniMax storyboard tool schema still does not expose `proceduralGenerator`.
+- Updated deterministic smoke fixtures so a parsed plan can carry a
+  `node-graph-flow` payload, compile it to `scene-graph`, and surface staged
+  diagnostics.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc 'npx prettier src/lib/storyboard-plan-schema.ts src/lib/staged-generation/segment.ts src/lib/staged-smoke-fixtures.ts docs/VISUAL_IR_COMPILER_ROADMAP.md docs/ITERATION_STATUS.md docs/PRODUCT_ARCHITECTURE.md docs/FINAL_PRODUCT_GOAL.md README.md --write'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `git diff --check`
+
+## Latest continuation — Procedural Generator v1 staged diagnostics wiring
+
+- Added `src/lib/procedural-generator-compiler.ts` as a Remotion-safe
+  procedural compiler boundary that turns `node-graph-flow` generator payloads
+  into normal `scene-graph` `VideoSegment` compile results.
+- Extended staged compiler diagnostics with optional procedural-generator
+  metadata so diagnostics can show planned `procedural_generator` output and
+  the actual compiled `primitive_scene_graph` path.
+- Added bounded macro fallback metadata for procedural generator compile
+  failure without changing the public staged request contract.
+- Updated deterministic smoke fixtures to validate the staged diagnostics path
+  through `buildStagedProjectDiagnostics()`.
+- Kept active generation unchanged: `StoryboardPlan.strategyDecision` still
+  accepts only `template_macro` and `primitive_scene_graph`; provider-backed
+  planner/compiler paths still cannot emit `procedural_generator`.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc 'npx prettier src/lib/procedural-generator-schema.ts src/lib/procedural-generator-compiler.ts src/lib/staged-generation/segment.ts src/lib/staged-generation/diagnostics.ts src/lib/staged-generation/pipeline.ts src/lib/staged-smoke-fixtures.ts docs/VISUAL_IR_COMPILER_ROADMAP.md docs/ITERATION_STATUS.md docs/PRODUCT_ARCHITECTURE.md docs/FINAL_PRODUCT_GOAL.md README.md --write'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `git diff --check`
+
+## Latest continuation — Procedural Generator v1 compile-to-SceneGraph groundwork
+
+- Added a deterministic `node-graph-flow` compiler that turns the bounded
+  procedural generator payload into schema-validated `primitive_scene_graph`
+  `SceneGraph` data.
+- The compiler preserves generator duration, theme, caption-safe intent, nodes,
+  edges, beat timing, and status metadata while reusing the existing
+  scene-graph renderer path.
+- Updated procedural diagnostics to mark the fixture as executable through a
+  compiled `primitive_scene_graph` path.
+- Kept active generation unchanged: `StoryboardPlan.strategyDecision` still
+  accepts only `template_macro` and `primitive_scene_graph`; provider-backed
+  planner/compiler paths still cannot emit `procedural_generator`.
+- Next bounded work before enabling planner/provider selection is wiring a
+  guarded staged execution path for procedural generator payloads.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc 'npx prettier src/lib/procedural-generator-schema.ts src/lib/staged-smoke-fixtures.ts docs/VISUAL_IR_COMPILER_ROADMAP.md docs/ITERATION_STATUS.md docs/PRODUCT_ARCHITECTURE.md docs/FINAL_PRODUCT_GOAL.md README.md --write'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `git diff --check`
 
 ## Latest continuation — Procedural Generator v1 Phase 4 schema groundwork
 

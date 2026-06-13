@@ -53,8 +53,9 @@ Current implementation status:
   `StoryboardSegmentPlan`: current executable strategies are bounded to
   `template_macro` and `primitive_scene_graph`, with staged diagnostics showing
   both the planned decision and the actual post-fallback render path
-- the first procedural-generator groundwork exists as a non-executable
-  `node-graph-flow` schema and diagnostics helper; it is not yet selectable by
+- the first procedural-generator groundwork exists as a `node-graph-flow`
+  schema, diagnostics helper, deterministic compile-to-SceneGraph path, and
+  guarded plan-mode execution path; it is not yet selectable by
   planner/provider generation
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration
@@ -172,9 +173,11 @@ Current modeling direction:
   `template_macro`, `primitive_scene_graph`, `procedural_generator`,
   `media_asset_composite`, future restricted `generated_component`,
   review/repair, and eventual micro-template memory. The current bounded
-  landing starts Procedural Generator v1 with non-executable
-  `node-graph-flow` schema groundwork while active generation remains limited
-  to executable `template_macro` and `primitive_scene_graph` paths.
+  landing starts Procedural Generator v1 with `node-graph-flow` schema
+  groundwork, deterministic compile-to-SceneGraph support, and staged
+  diagnostics metadata. Guarded plan-mode requests can supply a bounded
+  generator payload, while provider-backed planning remains limited to
+  executable `template_macro` and `primitive_scene_graph` paths.
 - `docs/FINAL_PRODUCT_GOAL.md` now documents the stable generation-pipeline
   contracts that support the Visual IR compiler roadmap; it is not the primary
   roadmap source.

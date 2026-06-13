@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { sceneGraphSchema, type SceneGraph } from "./scene-graph-schema";
 import { themeSchema } from "./video-schema";
 
 export const NODE_GRAPH_FLOW_GENERATOR_ID = "node-graph-flow" as const;
@@ -119,10 +120,184 @@ export const proceduralGeneratorSchema = z.discriminatedUnion("generatorId", [
 
 export type ProceduralGenerator = z.infer<typeof proceduralGeneratorSchema>;
 export type NodeGraphFlowGenerator = z.infer<typeof nodeGraphFlowGeneratorSchema>;
+export type ProceduralGeneratorCompiledRenderStrategy = "primitive_scene_graph" | "template_macro";
+export type ProceduralGeneratorDiagnostics = {
+  compiledRenderStrategy: ProceduralGeneratorCompiledRenderStrategy;
+  durationInFrames: number;
+  executable: boolean;
+  fallback?: {
+    reason: string;
+    type: ProceduralGeneratorCompiledRenderStrategy;
+  };
+  fallbackStrategy: "primitive_scene_graph" | "template_macro";
+  generatorId: ProceduralGenerator["generatorId"];
+  renderStrategy: "procedural_generator";
+};
 
-export const buildProceduralGeneratorDiagnostics = (generator: ProceduralGenerator) => ({
+const statusToTerminalStatus = (
+  status: NodeGraphFlowGenerator["nodes"][number]["status"],
+): "idle" | "running" | "success" | "error" => {
+  if (status === "active") {
+    return "running";
+  }
+  return status;
+};
+
+const statusToPathTone = (
+  status: NodeGraphFlowGenerator["edges"][number]["status"],
+): "primary" | "secondary" | "success" | "warning" => {
+  if (status === "success") {
+    return "success";
+  }
+  if (status === "error") {
+    return "warning";
+  }
+  if (status === "active") {
+    return "secondary";
+  }
+  return "primary";
+};
+
+const buildLinePathPoints = (generator: NodeGraphFlowGenerator) => {
+  const count = Math.max(generator.nodes.length, 2);
+
+  return generator.nodes.slice(0, 8).map((node, index) => {
+    const progress = count === 1 ? 0.5 : index / (count - 1);
+    const x = generator.direction === "left-to-right" ? 0.12 + progress * 0.76 : 0.5;
+    const y = generator.direction === "top-to-bottom" ? 0.18 + progress * 0.58 : 0.58;
+
+    return {
+      x,
+      y,
+      label: node.label,
+    };
+  });
+};
+
+const generatorBeatActionToSceneBeatAction = (
+  action: NodeGraphFlowGenerator["beats"][number]["action"],
+): "reveal-layer" | "emphasize-text" | "advance-step" | "change-camera" | "exit-layer" => {
+  if (action === "complete") {
+    return "advance-step";
+  }
+  if (action === "error") {
+    return "emphasize-text";
+  }
+  return "reveal-layer";
+};
+
+export const compileNodeGraphFlowToSceneGraph = (generator: NodeGraphFlowGenerator): SceneGraph => {
+  const activeNode = generator.nodes.find((node) => node.status === "active");
+  const terminalStatus = statusToTerminalStatus(activeNode?.status ?? "success");
+  const durationInFrames = generator.durationInFrames;
+  const graphDuration = Math.max(30, durationInFrames - 32);
+  const pathTone = statusToPathTone(
+    generator.edges.find((edge) => edge.status === "active")?.status ??
+      generator.edges.find((edge) => edge.status === "success")?.status ??
+      "idle",
+  );
+
+  return sceneGraphSchema.parse({
+    meta: {
+      title: generator.title,
+      fps: 30,
+      width: 1280,
+      height: 720,
+    },
+    theme: generator.theme,
+    sceneType: "process",
+    renderStrategy: "primitive_scene_graph",
+    composition: "node-graph",
+    layout: "node-graph",
+    durationInFrames,
+    camera: {
+      movement: generator.direction === "top-to-bottom" ? "pan-right" : "drift",
+      intensity: "subtle",
+    },
+    transitionIn: {
+      type: "slide-up",
+      durationInFrames: 12,
+    },
+    transitionOut: {
+      type: "soft-wipe",
+      durationInFrames: 12,
+    },
+    captionSafeZone: generator.captionSafeZone,
+    layers: [
+      {
+        id: "generator-bg",
+        type: "background",
+        treatment: "noise-grid",
+      },
+      {
+        id: "generator-title",
+        type: "text",
+        text: generator.title,
+        role: "eyebrow",
+        layout: "left",
+        startFrame: 0,
+        durationInFrames: Math.min(72, durationInFrames),
+      },
+      {
+        id: "generator-graph",
+        type: "node-graph",
+        title: generator.summary ?? generator.title,
+        nodes: generator.nodes.slice(0, 8),
+        edges: generator.edges.slice(0, 10).map(({ from, status, to }) => ({ from, status, to })),
+        layout: generator.direction === "left-to-right" ? "pipeline" : "horizontal",
+        motionPreset: "draw-path",
+        startFrame: 14,
+        durationInFrames: graphDuration,
+      },
+      {
+        id: "generator-path",
+        type: "line-path",
+        points: buildLinePathPoints(generator),
+        tone: pathTone,
+        showNodes: true,
+        motionPreset: "draw-path",
+        startFrame: 26,
+        durationInFrames: Math.max(24, durationInFrames - 44),
+      },
+      {
+        id: "generator-status",
+        type: "terminal-panel",
+        title: activeNode ? activeNode.label : "generator status",
+        lines: generator.nodes
+          .slice(0, 6)
+          .map((node) => `${node.status}: ${node.label}${node.detail ? ` - ${node.detail}` : ""}`),
+        status: terminalStatus,
+        layout: "bottom",
+        motionPreset: "type-text",
+        startFrame: Math.max(36, Math.floor(durationInFrames * 0.46)),
+        durationInFrames: Math.max(30, Math.floor(durationInFrames * 0.44)),
+      },
+      {
+        id: "generator-caption-zone",
+        type: "caption",
+        source: "segment-narration",
+      },
+    ],
+    beats: generator.beats.slice(0, 16).map((beat, index) => ({
+      id: `generator-beat-${index + 1}`,
+      atFrame: beat.atFrame,
+      action: generatorBeatActionToSceneBeatAction(beat.action),
+      targetLayerId: beat.action === "reveal" ? "generator-graph" : "generator-status",
+    })),
+  });
+};
+
+export const buildProceduralGeneratorDiagnostics = (
+  generator: ProceduralGenerator,
+  options: {
+    compiledRenderStrategy?: ProceduralGeneratorCompiledRenderStrategy;
+    fallback?: ProceduralGeneratorDiagnostics["fallback"];
+  } = {},
+): ProceduralGeneratorDiagnostics => ({
+  compiledRenderStrategy: options.compiledRenderStrategy ?? "primitive_scene_graph",
   durationInFrames: generator.durationInFrames,
-  executable: false as const,
+  executable: true,
+  ...(options.fallback ? { fallback: options.fallback } : {}),
   fallbackStrategy: generator.fallbackStrategy,
   generatorId: generator.generatorId,
   renderStrategy: generator.renderStrategy,

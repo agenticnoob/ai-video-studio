@@ -117,8 +117,11 @@ Current executable strategy note:
 - `template_macro` and `primitive_scene_graph` are the only active planner and
   compiler strategies.
 - `procedural_generator` has started as schema groundwork for bounded
-  deterministic modules such as `node-graph-flow`, but it is not planner
-  selectable until a deterministic compiler/renderer path exists.
+  deterministic modules such as `node-graph-flow`; it now has a deterministic
+  compile-to-SceneGraph path, staged diagnostics metadata, and guarded
+  plan-mode execution for supplied generator payloads. It is not
+  planner/provider selectable until provider-facing planner/tool support is
+  added.
 
 ## 2. Authoritative Terminology
 

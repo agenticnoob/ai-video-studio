@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { proceduralGeneratorSchema } from "./procedural-generator-schema";
 import {
   SCENE_GRAPH_TEMPLATE_ID,
   registeredTemplateIds,
@@ -36,6 +37,7 @@ export const storyboardSegmentPlanSchema = z
     templateId: templateIdSchema,
     templateReason: z.string().trim().min(1).max(1000),
     strategyDecision: strategyDecisionSchema,
+    proceduralGenerator: proceduralGeneratorSchema.optional(),
     narration: storyboardNarrationPlanSchema,
     visualBrief: z.string().trim().min(1).max(1200),
     pacingHint: z.string().trim().min(1).max(300).optional(),
@@ -59,6 +61,14 @@ export const storyboardSegmentPlanSchema = z
         code: "custom",
         message: 'strategyDecision.fallbackStrategy must be "template_macro" in this phase.',
         path: ["strategyDecision", "fallbackStrategy"],
+      });
+    }
+
+    if (segment.proceduralGenerator && segment.templateId !== SCENE_GRAPH_TEMPLATE_ID) {
+      ctx.addIssue({
+        code: "custom",
+        message: "proceduralGenerator is only supported for scene-graph segments.",
+        path: ["proceduralGenerator"],
       });
     }
   });

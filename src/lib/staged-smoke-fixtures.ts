@@ -2,8 +2,10 @@ import { segmentNarrationFromAsset, type SegmentNarrationAsset } from "./narrati
 import { normalizeSegmentCaptions } from "./captions";
 import {
   buildProceduralGeneratorDiagnostics,
+  compileNodeGraphFlowToSceneGraph,
   nodeGraphFlowGeneratorSchema,
 } from "./procedural-generator-schema";
+import { compileProceduralGeneratorSegment } from "./procedural-generator-compiler";
 import {
   videoProjectSchema,
   videoSegmentSchema,
@@ -16,7 +18,11 @@ import {
   orderPlanSegments,
   replaceSegmentAndNarrationLayer,
 } from "./staged-project-assembly";
-import { storyboardPlanSchema, type StoryboardPlan } from "./storyboard-plan-schema";
+import {
+  storyboardPlanSchema,
+  type StoryboardPlan,
+  type StoryboardSegmentPlan,
+} from "./storyboard-plan-schema";
 import {
   SCENE_GRAPH_TEMPLATE_ID,
   SCRIPTED_TEMPLATE_ID,
@@ -423,7 +429,7 @@ export const nodeGraphFlowProceduralGeneratorFixture = nodeGraphFlowGeneratorSch
   durationInFrames: 180,
   captionSafeZone: true,
   fallbackStrategy: "primitive_scene_graph",
-  fallbackReason: "Until procedural_generator is executable, fall back to scene-graph Visual IR.",
+  fallbackReason: "If the procedural compiler fails, fall back to scene-graph Visual IR.",
   title: "Generation pipeline flow",
   summary: "A deterministic node graph for recurring technical workflow visuals.",
   direction: "left-to-right",
@@ -448,17 +454,95 @@ export const nodeGraphFlowProceduralGeneratorFixture = nodeGraphFlowGeneratorSch
   ],
 });
 
+const proceduralGeneratorPlannedSegment: StoryboardSegmentPlan = {
+  id: "procedural-node-graph-flow",
+  order: 1,
+  title: "Procedural node graph",
+  purpose:
+    "Exercise deterministic procedural generator compilation through the staged segment result.",
+  templateId: SCENE_GRAPH_TEMPLATE_ID,
+  templateReason: "The procedural generator currently compiles through the scene-graph renderer.",
+  strategyDecision: primitiveSceneGraphStrategyDecision,
+  proceduralGenerator: nodeGraphFlowProceduralGeneratorFixture,
+  narration: {
+    text: "A bounded generator can now compile into the same scene graph render path before planner selection widens.",
+    tone: "technical",
+  },
+  visualBrief: "A node graph flow compiled from a bounded procedural generator payload.",
+  expectedDurationSeconds: 6,
+};
+
 const assertProceduralGeneratorFixture = (): void => {
   const diagnostics = buildProceduralGeneratorDiagnostics(nodeGraphFlowProceduralGeneratorFixture);
+  const compiled = compileNodeGraphFlowToSceneGraph(nodeGraphFlowProceduralGeneratorFixture);
+  const narration = createNarrationAsset({
+    durationInFrames: nodeGraphFlowProceduralGeneratorFixture.durationInFrames,
+    segmentId: proceduralGeneratorPlannedSegment.id,
+    text: proceduralGeneratorPlannedSegment.narration.text,
+  });
+  const compiledResult = compileProceduralGeneratorSegment({
+    generator: nodeGraphFlowProceduralGeneratorFixture,
+    narration,
+    segment: proceduralGeneratorPlannedSegment,
+  });
+  const plan = storyboardPlanSchema.parse({
+    title: "Procedural Generator Smoke",
+    brief: "Compile one bounded procedural generator into the existing scene graph path.",
+    language: "en",
+    segments: [proceduralGeneratorPlannedSegment],
+  });
+  const project = videoProjectSchema.parse({
+    meta: {
+      title: "Procedural Generator Smoke",
+      fps: 30,
+      width: 1280,
+      height: 720,
+    },
+    brief: plan.brief,
+    segments: [compiledResult.segment],
+  });
+  const stagedDiagnostics = buildStagedProjectDiagnostics({
+    plan,
+    project,
+    segments: [compiledResult],
+  });
 
   if (nodeGraphFlowProceduralGeneratorFixture.renderStrategy !== "procedural_generator") {
     throw new Error("Procedural generator fixture expected procedural_generator strategy.");
   }
-  if (diagnostics.executable !== false) {
-    throw new Error("Procedural generator fixture should not be marked executable yet.");
+  if (diagnostics.executable !== true) {
+    throw new Error("Procedural generator fixture should now be executable.");
   }
-  if (diagnostics.fallbackStrategy !== "primitive_scene_graph") {
-    throw new Error("Procedural generator fixture expected primitive_scene_graph fallback.");
+  if (
+    diagnostics.fallbackStrategy !== "primitive_scene_graph" ||
+    diagnostics.compiledRenderStrategy !== "primitive_scene_graph"
+  ) {
+    throw new Error("Procedural generator fixture expected primitive_scene_graph compile path.");
+  }
+  if (
+    compiled.renderStrategy !== "primitive_scene_graph" ||
+    compiled.composition !== "node-graph"
+  ) {
+    throw new Error("Procedural generator fixture expected compiled node-graph SceneGraph.");
+  }
+  if (!compiled.layers.some((layer) => layer.type === "node-graph")) {
+    throw new Error("Procedural generator fixture expected a compiled node-graph layer.");
+  }
+  if (
+    compiledResult.renderStrategy !== "primitive_scene_graph" ||
+    compiledResult.segment.templateId !== SCENE_GRAPH_TEMPLATE_ID
+  ) {
+    throw new Error("Procedural generator staged result expected scene-graph compile output.");
+  }
+  if (
+    stagedDiagnostics.compiler[0]?.proceduralGenerator?.renderStrategy !== "procedural_generator" ||
+    stagedDiagnostics.compiler[0]?.proceduralGenerator?.compiledRenderStrategy !==
+      "primitive_scene_graph" ||
+    stagedDiagnostics.compiler[0]?.renderStrategy !== "primitive_scene_graph"
+  ) {
+    throw new Error(
+      "Procedural generator diagnostics expected planned generator and compiled path.",
+    );
   }
 };
 

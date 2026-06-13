@@ -245,7 +245,9 @@ Current landing:
 
 ### Phase 4: Procedural Generator v1
 
-Status: started as non-executable schema groundwork for `node-graph-flow`.
+Status: started with schema groundwork, deterministic compile-to-SceneGraph
+support, staged diagnostics wiring, and guarded staged execution for
+`node-graph-flow`.
 
 Add deterministic modules for recurring complex visuals that are too specific
 for generic layers but too useful to be full templates.
@@ -267,16 +269,23 @@ Current groundwork:
 - The contract carries `renderStrategy: "procedural_generator"`, generator id,
   duration, caption-safe intent, nodes, edges, beats, and explicit fallback
   strategy.
-- deterministic smoke fixtures validate the schema and diagnostics helper.
-- This is not connected to planner strategy selection, provider compilation,
-  Remotion rendering, or export yet. Active generation still accepts only
-  `template_macro` and `primitive_scene_graph`.
+- deterministic smoke fixtures validate the schema, diagnostics helper, and
+  compile-to-SceneGraph path.
+- `node-graph-flow` can now compile into bounded `primitive_scene_graph`
+  `SceneGraph` data that reuses the existing scene-graph renderer.
+- staged diagnostics can represent planned `procedural_generator` output, the
+  actual compiled `primitive_scene_graph` path, and a bounded `template_macro`
+  fallback for generator compilation failure.
+- `StoryboardSegmentPlan.proceduralGenerator` can carry a bounded generator
+  payload for manually supplied `scene-graph` plan-mode requests.
+- This is not connected to planner strategy selection or provider compilation
+  yet. Active provider-backed planning still emits only `template_macro` and
+  `primitive_scene_graph`.
 
-Next acceptance before enabling execution:
+Next acceptance before planner/provider selection:
 
-- add a deterministic compiler/renderer path for `node-graph-flow`
-- expose diagnostics that distinguish planned generator output from fallback
-- define a bounded fallback to `primitive_scene_graph`, then `template_macro`
+- add provider-facing planner/tool schema support for procedural generator
+  payloads
 - only then allow `procedural_generator` in `StoryboardPlan.strategyDecision`
 
 These modules should output bounded Visual IR or render through controlled
