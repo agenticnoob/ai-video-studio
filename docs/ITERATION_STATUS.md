@@ -135,9 +135,6 @@ Validation performed so far:
 - The guard is process-local. It protects the normal Docker-first private
   deployment path, but multi-replica deployments still need an external lock or
   job queue before treating concurrency limits as global.
-- `AI_VIDEO_STUDIO_ARTIFACT_ROOT/renders/latest.mp4` remains a shared stable alias for the last completed
-  render, so render concurrency should stay at `1` unless that product
-  contract is changed.
 - This slice does not add project persistence, render history, job ids,
   cancellation, or richer progress UX.
 
@@ -1551,8 +1548,6 @@ Current product direction:
 - `POST /api/generate/staged` exposes the staged path for brief or existing
   plan input, and the page now defaults to this staged path for top-level
   generation.
-- `POST /api/generate` still returns schema-validated `VideoProject` directly
-  and remains available through the one-shot fallback toggle.
 - Future existing video, image, audio, or color inputs should be modeled as
   project-level or segment-level `media.layers[]` data, not as extra
   templates inside the segment.
@@ -1561,17 +1556,15 @@ Current product direction:
 
 Current working flow:
 1. user writes a brief
-2. page calls `POST /api/generate`
+2. page calls `POST /api/generate/staged`
 3. API returns schema-validated `VideoProject`
 4. page hydrates project-level editable state
 5. assembled full-video preview renders the normalized project
 6. user selects a segment and edits / regenerates only that segment
 7. user clicks local export to render the current edited `VideoProject`
-8. server writes both:
-   - stable artifact: `AI_VIDEO_STUDIO_ARTIFACT_ROOT/renders/latest.mp4`
-   - unique artifact for this render: `AI_VIDEO_STUDIO_ARTIFACT_ROOT/renders/render-<timestamp>-<id>.mp4`
-9. UI returns render state plus both download entries:
-   - stable: `GET /api/render/latest`
+8. server writes a unique artifact for this render:
+   - `AI_VIDEO_STUDIO_ARTIFACT_ROOT/renders/render-<timestamp>-<id>.mp4`
+9. UI returns render state plus the corresponding download entry:
    - unique: `GET /api/render/[renderId]`
 
 ## What is already implemented
@@ -1587,18 +1580,17 @@ Current working flow:
 - structured scene/theme editing preserved within the selected segment
 - working segment regeneration action from the revision prompt
 - local render/export controls for the current edited project
-- render success state now exposes both the stable latest artifact and the unique artifact for that render
+- render success state now exposes the unique artifact for that render
 
 ### Structured generation boundary
-- `src/app/api/generate/route.ts`
-- supports two request modes:
+- `src/app/api/generate/staged/route.ts`
+- supports three request modes:
   - full project generation from brief
+  - full project assembly from an existing validated storyboard plan
   - selected segment regeneration from current project + segment id + revision prompt
-- returns schema-validated `VideoProject` JSON
-- **current implementation is MiniMax (`https://api.minimaxi.com/v1/text/chatcompletion_v2`) backed** — see [`docs/providers/minimax.md`](providers/minimax.md)
-- the local deterministic mock in `src/lib/project-generation.ts` is now **test-only** and is no longer imported by the route; missing `MINIMAX_API_KEY` surfaces as a 500 with an explicit message, never a silent fallback
-- `/api/generate` returns `project` only; the old deprecated `spec`
-  compatibility field has been removed
+- returns staged output with `project`, `plan`, and diagnostics
+- **current implementation is MiniMax (`https://api.minimaxi.com/v1/text/chatcompletion_v2`) planner/compiler backed plus in-repo TTS/assembly** — see [`docs/providers/minimax.md`](providers/minimax.md)
+- the local deterministic mock in `src/lib/project-generation.ts` is now **test-only** and is no longer imported by the active page generation path; missing `MINIMAX_API_KEY` surfaces as a 500 with an explicit message, never a silent fallback
 
 ### Storyboard planning groundwork
 - `src/lib/storyboard-plan-schema.ts` defines the planner-stage contract.
@@ -1616,8 +1608,7 @@ Current working flow:
 
 ### Local render/export boundary
 - `src/app/api/render/route.ts` accepts the normalized current `VideoProject` and performs local Remotion render
-- `src/lib/render-project.ts` renders `ProjectVideo`, creates a unique render artifact, and refreshes `latest.mp4`
-- `src/app/api/render/latest/route.ts` serves the stable latest artifact
+- `src/lib/render-project.ts` renders `ProjectVideo` and creates a unique render artifact
 - `src/app/api/render/[renderId]/route.ts` serves the unique artifact for one successful export
 - `src/helpers/use-rendering.ts` resets stale render attempts safely so the UI does not stay stuck in `rendering`
 
@@ -1686,9 +1677,8 @@ Latest Docker dev verification after the LAN-access + studio recovery pass:
 ## Important files for the current stage
 
 - `src/app/page.tsx`
-- `src/app/api/generate/route.ts`
+- `src/app/api/generate/staged/route.ts`
 - `src/app/api/render/route.ts`
-- `src/app/api/render/latest/route.ts`
 - `src/app/api/render/[renderId]/route.ts`
 - `src/helpers/use-rendering.ts`
 - `src/lib/render-project.ts`
@@ -1744,8 +1734,6 @@ Suggested next focus, in order:
 - Keep `VideoProject` as the top-level page/generation/preview/render boundary for this phase.
 - Treat `docs/FINAL_PRODUCT_GOAL.md` as the authoritative final target and
   roadmap source.
-- Treat the current one-shot MiniMax generation path as a shipped v1 shortcut,
-  not the final generation architecture.
 - Move future generation work toward storyboard planning, in-project narration
   synthesis, audio + aligned captions, duration-aware selected-template
   compilation, and final `VideoProject` assembly.
@@ -1763,7 +1751,5 @@ Suggested next focus, in order:
   segment-level `media.layers[]` data.
 - Treat `baseLayer` as a media-layer role, not a separate product field.
 - Do not widen scope into multi-template-per-segment support unless a concrete workflow proves that scene/component composition is insufficient.
-- `/api/generate` now returns `{ project }` only; do not reintroduce the old
-  `spec` compatibility field unless a concrete external caller requires it.
 - Prefer Docker-first artifacts and validation on this workstation.
 - On this workstation, browser automation is not the default validation path.

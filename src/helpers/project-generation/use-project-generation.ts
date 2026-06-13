@@ -5,7 +5,6 @@ import { useProjectState } from "./use-project-state";
 import { useVoiceClone } from "./use-voice-clone";
 
 export type { GenerationOperation } from "./use-generation-actions";
-export type { GenerationPipeline } from "./use-project-state";
 export type { VoiceCloneSettings } from "./use-voice-clone";
 
 export const useProjectGeneration = () => {
@@ -13,9 +12,7 @@ export const useProjectGeneration = () => {
   const voiceClone = useVoiceClone();
   const generationActions = useGenerationActions({
     brief: projectState.brief,
-    generationPipeline: projectState.generationPipeline,
     getVoiceClonePayload: voiceClone.getVoiceClonePayload,
-    isStagedGeneration: projectState.isStagedGeneration,
     normalizedProject: projectState.normalizedProject,
     revisionPrompt: projectState.revisionPrompt,
     selectedSegmentId: projectState.selectedSegmentId,
@@ -29,10 +26,8 @@ export const useProjectGeneration = () => {
     durationInFrames: projectState.durationInFrames,
     error: generationActions.error,
     generationOperation: generationActions.generationOperation,
-    generationPipeline: projectState.generationPipeline,
     isGenerating: generationActions.isGenerating,
     isRegeneratingSegment: generationActions.isRegeneratingSegment,
-    isStagedGeneration: projectState.isStagedGeneration,
     isUploadingVoiceReference: voiceClone.isUploadingVoiceReference,
     normalizedProject: projectState.normalizedProject,
     revisionPrompt: projectState.revisionPrompt,
@@ -44,7 +39,6 @@ export const useProjectGeneration = () => {
     regenerateSelectedSegment: generationActions.regenerateSelectedSegment,
     selectSegment: projectState.selectSegment,
     setBrief: projectState.setBrief,
-    setGenerationPipeline: projectState.setGenerationPipeline,
     setRevisionPrompt: projectState.setRevisionPrompt,
     uploadVoiceReference: voiceClone.uploadVoiceReference,
     updateSegment: projectState.updateSegment,

@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { normalizeProject, type VideoProject } from "../../lib/project-schema";
 import { createProgressId } from "../create-progress-id";
-import { getInitialSelectedSegmentId, type GenerationPipeline } from "./use-project-state";
+import { getInitialSelectedSegmentId } from "./use-project-state";
 import type { VoiceClonePayload } from "./use-voice-clone";
 
 type GenerateResponse = {
@@ -39,9 +39,7 @@ export type GenerationOperation =
 
 export type GenerationActionsContext = {
   brief: string;
-  generationPipeline: GenerationPipeline;
   getVoiceClonePayload: (enabledForRequest: boolean) => VoiceClonePayload | undefined;
-  isStagedGeneration: boolean;
   normalizedProject: VideoProject;
   revisionPrompt: string;
   selectedSegmentId: string | null;
@@ -62,7 +60,6 @@ export type UseGenerationActionsResult = {
 export const useGenerationActions = ({
   brief,
   getVoiceClonePayload,
-  isStagedGeneration,
   normalizedProject,
   revisionPrompt,
   selectedSegmentId,
@@ -85,15 +82,11 @@ export const useGenerationActions = ({
     setGenerationOperation({ kind: "project", progressId, startedAt, status: "running" });
 
     try {
-      const voiceClonePayload = getVoiceClonePayload(isStagedGeneration);
-      const response = await fetch(isStagedGeneration ? "/api/generate/staged" : "/api/generate", {
+      const voiceClonePayload = getVoiceClonePayload(true);
+      const response = await fetch("/api/generate/staged", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          isStagedGeneration
-            ? { mode: "brief", brief, progressId, voiceClone: voiceClonePayload }
-            : { mode: "project", brief, progressId },
-        ),
+        body: JSON.stringify({ mode: "brief", brief, progressId, voiceClone: voiceClonePayload }),
       });
       const data = (await response.json()) as GenerateResponse;
 
@@ -144,8 +137,8 @@ export const useGenerationActions = ({
     setGenerationOperation({ kind: "segment", progressId, startedAt, status: "running" });
 
     try {
-      const voiceClonePayload = getVoiceClonePayload(isStagedGeneration);
-      const response = await fetch(isStagedGeneration ? "/api/generate/staged" : "/api/generate", {
+      const voiceClonePayload = getVoiceClonePayload(true);
+      const response = await fetch("/api/generate/staged", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -154,7 +147,7 @@ export const useGenerationActions = ({
           progressId,
           segmentId: selectedSegmentId,
           revisionPrompt,
-          ...(isStagedGeneration && voiceClonePayload ? { voiceClone: voiceClonePayload } : {}),
+          ...(voiceClonePayload ? { voiceClone: voiceClonePayload } : {}),
         }),
       });
       const data = (await response.json()) as GenerateResponse;

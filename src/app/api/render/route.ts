@@ -61,8 +61,6 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       downloadUrl: renderResult.downloadUrl,
-      latestDownloadUrl: renderResult.latestDownloadUrl,
-      latestOutputPath: renderResult.latestOutputPath,
       outputPath: renderResult.outputPath,
       renderId: renderResult.renderId,
       sizeInBytes: renderResult.sizeInBytes,

@@ -34,9 +34,8 @@ target maps onto the codebase.
     revision.
 11. The render endpoint exports the current edited project through Remotion.
 
-The current MiniMax-backed one-call `POST /api/generate` path is a shipped v1
-shortcut. It can stay while useful, but the active page flow now defaults to
-the staged planner -> TTS -> compiler -> assembly pipeline. Segment-owned
+The active page flow uses the staged planner -> TTS -> compiler -> assembly
+pipeline. Segment-owned
 narration audio/captions, the Next-side F5 adapter, and the optional local
 F5-TTS runtime service are in place. The current hardening target is a full
 provider-backed `POST /api/generate/staged` live smoke that combines MiniMax
@@ -44,8 +43,6 @@ planner/compiler calls with real F5 narration.
 
 Current implementation snapshot:
 
-- The shipped `/api/generate` route still provides the one-call
-  `VideoProject` shortcut as a fallback.
 - `src/lib/storyboard-plan-schema.ts` defines the first validated
   `StoryboardPlan` boundary.
 - `src/templates/registry.ts` derives the planner template manifest from
@@ -74,13 +71,11 @@ Current implementation snapshot:
 - `src/lib/staged-generation/*`, the MiniMax template compiler helpers, and
   `POST /api/generate/staged` provide the staged assembly path from brief or
   plan input to `VideoProject`.
-- The active page generation flow defaults to `/api/generate/staged`; the
-  shipped v1 `/api/generate` shortcut remains available through a fallback
-  toggle.
+- The active page generation flow uses `/api/generate/staged`.
 - The active selected-segment regeneration flow also uses
-  `/api/generate/staged` when staged mode is enabled: one target segment is
-  replanned, regenerated through TTS, recompiled from real audio duration, and
-  merged back into the current `VideoProject`.
+  `/api/generate/staged`: one target segment is replanned, regenerated through
+  TTS, recompiled from real audio duration, and merged back into the current
+  `VideoProject`.
 - `/api/tts/assets/...` supports byte-range requests for Remotion Player
   seeking, and `/api/render` resolves route media to an absolute Next app
   origin before Remotion export.

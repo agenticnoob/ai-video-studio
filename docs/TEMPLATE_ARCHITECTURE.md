@@ -153,9 +153,7 @@ manifest, and `src/lib/minimax/*` exposes an internal MiniMax planner facade.
 The first internal TTS asset boundary also exists through
 `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`, and
 `/api/tts/assets/...`. The selected-template compiler and staged assembly path
-exists behind `POST /api/generate/staged`; the main page uses that staged path
-by default while keeping the shipped v1 `POST /api/generate` route as a
-fallback.
+exists behind `POST /api/generate/staged`; the main page uses that staged path.
 
 The in-project F5-TTS provider adapter returns or normalizes audio plus aligned
 caption cues from the same segment narration request. F5-TTS should not become

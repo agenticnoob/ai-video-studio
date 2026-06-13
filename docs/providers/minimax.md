@@ -1,23 +1,21 @@
 # MiniMax Provider Implementation
 
-Status: implemented v1 provider path plus active staged generation,
-selected-segment staged regeneration, and TTS asset delivery.
+Status: active staged generation provider path plus selected-segment staged
+regeneration and TTS asset delivery.
 
-This document describes the current `POST /api/generate` provider path. It is
-no longer a proposal. The provider keeps `VideoProject` as the generation,
-preview, and render contract; MiniMax only converts a brief or segment revision
-request into schema-valid `VideoProject` JSON.
+This document describes how MiniMax is used in the current staged generation
+pipeline. The provider keeps `VideoProject` as the preview/edit/export
+contract; MiniMax is responsible for storyboard planning and selected-template
+compilation inside the staged pipeline.
 
 Roadmap note:
 - The authoritative final generation target is `docs/FINAL_PRODUCT_GOAL.md`.
-- `POST /api/generate` is the shipped v1 shortcut.
 - The storyboard planner, TTS asset route, selected-template compiler, and
   staged assembly path are wired behind `POST /api/generate/staged`.
 - The next narration-provider target is the in-project F5-TTS provider
   described in `docs/providers/f5-tts.md`; MiniMax TTS remains the current
   working provider/fallback until that path lands.
-- The main page generation action now defaults to `POST /api/generate/staged`
-  and keeps `POST /api/generate` available as a one-shot fallback.
+- The main page generation action now uses `POST /api/generate/staged`.
 - In staged mode, selected-segment regeneration replans only the target
   segment, regenerates its narration audio, recompiles its template
   implementation from the real audio duration, and preserves non-target
@@ -26,8 +24,6 @@ Roadmap note:
 ## Scope
 
 In scope:
-- full-project generation from `mode: "project"`
-- selected-segment regeneration from `mode: "segment"`
 - internal storyboard-plan generation via `minimaxGenerateStoryboardPlan()`
 - internal planned-segment TTS asset generation via `POST /api/tts`
 - staged generation via `POST /api/generate/staged`
@@ -55,16 +51,14 @@ Out of scope for this provider pass:
 
 ## Implementation Files
 
-- `src/app/api/generate/route.ts` validates request bodies and maps provider errors to HTTP status codes.
 - `src/lib/minimax/provider.ts` reads config and calls `text/chatcompletion_v2`.
-- `src/lib/minimax/prompts.ts` builds project, legacy segment,
-  storyboard-planner, staged segment-revision, and compiler prompts.
+- `src/lib/minimax/prompts.ts` builds storyboard-planner, staged
+  segment-revision, and compiler prompts.
 - `src/lib/minimax/prompts.ts` also builds selected-template compiler prompts.
 - `src/lib/minimax/tool-schema.ts` contains the `emit_result` JSON schemas for `VideoProject`, `StoryboardPlan`, and selected template implementations.
-- `src/lib/minimax/parse-project.ts` parses tool-call arguments and validates the final `VideoProject`.
 - `src/lib/minimax/parse-storyboard-plan.ts` parses tool-call arguments and validates the planner `StoryboardPlan`.
 - `src/lib/minimax/parse-template-implementation.ts` parses selected-template compiler tool-call arguments.
-- `src/lib/minimax/index.ts` exposes `minimaxGenerateProject()`, `minimaxReviseSegment()`, `minimaxGenerateStoryboardPlan()`, `minimaxGenerateRevisedSegmentPlan()`, and `minimaxCompileTemplateImplementation()`.
+- `src/lib/minimax/index.ts` exposes `minimaxGenerateStoryboardPlan()`, `minimaxGenerateRevisedSegmentPlan()`, and `minimaxCompileTemplateImplementation()`.
 - `src/lib/storyboard-plan-schema.ts` defines the planner contract.
 - `src/lib/narration-asset-schema.ts` defines the generated narration asset metadata contract.
 - `src/lib/narration-asset-schema.ts` also defines segment-owned narration
@@ -143,23 +137,6 @@ some 3-segment briefs.
 
 ## Generation Flow
 
-Project mode:
-1. `POST /api/generate` validates `{ mode: "project", brief }`.
-2. `minimaxGenerateProject()` builds a project prompt.
-3. MiniMax is forced to call `emit_result`.
-4. The first `tool_calls[0].function.arguments` string is parsed.
-5. `videoProjectSchema.safeParse()` gates the returned project.
-6. The route returns `{ project }`.
-
-Segment mode:
-1. `POST /api/generate` validates `{ mode: "segment", project, segmentId, revisionPrompt }`.
-2. `minimaxReviseSegment()` sends the full current project, including every segment's `implementation.meta`, `implementation.theme`, and `implementation.scenes`.
-3. The prompt instructs MiniMax to return the full project and preserve non-target segments byte-for-byte.
-4. The same tool-call parser and Zod validation gate the returned project.
-5. Existing project media layers are reattached and current narration layer
-   `startFrame` values are recalculated to prevent legacy one-shot segment
-   regeneration from dropping or desynchronizing staged narration audio.
-
 Storyboard-planner mode:
 1. `minimaxGenerateStoryboardPlan()` builds a planning prompt from the brief.
 2. The prompt includes the compact planner template manifest derived from registered template definitions.
@@ -208,9 +185,8 @@ Staged endpoint:
    `VideoSegment.narration.audio`; project-level narration media layers remain
    supported only as a transitional compatibility path.
 5. The route returns `{ plan, project, diagnostics }`.
-6. The main page uses this route by default for top-level generation and
-   selected-segment regeneration while keeping the one-shot route as a
-   fallback toggle.
+6. The main page uses this route for top-level generation and selected-segment
+   regeneration.
 
 F5-TTS roadmap note:
 - The future target is planner -> narration synthesis -> audio + aligned
@@ -271,9 +247,9 @@ static validation when Docker is not part of a task, but they are not the
 default runtime path for this project.
 
 Useful Docker smoke paths:
-- Unset `MINIMAX_API_KEY`, call `POST /api/generate`, expect 500 with the explicit config message.
+- Unset `MINIMAX_API_KEY`, call `POST /api/generate/staged`, expect 500 with the explicit config message.
 - With a valid key, generate a 1-3 segment project and confirm the returned `project` renders in the page.
-- Revise a single segment and confirm non-target segments keep their `implementation.theme` and `implementation.scenes`.
+- Revise a single segment and confirm non-target segments keep their existing non-target content.
 
 ## Current Product Contract
 

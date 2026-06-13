@@ -1,8 +1,6 @@
 import path from "node:path";
 import { getRenderOutputDirectory } from "./artifact-paths";
 
-export const LATEST_RENDER_DOWNLOAD_URL = "/api/render/latest";
-
 const RENDER_ID_PATTERN = /^[a-z0-9-]+$/;
 
 export const isValidRenderId = (renderId: string): boolean => {
@@ -23,12 +21,4 @@ export const getRenderArtifactAbsolutePath = (renderId: string): string => {
 
 export const getRenderArtifactDownloadUrl = (renderId: string): string => {
   return `/api/render/${renderId}`;
-};
-
-export const getLatestRenderAbsolutePath = (): string => {
-  return path.join(getRenderOutputDirectory(), "latest.mp4");
-};
-
-export const getLatestRenderOutputPath = (): string => {
-  return path.join(getRenderOutputDirectory(), "latest.mp4");
 };

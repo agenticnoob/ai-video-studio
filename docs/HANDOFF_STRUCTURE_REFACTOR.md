@@ -37,8 +37,7 @@ Keep these stable:
 - generated narration text, audio, and captions belong under
   `VideoSegment.narration`.
 - project-level narration media layers are compatibility carriers only.
-- `POST /api/generate/staged` is the default page generation path.
-- `POST /api/generate` remains the shipped one-shot fallback path.
+- `POST /api/generate/staged` is the active page generation path.
 
 ## Recommended Subagent Split
 

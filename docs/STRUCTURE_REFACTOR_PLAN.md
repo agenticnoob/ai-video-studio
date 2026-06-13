@@ -266,7 +266,6 @@ src/helpers/project-generation/
 Implementation rules:
 
 - keep `GenerationPanel` and `PreviewPanel` behavior stable.
-- preserve staged/shortcut generation toggle behavior.
 - preserve voice reference upload retry behavior.
 - keep generation-time validation for missing voice clone reference audio or
   reference text.

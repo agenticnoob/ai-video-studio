@@ -24,11 +24,9 @@ Current base:
 Current implementation status:
 - the segment-first editing workflow is implemented
 - local project render/export is implemented
-- `POST /api/generate` is now provider-backed (MiniMax / minimaxi.com) — see [MiniMax integration](#minimax-integration) below
 - generation and rendering support registered segment templates (`scripted`
   and `spotlight`) while preserving one primary template per segment
-- the current MiniMax generation path is a usable v1 shortcut; the
-  authoritative final target is the staged planner -> narration synthesis ->
+- the active generation path is the staged planner -> narration synthesis ->
   audio + aligned captions -> template compiler pipeline documented in
   `docs/FINAL_PRODUCT_GOAL.md`
 - the first storyboard-planning contract is in place as a server-safe schema,
@@ -48,9 +46,8 @@ Current implementation status:
 - the selected-template compiler and staged endpoint use planned segment
   narration, real TTS duration, and only the selected template schema/rules to
   compile template-specific `implementation`
-- the page defaults to staged generation through `POST /api/generate/staged`
-  and keeps the shipped v1 `POST /api/generate` shortcut available through a
-  page-level toggle
+- the page uses `POST /api/generate/staged` for project generation and
+  selected-segment regeneration
 - staged selected-segment regeneration reruns the target segment's planning,
   TTS, selected-template compilation, and segment-owned narration replacement
   while preserving non-target segments
@@ -90,8 +87,7 @@ Current implementation status:
 ## Current product flow
 
 1. user writes a brief
-2. page calls `POST /api/generate/staged` by default, or `POST /api/generate`
-   when the one-shot fallback is selected
+2. page calls `POST /api/generate/staged`
 3. API returns schema-validated `VideoProject`
 4. page renders assembled preview via `ProjectVideo`
 5. user edits a selected segment and can regenerate only that segment; staged
@@ -101,10 +97,8 @@ Current implementation status:
 7. user exports the current edited project through `POST /api/render`
 8. successful render writes:
    - unique artifact: `AI_VIDEO_STUDIO_ARTIFACT_ROOT/renders/render-<timestamp>-<id>.mp4`
-   - stable artifact: `AI_VIDEO_STUDIO_ARTIFACT_ROOT/renders/latest.mp4`
 9. download routes:
    - unique artifact: `/api/render/[renderId]`
-   - stable latest artifact: `/api/render/latest`
 
 ## Product direction
 
@@ -151,8 +145,8 @@ Current top-level boundaries:
    - segment-first editor
    - full preview panel
    - local render/export actions
-2. `/src/app/api/generate/route.ts`
-   - MiniMax-backed project/segment generation
+2. `/src/app/api/generate/staged/route.ts`
+   - staged generation and selected-segment regeneration
 3. `/src/app/api/render/*`
    - local Remotion export for the current edited project
 4. `/src/lib/project-schema.ts`
@@ -192,9 +186,7 @@ Start from:
 - `README.md`
 
 Current code checkpoint:
-- active page generation defaults to `POST /api/generate/staged`
-- fallback product route: `POST /api/generate` still returns a validated
-  one-shot `VideoProject`
+- active page generation uses `POST /api/generate/staged`
 - staged-generation groundwork: `StoryboardPlan` schema, planner manifest, and
   internal MiniMax planner facade are implemented
 - TTS groundwork: internal `POST /api/tts` can generate and serve a
@@ -435,8 +427,7 @@ voice/reference behavior.
 Important distinction:
 - `./scripts/render.sh` is still the default/sample composition render path from the Docker wrapper
 - current edited-project export is the in-app action / `POST /api/render`
-- the edited-project export writes `AI_VIDEO_STUDIO_ARTIFACT_ROOT/renders/latest.mp4`
-  plus a unique `AI_VIDEO_STUDIO_ARTIFACT_ROOT/renders/render-*.mp4`
+- the edited-project export writes a unique `AI_VIDEO_STUDIO_ARTIFACT_ROOT/renders/render-*.mp4`
 - generated route media such as `/api/tts/assets/...` is converted to an
   absolute Next app URL for Remotion export. Override the default
   `http://127.0.0.1:3000` with `AI_VIDEO_STUDIO_RENDER_ASSET_ORIGIN` when the
@@ -528,8 +519,8 @@ Configured limits in `.env.example`:
 
 | Variable | Default | Purpose |
 |---|---:|---|
-| `AI_VIDEO_STUDIO_RENDER_CONCURRENCY` | `1` | Maximum concurrent `/api/render` exports in this Next process. Keep this at `1` while `AI_VIDEO_STUDIO_ARTIFACT_ROOT/renders/latest.mp4` remains a shared stable alias. |
-| `AI_VIDEO_STUDIO_GENERATION_CONCURRENCY` | `1` | Maximum concurrent `/api/generate/staged` and fallback `/api/generate` requests in this Next process. |
+| `AI_VIDEO_STUDIO_RENDER_CONCURRENCY` | `1` | Maximum concurrent `/api/render` exports in this Next process. |
+| `AI_VIDEO_STUDIO_GENERATION_CONCURRENCY` | `1` | Maximum concurrent `/api/generate/staged` requests in this Next process. |
 | `AI_VIDEO_STUDIO_TTS_CONCURRENCY` | `1` | Maximum concurrent TTS provider synthesis calls, including local F5 runtime calls. |
 | `AI_VIDEO_STUDIO_BUSY_MODE` | `reject` | `reject` returns HTTP `429` when the task type is busy; `queue` waits inside the HTTP request. |
 | `AI_VIDEO_STUDIO_QUEUE_TIMEOUT_MS` | `300000` | Maximum wait time for `queue` mode. |
@@ -541,8 +532,6 @@ Recommended private-team defaults:
   "busy, retry later" response instead of a long hanging request
 - use `queue` only for trusted local workflows where keeping the browser
   request open is acceptable
-- do not raise render concurrency while `AI_VIDEO_STUDIO_ARTIFACT_ROOT/renders/latest.mp4` remains a
-  shared "last completed render" alias
 
 The guard is process-local. It is enough for the Docker-first private-team
 workflow, but it is not a global lock across multiple Next replicas. If this
@@ -558,7 +547,7 @@ job system before treating these limits as global.
 
 ## MiniMax integration
 
-`POST /api/generate` is now backed by [MiniMax](https://api.minimaxi.com/v1) (minimaxi.com) Chat Completions. The `VideoProject` schema contract is unchanged — the provider is responsible for receiving the brief / current project and emitting a schema-validating JSON object. Each returned segment must choose one registered `templateId`, and its `implementation` must match that template-specific schema.
+The staged generation path is backed by [MiniMax](https://api.minimaxi.com/v1) (minimaxi.com) planner/compiler calls plus the in-repo TTS/assembly pipeline. The assembled `VideoProject` contract is unchanged — provider output must still validate against the selected planner/template schemas and final project schema.
 
 ### Environment variables
 
@@ -591,7 +580,7 @@ Local render/export also supports:
 
 ### What happens if the key is missing
 
-The provider throws `MinimaxConfigError("MINIMAX_API_KEY is not configured. Set it in .env to enable real generation.")` on the first call, and `POST /api/generate` translates that into a `500` with the same message in the `error` field. The UI surfaces it as the generation error state — there is no silent mock fallback to the local mock anymore.
+The provider throws `MinimaxConfigError("MINIMAX_API_KEY is not configured. Set it in .env to enable real generation.")` on the first staged generation call, and `POST /api/generate/staged` returns a `500` with the same message in the `error` field. The UI surfaces it as the generation error state — there is no silent mock fallback to the local mock anymore.
 
 ### Failure → HTTP status mapping
 
@@ -601,7 +590,7 @@ The provider throws `MinimaxConfigError("MINIMAX_API_KEY is not configured. Set 
 | Network error / upstream non-2xx (4xx, 5xx) | 502 |
 | Upstream returns non-JSON | 502 |
 | Tool call missing, wrong function, empty arguments, or `finish_reason=length` | 502 |
-| Response is JSON but fails `videoProjectSchema` | 500 |
+| Response is JSON but fails planner/template/project validation | 500 |
 | Invalid request body / unknown mode | 400 |
 
 ### Docker-first verification
@@ -616,9 +605,9 @@ Then smoke test the missing-key path from another terminal (returns 500):
 ```bash
 cd /data/projects/labs/ai-video-studio
 # ensure .env does NOT export MINIMAX_API_KEY
-curl -s -X POST http://127.0.0.1:3000/api/generate \
+curl -s -X POST http://127.0.0.1:3000/api/generate/staged \
   -H 'content-type: application/json' \
-  -d '{"mode":"project","brief":"hello world"}'
+  -d '{"mode":"brief","brief":"hello world"}'
 # -> {"error":"MINIMAX_API_KEY is not configured. Set it in .env to enable real generation."} (status 500)
 ```
 

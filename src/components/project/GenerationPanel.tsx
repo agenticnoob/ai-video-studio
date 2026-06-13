@@ -1,10 +1,6 @@
 import type { FC } from "react";
 
-import type {
-  GenerationOperation,
-  GenerationPipeline,
-  VoiceCloneSettings,
-} from "../../helpers/use-project-generation";
+import type { GenerationOperation, VoiceCloneSettings } from "../../helpers/use-project-generation";
 import { useTaskProgress } from "../../helpers/use-task-progress";
 import { Card } from "../ui/Card";
 import { ActivityProgress } from "../ui/ActivityProgress";
@@ -13,14 +9,11 @@ type GenerationPanelProps = {
   brief: string;
   disabled: boolean;
   error: string | null;
-  generationPipeline: GenerationPipeline;
   generationOperation: GenerationOperation;
   isGenerating: boolean;
-  isStagedGeneration: boolean;
   isUploadingVoiceReference: boolean;
   onBriefChange: (value: string) => void;
   onGenerate: () => void;
-  onGenerationPipelineChange: (pipeline: GenerationPipeline) => void;
   onVoiceCloneChange: (settings: VoiceCloneSettings) => void;
   onVoiceReferenceUpload: (file: File) => void;
   voiceClone: VoiceCloneSettings;
@@ -34,14 +27,11 @@ export const GenerationPanel: FC<GenerationPanelProps> = ({
   brief,
   disabled,
   error,
-  generationPipeline,
   generationOperation,
   isGenerating,
-  isStagedGeneration,
   isUploadingVoiceReference,
   onBriefChange,
   onGenerate,
-  onGenerationPipelineChange,
   onVoiceCloneChange,
   onVoiceReferenceUpload,
   voiceClone,
@@ -69,86 +59,71 @@ export const GenerationPanel: FC<GenerationPanelProps> = ({
         />
       </label>
 
-      <label className="mt-4 flex items-center gap-3 text-sm text-foreground">
-        <input
-          checked={generationPipeline === "staged"}
-          className="h-4 w-4 accent-foreground"
-          disabled={disabled}
-          type="checkbox"
-          onChange={(event) =>
-            onGenerationPipelineChange(event.currentTarget.checked ? "staged" : "shortcut")
-          }
-        />
-        <span>阶段式生成</span>
-      </label>
+      <div className="mt-4">
+        <label className="flex items-center gap-3 text-sm text-foreground">
+          <input
+            checked={voiceClone.enabled}
+            className="h-4 w-4 accent-foreground"
+            disabled={disabled}
+            type="checkbox"
+            onChange={(event) =>
+              onVoiceCloneChange({
+                ...voiceClone,
+                enabled: event.currentTarget.checked,
+              })
+            }
+          />
+          <span>声音克隆</span>
+        </label>
 
-      {isStagedGeneration ? (
-        <div className="mt-4">
-          <label className="flex items-center gap-3 text-sm text-foreground">
-            <input
-              checked={voiceClone.enabled}
-              className="h-4 w-4 accent-foreground"
-              disabled={disabled}
-              type="checkbox"
-              onChange={(event) =>
-                onVoiceCloneChange({
-                  ...voiceClone,
-                  enabled: event.currentTarget.checked,
-                })
-              }
-            />
-            <span>声音克隆</span>
-          </label>
+        {voiceClone.enabled ? (
+          <div className="mt-4 space-y-3">
+            <label className="block text-sm font-medium text-foreground">
+              参考音频文本
+              <textarea
+                className={`${inputClassName} min-h-20 resize-y`}
+                disabled={disabled}
+                value={voiceClone.referenceText}
+                onChange={(event) =>
+                  onVoiceCloneChange({
+                    ...voiceClone,
+                    referenceText: event.currentTarget.value,
+                  })
+                }
+              />
+            </label>
 
-          {voiceClone.enabled ? (
-            <div className="mt-4 space-y-3">
-              <label className="block text-sm font-medium text-foreground">
-                参考音频文本
-                <textarea
-                  className={`${inputClassName} min-h-20 resize-y`}
-                  disabled={disabled}
-                  value={voiceClone.referenceText}
-                  onChange={(event) =>
-                    onVoiceCloneChange({
-                      ...voiceClone,
-                      referenceText: event.currentTarget.value,
-                    })
+            <label className="block text-sm font-medium text-foreground">
+              参考音频
+              <input
+                accept=".wav,.mp3,.m4a,.aac,audio/wav,audio/mpeg,audio/mp3,audio/m4a,audio/aac"
+                className={`${inputClassName} file:mr-3 file:rounded-geist file:border file:border-panel-border-color file:bg-foreground file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-background`}
+                disabled={disabled || isUploadingVoiceReference}
+                type="file"
+                onChange={(event) => {
+                  const file = event.currentTarget.files?.[0];
+                  event.currentTarget.value = "";
+                  if (file) {
+                    onVoiceReferenceUpload(file);
                   }
-                />
-              </label>
+                }}
+              />
+            </label>
 
-              <label className="block text-sm font-medium text-foreground">
-                参考音频
-                <input
-                  accept=".wav,.mp3,.m4a,.aac,audio/wav,audio/mpeg,audio/mp3,audio/m4a,audio/aac"
-                  className={`${inputClassName} file:mr-3 file:rounded-geist file:border file:border-panel-border-color file:bg-foreground file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-background`}
-                  disabled={disabled || isUploadingVoiceReference}
-                  type="file"
-                  onChange={(event) => {
-                    const file = event.currentTarget.files?.[0];
-                    event.currentTarget.value = "";
-                    if (file) {
-                      onVoiceReferenceUpload(file);
-                    }
-                  }}
-                />
-              </label>
-
-              <div className="text-sm text-foreground">
-                {isUploadingVoiceReference
-                  ? "正在上传参考音频..."
-                  : voiceClone.originalName
-                    ? `已上传：${voiceClone.originalName}`
-                    : "未上传参考音频"}
-              </div>
-
-              {voiceReferenceError ? (
-                <div className="text-sm font-medium text-foreground">{voiceReferenceError}</div>
-              ) : null}
+            <div className="text-sm text-foreground">
+              {isUploadingVoiceReference
+                ? "正在上传参考音频..."
+                : voiceClone.originalName
+                  ? `已上传：${voiceClone.originalName}`
+                  : "未上传参考音频"}
             </div>
-          ) : null}
-        </div>
-      ) : null}
+
+            {voiceReferenceError ? (
+              <div className="text-sm font-medium text-foreground">{voiceReferenceError}</div>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
 
       <button
         className="mt-4 rounded-geist border border-foreground bg-foreground px-4 py-2 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-60"
@@ -156,13 +131,7 @@ export const GenerationPanel: FC<GenerationPanelProps> = ({
         onClick={onGenerate}
         type="button"
       >
-        {isGenerating
-          ? isStagedGeneration
-            ? "正在阶段式生成..."
-            : "正在生成项目..."
-          : isStagedGeneration
-            ? "阶段式生成项目"
-            : "生成项目"}
+        {isGenerating ? "正在生成项目..." : "生成项目"}
       </button>
 
       <div className="mt-4">
@@ -171,9 +140,7 @@ export const GenerationPanel: FC<GenerationPanelProps> = ({
             generationOperation.status === "running"
               ? generationOperation.kind === "segment"
                 ? "正在等待分段重生成接口返回新的分段数据。"
-                : isStagedGeneration
-                  ? "正在等待阶段式生成接口返回完整 VideoProject。"
-                  : "正在等待快捷生成接口返回完整 VideoProject。"
+                : "正在等待生成接口返回完整 VideoProject。"
               : generationOperation.status === "success"
                 ? generationOperation.kind === "segment"
                   ? "已收到新的分段数据，并刷新当前编辑态项目。"

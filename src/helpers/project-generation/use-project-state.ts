@@ -10,8 +10,6 @@ import {
 } from "../../lib/project-schema";
 import { sampleProject } from "../../lib/sample-video";
 
-export type GenerationPipeline = "staged" | "shortcut";
-
 const defaultBrief =
   "为 AI Video Studio 生成一条简洁的产品演示视频：展示用户如何输入创意 brief、获得分段项目、逐段微调，并预览完整成片。";
 
@@ -22,15 +20,12 @@ export const getInitialSelectedSegmentId = (project: VideoProject): string | nul
 export type UseProjectStateResult = {
   brief: string;
   durationInFrames: number;
-  generationPipeline: GenerationPipeline;
-  isStagedGeneration: boolean;
   normalizedProject: VideoProject;
   revisionPrompt: string;
   selectedSegment: VideoSegment | null;
   selectedSegmentId: string | null;
   selectSegment: (segmentId: string) => void;
   setBrief: (brief: string) => void;
-  setGenerationPipeline: (pipeline: GenerationPipeline) => void;
   setProject: (project: VideoProject) => void;
   setRevisionPrompt: (prompt: string) => void;
   setSelectedSegmentId: (segmentId: string | null) => void;
@@ -44,7 +39,6 @@ export const useProjectState = (): UseProjectStateResult => {
     getInitialSelectedSegmentId(sampleProject),
   );
   const [revisionPrompt, setRevisionPrompt] = useState("");
-  const [generationPipeline, setGenerationPipeline] = useState<GenerationPipeline>("staged");
 
   const normalizedProject = useMemo(() => normalizeProject(project), [project]);
   const durationInFrames = useMemo(
@@ -55,7 +49,6 @@ export const useProjectState = (): UseProjectStateResult => {
     () => normalizedProject.segments.find((segment) => segment.id === selectedSegmentId) ?? null,
     [normalizedProject.segments, selectedSegmentId],
   );
-  const isStagedGeneration = generationPipeline === "staged";
 
   const selectSegment = (segmentId: string) => {
     setSelectedSegmentId(segmentId);
@@ -76,15 +69,12 @@ export const useProjectState = (): UseProjectStateResult => {
   return {
     brief,
     durationInFrames,
-    generationPipeline,
-    isStagedGeneration,
     normalizedProject,
     revisionPrompt,
     selectedSegment,
     selectedSegmentId,
     selectSegment,
     setBrief,
-    setGenerationPipeline,
     setProject,
     setRevisionPrompt,
     setSelectedSegmentId,

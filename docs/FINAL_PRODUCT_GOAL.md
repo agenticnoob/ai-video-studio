@@ -510,9 +510,9 @@ brief
   -> preview/edit/export
 ```
 
-Do not treat the current one-call `POST /api/generate` path as the permanent
-generation architecture. Treat it as the shipped v1 authoring loop that proves
-preview, editing, template rendering, validation, and export.
+Do not collapse the product back into a one-call prompt -> `VideoProject`
+generation architecture. The active system is the staged authoring loop that
+proves preview, editing, template rendering, validation, and export.
 
 Current compatibility notes:
 
@@ -562,7 +562,7 @@ Status: implemented.
 Implemented capability:
 
 - prompt input
-- MiniMax-backed `POST /api/generate`
+- MiniMax-backed staged generation
 - schema-validated `VideoProject`
 - registered `scripted` and `spotlight` templates
 - full-video preview
@@ -572,8 +572,6 @@ Implemented capability:
 
 Known limitation:
 
-- the shipped one-shot `POST /api/generate` route still exists as a fallback
-  shortcut
 - the active staged page path now uses planner -> TTS -> compiler -> assembly,
   with bounded planner repair and deterministic mixed-template smoke fixtures;
   segment-owned narration audio/captions and the Next-side F5 adapter are in
@@ -593,7 +591,7 @@ Deliverables:
   audio + aligned captions -> compiler -> assembly
 - explicit statement that captions/subtitles are produced or normalized from
   the narration provider result
-- explicit statement that current one-shot generation is a v1 shortcut
+- explicit statement that the staged pipeline is the active generation path
 
 ### Milestone 2: Storyboard Plan Contract
 
@@ -688,8 +686,6 @@ Implemented:
   `VideoSegment.narration.audio`
 - render-time flattening for segment-owned narration audio
 - `POST /api/generate/staged` route for brief or existing plan input
-- main page generation defaults to the staged route, with the one-shot v1 path
-  kept as a fallback toggle
 - `POST /api/generate/staged` segment mode replans one target segment,
   regenerates its TTS audio, recompiles its selected-template implementation,
   replaces that segment's owned narration data, and preserves non-target

@@ -27,8 +27,7 @@ export const RenderControls: React.FC<{
         <div>
           <h2 className="text-base font-semibold text-foreground">本地导出</h2>
           <p className="mt-2 text-sm leading-6 text-foreground">
-            使用当前编辑态 VideoProject 触发本地 Remotion render；每次成功导出都会生成唯一产物，
-            同时刷新稳定副本 latest.mp4。
+            使用当前编辑态 VideoProject 触发本地 Remotion render；每次成功导出都会生成一个唯一产物文件。
           </p>
         </div>
         <div className="bg-foreground px-3 py-1 text-xs uppercase text-background">
@@ -70,12 +69,6 @@ export const RenderControls: React.FC<{
         />
       </div>
 
-      {state.status === "idle" ? (
-        <p className="mt-4 text-sm text-foreground">
-          稳定输出路径会使用当前服务端配置的 render 输出目录，并写入 `latest.mp4`。
-        </p>
-      ) : null}
-
       {state.status === "rendering" ? (
         <div className="mt-4 text-sm text-foreground">
           正在渲染当前预览对应的视频。如果编辑态发生变化，当前请求会被安全丢弃并回到 idle。
@@ -93,9 +86,6 @@ export const RenderControls: React.FC<{
             本次导出：<span className="font-mono text-foreground">{state.outputPath}</span>
           </div>
           <div className="mt-1">
-            稳定副本：<span className="font-mono text-foreground">{state.latestOutputPath}</span>
-          </div>
-          <div className="mt-1">
             Render ID：<span className="font-mono text-foreground">{state.renderId}</span>
           </div>
           <div className="mt-1">文件大小：{formatSize(state.sizeInBytes)}</div>
@@ -105,12 +95,6 @@ export const RenderControls: React.FC<{
               href={state.downloadUrl}
             >
               下载本次导出文件
-            </a>
-            <a
-              className="inline-flex bg-foreground px-3 py-2 font-medium text-background transition"
-              href={state.latestDownloadUrl}
-            >
-              下载稳定副本 latest.mp4
             </a>
           </div>
         </div>

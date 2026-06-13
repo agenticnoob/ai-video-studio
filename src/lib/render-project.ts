@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { copyFile, mkdir, stat } from "node:fs/promises";
+import { mkdir, stat } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import type { bundle as bundleFn } from "@remotion/bundler";
@@ -9,12 +9,9 @@ import type {
 } from "@remotion/renderer";
 import { normalizeProject, type VideoProject } from "./project-schema";
 import {
-  getLatestRenderAbsolutePath,
-  getLatestRenderOutputPath,
   getRenderArtifactAbsolutePath,
   getRenderArtifactDownloadUrl,
   getRenderArtifactOutputPath,
-  LATEST_RENDER_DOWNLOAD_URL,
 } from "./render-artifacts";
 
 export const PROJECT_VIDEO_COMPOSITION_ID = "ProjectVideo";
@@ -50,8 +47,6 @@ type WebpackOverrideModule = {
 export type ProjectRenderResult = {
   absoluteOutputPath: string;
   downloadUrl: string;
-  latestDownloadUrl: string;
-  latestOutputPath: string;
   outputPath: string;
   project: VideoProject;
   renderId: string;
@@ -134,13 +129,10 @@ const resolveRouteMediaForRender = (project: VideoProject): VideoProject => {
 };
 
 export {
-  getLatestRenderAbsolutePath,
-  getLatestRenderOutputPath,
   getRenderArtifactAbsolutePath,
   getRenderArtifactDownloadUrl,
   getRenderArtifactOutputPath,
   isValidRenderId,
-  LATEST_RENDER_DOWNLOAD_URL,
 } from "./render-artifacts";
 
 export const renderProjectVideo = async (
@@ -159,7 +151,6 @@ export const renderProjectVideo = async (
   const renderId = createRenderId();
   const outputPath = getRenderArtifactOutputPath(renderId);
   const absoluteOutputPath = getRenderArtifactAbsolutePath(renderId);
-  const latestAbsoluteOutputPath = getLatestRenderAbsolutePath();
 
   await mkdir(path.dirname(absoluteOutputPath), { recursive: true });
 
@@ -189,17 +180,12 @@ export const renderProjectVideo = async (
   });
   options.onProgress?.("render", "success", "Mp4 render completed.");
 
-  options.onProgress?.("artifact", "running", "Writing latest render artifact.");
-  await copyFile(absoluteOutputPath, latestAbsoluteOutputPath);
-
   const outputStats = await stat(absoluteOutputPath);
   options.onProgress?.("artifact", "success", "Render artifact ready.");
 
   return {
     absoluteOutputPath,
     downloadUrl: getRenderArtifactDownloadUrl(renderId),
-    latestDownloadUrl: LATEST_RENDER_DOWNLOAD_URL,
-    latestOutputPath: getLatestRenderOutputPath(),
     outputPath,
     project,
     renderId,

@@ -47,15 +47,13 @@ Remotion rendering guide.
 
 `ai-video-studio` already has a usable one-primary-template-per-segment authoring loop:
 - user writes a brief
-- page defaults to staged generation through `POST /api/generate/staged`
-- page can fall back to the shipped one-shot `POST /api/generate` path through
-  a generation-mode toggle
+- page uses `POST /api/generate/staged` for project generation
 - API returns schema-validated `VideoProject`
 - page hydrates project-level editable state
 - assembled full-video preview renders live
 - user can select a segment, edit its fields, and regenerate only that segment
 - user can locally export the current edited project through `POST /api/render`
-- successful export writes both a stable latest artifact and a unique artifact for that render
+- successful export writes a unique artifact for that render
 
 The first staged-generation groundwork is also in place:
 - `src/lib/storyboard-plan-schema.ts` defines validated `StoryboardPlan` and
@@ -78,11 +76,10 @@ The first staged-generation groundwork is also in place:
   provider adapter.
 - `POST /api/generate/staged` is available as the staged endpoint for either a
   brief, an existing `StoryboardPlan`, or one selected segment regeneration.
-- The main page now defaults to staged generation; `POST /api/generate` remains
-  available as the shipped v1 shortcut and fallback path.
-- In staged mode, selected-segment regeneration now regenerates the target
-  segment's plan, TTS audio, duration-aware template implementation, and
-  segment-owned narration audio while preserving non-target segments.
+- The main page now uses staged generation directly.
+- Selected-segment regeneration regenerates the target segment's plan, TTS
+  audio, duration-aware template implementation, and segment-owned narration
+  audio while preserving non-target segments.
 - Generated TTS assets are attached to `VideoSegment.narration.audio` and
   flattened to the project timeline for preview/export. Project-level
   narration media layers remain supported only as a transitional compatibility
@@ -216,9 +213,8 @@ Current product modeling decision:
 - `src/app/page.tsx`
 - `src/components/project/GenerationPanel.tsx`
 - `src/components/project/PreviewPanel.tsx`
-- `src/app/api/generate/route.ts`
+- `src/app/api/generate/staged/route.ts`
 - `src/app/api/render/route.ts`
-- `src/app/api/render/latest/route.ts`
 - `src/app/api/render/[renderId]/route.ts`
 - `src/helpers/use-rendering.ts`
 - `src/helpers/use-project-generation.ts`
@@ -312,8 +308,6 @@ host-local setup.
 
 - Keep `VideoProject` as the top-level page/generation/preview/render boundary for this phase.
 - Treat `docs/FINAL_PRODUCT_GOAL.md` as the authoritative roadmap source.
-- Treat the current one-shot MiniMax project generation path as a shipped v1
-  shortcut, not the final generation architecture.
 - Move future generation work toward `StoryboardPlan` -> in-project narration
   synthesis -> audio + aligned captions -> selected-template compile ->
   assembled `VideoProject`.

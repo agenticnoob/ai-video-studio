@@ -40,14 +40,11 @@ const Home: NextPage = () => {
                 brief={generation.brief}
                 disabled={isMutatingProject}
                 error={generation.error}
-                generationPipeline={generation.generationPipeline}
                 generationOperation={generation.generationOperation}
                 isGenerating={generation.isGenerating}
-                isStagedGeneration={generation.isStagedGeneration}
                 isUploadingVoiceReference={generation.isUploadingVoiceReference}
                 onBriefChange={generation.setBrief}
                 onGenerate={generation.generateProject}
-                onGenerationPipelineChange={generation.setGenerationPipeline}
                 onVoiceCloneChange={generation.updateVoiceClone}
                 onVoiceReferenceUpload={generation.uploadVoiceReference}
                 voiceClone={generation.voiceClone}

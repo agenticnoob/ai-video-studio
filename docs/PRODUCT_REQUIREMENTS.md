@@ -447,15 +447,10 @@ Current implementation note:
 - the current page UI separates whole-video generation/preview/export from
   segment editing, uses a horizontal segment strip, and keeps structured
   segment/template fields compact
-- the shipped `POST /api/generate` path still returns a validated one-shot
-  `VideoProject` directly and remains available as a fallback
-
-Practical v1 shortcut:
+Practical implementation:
 - keep one primary template instance per segment
 - allow that template to contain multiple scenes and internal components
 - preserve the product requirement that a segment is the user-facing editing unit
-- keep the current one-shot `VideoProject` generation path while it remains
-  useful, but do not treat it as the final architecture
 
 ## 14. Working decisions captured so far
 

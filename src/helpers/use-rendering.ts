@@ -14,8 +14,6 @@ export type State =
   | {
       finishedAt: number;
       downloadUrl: string;
-      latestDownloadUrl: string;
-      latestOutputPath: string;
       outputPath: string;
       renderId: string;
       progressId: string;
@@ -34,8 +32,6 @@ export type State =
 type RenderResponse = {
   downloadUrl?: string;
   error?: string;
-  latestDownloadUrl?: string;
-  latestOutputPath?: string;
   outputPath?: string;
   renderId?: string;
   sizeInBytes?: number;
@@ -46,18 +42,11 @@ const isRenderSuccessResponse = (
 ): response is Required<
   Pick<
     RenderResponse,
-    | "downloadUrl"
-    | "latestDownloadUrl"
-    | "latestOutputPath"
-    | "outputPath"
-    | "renderId"
-    | "sizeInBytes"
+    "downloadUrl" | "outputPath" | "renderId" | "sizeInBytes"
   >
 > => {
   return (
     typeof response.downloadUrl === "string" &&
-    typeof response.latestDownloadUrl === "string" &&
-    typeof response.latestOutputPath === "string" &&
     typeof response.outputPath === "string" &&
     typeof response.renderId === "string" &&
     typeof response.sizeInBytes === "number"
@@ -117,8 +106,6 @@ export const useRendering = (project: VideoProject) => {
       setState({
         downloadUrl: data.downloadUrl,
         finishedAt: Date.now(),
-        latestDownloadUrl: data.latestDownloadUrl,
-        latestOutputPath: data.latestOutputPath,
         outputPath: data.outputPath,
         progressId,
         renderId: data.renderId,
