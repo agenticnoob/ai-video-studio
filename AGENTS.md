@@ -93,11 +93,11 @@ The first staged-generation groundwork is also in place:
   file into memory, uses immutable artifact caching, and segment-owned
   narration `<Audio>` pauses the Remotion preview timeline while buffering.
 - Normalized caption payloads are written beside generated audio artifacts
-  under `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR` as `<audio-name>.captions.json`.
+  under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts` as `<audio-name>.captions.json`.
 - Page-level F5 voice cloning is exposed for staged generation. Users upload a
   `.wav`, `.mp3`, `.m4a`, or `.aac` reference audio file and provide matching
   reference text; the upload is stored under
-  `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR` and reused for full-project generation
+  `AI_VIDEO_STUDIO_ARTIFACT_ROOT/voice-references` and reused for full-project generation
   plus selected-segment regeneration when `voiceClone.enabled` is true. In the
   Docker workflow this defaults to the shared path
   `/workspace/out/voice-references`.
@@ -136,7 +136,7 @@ The first staged-generation groundwork is also in place:
   export smoke.
 - The F5 Docker overlay mounts the configured
   shared `/workspace/out` tree read-only into the runtime, so the configured
-  `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR` remains reachable without a second
+  `AI_VIDEO_STUDIO_ARTIFACT_ROOT/voice-references` path remains reachable without a second
   runtime-path setting.
 
 This repo is past the upstream starter-demo stage.

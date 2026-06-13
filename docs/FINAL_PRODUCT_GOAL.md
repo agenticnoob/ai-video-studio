@@ -530,13 +530,13 @@ Current compatibility notes:
   fallback caption cues, with caption cues flattened to the project timeline
   for preview and export.
 - Page-level F5 voice cloning is now exposed for staged generation: uploaded
-  reference audio is stored under `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR`, then paired with
+  reference audio is stored under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/voice-references`, then paired with
   user supplied reference text at generation time and reused for full-project
   generation plus selected-segment regeneration when cloning is enabled.
 - The current fallback caption path uses sentence punctuation as a hard split,
   comma punctuation as a soft split, merges short comma chunks forward for
   readability, and saves the normalized caption payload beside generated audio
-  under `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR` as `<audio-name>.captions.json`.
+  under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts` as `<audio-name>.captions.json`.
 - Generated narration audio is served as seekable streamed byte ranges with
   immutable artifact caching, and Remotion preview pauses timeline advancement
   while narration audio is buffering.
@@ -635,14 +635,14 @@ Implemented:
 
 - `SegmentNarrationAsset` validation
 - MiniMax-backed internal `POST /api/tts` for one planned segment
-- local artifact writing under `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR`
+- local artifact writing under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts`
 - `/api/tts/assets/...` serving for Remotion-consumable audio URLs
 - ffprobe duration measurement and frame normalization
 
 Deliverables:
 
 - TTS provider module
-- local audio artifact path such as `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR`
+- local audio artifact path such as `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts`
 - audio serving path that Remotion can consume
 - duration probing or provider-returned duration normalization
 - `SegmentNarrationAsset` metadata

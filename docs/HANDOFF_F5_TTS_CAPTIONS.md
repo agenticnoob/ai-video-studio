@@ -116,7 +116,7 @@ Already implemented:
   - `src/lib/tts/*`
   - `src/app/api/tts/route.ts`
   - `src/app/api/tts/assets/[...assetPath]/route.ts`
-- local generated audio artifacts under `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR`.
+- local generated audio artifacts under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts`.
 - byte-range serving for generated TTS assets.
 - selected-template compilation using real narration audio duration.
 - segment-owned `narration` schema on `VideoSegment`.
@@ -149,7 +149,7 @@ Implemented in the F5/captions/runtime slices:
 - punctuation-aware F5 fallback cues when real alignment is unavailable:
   sentence punctuation is a hard split, comma punctuation is a soft split, and
   short comma chunks merge forward for readability.
-- sidecar caption artifact writing under `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR` as
+- sidecar caption artifact writing under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts` as
   `<audio-name>.captions.json` after final Next-side caption normalization.
 - Remotion flattening/rendering for segment-owned captions.
 - selected-segment caption replacement through `VideoSegment.narration`.
@@ -157,7 +157,7 @@ Implemented in the F5/captions/runtime slices:
 - optional `services/f5-tts/` FastAPI runtime with `contract-smoke` and real
   `F5_TTS_SERVICE_MODE=f5` modes.
 - page-level F5 voice cloning for staged generation: uploaded references are
-  stored under `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR`, then paired with generation-time
+  stored under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/voice-references`, then paired with generation-time
   `voiceClone: { enabled, referenceId, referenceText }`, and used as
   `referenceAudio` / `referenceText` by the F5 runtime.
 - Docker overlays for the F5 service and explicit GPU runtime.

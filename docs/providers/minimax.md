@@ -80,7 +80,7 @@ Out of scope for this provider pass:
 - `src/lib/tts/audio-duration.ts` probes generated audio duration with `ffprobe`.
 - `src/lib/tts/artifacts.ts` owns local TTS artifact paths and download URLs.
 - `src/app/api/tts/route.ts` generates one planned segment narration asset.
-- `src/app/api/tts/assets/[...assetPath]/route.ts` serves generated audio files from `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR`.
+- `src/app/api/tts/assets/[...assetPath]/route.ts` serves generated audio files from `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts`.
 - `src/lib/project-generation.ts` is test-only mock generation and is not imported by the route.
 
 ## Environment Variables
@@ -174,7 +174,7 @@ TTS mode:
 3. `synthesizeMinimaxSpeech()` sends the segment narration text to the
    MiniMax synchronous speech endpoint.
 4. The provider decodes `data.audio` from hex into a local audio file under
-   `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR`.
+   `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts`.
 5. `ffprobe` measures the generated file duration.
 6. The route returns a validated `SegmentNarrationAsset` with `audioSrc`,
    `durationInSeconds`, `durationInFrames`, provider, voice, and format.

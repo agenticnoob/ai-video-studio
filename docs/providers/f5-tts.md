@@ -90,14 +90,14 @@ segment regeneration, and export.
     `wav`.
   - `F5_TTS_REFERENCE_AUDIO` optionally points to reference audio for a local
     voice-cloning runtime.
-  - `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR` points to the shared reference-audio
-    directory used by both Next upload handling and F5 synthesis. The Docker
-    workflow defaults this to `/workspace/out/voice-references`.
+  - `AI_VIDEO_STUDIO_ARTIFACT_ROOT` is the shared artifact root used by Next,
+    Remotion, and F5. Voice references live under its `voice-references/`
+    subdirectory. The Docker workflow defaults this root to `/workspace/out`.
   - `F5_TTS_FALLBACK_TO_MINIMAX=false` disables MiniMax fallback when F5 fails.
 - Write generated audio to local project artifacts, consistent with the current
-  `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR` path.
+  `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts` path.
 - Write the final normalized caption payload beside the generated audio under
-  `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR` as `<audio-name>.captions.json`.
+  `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts` as `<audio-name>.captions.json`.
 - Serve generated audio through `/api/tts/assets/...` with byte-range support.
 - Normalize provider captions/alignment into segment-owned caption data with
   segment-local timing.
@@ -139,7 +139,7 @@ Page-level voice cloning uses this runtime contract:
 
 1. `POST /api/tts/voice-references` accepts multipart `audio`, validates
    `.wav`, `.mp3`, `.m4a`, or `.aac`, and stores the file under ignored
-   `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR`.
+   `AI_VIDEO_STUDIO_ARTIFACT_ROOT/voice-references`.
 2. `/api/tts` and `/api/generate/staged` accept optional
    `voiceClone: { enabled, referenceId, referenceText }`.
 3. When `voiceClone.enabled` is true, the TTS boundary forces `f5-tts`, resolves
@@ -212,6 +212,6 @@ Current runtime note:
   `F5_TTS_DEFAULT_REFERENCE_TEXT`.
 - The Docker F5 overlay mounts the configured
   shared `/workspace/out` tree into the runtime, so the configured
-  `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR` remains valid there and real-mode
+  `AI_VIDEO_STUDIO_ARTIFACT_ROOT/voice-references` path remains valid there and real-mode
   cloning can use files uploaded through the Next UI without a second
   runtime-path setting.

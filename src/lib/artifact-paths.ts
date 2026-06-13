@@ -1,14 +1,7 @@
 import path from "node:path";
 
-const resolveConfiguredDirectory = ({
-  envName,
-  fallbackDirectory,
-}: {
-  envName: string;
-  fallbackDirectory: string;
-}): string => {
-  const configuredDirectory = (process.env[envName] ?? "").trim();
-  const normalizedDirectory = (configuredDirectory || fallbackDirectory).replace(/\/+$/, "");
+const resolveConfiguredPath = (configuredValue: string, fallbackPath: string): string => {
+  const normalizedDirectory = (configuredValue.trim() || fallbackPath).replace(/\/+$/, "");
 
   if (path.isAbsolute(normalizedDirectory)) {
     return normalizedDirectory;
@@ -17,27 +10,21 @@ const resolveConfiguredDirectory = ({
   return path.join(/* turbopackIgnore: true */ process.cwd(), normalizedDirectory);
 };
 
-export const DEFAULT_RENDER_OUTPUT_DIRECTORY = "/workspace/out/renders";
-export const DEFAULT_TTS_OUTPUT_DIRECTORY = "/workspace/out/tts";
-export const DEFAULT_VOICE_REFERENCE_DIRECTORY = "/workspace/out/voice-references";
+export const DEFAULT_ARTIFACT_ROOT = "/workspace/out";
+
+export const getArtifactRoot = (): string => {
+  const configuredRoot = (process.env.AI_VIDEO_STUDIO_ARTIFACT_ROOT ?? "").trim();
+  return resolveConfiguredPath(configuredRoot, DEFAULT_ARTIFACT_ROOT);
+};
 
 export const getRenderOutputDirectory = (): string => {
-  return resolveConfiguredDirectory({
-    envName: "AI_VIDEO_STUDIO_RENDER_OUTPUT_DIR",
-    fallbackDirectory: DEFAULT_RENDER_OUTPUT_DIRECTORY,
-  });
+  return path.join(getArtifactRoot(), "renders");
 };
 
 export const getTtsOutputDirectory = (): string => {
-  return resolveConfiguredDirectory({
-    envName: "AI_VIDEO_STUDIO_TTS_OUTPUT_DIR",
-    fallbackDirectory: DEFAULT_TTS_OUTPUT_DIRECTORY,
-  });
+  return path.join(getArtifactRoot(), "tts");
 };
 
 export const getVoiceReferenceDirectory = (): string => {
-  return resolveConfiguredDirectory({
-    envName: "AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR",
-    fallbackDirectory: DEFAULT_VOICE_REFERENCE_DIRECTORY,
-  });
+  return path.join(getArtifactRoot(), "voice-references");
 };
