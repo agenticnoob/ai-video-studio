@@ -10,6 +10,7 @@ export {
   registeredTemplateIds,
   SCRIPTED_TEMPLATE_ID,
   SPOTLIGHT_TEMPLATE_ID,
+  STATS_DASHBOARD_TEMPLATE_ID,
   templateDefinitions,
   templateIds,
   templateSegmentJsonSchemas,

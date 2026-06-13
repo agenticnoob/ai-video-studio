@@ -1,6 +1,74 @@
 # Iteration Status
 
-Last updated: Production Docker service split from dev web service
+Last updated: Stats dashboard template implementation
+
+## Latest continuation — Stats dashboard template implementation
+
+- Implemented the first registered `stats-dashboard` segment template as the
+  next bounded template slice.
+- Kept the product model unchanged: one primary `templateId` per segment,
+  template-local `implementation`, and segment-owned narration/captions outside
+  template fields.
+- Added `src/templates/stats-dashboard/` with:
+  - `schema.ts` for `StatsDashboardSpec`
+  - `definition.ts` for planner/compiler metadata, JSON schema, prompts,
+    duration helper, and revision payload preservation
+  - `runtime.tsx` for Remotion rendering through existing primitives
+  - `editor.tsx` for compact manual editing
+  - `index.ts` for bundle registration
+- Registered the template through the existing server/runtime registries:
+  `src/templates/ids.ts`, `src/templates/registered-definitions.ts`, and
+  `src/templates/registered-bundles.ts`.
+- The implementation now supports a controlled dashboard composition model:
+  - `layout`: `single`, `split`, `grid`, `hero-metric`, or `timeline`
+  - `blocks[]`: `kpi`, `insight`, `bar-chart`, `line-chart`, or
+    `donut-chart`
+  - optional `timeline[]`: Remotion `Sequence` steps that reveal block groups
+    over time
+- Parameterized `LineChart` and `DonutChart` with semantic props while keeping
+  their default primitive-catalog previews intact. `BarChart` also accepts
+  semantic sizing/container props for compact dashboard layouts.
+- Used Subagent-Driven only for bounded read-only review:
+  - primitive reuse audit
+  - template wiring audit
+  Main-agent implementation and final validation remain centralized in this
+  pass.
+- Remotion Studio on port `3001` now exposes only the real registered template
+  previews:
+  - `ScriptedTemplatePreview`
+  - `SpotlightTemplatePreview`
+  - `StatsDashboardTemplatePreview`
+  Starter/demo/non-template compositions are intentionally hidden from the
+  Studio registry.
+- The template preview projects intentionally omit narration audio/captions.
+  Root cause: Remotion Studio on `3001` is not the Next app, so preview fixtures
+  that point `<Audio>` at `/api/tts/assets/smoke/*.mp3` can fail in Studio even
+  though the main Next preview/export path can serve real TTS assets.
+- The `3001` template preview compositions keep `defaultProps` as inline static
+  object literals in `src/remotion/Root.tsx`. Remotion Studio's save-default-
+  props check parses the root file AST and cannot extract values from wrapper
+  components or imported fixture constants.
+- Tuned `stats-dashboard` visual density so multi-block dashboard layouts keep
+  text compact: smaller kicker/title treatment, subtitle/footer hidden in
+  compact dashboard mode, tighter panel spacing, and larger compact chart
+  render areas.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc 'npx prettier src/remotion/primitives/charts/LineChart.tsx src/remotion/primitives/charts/DonutChart.tsx src/remotion/primitives/index.ts src/templates/ids.ts src/templates/registry.ts src/templates/registered-definitions.ts src/templates/registered-bundles.ts src/templates/stats-dashboard/schema.ts src/templates/stats-dashboard/definition.ts src/templates/stats-dashboard/index.ts src/templates/stats-dashboard/runtime.tsx src/templates/stats-dashboard/editor.tsx --write'`
+- `docker compose run --rm web bash -lc 'npx prettier AGENTS.md README.md docs/ITERATION_STATUS.md docs/plans/STATS_DASHBOARD_TEMPLATE_ROADMAP.md docs/HANDOFF_STATS_DASHBOARD_TEMPLATE.md docs/REMOTION_PRIMITIVES.md --write'`
+- `docker compose run --rm web bash -lc 'npx prettier src/lib/template-registry.ts src/lib/staged-smoke-fixtures.ts src/remotion/Root.tsx --write'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts StatsDashboardTemplatePreview /workspace/out/stats-dashboard-v2.png --frame=145 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts StatsDashboardTemplatePreview /workspace/out/stats-dashboard-compact.png --frame=145 --scale=0.5'`
+- `docker compose up -d studio`
+- `docker compose restart studio`
+- `curl -I http://127.0.0.1:3001`
+- Direct Remotion `computeCanUpdateDefaultPropsFromContent` check for all three
+  Studio preview composition ids returned `canUpdate: true`.
+- `git diff --check`
 
 ## Latest continuation — Production Docker service split from dev web service
 

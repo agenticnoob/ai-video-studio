@@ -24,8 +24,9 @@ Current base:
 Current implementation status:
 - the segment-first editing workflow is implemented
 - local project render/export is implemented
-- generation and rendering support registered segment templates (`scripted`
-  and `spotlight`) while preserving one primary template per segment
+- generation and rendering support registered segment templates (`scripted`,
+  `spotlight`, and `stats-dashboard`) while preserving one primary template per
+  segment
 - the active generation path is the staged planner -> narration synthesis ->
   audio + aligned captions -> template compiler pipeline documented in
   `docs/FINAL_PRODUCT_GOAL.md`
@@ -114,6 +115,8 @@ Current modeling direction:
   - `scripted`: `VideoSpec` with internal `scenes`
   - `spotlight`: `SpotlightSpec` with `headline`, `subheadline`,
     `callouts`, and `durationInFrames`
+  - `stats-dashboard`: `StatsDashboardSpec` with `layout`, dashboard
+    `blocks`, optional `timeline`, and `durationInFrames`
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
 - generated narration audio should be carried outside template-specific
   `implementation` fields; the target home is segment-owned
