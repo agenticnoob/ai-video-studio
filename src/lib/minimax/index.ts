@@ -192,6 +192,7 @@ export const minimaxCompileTemplateImplementation = async (
         throw error;
       }
       if (attempt >= MAX_TEMPLATE_COMPILER_REPAIR_ATTEMPTS) {
+        error.attempts = attempt + 1;
         throw error;
       }
       validationError = error.message;

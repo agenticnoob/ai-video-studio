@@ -140,7 +140,7 @@ Purpose:
 
 ### Phase 2: Visual IR Generation v1
 
-Next recommended goal.
+Status: implemented for the bounded `primitive_scene_graph` path.
 
 Add provider-backed generation only for the bounded
 `primitive_scene_graph` path.
@@ -176,6 +176,23 @@ Acceptance:
 - generated output renders through `ProjectVideo`
 - deterministic fixture remains available
 - existing templates still work as fallback/macro paths
+
+Current landing:
+
+- the selected-template compiler prompt now gives `scene-graph` a constrained
+  Visual IR vocabulary for provider-backed `primitive_scene_graph` generation
+- compiler diagnostics expose render strategy, repair attempts, and fallback
+  metadata
+- selected-segment regeneration can preserve the existing `scene-graph`
+  segment if Visual IR compilation fails after bounded repair
+- full-project generation falls back from repeated `scene-graph` compiler
+  failure to a deterministic `template_macro` segment instead of returning a
+  broken Visual IR payload
+- deterministic fixture assertions cover `primitive_scene_graph` diagnostics
+  and fallback shape
+- `scripts/staged-live-smoke.mjs` includes a forced `mode: "plan"`
+  provider-backed `scene-graph` request that verifies generated Visual IR
+  remains `primitive_scene_graph` and does not fallback
 
 ### Phase 3: Render Strategy Decision v1
 

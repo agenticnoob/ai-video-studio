@@ -143,6 +143,22 @@ const buildStoryboardRepairInstructions = ({
 const buildTemplateCompilerSystemPrompt = (request: MinimaxTemplateCompileRequest): string => {
   const template = getTemplateDefinition(request.segment.templateId);
   const durationRange = template.capabilities.recommendedDurationFrames;
+  const sceneGraphVisualIrInstructions =
+    request.segment.templateId === "scene-graph"
+      ? [
+          "# SceneGraph Visual IR v1 rules",
+          "- This is provider-backed Visual IR generation for primitive_scene_graph only.",
+          '- Set renderStrategy exactly to "primitive_scene_graph".',
+          '- Allowed composition values: "hero", "path", "split", "node-graph", "code-terminal", "lockup".',
+          '- Allowed layout values: "full-bleed", "center", "split", "path-horizontal", "node-graph", "code-terminal-split", "safe-lockup".',
+          '- Allowed layer types: "background", "kinetic-title", "text", "rich-text", "shape", "image-plane", "code-panel", "terminal-panel", "browser-window", "node-graph", "line-path", "cursor", "callout", "metric-highlight", "process-step", "caption".',
+          '- Allowed motionPreset values: "fade-in", "slide-in", "pop", "draw-path", "highlight", "type-text", "camera-push", "match-cut", "success-pulse", "error-glitch".',
+          "- Use 3 to 8 layers for normal segments and reserve captions with a caption layer whose source is segment-narration.",
+          "- Keep every beat segment-local, within durationInFrames, and point targetLayerId only at existing layer ids.",
+          "- Prefer full-bleed, path, node-graph, code-terminal, or lockup visual structures over centered cards.",
+          "- Do not use template_macro, procedural_generator, media_asset_composite, or generated_component in this phase.",
+        ].join("\n")
+      : "";
   const repairInstructions =
     request.validationError || request.previousInvalidOutput
       ? [
@@ -189,6 +205,8 @@ ${template.implementationPrompt}
 # Theme rules
 - Include all required theme fields when the selected template schema requires theme.
 - Use readable contrast and CSS color literals.
+
+${sceneGraphVisualIrInstructions}
 
 ${repairInstructions}
 

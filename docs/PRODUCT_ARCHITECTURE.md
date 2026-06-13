@@ -39,9 +39,16 @@ those targets map onto the codebase.
 The active page flow uses the staged planner -> TTS -> compiler -> assembly
 pipeline. Segment-owned
 narration audio/captions, the Next-side F5 adapter, and the optional local
-F5-TTS runtime service are in place. The current hardening target is a full
-provider-backed `POST /api/generate/staged` live smoke that combines MiniMax
-planner/compiler calls with real F5 narration.
+F5-TTS runtime service are in place. The Visual IR Generation v1 landing keeps
+provider-backed generation bounded to `primitive_scene_graph`:
+the `scene-graph` compiler prompt exposes only the allowed Visual IR
+vocabulary, staged diagnostics report repair/fallback state, and
+selected-segment regeneration preserves the existing segment if repeated
+scene-graph validation fails. Full-project generation falls back from repeated
+scene-graph compiler failure to a deterministic `spotlight` macro segment when
+there is no existing segment to preserve. `scripts/staged-live-smoke.mjs`
+includes a forced provider-backed `scene-graph` plan smoke with real F5
+narration before scope widens beyond `primitive_scene_graph`.
 
 Current implementation snapshot:
 

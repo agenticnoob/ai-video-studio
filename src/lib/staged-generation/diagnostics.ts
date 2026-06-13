@@ -1,7 +1,4 @@
-import type {
-  GenerateStagedProjectResult,
-  GenerateStagedSegmentRevisionResult,
-} from "./pipeline";
+import type { GenerateStagedProjectResult, GenerateStagedSegmentRevisionResult } from "./pipeline";
 
 type PlannerDiagnostics = {
   attempts: number;
@@ -10,7 +7,12 @@ type PlannerDiagnostics = {
 
 type CompilerDiagnostics = {
   attempts: number;
+  fallback?: {
+    reason: string;
+    type: "preserved_existing_segment" | "template_macro";
+  };
   repaired: boolean;
+  renderStrategy: "primitive_scene_graph" | "template_macro";
   segmentId: string;
   templateId: string;
 };
@@ -42,7 +44,9 @@ export const buildStagedProjectDiagnostics = (
           },
     compiler: result.segments.map((segment) => ({
       attempts: segment.compilerAttempts,
+      fallback: segment.compilerFallback,
       repaired: segment.repaired,
+      renderStrategy: segment.renderStrategy,
       segmentId: segment.segment.id,
       templateId: segment.segment.templateId,
     })),
@@ -75,7 +79,9 @@ export const buildStagedSegmentRevisionDiagnostics = (
     compiler: [
       {
         attempts: result.compilerAttempts,
+        fallback: result.compilerFallback,
         repaired: result.repaired,
+        renderStrategy: result.renderStrategy,
         segmentId: result.segment.id,
         templateId: result.segment.templateId,
       },

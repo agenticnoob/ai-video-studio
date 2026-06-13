@@ -14,6 +14,7 @@ const formatIssues = (issues: z.ZodIssue[]): string =>
     .join("; ");
 
 export class TemplateImplementationParseError extends Error {
+  attempts?: number;
   raw: string;
 
   constructor(message: string, raw: string) {

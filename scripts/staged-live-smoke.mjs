@@ -20,9 +20,7 @@ const skipIfMissingConfig = () => {
     return false;
   }
 
-  console.log(
-    `Skipping live staged smoke because required env is missing: ${missing.join(", ")}.`,
-  );
+  console.log(`Skipping live staged smoke because required env is missing: ${missing.join(", ")}.`);
   return true;
 };
 
@@ -132,6 +130,61 @@ const assertDiagnostics = (diagnostics, segmentCount) => {
   }
 };
 
+const assertSceneGraphVisualIr = (body) => {
+  const [segment] = body.project?.segments || [];
+  if (!segment) {
+    fail("SceneGraph smoke response did not include a segment");
+  }
+  if (segment.templateId !== "scene-graph") {
+    fail(`Expected scene-graph template, received ${segment.templateId}`);
+  }
+  if (segment.implementation?.renderStrategy !== "primitive_scene_graph") {
+    fail(
+      `Expected primitive_scene_graph renderStrategy, received ${segment.implementation?.renderStrategy}`,
+    );
+  }
+
+  const [compiler] = body.diagnostics?.compiler || [];
+  if (!compiler) {
+    fail("SceneGraph smoke response did not include compiler diagnostics");
+  }
+  if (compiler.renderStrategy !== "primitive_scene_graph") {
+    fail(`Expected primitive_scene_graph diagnostics, received ${compiler.renderStrategy}`);
+  }
+  if (compiler.fallback) {
+    fail(`SceneGraph smoke unexpectedly fell back: ${JSON.stringify(compiler.fallback)}`);
+  }
+};
+
+const buildSceneGraphPlan = () => ({
+  title: "Live SceneGraph Visual IR Smoke",
+  brief:
+    "Compile one provider-backed scene-graph segment with narration, captions, and bounded Visual IR.",
+  language: "en",
+  globalStyle:
+    "Cinematic technical explainer with full-bleed structure, visible process flow, and caption-safe layout.",
+  segments: [
+    {
+      id: "segment-1",
+      order: 1,
+      title: "Visual IR compiler path",
+      purpose:
+        "Show how the product turns a storyboard segment into a validated primitive scene graph.",
+      templateId: "scene-graph",
+      templateReason:
+        "This smoke must exercise provider-backed primitive_scene_graph generation rather than a macro template.",
+      narration: {
+        text: "The compiler turns a planned segment into a validated scene graph, then renders it through the same project video path.",
+        tone: "clear",
+      },
+      visualBrief:
+        "Use a full-bleed technical opener with a node graph or line path, code or terminal panel, and a caption-safe lower band.",
+      pacingHint: "steady technical demo",
+      expectedDurationSeconds: 6,
+    },
+  ],
+});
+
 const run = async () => {
   if (skipIfMissingConfig()) {
     return;
@@ -161,11 +214,35 @@ const run = async () => {
     await assertSegmentNarration(segment);
   }
 
+  console.log("Requesting live scene-graph Visual IR staged project");
+  const sceneGraphBody = await requestJson(`${NEXT_ORIGIN}/api/generate/staged`, {
+    method: "POST",
+    body: JSON.stringify({
+      mode: "plan",
+      provider: "f5-tts",
+      plan: buildSceneGraphPlan(),
+    }),
+  });
+
+  const sceneGraphSegments = sceneGraphBody.project?.segments;
+  if (!Array.isArray(sceneGraphSegments) || sceneGraphSegments.length !== 1) {
+    fail("SceneGraph smoke response did not include exactly one segment");
+  }
+  assertDiagnostics(sceneGraphBody.diagnostics, 1);
+  assertSceneGraphVisualIr(sceneGraphBody);
+  await assertSegmentNarration(sceneGraphSegments[0]);
+
   const summary = {
     audioSources: segments.map((segment) => segment.narration.audio.src),
     captionCueCounts: segments.map((segment) => segment.narration.captions.cues.length),
     diagnostics: body.diagnostics,
     render: undefined,
+    sceneGraph: {
+      audioSource: sceneGraphSegments[0].narration.audio.src,
+      compiler: sceneGraphBody.diagnostics.compiler,
+      renderStrategy: sceneGraphSegments[0].implementation.renderStrategy,
+      templateId: sceneGraphSegments[0].templateId,
+    },
     segmentCount: segments.length,
     templateIds: segments.map((segment) => segment.templateId),
   };

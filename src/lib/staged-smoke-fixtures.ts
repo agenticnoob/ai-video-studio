@@ -6,6 +6,7 @@ import {
   type VideoProject,
   type VideoSegment,
 } from "./project-schema";
+import { buildStagedProjectDiagnostics } from "./staged-generation/diagnostics";
 import {
   assembleStagedProject,
   orderPlanSegments,
@@ -825,6 +826,79 @@ const assertSceneGraphFixture = (): void => {
   ) {
     throw new Error("Scene-graph smoke fixture expected segment-owned captions.");
   }
+  if (
+    sceneGraphSmokeProject.segments.some(
+      (segment) =>
+        (segment.implementation as { renderStrategy?: string }).renderStrategy !==
+        "primitive_scene_graph",
+    )
+  ) {
+    throw new Error("Scene-graph smoke fixture expected primitive_scene_graph render strategy.");
+  }
 };
 
 assertSceneGraphFixture();
+
+const assertSceneGraphCompilerDiagnosticsFixture = (): void => {
+  const templateMacroFallbackSegment = videoSegmentSchema.parse({
+    ...spotlightSegment,
+    id: "segment-3",
+    title: "Macro fallback",
+    intent: "Verify full-project fallback for scene graph compiler failure.",
+  });
+  const diagnostics = buildStagedProjectDiagnostics({
+    plan: mixedTemplateStoryboardPlan,
+    project: sceneGraphSmokeProject,
+    segments: [
+      {
+        compilerAttempts: 2,
+        compilerFallback: {
+          reason: "Fixture repair fallback",
+          type: "preserved_existing_segment",
+        },
+        narration: createNarrationAsset({
+          durationInFrames: 120,
+          segmentId: "scene-graph-diagnostics",
+          text: "Diagnostics expose primitive scene graph repair and fallback state.",
+        }),
+        repaired: true,
+        renderStrategy: "primitive_scene_graph",
+        segment: sceneGraphSmokeProject.segments[0],
+      },
+      {
+        compilerAttempts: 2,
+        compilerFallback: {
+          reason: "Fixture scene-graph validation failure",
+          type: "template_macro",
+        },
+        narration: createNarrationAsset({
+          durationInFrames: 120,
+          segmentId: "scene-graph-template-macro-fallback",
+          text: "When scene graph validation fails, full project generation can fall back to a stable macro.",
+        }),
+        repaired: true,
+        renderStrategy: "template_macro",
+        segment: templateMacroFallbackSegment,
+      },
+    ],
+  });
+
+  const [compiler, macroCompiler] = diagnostics.compiler;
+  if (
+    compiler?.attempts !== 2 ||
+    !compiler.repaired ||
+    compiler.renderStrategy !== "primitive_scene_graph" ||
+    compiler.fallback?.type !== "preserved_existing_segment"
+  ) {
+    throw new Error("Scene-graph diagnostics fixture expected repair and fallback metadata.");
+  }
+  if (
+    macroCompiler?.renderStrategy !== "template_macro" ||
+    macroCompiler.fallback?.type !== "template_macro" ||
+    templateMacroFallbackSegment.templateId !== SPOTLIGHT_TEMPLATE_ID
+  ) {
+    throw new Error("Scene-graph diagnostics fixture expected template macro fallback metadata.");
+  }
+};
+
+assertSceneGraphCompilerDiagnosticsFixture();

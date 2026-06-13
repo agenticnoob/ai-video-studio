@@ -417,9 +417,14 @@ Recommended bounded rollout:
 8. Done: upgrade the renderer into a bounded Visual IR compiler path with
    primitives, layout presets, and motion grammar. The completed Visual IR v1
    goal and handoff notes are archived under `docs/archive/`.
-9. Next: follow `docs/VISUAL_IR_COMPILER_ROADMAP.md` and add Visual IR
-   Generation v1 for `primitive_scene_graph` only after deterministic renderer
-   quality is stable.
+9. Done: follow `docs/VISUAL_IR_COMPILER_ROADMAP.md` and add Visual IR
+   Generation v1 for `primitive_scene_graph` only. The bounded landing
+   constrains the selected-template compiler prompt to the SceneGraph Visual IR
+   vocabulary, exposes repair/fallback diagnostics, preserves the existing
+   segment during selected-segment regeneration if scene-graph compilation
+   fails after bounded repair, falls back to a stable macro for full-project
+   generation when no existing segment can be preserved, and adds a forced
+   provider-backed scene-graph live smoke.
 10. Add render strategy decision, procedural generators, media asset
    composition, review/repair, and restricted generated component escape hatch
    as later bounded phases.

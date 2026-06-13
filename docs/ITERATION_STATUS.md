@@ -1,6 +1,53 @@
 # Iteration Status
 
-Last updated: Visual IR roadmap alignment and docs archive cleanup
+Last updated: Visual IR Generation v1 Phase 2 landing
+
+## Latest continuation — Visual IR Generation v1 Phase 2 landing
+
+- Landed Phase 2 Visual IR Generation v1 for the bounded
+  `primitive_scene_graph` path without adding generated TSX, package
+  installation, dynamic imports, media compositing, persistence, or broad
+  render-strategy routing.
+- Tightened the MiniMax selected-template compiler prompt for `scene-graph`
+  so provider-backed output receives the allowed Visual IR vocabulary:
+  composition presets, layout presets, layer types, motion presets, caption
+  reservation, segment-local beats, and `primitive_scene_graph` only.
+- Added compiler attempt metadata to final template-implementation parse
+  errors so repeated repair failures can be surfaced in diagnostics.
+- Extended staged compiler diagnostics with `renderStrategy` and optional
+  fallback metadata. Existing macro templates report `template_macro`; the
+  `scene-graph` path reports `primitive_scene_graph`.
+- Added selected-segment regeneration protection for `scene-graph`: if Visual
+  IR compilation fails after bounded repair, the API preserves the existing
+  segment/project and marks diagnostics with
+  `preserved_existing_segment` instead of returning a broken replacement.
+- Added full-project generation fallback for repeated `scene-graph` compiler
+  failure: when no existing segment can be preserved, the staged compiler
+  creates a deterministic `spotlight` macro segment and marks diagnostics with
+  `template_macro`.
+- Extended `scripts/staged-live-smoke.mjs` with a forced `mode: "plan"`
+  provider-backed `scene-graph` request. The live smoke now verifies generated
+  Visual IR stays `primitive_scene_graph`, has no fallback, carries F5
+  narration/captions, and serves range-capable audio.
+- Extended deterministic smoke fixture assertions so `scene-graph` fixture
+  segments must remain `primitive_scene_graph`, diagnostics can represent
+  repair/fallback state, and full-project fallback lands on a stable macro
+  segment.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc 'npx prettier src/lib/minimax/index.ts src/lib/minimax/parse-template-implementation.ts src/lib/minimax/prompts.ts src/lib/staged-generation/segment.ts src/lib/staged-generation/pipeline.ts src/lib/staged-generation/diagnostics.ts src/lib/staged-smoke-fixtures.ts --write'`
+- `docker compose run --rm web bash -lc 'npx prettier src/lib/staged-generation/segment.ts src/lib/staged-generation/diagnostics.ts src/lib/staged-smoke-fixtures.ts scripts/staged-live-smoke.mjs --write'`
+- `docker compose run --rm web bash -lc 'npx prettier docs/VISUAL_IR_COMPILER_ROADMAP.md docs/ITERATION_STATUS.md docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md docs/PRODUCT_ARCHITECTURE.md --write'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `docker compose run --rm web bash -lc 'npm run start >/tmp/ai-video-studio-next.log 2>&1 & server_pid=$!; ready=0; for i in $(seq 1 45); do node -e "fetch(\"http://127.0.0.1:3000\").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" && ready=1 && break; sleep 1; done; if [ "$ready" != "1" ]; then cat /tmp/ai-video-studio-next.log; kill $server_pid >/dev/null 2>&1 || true; exit 1; fi; npm run smoke:staged-live; status=$?; kill $server_pid >/dev/null 2>&1 || true; exit $status'`
+  - live smoke passed a normal brief request with `scene-graph` +
+    `scripted`, F5 narration/captions, compiler diagnostics, and range audio
+  - live smoke passed a forced `mode: "plan"` scene-graph request with
+    `renderStrategy: "primitive_scene_graph"` and no fallback
+- `git diff --check`
 
 ## Latest continuation — Visual IR roadmap alignment and docs archive cleanup
 

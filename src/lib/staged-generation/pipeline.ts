@@ -10,7 +10,9 @@ import {
   replaceSegmentAndNarrationLayer,
 } from "./assembly";
 import {
+  canFallbackToExistingSegment,
   compilePlannedSegment,
+  createExistingSegmentCompileFallback,
   generateAndCompilePlannedSegment,
   type CompilePlannedSegmentResult,
 } from "./segment";
@@ -44,12 +46,14 @@ export type GenerateStagedSegmentRevisionRequest = {
 
 export type GenerateStagedSegmentRevisionResult = {
   compilerAttempts: number;
+  compilerFallback?: CompilePlannedSegmentResult["compilerFallback"];
   narration: SegmentNarrationAsset;
   plan: StoryboardPlan;
   plannerAttempts: number;
   plannerRepaired: boolean;
   project: VideoProject;
   repaired: boolean;
+  renderStrategy: CompilePlannedSegmentResult["renderStrategy"];
   segment: VideoSegment;
 };
 
@@ -155,27 +159,48 @@ export const generateStagedSegmentRevision = async ({
     });
     onProgress?.("compiler", "success", `Template compiled for ${segmentId}.`);
   } catch (error) {
-    onProgress?.("compiler", "failure", error instanceof Error ? error.message : undefined);
-    throw error;
+    if (canFallbackToExistingSegment(plannedSegment)) {
+      compiled = createExistingSegmentCompileFallback({
+        error,
+        narration,
+        segment: project.segments[segmentIndex],
+      });
+      onProgress?.(
+        "compiler",
+        "success",
+        `SceneGraph compilation failed for ${segmentId}; preserved existing segment.`,
+      );
+    } else {
+      onProgress?.("compiler", "failure", error instanceof Error ? error.message : undefined);
+      throw error;
+    }
   }
 
   onProgress?.("assembly", "running", "Replacing selected segment in VideoProject.");
-  const revisedProject = replaceSegmentAndNarrationLayer({
-    narration,
-    project,
-    segment: compiled.segment,
-    segmentId,
-  });
-  onProgress?.("assembly", "success", "Selected segment replaced.");
+  const revisedProject = compiled.compilerFallback
+    ? project
+    : replaceSegmentAndNarrationLayer({
+        narration,
+        project,
+        segment: compiled.segment,
+        segmentId,
+      });
+  onProgress?.(
+    "assembly",
+    "success",
+    compiled.compilerFallback ? "Existing segment preserved." : "Selected segment replaced.",
+  );
 
   return {
     compilerAttempts: compiled.compilerAttempts,
+    compilerFallback: compiled.compilerFallback,
     narration,
     plan,
     plannerAttempts,
     plannerRepaired,
     project: revisedProject,
     repaired: compiled.repaired,
+    renderStrategy: compiled.renderStrategy,
     segment: compiled.segment,
   };
 };
