@@ -5,51 +5,37 @@ Use this file as the first-stop workflow note when starting a new task in this r
 ## Start here
 
 Before planning or editing, read these files in order:
-1. `docs/FINAL_PRODUCT_GOAL.md`
+1. `docs/VISUAL_IR_COMPILER_ROADMAP.md`
 2. `docs/ITERATION_STATUS.md`
-3. `docs/PRODUCT_REQUIREMENTS.md`
-4. `docs/FUTURE_DIRECTION_NOTES.md`
-5. `docs/VISUAL_IR_COMPILER_ROADMAP.md` when the task involves long-term
-   visual generation architecture, render strategies, Visual IR generation,
-   procedural generators, asset composition, review/repair, or codegen escape
-   hatch decisions
-6. `docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md` when the task involves template
+3. `docs/FINAL_PRODUCT_GOAL.md`
+4. `docs/PRODUCT_REQUIREMENTS.md`
+5. `docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md` when the task involves template
    direction, shot language, visual flexibility, generated scenes, or visual
    quality beyond the current registered templates
-7. `docs/GOAL_SCENE_GRAPH_MVP.md` and
-   `docs/HANDOFF_SCENE_GRAPH_SUBAGENT.md` when the task asks to implement the
-   first scene graph registered-template landing
-8. `docs/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md` and
-   `docs/HANDOFF_SCENE_GRAPH_VISUAL_IR_SUBAGENT.md` when the task asks to make
-   scene-graph output less PPT-like, add Visual IR primitives, or continue the
-   Visual IR compiler direction
-9. `docs/HANDOFF_F5_TTS_CAPTIONS.md` when the task involves F5-TTS,
+6. `docs/providers/f5-tts.md` when the task involves F5-TTS,
    captions/subtitles, or narration provider work
-10. `docs/providers/f5-tts-service-plan.md` when the task involves the local
+7. `docs/providers/f5-tts-service-plan.md` when the task involves the local
    F5-TTS runtime service or Docker service setup
-11. `docs/STRUCTURE_REFACTOR_PLAN.md` and
-   `docs/HANDOFF_STRUCTURE_REFACTOR.md` when the task is behavior-preserving
-   structure cleanup, modularization, or Subagent-Driven refactor work
-12. `README.md`
+8. `docs/PRODUCT_ARCHITECTURE.md` and `docs/TEMPLATE_ARCHITECTURE.md` when the
+   task needs architecture or template-module details
+9. `README.md`
+
+Completed goals, old handoffs, prior structure plans, and reference research
+live under `docs/archive/`. Read archived files only when investigating old
+decisions or resurrecting a completed slice.
 
 These files together explain:
-- authoritative final generation goal
+- authoritative Visual IR compiler roadmap
 - current implemented stage
+- stable generation-pipeline boundaries
 - product requirements
-- roadmap direction
 - deferred scope
 - product direction
-- full Visual IR compiler roadmap when visual generation architecture or later
-  phases are in scope
 - scene graph / shot-language direction when visual template flexibility is
   relevant
-- scene graph MVP goal, boundaries, and Subagent-Driven handoff when
-  implementation starts
-- scene graph Visual IR v1 goal and Subagent-Driven handoff when improving
-  visual quality beyond the current card-like MVP renderer
-- F5-TTS / aligned captions handoff when relevant
+- F5-TTS / aligned captions provider target when relevant
 - F5-TTS runtime service plan when relevant
-- structure refactor plan and handoff when relevant
+- architecture and template-module details when relevant
 - Docker-first local workflow
 
 Local configuration is now unified around one tracked template and one ignored
@@ -89,10 +75,10 @@ The first staged-generation groundwork is also in place:
   `/api/tts/assets/...` provide the first internal TTS asset boundary for one
   planned segment's narration, including local audio artifacts and measured
   duration.
-- `src/lib/staged-generation/*` and the MiniMax selected-template compiler
-  helpers provide the staged assembly path:
-  StoryboardPlan -> per-segment TTS -> selected-template compile -> assembled
-  `VideoProject`. Generated narration audio is now owned by
+- `src/lib/staged-generation/*` and the MiniMax compiler helpers provide the
+  staged assembly path:
+  StoryboardPlan -> per-segment TTS -> visual implementation compile ->
+  assembled `VideoProject`. Generated narration audio is now owned by
   `VideoSegment.narration.audio`; the current continuation also extends this
   narration boundary to segment-owned captions and the Next-side F5-TTS
   provider adapter.
@@ -158,7 +144,8 @@ The first staged-generation groundwork is also in place:
   and parse JSON-string payloads, while the SceneGraph schema normalizes only
   known primitive aliases/defaults before final validation. This is not a
   generic free-form repair system.
-  `docs/VISUAL_IR_COMPILER_ROADMAP.md` is the full multi-phase roadmap.
+  `docs/VISUAL_IR_COMPILER_ROADMAP.md` is the authoritative multi-phase
+  roadmap.
 - The optional `f5-tts` Docker service is implemented with contract-smoke mode
   and real `F5_TTS_SERVICE_MODE=f5` mode. The GPU overlay has been validated
   locally with the downloaded checkpoint, vocab, and Vocos vocoder under
@@ -205,12 +192,13 @@ inside a segment:
 The MiniMax-backed v1 generation path is usable for the current stage, and the
 validated storyboard-plan contract / compact planner manifest / internal
 planner facade are already present. The next product milestone should continue
-moving toward the authoritative final generation pipeline in
-`docs/FINAL_PRODUCT_GOAL.md`:
+moving toward the Visual IR compiler roadmap in
+`docs/VISUAL_IR_COMPILER_ROADMAP.md`, while preserving the stable generation
+pipeline boundaries in `docs/FINAL_PRODUCT_GOAL.md`:
 
 ```txt
 brief -> StoryboardPlan -> per-segment narration synthesis
--> audio + aligned captions -> per-segment template compile
+-> audio + aligned captions -> visual implementation compile
 -> assembled VideoProject
 ```
 
@@ -357,9 +345,10 @@ host-local setup.
 ## Notes for Hermes/Codex/OpenCode
 
 - Keep `VideoProject` as the top-level page/generation/preview/render boundary for this phase.
-- Treat `docs/FINAL_PRODUCT_GOAL.md` as the authoritative roadmap source.
+- Treat `docs/VISUAL_IR_COMPILER_ROADMAP.md` as the authoritative roadmap
+  source.
 - Move future generation work toward `StoryboardPlan` -> in-project narration
-  synthesis -> audio + aligned captions -> selected-template compile ->
+  synthesis -> audio + aligned captions -> visual implementation compile ->
   assembled `VideoProject`.
 - Treat F5-TTS as the preferred next narration provider boundary in this repo,
   not as a separate external product. Runtime may be local process/container;

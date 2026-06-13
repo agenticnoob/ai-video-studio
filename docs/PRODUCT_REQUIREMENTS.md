@@ -2,12 +2,12 @@
 
 Status: draft, refined from product-direction discussion.
 
-Authoritative generation target:
-- `docs/FINAL_PRODUCT_GOAL.md` defines the final prompt-to-video generation
-  pipeline and should drive roadmap iteration.
-- This PRD defines the product model and scope, while the final-goal document
-  defines the detailed planner -> narration synthesis -> audio + aligned
-  captions -> template-compiler architecture.
+Authoritative roadmap:
+- `docs/VISUAL_IR_COMPILER_ROADMAP.md` defines the final AI video compiler
+  direction and should drive roadmap iteration.
+- `docs/FINAL_PRODUCT_GOAL.md` defines the stable prompt-to-video generation
+  pipeline boundaries that support that roadmap.
+- This PRD defines the product model and scope.
 
 ## 1. Product definition
 
@@ -43,8 +43,8 @@ Product direction:
   template descriptions and usage guidance, then generate that template's
   structured parameters
 - final generation should be staged: storyboard planning first, per-segment
-  TTS second, selected-template parameter compilation third, project assembly
-  last
+  TTS second, selected visual implementation compilation third, project
+  assembly last
 - narration/TTS is part of the main generated-video pipeline because real
   voice duration should drive segment timing and template parameters; the
   preferred next provider path is an in-project F5-TTS provider that can return
@@ -269,7 +269,8 @@ V1 should focus on the simplest version of the product that still proves the cor
 
 The shipped v1 path may use a simplified provider call that directly emits a
 schema-valid `VideoProject`. That is acceptable as a proving loop, but the
-roadmap should evolve toward the staged final target in
+roadmap should evolve toward the AI video compiler target in
+`docs/VISUAL_IR_COMPILER_ROADMAP.md`, using the stable generation boundaries in
 `docs/FINAL_PRODUCT_GOAL.md`.
 
 ### 9.1 V1 must support
@@ -463,7 +464,8 @@ Practical implementation:
 - Natural-language editing should be primary; structured editing should remain available as a secondary path.
 - Existing-media layers are a future milestone.
 - One segment should keep one primary template; template internals can grow through template-specific implementation fields/components.
-- AI-generated templates are future discussion, not current scope.
+- unrestricted AI-generated components are a future restricted escape hatch,
+  not current scope.
 - TTS narration audio is part of the main generation roadmap, not merely a
   generic media-layer enhancement.
 - Real narration audio duration should drive future template parameter

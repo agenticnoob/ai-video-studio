@@ -4,9 +4,10 @@
 product boundary is `VideoProject`: generation, page preview, segment editing,
 and local export all operate on schema-validated project data.
 
-The authoritative final generation target is documented in
-`docs/FINAL_PRODUCT_GOAL.md`. This architecture document summarizes how that
-target maps onto the codebase.
+The authoritative product roadmap is `docs/VISUAL_IR_COMPILER_ROADMAP.md`.
+`docs/FINAL_PRODUCT_GOAL.md` documents the stable generation-pipeline
+contracts that support that roadmap. This architecture document summarizes how
+those targets map onto the codebase.
 
 ## Core Loop
 
@@ -21,10 +22,11 @@ target maps onto the codebase.
    adapter backed by an optional runtime service.
 5. The system measures or normalizes the generated audio duration and
    normalizes provider-returned caption timing.
-6. For each segment, the compiler receives only the selected template's full
+6. For each segment, the compiler receives only the selected render path's
    schema and implementation rules, plus narration text, audio duration, and
    visual brief.
-7. The compiler returns schema-valid template-specific `implementation`.
+7. The compiler returns schema-valid `implementation`: template parameters for
+   `template_macro` paths or bounded Visual IR for `scene-graph`.
 8. The system assembles compiled segments into a validated `VideoProject`.
    Generated narration audio and captions should be attached to their owning
    `VideoSegment`; preview/export flatten segment-owned timing into the global
@@ -127,11 +129,11 @@ template if it can implement a complete segment intent and has a schema,
 definition, runtime adapter, editor path, and registration.
 
 Images, videos, audio tracks, and color layers are timeline/media data, not
-templates. The media-layer planning boundary is documented in
-`docs/MEDIA_LAYERS.md`: project-level layers are for full-video assets such as
-background music or global overlays; segment-level layers are for media that
-belongs to one segment. Treat the old `baseLayer` idea as a layer role rather
-than a separate field.
+templates. The current planning boundary is: project-level layers are for
+full-video assets such as background music or global overlays; segment-level
+layers are for media that belongs to one segment. Treat the old `baseLayer`
+idea as a layer role rather than a separate field. Historical media-layer notes
+are archived in `docs/archive/MEDIA_LAYERS.md`.
 
 Do not use template-specific `implementation` fields as narration or caption
 storage. Generated narration belongs to the segment, and shared preview/export
@@ -161,12 +163,12 @@ Template context should be split by generation stage:
   speaker profile, and deterministic artifact identity; it should return audio
   metadata and aligned captions when available.
 - Compiler context: full schema and implementation rules for only the selected
-  template.
+  render path, such as a template macro or bounded SceneGraph Visual IR.
 - Runtime context: React/Remotion renderer code, kept internal and not exposed
   to the provider.
 
 This separation keeps planner context small as template count grows and keeps
-template compilation easier to validate.
+visual implementation compilation easier to validate.
 
 ## Directory Intent
 
@@ -197,11 +199,8 @@ captions, backgrounds, progress markers, or transitions, prefer a Remotion
 runtime directory such as `src/remotion/primitives/` rather than
 `src/components/`.
 
-The component-library policy for external Remotion examples is documented in
-`docs/REMOTION_COMPONENT_LIBRARY.md`.
-
-Specific external reference notes for Clippkit and Remotion's trailer project
-are documented in `docs/EXTERNAL_REMOTION_REFERENCES.md`.
+Historical component-library policy and external Remotion reference notes are
+archived under `docs/archive/`.
 
 ## Template Selection Contract
 

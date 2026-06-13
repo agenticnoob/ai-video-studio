@@ -17,9 +17,9 @@ Read these files before planning edits:
 1. `docs/FINAL_PRODUCT_GOAL.md`
 2. `docs/ITERATION_STATUS.md`
 3. `docs/TEMPLATE_ARCHITECTURE.md`
-4. `docs/REMOTION_PRIMITIVES.md`
-5. `docs/plans/STATS_DASHBOARD_TEMPLATE_ROADMAP.md`
-6. `docs/HANDOFF_STATS_DASHBOARD_TEMPLATE.md`
+4. `docs/archive/REMOTION_PRIMITIVES.md`
+5. `docs/archive/plans/STATS_DASHBOARD_TEMPLATE_ROADMAP.md`
+6. `docs/archive/HANDOFF_STATS_DASHBOARD_TEMPLATE.md`
 7. `.agents/skills/remotion-best-practices/SKILL.md`
 
 ## Current Product Boundary

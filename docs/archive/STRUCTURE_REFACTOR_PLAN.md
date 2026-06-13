@@ -147,8 +147,8 @@ Status: this document.
 
 Deliverables:
 
-- `docs/STRUCTURE_REFACTOR_PLAN.md`
-- `docs/HANDOFF_STRUCTURE_REFACTOR.md`
+- `docs/archive/STRUCTURE_REFACTOR_PLAN.md`
+- `docs/archive/HANDOFF_STRUCTURE_REFACTOR.md`
 - status links from `docs/ITERATION_STATUS.md`, `README.md`, and `AGENTS.md`
 
 Validation:

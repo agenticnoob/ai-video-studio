@@ -1,6 +1,28 @@
 # Iteration Status
 
-Last updated: Scene graph provider output hardening
+Last updated: Visual IR roadmap alignment and docs archive cleanup
+
+## Latest continuation — Visual IR roadmap alignment and docs archive cleanup
+
+- Made `docs/VISUAL_IR_COMPILER_ROADMAP.md` the primary product roadmap and
+  final direction for the repository.
+- Reframed `docs/FINAL_PRODUCT_GOAL.md` as the stable generation-pipeline
+  contract that supports the Visual IR compiler roadmap, not as the top-level
+  roadmap source.
+- Updated active docs so staged planning, narration synthesis, audio/captions,
+  visual implementation compilation, `VideoProject` preview/edit/export, and
+  fallback behavior align with the AI video compiler direction:
+  - templates are macro/preset paths
+  - `scene-graph` is the active `primitive_scene_graph` Visual IR path
+  - procedural generators, media asset composites, review/repair, and
+    restricted generated components remain later bounded phases
+- Archived completed goals, old handoffs, old structure/future notes, and
+  historical Remotion/MiniMax research under `docs/archive/`, leaving active
+  docs focused on current roadmap and implementation contracts.
+
+Validation performed:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx prettier AGENTS.md README.md docs/*.md docs/providers/*.md docs/archive/*.md docs/archive/providers/*.md docs/archive/plans/*.md --write'`
+- `git diff --check`
 
 ## Latest continuation — Scene graph provider output hardening
 
@@ -46,14 +68,14 @@ Validation performed:
   - review/repair loop
   - eventual micro-template memory
 - Updated `AGENTS.md`, `README.md`, `docs/FINAL_PRODUCT_GOAL.md`,
-  `docs/FUTURE_DIRECTION_NOTES.md`, and
+  `docs/archive/FUTURE_DIRECTION_NOTES.md`, and
   `docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md` to point to the full roadmap.
 - Clarified that the next recommended bounded phase after deterministic Visual
   IR v1 is Visual IR Generation v1 for `primitive_scene_graph` only, before
   broader render strategy routing or codegen escape hatches.
 
 Validation performed for this documentation slice:
-- `docker compose run --rm web bash -lc 'npx prettier AGENTS.md README.md docs/FINAL_PRODUCT_GOAL.md docs/FUTURE_DIRECTION_NOTES.md docs/ITERATION_STATUS.md docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md docs/VISUAL_IR_COMPILER_ROADMAP.md --write'`
+- `docker compose run --rm web bash -lc 'npx prettier AGENTS.md README.md docs/FINAL_PRODUCT_GOAL.md docs/archive/FUTURE_DIRECTION_NOTES.md docs/ITERATION_STATUS.md docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md docs/VISUAL_IR_COMPILER_ROADMAP.md --write'`
 - `git diff --check`
 
 ## Latest continuation — Scene graph Visual IR v1 deterministic slice
@@ -107,11 +129,11 @@ Next recommended bounded slice:
 - Updated the roadmap so fixed registered templates are treated as
   macro/preset paths, while `scene-graph` becomes the first bounded Visual IR
   compiler path.
-- Added `docs/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md` as the next Goal-mode target:
+- Added `docs/archive/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md` as the next Goal-mode target:
   improve the current card-like `scene-graph` renderer with render strategy
   vocabulary, layout/motion presets, and technical-video primitives such as
   `NodeGraph`, `LinePath`, `CodePanel`, `TerminalPanel`, and `BrowserWindow`.
-- Added `docs/HANDOFF_SCENE_GRAPH_VISUAL_IR_SUBAGENT.md` for
+- Added `docs/archive/HANDOFF_SCENE_GRAPH_VISUAL_IR_SUBAGENT.md` for
   Subagent-Driven execution of that next slice.
 - Kept the next slice explicitly bounded: no provider-backed LLM generation,
   no media library, no timeline editor, no persistence, and no unrestricted
@@ -121,7 +143,7 @@ Suggested next Goal-mode objective:
 
 ```txt
 Implement the Scene Graph Visual IR v1 goal described in
-docs/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md: upgrade the existing scene-graph
+docs/archive/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md: upgrade the existing scene-graph
 renderer from a card-like MVP into a bounded Visual IR compiler path with
 renderStrategy vocabulary, layout/motion presets, technical-video primitives
 such as NodeGraph/LinePath/CodePanel/TerminalPanel, and deterministic
@@ -132,7 +154,7 @@ generated TSX.
 ```
 
 Validation performed for this documentation slice:
-- `docker compose run --rm web bash -lc 'npx prettier AGENTS.md README.md docs/FINAL_PRODUCT_GOAL.md docs/FUTURE_DIRECTION_NOTES.md docs/ITERATION_STATUS.md docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md docs/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md docs/HANDOFF_SCENE_GRAPH_VISUAL_IR_SUBAGENT.md --write'`
+- `docker compose run --rm web bash -lc 'npx prettier AGENTS.md README.md docs/FINAL_PRODUCT_GOAL.md docs/archive/FUTURE_DIRECTION_NOTES.md docs/ITERATION_STATUS.md docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md docs/archive/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md docs/archive/HANDOFF_SCENE_GRAPH_VISUAL_IR_SUBAGENT.md --write'`
 - `git diff --check`
 
 ## Latest continuation — Scene graph MVP implementation
@@ -204,14 +226,14 @@ Next recommended bounded slice:
     of letting the LLM write unrestricted TSX
 - Synchronized the top-level roadmap entry in `docs/FINAL_PRODUCT_GOAL.md`,
   the future-direction notes, and the README product-direction summary.
-- Added `docs/GOAL_SCENE_GRAPH_MVP.md` as the concrete first implementation
-  target and `docs/HANDOFF_SCENE_GRAPH_SUBAGENT.md` as the Subagent-Driven
+- Added `docs/archive/GOAL_SCENE_GRAPH_MVP.md` as the concrete first implementation
+  target and `docs/archive/HANDOFF_SCENE_GRAPH_SUBAGENT.md` as the Subagent-Driven
   execution handoff.
 - This is a documentation/planning slice only; no runtime schema, renderer, or
   generation code has been changed yet.
 
 Validation performed so far:
-- `docker compose run --rm web bash -lc 'npx prettier AGENTS.md README.md docs/ITERATION_STATUS.md docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md docs/GOAL_SCENE_GRAPH_MVP.md docs/HANDOFF_SCENE_GRAPH_SUBAGENT.md --write'`
+- `docker compose run --rm web bash -lc 'npx prettier AGENTS.md README.md docs/ITERATION_STATUS.md docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md docs/archive/GOAL_SCENE_GRAPH_MVP.md docs/archive/HANDOFF_SCENE_GRAPH_SUBAGENT.md --write'`
 - `git diff --check`
 
 ## Latest continuation — Stats dashboard template implementation
@@ -268,7 +290,7 @@ Validation performed so far:
 Validation performed so far:
 - `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
 - `docker compose run --rm web bash -lc 'npx prettier src/remotion/primitives/charts/LineChart.tsx src/remotion/primitives/charts/DonutChart.tsx src/remotion/primitives/index.ts src/templates/ids.ts src/templates/registry.ts src/templates/registered-definitions.ts src/templates/registered-bundles.ts src/templates/stats-dashboard/schema.ts src/templates/stats-dashboard/definition.ts src/templates/stats-dashboard/index.ts src/templates/stats-dashboard/runtime.tsx src/templates/stats-dashboard/editor.tsx --write'`
-- `docker compose run --rm web bash -lc 'npx prettier AGENTS.md README.md docs/ITERATION_STATUS.md docs/plans/STATS_DASHBOARD_TEMPLATE_ROADMAP.md docs/HANDOFF_STATS_DASHBOARD_TEMPLATE.md docs/REMOTION_PRIMITIVES.md --write'`
+- `docker compose run --rm web bash -lc 'npx prettier AGENTS.md README.md docs/ITERATION_STATUS.md docs/archive/plans/STATS_DASHBOARD_TEMPLATE_ROADMAP.md docs/archive/HANDOFF_STATS_DASHBOARD_TEMPLATE.md docs/archive/REMOTION_PRIMITIVES.md --write'`
 - `docker compose run --rm web bash -lc 'npx prettier src/lib/template-registry.ts src/lib/staged-smoke-fixtures.ts src/remotion/Root.tsx --write'`
 - `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
 - `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
@@ -454,7 +476,7 @@ Validation performed so far:
   `/api/tts/assets/...` byte-range serving.
 
 Current readiness:
-- All phases in `docs/STRUCTURE_REFACTOR_PLAN.md` are implemented.
+- All phases in `docs/archive/STRUCTURE_REFACTOR_PLAN.md` are implemented.
 - Product behavior is intended to stay stable: `VideoProject` remains the
   preview/edit/export boundary, segment-owned narration remains the target
   model, and `POST /api/generate/staged` remains the default page path.
@@ -498,7 +520,7 @@ Validation performed so far:
   and errors, while diagnostics are built by the staged-generation module.
 
 Current readiness:
-- Phase 1 from `docs/STRUCTURE_REFACTOR_PLAN.md` is implemented.
+- Phase 1 from `docs/archive/STRUCTURE_REFACTOR_PLAN.md` is implemented.
 - `mode: "brief"`, `mode: "plan"`, and `mode: "segment"` public behavior is
   intended to stay unchanged.
 - Later phases have since been implemented; use the latest continuation above
@@ -516,9 +538,9 @@ Validation performed:
   particular, staged generation orchestration, diagnostics, TTS/F5 provider
   behavior, frontend generation state, Remotion timeline flattening, and smoke
   entrypoints can be made more cohesive without changing product behavior.
-- Added `docs/STRUCTURE_REFACTOR_PLAN.md` as the authoritative plan for the
+- Added `docs/archive/STRUCTURE_REFACTOR_PLAN.md` as the authoritative plan for the
   behavior-preserving structure cleanup.
-- Added `docs/HANDOFF_STRUCTURE_REFACTOR.md` so a new conversation or
+- Added `docs/archive/HANDOFF_STRUCTURE_REFACTOR.md` so a new conversation or
   Subagent-Driven run can start directly from scoped inspection and then
   implement one bounded slice at a time.
 - The recommended first implementation slice is staged pipeline cleanup:
@@ -939,7 +961,7 @@ Current readiness:
   - selected-segment regeneration retimed those then-current narration layers
   - that plan was later completed for `VideoSegment.narration.audio`; captions
     remain the next model-alignment step
-- Rewrote `docs/HANDOFF_F5_TTS_CAPTIONS.md` so the next conversation starts
+- Rewrote `docs/archive/HANDOFF_F5_TTS_CAPTIONS.md` so the next conversation starts
   from segment-owned narration/captions before adding F5-TTS runtime details.
 - Aligned docs and README around this model and removed the superseded early
   implementation plan under `docs/plans/`.
@@ -953,7 +975,9 @@ Current readiness:
 
 ## Latest continuation — F5-TTS aligned-captions target alignment
 
-- Updated the authoritative target from a plain TTS-first staged path to a
+- Historical note: this section predates the Visual IR roadmap alignment. The
+  current authoritative roadmap is now `docs/VISUAL_IR_COMPILER_ROADMAP.md`.
+- Updated the then-authoritative target from a plain TTS-first staged path to a
   narration-synthesis path:
   `StoryboardPlan` -> in-project narration provider -> audio + aligned
   captions -> selected-template compiler -> assembled `VideoProject`.
@@ -1348,8 +1372,12 @@ Remaining next slices:
 
 ## Latest continuation — authoritative final generation goal
 
-- Added `docs/FINAL_PRODUCT_GOAL.md` as the authoritative product target and
-  roadmap source.
+- Historical note: this section predates the Visual IR roadmap alignment. The
+  current authoritative roadmap is now `docs/VISUAL_IR_COMPILER_ROADMAP.md`;
+  `docs/FINAL_PRODUCT_GOAL.md` now records stable generation-pipeline
+  contracts.
+- Added `docs/FINAL_PRODUCT_GOAL.md` as the then-authoritative product target
+  and roadmap source.
 - Locked the final generation model as a staged pipeline:
   user prompt -> storyboard plan -> per-segment TTS -> per-segment
   selected-template compilation -> assembled `VideoProject`.
@@ -1366,7 +1394,7 @@ Remaining next slices:
 
 ## 2026-06-08 continuation — media layer MVP implementation plan
 
-- Tightened `docs/MEDIA_LAYERS.md` from a broad model into a bounded first
+- Tightened `docs/archive/MEDIA_LAYERS.md` from a broad model into a bounded first
   implementation plan.
 - Defined the first media slice as project-level only:
   `VideoProject.media.layers[]`, required `startFrame` and
@@ -1385,7 +1413,7 @@ Remaining next slices:
 
 ## 2026-06-08 continuation — external Remotion reference notes
 
-- Added `docs/EXTERNAL_REMOTION_REFERENCES.md` to preserve the takeaways from
+- Added `docs/archive/EXTERNAL_REMOTION_REFERENCES.md` to preserve the takeaways from
   Clippkit and `remotion-dev/trailer`.
 - Recorded Clippkit as a component-library / primitive-catalog reference:
   useful for categorized local primitives, catalog review, source metadata,
@@ -1395,7 +1423,7 @@ Remaining next slices:
   and future `product-intro` / `launch-trailer` template inspiration, but not
   as a direct template import.
 - Linked the new reference note from `docs/PRODUCT_ARCHITECTURE.md` and
-  `docs/REMOTION_COMPONENT_LIBRARY.md`.
+  `docs/archive/REMOTION_COMPONENT_LIBRARY.md`.
 
 ## 2026-06-08 continuation — unified media layer planning boundary
 
@@ -1407,7 +1435,7 @@ Remaining next slices:
   hook, not a project-level or cross-template audio track model. That hook has
   since been removed from new generation/runtime paths.
 - Replaced the separate `baseLayer` / `audio.tracks` planning split with a
-  unified media layer model in `docs/MEDIA_LAYERS.md`: optional project-level
+  unified media layer model in `docs/archive/MEDIA_LAYERS.md`: optional project-level
   `media.layers[]` for image, video, audio, and color layers; later
   segment-level media layers only if needed.
 - Reframed `baseLayer` as a media-layer role (`role: "base"` /
@@ -1466,7 +1494,7 @@ Remaining next slices:
 - Kept browser-side mouse recording out of the current product flow. Cursor
   tracks remain a low-level primitive input, not a `VideoProject`,
   `VideoSegment`, or registered-template schema field.
-- Updated `docs/REMOTION_PRIMITIVES.md` to document the new primitive,
+- Updated `docs/archive/REMOTION_PRIMITIVES.md` to document the new primitive,
   Studio showcase status, and the product boundary around cursor recording.
 
 ## 2026-06-08 continuation — Remotion component library terminology
@@ -1479,7 +1507,7 @@ Remaining next slices:
   - text effects, charts, transitions, logo reveals, backgrounds, lower
     thirds, and media layouts should normally live under `src/remotion/`
     rather than `src/templates/`
-- Added `docs/REMOTION_COMPONENT_LIBRARY.md` to document component-library
+- Added `docs/archive/REMOTION_COMPONENT_LIBRARY.md` to document component-library
   intake, directory roles, catalog shape, promotion path, implementation
   rules, and external reference policy.
 - Updated product and template architecture docs so future RVE-style imports
@@ -1511,7 +1539,7 @@ Remaining next slices:
     scenes, elements, and transition helpers
   - refactored current scripted and spotlight renderers to consume the first
     shared primitives while keeping their template implementations unchanged
-- Added `docs/REMOTION_PRIMITIVES.md` so each reusable Remotion primitive has
+- Added `docs/archive/REMOTION_PRIMITIVES.md` so each reusable Remotion primitive has
   a documented visual effect, props summary, current usage, and intended reuse
   pattern.
 - Added a `scripted` block-contract pilot:
@@ -1709,7 +1737,7 @@ Practical next step:
 Carved down from the broader T2 milestone: the in-scope change here is **only**
 the tool-calling main path + Zod strict validation + `max_tokens=8192` (plus
 the `finish_reason=length` guard). All decisions are inherited from the T1
-research probe (`docs/providers/minimax-tool-calling.md`) and are not
+research probe (`docs/archive/providers/minimax-tool-calling.md`) and are not
 re-debated here.
 
 Scope (per `t_2f241ef2`):
@@ -1801,7 +1829,7 @@ Validation trio:
 ## Tool calling — T3 live review resolved (2026-06-02 → stabilized)
 
 - T2 wired the v2 deep-recursive `emit_result` tool + `tool_choice: {type:"function", function:{name:"emit_result"}}` + `max_tokens=8192` per T1 §5; `response_format: json_object` was dropped as redundant.
-- T3 independent live verification (4 runs against the real `MINIMAX_API_KEY`; brief set different from T1/T2's) recorded in [`docs/providers/minimax-tool-calling-review.md`](providers/minimax-tool-calling-review.md).
+- T3 independent live verification (4 runs against the real `MINIMAX_API_KEY`; brief set different from T1/T2's) recorded in [`docs/archive/providers/minimax-tool-calling-review.md`](providers/minimax-tool-calling-review.md).
 - Follow-up fixes (parseToolCallArguments Path 4 + buildSegmentPrompt full non-target feed) landed and have been merged. The default `MINIMAX_MODEL = MiniMax-M2.7-highspeed` is the accepted production configuration.
 
 ## Current stage
@@ -1815,9 +1843,9 @@ Current product direction:
 - `templateId` determines the schema of `implementation`.
 - `implementation` is template-specific; current `scripted` implementations use `VideoSpec`.
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates.
-- The final generation target is documented in
-  `docs/FINAL_PRODUCT_GOAL.md`: planner -> TTS -> selected-template compiler
-  -> assembled `VideoProject`.
+- Historical note: `docs/FINAL_PRODUCT_GOAL.md` is now the stable
+  generation-pipeline contract under the Visual IR roadmap. The current
+  authoritative roadmap is `docs/VISUAL_IR_COMPILER_ROADMAP.md`.
 - The first planner-stage groundwork is implemented:
   - `src/lib/storyboard-plan-schema.ts` validates `StoryboardPlan` and
     `StoryboardSegmentPlan`
@@ -1986,7 +2014,7 @@ Latest Docker dev verification after the LAN-access + studio recovery pass:
 - `src/components/RenderControls.tsx`
 - `docs/FINAL_PRODUCT_GOAL.md`
 - `docs/PRODUCT_REQUIREMENTS.md`
-- `docs/FUTURE_DIRECTION_NOTES.md`
+- `docs/archive/FUTURE_DIRECTION_NOTES.md`
 - `docs/plans/2026-05-29-v1-segment-first-orchestrator.md`
 
 ## Recommended next milestone
@@ -2012,10 +2040,12 @@ Suggested next focus, in order:
 ## Notes for future Hermes/Codex work
 
 - Keep `VideoProject` as the top-level page/generation/preview/render boundary for this phase.
-- Treat `docs/FINAL_PRODUCT_GOAL.md` as the authoritative final target and
-  roadmap source.
+- Treat `docs/VISUAL_IR_COMPILER_ROADMAP.md` as the authoritative roadmap and
+  final direction.
+- Treat `docs/FINAL_PRODUCT_GOAL.md` as the stable generation-pipeline
+  contract that supports the Visual IR compiler roadmap.
 - Move future generation work toward storyboard planning, in-project narration
-  synthesis, audio + aligned captions, duration-aware selected-template
+  synthesis, audio + aligned captions, duration-aware visual implementation
   compilation, and final `VideoProject` assembly.
 - Treat F5-TTS as the preferred next narration-provider boundary in this repo,
   while MiniMax TTS remains the current working provider/fallback.

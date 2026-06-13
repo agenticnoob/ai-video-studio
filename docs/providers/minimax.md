@@ -9,7 +9,9 @@ contract; MiniMax is responsible for storyboard planning and selected-template
 compilation inside the staged pipeline.
 
 Roadmap note:
-- The authoritative final generation target is `docs/FINAL_PRODUCT_GOAL.md`.
+- The authoritative product roadmap is `docs/VISUAL_IR_COMPILER_ROADMAP.md`.
+- Stable generation-pipeline boundaries are documented in
+  `docs/FINAL_PRODUCT_GOAL.md`.
 - The storyboard planner, TTS asset route, selected-template compiler, and
   staged assembly path are wired behind `POST /api/generate/staged`.
 - The next narration-provider target is the in-project F5-TTS provider

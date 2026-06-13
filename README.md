@@ -4,11 +4,10 @@ AI-first web app scaffold evolving into a prompt-to-video studio.
 
 Goal:
 - user enters a natural-language brief
-- AI plans storyboard segments from the brief and registered template
-  capabilities
+- AI plans storyboard segments from the brief and available render strategies
 - the system generates narration audio and aligned captions for each segment
-- AI compiles each segment into structured template parameters using the real
-  audio duration
+- AI compiles each segment into bounded visual implementation data using the
+  real audio duration
 - page shows live preview for tuning
 - user tweaks copy, timing, colors, scenes, assets
 - final render exports a video artifact
@@ -28,7 +27,9 @@ Current implementation status:
   `spotlight`, and `stats-dashboard`) while preserving one primary template per
   segment
 - the active generation path is the staged planner -> narration synthesis ->
-  audio + aligned captions -> template compiler pipeline documented in
+  audio + aligned captions -> visual implementation compiler pipeline; the
+  overall product direction is the AI video compiler roadmap in
+  `docs/VISUAL_IR_COMPILER_ROADMAP.md`, with stable generation boundaries in
   `docs/FINAL_PRODUCT_GOAL.md`
 - the first storyboard-planning contract is in place as a server-safe schema,
   compact registered-template manifest, and internal MiniMax planner facade
@@ -45,13 +46,13 @@ Current implementation status:
   narration media layers remain supported only as a transitional compatibility
   carrier
 - the selected-template compiler and staged endpoint use planned segment
-  narration, real TTS duration, and only the selected template schema/rules to
-  compile template-specific `implementation`
+  narration, real TTS duration, and only the selected visual path's
+  schema/rules to compile schema-valid `implementation`
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration
 - staged selected-segment regeneration reruns the target segment's planning,
-  TTS, selected-template compilation, and segment-owned narration replacement
-  while preserving non-target segments
+  TTS, visual implementation compilation, and segment-owned narration
+  replacement while preserving non-target segments
 - the main page has been split into a thin layout entry plus focused project
   generation, generation controls, and preview modules so the staged loop can
   keep growing without concentrating all logic in `src/app/page.tsx`
@@ -69,20 +70,16 @@ Current implementation status:
   restores explicit card hierarchy through a shared reusable card primitive so
   workspace shells, panels, nested editor groups, and segment-strip items all
   share the same border and shadow system
-- roadmap decisions should use `docs/FINAL_PRODUCT_GOAL.md` as the top-level
-  source
+- roadmap decisions should use `docs/VISUAL_IR_COMPILER_ROADMAP.md` as the
+  top-level source
 - current progress and next-step notes live in `docs/ITERATION_STATUS.md`
 - product requirements live in `docs/PRODUCT_REQUIREMENTS.md`
 - F5-TTS / aligned captions provider target lives in
   `docs/providers/f5-tts.md`
 - F5-TTS local runtime service plan lives in
   `docs/providers/f5-tts-service-plan.md`
-- implementation handoff for that slice lives in
-  `docs/HANDOFF_F5_TTS_CAPTIONS.md`
-- behavior-preserving structure refactor planning lives in
-  `docs/STRUCTURE_REFACTOR_PLAN.md`
-- handoff for the structure refactor lives in
-  `docs/HANDOFF_STRUCTURE_REFACTOR.md`
+- completed goals, old handoffs, and historical research live in
+  `docs/archive/`
 - agent/new-task startup notes live in `AGENTS.md`
 
 ## Current product flow
@@ -109,8 +106,8 @@ Current modeling direction:
 - one segment should have one primary template
 - `templateId` determines the schema of `implementation`
 - final generation should plan segments first, generate narration audio plus
-  aligned captions per segment second, then compile the selected template's
-  `implementation` from the real audio duration and segment visual brief
+  aligned captions per segment second, then compile the segment's selected
+  visual implementation from the real audio duration and segment visual brief
 - `implementation` is template-specific; current registered templates are:
   - `scripted`: `VideoSpec` with internal `scenes`
   - `spotlight`: `SpotlightSpec` with `headline`, `subheadline`,
@@ -149,23 +146,22 @@ Current modeling direction:
   `SceneGraph` data, while the app compiles that data through a stable
   Remotion renderer instead of relying only on fixed card-like templates or
   unrestricted generated TSX. See `docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md`.
-- the concrete first landing for that direction is documented in
-  `docs/GOAL_SCENE_GRAPH_MVP.md`; Subagent-Driven execution boundaries live in
-  `docs/HANDOFF_SCENE_GRAPH_SUBAGENT.md`.
 - the first Scene Graph Visual IR v1 deterministic slice is implemented:
   existing templates remain macro/preset paths, while `scene-graph` now has a
   bounded `primitive_scene_graph` compiler path with full-bleed, node graph,
   line path, code panel, terminal panel, browser-window placeholder, cursor,
   and lockup treatments. LLM Visual IR generation/repair is the next slice;
-  unrestricted generated TSX remains out of scope. See
-  `docs/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md` and
-  `docs/HANDOFF_SCENE_GRAPH_VISUAL_IR_SUBAGENT.md`.
+  unrestricted generated TSX remains out of scope. The completed goal and
+  handoff notes are archived under `docs/archive/`.
 - the full expert-derived visual architecture roadmap lives in
   `docs/VISUAL_IR_COMPILER_ROADMAP.md`. It defines the complete phased target:
   `template_macro`, `primitive_scene_graph`, `procedural_generator`,
   `media_asset_composite`, future restricted `generated_component`,
   review/repair, and eventual micro-template memory. The next recommended
   bounded phase is Visual IR Generation v1 for `primitive_scene_graph`.
+- `docs/FINAL_PRODUCT_GOAL.md` now documents the stable generation-pipeline
+  contracts that support the Visual IR compiler roadmap; it is not the primary
+  roadmap source.
 
 Current top-level boundaries:
 1. `/src/app/page.tsx`
@@ -206,11 +202,10 @@ Current top-level boundaries:
 Start from:
 - `docs/FINAL_PRODUCT_GOAL.md`
 - `docs/ITERATION_STATUS.md`
-- `docs/STRUCTURE_REFACTOR_PLAN.md` when the task is structural cleanup
-- `docs/HANDOFF_STRUCTURE_REFACTOR.md` when handing structure cleanup to a new
-  conversation or Subagent-Driven run
 - `docs/PRODUCT_REQUIREMENTS.md`
-- `docs/FUTURE_DIRECTION_NOTES.md`
+- `docs/VISUAL_IR_COMPILER_ROADMAP.md` when the task touches visual strategy
+- `docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md` when the task touches scene graph
+  visual generation
 - `README.md`
 
 Current code checkpoint:
@@ -220,8 +215,9 @@ Current code checkpoint:
 - TTS groundwork: internal `POST /api/tts` can generate and serve a
   `SegmentNarrationAsset` for one planned segment when MiniMax TTS is
   configured
-- selected-template compiler groundwork: internal compiler functions and
-  `POST /api/generate/staged` can assemble a staged project
+- visual implementation compiler groundwork: internal selected-template
+  compiler functions and `POST /api/generate/staged` can assemble a staged
+  project
 - staged selected-segment regeneration is wired for the active page path
 - page generation state now lives under `src/helpers/project-generation/`;
   `src/helpers/use-project-generation.ts` remains a compatibility export, with

@@ -164,5 +164,5 @@ These visual reference projects do not change the media-layer boundary.
 
 Images, videos, audio tracks, and color layers should be modeled as project-
 level or segment-level timeline/media data, as described in
-`docs/MEDIA_LAYERS.md`, not as another primitive selection or another segment
+`docs/archive/MEDIA_LAYERS.md`, not as another primitive selection or another segment
 template.

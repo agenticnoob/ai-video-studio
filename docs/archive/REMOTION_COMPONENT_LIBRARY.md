@@ -135,7 +135,7 @@ Related external references:
   finished-video narrative reference, not a primitive registry.
 
 Project-specific takeaways from both are recorded in
-`docs/EXTERNAL_REMOTION_REFERENCES.md`.
+`docs/archive/EXTERNAL_REMOTION_REFERENCES.md`.
 
 ## Promotion Path
 
@@ -186,7 +186,7 @@ When adding a reusable Remotion component:
    explicitly promotes them into its implementation schema.
 6. Add a small Studio showcase only when it helps review the component.
 7. Keep showcase compositions separate from product template registration.
-8. Update `docs/REMOTION_PRIMITIVES.md` for adopted reusable primitives.
+8. Update `docs/archive/REMOTION_PRIMITIVES.md` for adopted reusable primitives.
 
 ## External Reference Policy
 

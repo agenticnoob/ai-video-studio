@@ -1,10 +1,12 @@
 # Visual IR Compiler Roadmap
 
-Status: full roadmap derived from the expert architecture direction. Use this
-as the high-level plan after the deterministic Scene Graph Visual IR v1 slice.
+Status: authoritative product roadmap and final direction.
 
-This roadmap explains the complete target, not only the next bounded
-implementation step.
+Use this as the primary roadmap for `ai-video-studio`. It explains the
+complete target, not only the next bounded implementation step. Supporting
+documents such as `docs/FINAL_PRODUCT_GOAL.md`, `docs/PRODUCT_ARCHITECTURE.md`,
+`docs/TEMPLATE_ARCHITECTURE.md`, and provider notes should align with this
+roadmap.
 
 ## 1. Core Thesis
 
@@ -371,4 +373,3 @@ provider-generated `primitive_scene_graph` output is reliable.
 - auth/multi-tenant permissions
 - multi-template-per-segment orchestration
 - converting all existing templates into Visual IR macros in one pass
-

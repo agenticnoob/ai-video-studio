@@ -22,7 +22,7 @@ brief
   -> StoryboardPlan
   -> per-segment narration synthesis
   -> audio + captions
-  -> selected registered template compilation
+  -> render strategy / visual implementation compilation
   -> assembled VideoProject
 ```
 
@@ -397,11 +397,11 @@ Keep regeneration dependencies explicit:
 
 Recommended bounded rollout:
 
-1. Add `docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md` and align roadmap docs.
-2. Use `docs/GOAL_SCENE_GRAPH_MVP.md` as the concrete first implementation
-   target.
-3. Use `docs/HANDOFF_SCENE_GRAPH_SUBAGENT.md` when running the MVP through
-   Subagent-Driven execution.
+1. Done: add `docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md` and align roadmap docs.
+2. Done: implement the first scene graph registered-template landing.
+   Completed goal and handoff notes are archived under `docs/archive/`.
+3. Done: keep Subagent-Driven execution boundaries in the archived handoff
+   notes for historical reference.
 4. Done: add `src/lib/scene-graph-schema.ts` with `ShotLanguagePlan` and
    `SceneGraph` contracts.
 5. Done: add a registered `scene-graph` template with a small
@@ -414,9 +414,9 @@ Recommended bounded rollout:
    - process step
    - caption source marker
 7. Done: add deterministic smoke fixtures before provider-backed generation.
-8. Done: use `docs/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md` to upgrade the renderer
-   into a bounded Visual IR compiler path with primitives, layout presets, and
-   motion grammar.
+8. Done: upgrade the renderer into a bounded Visual IR compiler path with
+   primitives, layout presets, and motion grammar. The completed Visual IR v1
+   goal and handoff notes are archived under `docs/archive/`.
 9. Next: follow `docs/VISUAL_IR_COMPILER_ROADMAP.md` and add Visual IR
    Generation v1 for `primitive_scene_graph` only after deterministic renderer
    quality is stable.

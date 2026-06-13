@@ -4,12 +4,12 @@ Status: implementation handoff plus completed deterministic-slice notes.
 
 Use this file together with:
 
-1. `docs/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md`
+1. `docs/archive/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md`
 2. `docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md`
 3. `docs/FINAL_PRODUCT_GOAL.md`
 4. `docs/ITERATION_STATUS.md`
 5. `docs/TEMPLATE_ARCHITECTURE.md`
-6. `docs/REMOTION_PRIMITIVES.md`
+6. `docs/archive/REMOTION_PRIMITIVES.md`
 7. `.agents/skills/remotion-best-practices/SKILL.md`
 
 ## 0. Completed Deterministic Slice Notes

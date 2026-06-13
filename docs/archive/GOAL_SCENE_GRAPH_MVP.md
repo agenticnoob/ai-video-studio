@@ -300,7 +300,7 @@ Mitigation:
 Use this objective when starting the implementation goal:
 
 ```txt
-Implement the Scene Graph MVP described in docs/GOAL_SCENE_GRAPH_MVP.md:
+Implement the Scene Graph MVP described in docs/archive/GOAL_SCENE_GRAPH_MVP.md:
 add validated ShotLanguagePlan/SceneGraph contracts, register a scene-graph
 template, implement a UniversalSceneRenderer MVP, add deterministic fixture
 coverage, and validate preview/export compatibility without introducing

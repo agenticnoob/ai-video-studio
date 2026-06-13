@@ -2,7 +2,7 @@
 
 Status: execution handoff for Goal-mode implementation.
 
-Use this file together with `docs/GOAL_SCENE_GRAPH_MVP.md` and
+Use this file together with `docs/archive/GOAL_SCENE_GRAPH_MVP.md` and
 `docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md`.
 
 ## 1. Operating Model
@@ -36,12 +36,12 @@ Do not delegate final architecture decisions to subagents.
 
 Before implementation, read:
 
-1. `docs/GOAL_SCENE_GRAPH_MVP.md`
+1. `docs/archive/GOAL_SCENE_GRAPH_MVP.md`
 2. `docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md`
 3. `docs/FINAL_PRODUCT_GOAL.md`
 4. `docs/ITERATION_STATUS.md`
 5. `docs/TEMPLATE_ARCHITECTURE.md`
-6. `docs/REMOTION_PRIMITIVES.md`
+6. `docs/archive/REMOTION_PRIMITIVES.md`
 7. `.agents/skills/remotion-best-practices/SKILL.md`
 
 When using codegraph, prefer it before grep/read if `.codegraph/` exists.

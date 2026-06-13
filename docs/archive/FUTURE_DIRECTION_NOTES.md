@@ -25,7 +25,7 @@ Status: partially resumed.
 - 最新视觉方向判断：当前固定注册模版能验证 staged pipeline，但视觉上限偏低，
   容易生成像动态卡片或 dashboard 的成片。方向不是继续堆更多完整模板，而是
   把模板降级为 macro / preset，把 `scene-graph` 演进成受控 Visual IR
-  compiler。下一步应按 `docs/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md` 做视觉质量
+  compiler。下一步应按 `docs/archive/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md` 做视觉质量
   slice：先用 deterministic fixture 证明 primitives + layout presets +
   motion grammar 能明显降低 PPT 感，再接 LLM 生成 Visual IR。不要把主路径改成
   无限制 LLM 直接写 TSX。

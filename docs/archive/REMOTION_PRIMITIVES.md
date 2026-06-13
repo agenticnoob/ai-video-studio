@@ -10,7 +10,7 @@ remaining one primary template for a `VideoSegment`.
 
 External Remotion libraries may call similar assets "templates". In this repo,
 those assets should be treated as reusable component or primitive candidates
-first. See `docs/REMOTION_COMPONENT_LIBRARY.md` for the intake and promotion
+first. See `docs/archive/REMOTION_COMPONENT_LIBRARY.md` for the intake and promotion
 policy.
 
 For Remotion motion rules, keep animation deterministic and frame-driven with

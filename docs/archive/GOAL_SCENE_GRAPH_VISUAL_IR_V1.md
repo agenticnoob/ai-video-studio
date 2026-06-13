@@ -230,7 +230,7 @@ Use this objective in the next conversation:
 
 ```txt
 Implement the Scene Graph Visual IR v1 goal described in
-docs/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md: upgrade the existing scene-graph
+docs/archive/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md: upgrade the existing scene-graph
 renderer from a card-like MVP into a bounded Visual IR compiler path with
 renderStrategy vocabulary, layout/motion presets, technical-video primitives
 such as NodeGraph/LinePath/CodePanel/TerminalPanel, and deterministic

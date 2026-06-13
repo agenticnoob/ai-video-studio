@@ -324,7 +324,7 @@ repo's existing Docker/npm recovery guidance from `AGENTS.md` and `README.md`.
 - `docs/FINAL_PRODUCT_GOAL.md`
 - `docs/PRODUCT_ARCHITECTURE.md`
 - `docs/PRODUCT_REQUIREMENTS.md`
-- `docs/MEDIA_LAYERS.md`
+- `docs/archive/MEDIA_LAYERS.md`
 - `docs/providers/f5-tts.md`
 - `docs/ITERATION_STATUS.md`
 - `AGENTS.md`

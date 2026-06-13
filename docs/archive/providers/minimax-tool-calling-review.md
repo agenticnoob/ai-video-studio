@@ -183,6 +183,6 @@ parser-equivalent and use raw network calls; it did **not**:
 - T3 follow-up card (created at completion): see kanban comment
   on `t_794f5663` and the new child task assigned to
   `m3-builder` with `parents=[t_e9e43f18, t_794f5663]`.
-- This report: `docs/providers/minimax-tool-calling-review.md`
+- This report: `docs/archive/providers/minimax-tool-calling-review.md`
 - ITERATION_STATUS.md: appended "Tool calling live review" subsection
   in the "Latest iteration" block.

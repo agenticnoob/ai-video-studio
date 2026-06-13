@@ -4,12 +4,14 @@ The project uses one primary template per `VideoSegment`. A template is split
 into server-safe metadata and client/video runtime code so API routes can build
 schemas and prompts without importing React or Remotion components.
 
-Templates are built from existing Remotion code. The provider should not
+Templates are built from existing Remotion code and now act as macro/preset
+paths inside the broader Visual IR compiler roadmap. The provider should not
 generate new Remotion source code during normal project generation; it should
-choose a registered template from the template descriptions and fill that
-template's structured parameters.
+choose a registered template when a macro path is appropriate, or generate
+bounded Visual IR for the `scene-graph` path.
 
-The final generation target is documented in `docs/FINAL_PRODUCT_GOAL.md`.
+The authoritative roadmap is `docs/VISUAL_IR_COMPILER_ROADMAP.md`; stable
+generation-pipeline contracts are documented in `docs/FINAL_PRODUCT_GOAL.md`.
 Template metadata should support two provider contexts:
 
 - planner manifest: compact descriptions and capabilities for all templates
@@ -97,12 +99,9 @@ area such as `src/remotion/primitives/`, not under `src/components/`.
 `src/components/` is reserved for product-page UI components such as segment
 lists, editors, buttons, inputs, and render controls.
 
-The current primitive catalog lives in `docs/REMOTION_PRIMITIVES.md`. Update it
-whenever a new reusable video primitive is added or an existing primitive's
-visual role changes.
-
-The broader component-library intake and promotion policy lives in
-`docs/REMOTION_COMPONENT_LIBRARY.md`.
+Historical primitive-catalog and component-library intake notes are archived
+under `docs/archive/`. Keep new template guidance in this file unless a larger
+reference document is clearly needed again.
 
 ## Block Contracts
 

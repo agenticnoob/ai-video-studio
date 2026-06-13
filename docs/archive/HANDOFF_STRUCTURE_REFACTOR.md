@@ -17,9 +17,9 @@ Read these files before planning edits:
 
 1. `docs/FINAL_PRODUCT_GOAL.md`
 2. `docs/ITERATION_STATUS.md`
-3. `docs/STRUCTURE_REFACTOR_PLAN.md`
-4. `docs/HANDOFF_STRUCTURE_REFACTOR.md`
-5. `docs/HANDOFF_F5_TTS_CAPTIONS.md` if touching TTS, F5, captions, or
+3. `docs/archive/STRUCTURE_REFACTOR_PLAN.md`
+4. `docs/archive/HANDOFF_STRUCTURE_REFACTOR.md`
+5. `docs/archive/HANDOFF_F5_TTS_CAPTIONS.md` if touching TTS, F5, captions, or
    `VideoSegment.narration`
 6. `docs/providers/f5-tts-service-plan.md` if touching F5 runtime or smoke
    commands
@@ -161,7 +161,7 @@ Expected output:
 
 ## Completed Slice
 
-Phase 1 from `docs/STRUCTURE_REFACTOR_PLAN.md` is implemented:
+Phase 1 from `docs/archive/STRUCTURE_REFACTOR_PLAN.md` is implemented:
 
 ```txt
 Refactor staged generation pipeline.
@@ -220,7 +220,7 @@ not use narration layers. This cleanup has been applied:
 
 ## Completed Follow-Up Slices
 
-Phases 2 through 5 from `docs/STRUCTURE_REFACTOR_PLAN.md` are implemented:
+Phases 2 through 5 from `docs/archive/STRUCTURE_REFACTOR_PLAN.md` are implemented:
 
 - TTS/F5 provider boundary is split across `src/lib/tts/provider-selection.ts`,
   `src/lib/tts/synthesis.ts`, and `src/lib/tts/caption-artifacts.ts`.
@@ -267,7 +267,7 @@ docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm
 Before ending the implementation conversation:
 
 - update `docs/ITERATION_STATUS.md`
-- update `docs/STRUCTURE_REFACTOR_PLAN.md` if a phase is completed or changed
+- update `docs/archive/STRUCTURE_REFACTOR_PLAN.md` if a phase is completed or changed
 - update this handoff if the next slice changes
 - run the relevant Docker-first validation commands
 - include exact commands and outcomes in the final response

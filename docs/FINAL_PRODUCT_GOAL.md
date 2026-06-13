@@ -1,17 +1,38 @@
 # Final Product Goal
 
-Status: authoritative product target and roadmap source.
+Status: product-generation contract aligned to the Visual IR compiler roadmap.
 
-This document defines the long-term generation target for `ai-video-studio`.
+`docs/VISUAL_IR_COMPILER_ROADMAP.md` is the primary product roadmap and final
+direction for `ai-video-studio`. This document defines the stable generation
+pipeline and data contracts that support that roadmap: storyboard planning,
+segment-owned narration/audio/captions, visual implementation compilation,
+`VideoProject` preview/edit/export, and bounded fallback behavior.
+
 When roadmap, architecture, provider, template, TTS, or media-layer work needs
-direction, use this document as the highest-level product goal. More specific
-documents such as `PRODUCT_REQUIREMENTS.md`, `PRODUCT_ARCHITECTURE.md`,
-`TEMPLATE_ARCHITECTURE.md`, `MEDIA_LAYERS.md`, and provider notes should align
-with this target.
+direction, start from `docs/VISUAL_IR_COMPILER_ROADMAP.md`, then use this
+document for the generation-pipeline boundaries that must remain stable while
+the Visual IR compiler expands.
 
 ## 0. Product Statement
 
 最终目标：
+
+`ai-video-studio` 的最终方向是一个 AI video compiler，而不是无限增加固定模板的
+模板选择器。主路线以 `docs/VISUAL_IR_COMPILER_ROADMAP.md` 为准：
+
+```txt
+User Prompt
+  -> Creative Treatment
+  -> Shot Plan
+  -> Render Strategy Decision
+  -> Visual IR / Template Macro / Procedural Generator / Media Composite
+  -> Remotion Compiler
+  -> Review / Repair
+  -> VideoProject
+  -> Preview / Export
+```
+
+本文件保留这条主路线下必须稳定的生成管线边界：
 
 用户输入提示词后，系统把用户提示词、系统提示词、当前项目已注册的模版、
 每个模版的能力和使用场景交给 LLM。LLM 先分析这个视频应该有几个分镜，
@@ -31,48 +52,65 @@ with this target.
    alignment，再使用 narration、标点切分规则和语音时长生成 fallback 字幕。
 4. 把真实时长、当前分镜选择的模版信息、当前分镜大致内容、台词、
    全局风格上下文交给 LLM。
-5. LLM 只返回该模版需要的 schema-valid 参数。
-6. 系统把 `templateId`、生成语音、真实时长、字幕数据、模版参数组合成当前分镜。
+5. LLM 只返回当前 render strategy 允许的 schema-valid 数据：固定模板走
+   `template_macro` 参数，通用表达优先走 `primitive_scene_graph` Visual IR，
+   后续再按 roadmap 扩展 procedural/media/restricted generated component 路径。
+6. 系统把 `templateId` / render strategy、生成语音、真实时长、字幕数据、
+   视觉实现数据组合成当前分镜。
 7. 全部分镜生成后，系统把它们组装成一个完整 `VideoProject`，用于预览、
    编辑、重新生成和本地导出。
 
 The English sections below turn this product statement into engineering
-contracts, roadmap order, and scope boundaries.
+contracts and scope boundaries. The phase order and final visual architecture
+are governed by `docs/VISUAL_IR_COMPILER_ROADMAP.md`.
 
 ## 1. Final Goal
 
 `ai-video-studio` should turn a user's loose creative prompt into a complete,
 watchable, audible, editable, and locally exportable video.
 
-The final generation model is not a single LLM call that directly emits a full
-`VideoProject`. The final model is an orchestrated pipeline:
+The final product direction is an AI video compiler. The final generation model
+is not a single LLM call that directly emits a full `VideoProject`, and it is
+not an endless catalog of fixed templates. The stable generation pipeline is:
 
 ```txt
 user prompt
   -> storyboard planning
   -> per-segment narration synthesis
   -> audio + aligned captions
-  -> per-segment template compilation
+  -> render strategy / visual implementation compilation
   -> assembled VideoProject
   -> preview, edit, regenerate, export
+```
+
+The visual implementation stage follows the Visual IR compiler roadmap:
+
+```txt
+template_macro
+primitive_scene_graph
+procedural_generator
+media_asset_composite
+generated_component as a future restricted escape hatch only
 ```
 
 The system should:
 
 1. Understand the user's creative intent.
 2. Choose how many segments / shots the video needs.
-3. Select one primary registered template for each segment.
+3. Select one render strategy for each segment, with current compatibility
+   still represented by one primary `templateId`.
 4. Write or refine narration for each segment.
 5. Generate narration audio and aligned captions for each segment before final
    template parameters are compiled.
 6. Prefer the in-project F5-TTS provider for local narration synthesis and
    caption alignment.
-7. Use the real audio duration to generate schema-valid template parameters.
+7. Use the real audio duration to generate schema-valid visual implementation
+   data for the selected strategy.
 8. Assemble all compiled segments into one `VideoProject`.
 9. Let the user preview, edit, regenerate, and export the full video.
 
-This keeps the product segment-first, template-driven, voice-aware, and
-scalable as the template library grows.
+This keeps the product segment-first, compiler-driven, voice-aware, and
+scalable as visual strategies grow beyond fixed templates.
 
 ## 2. Authoritative Terminology
 
@@ -82,20 +120,26 @@ Use these terms consistently.
 | --- | --- | --- |
 | User prompt | `brief` / creative intent | The user's initial topic, story, requirement, or instruction. |
 | Shot / storyboard segment / 分镜 | `VideoSegment` | The user-facing editable unit in the final video. |
-| Template | `templateId` + template module | A registered implementation mechanism for one segment. |
-| Template choice | `templateId` | The primary template selected for a segment. |
+| Render strategy | `template_macro` / `primitive_scene_graph` / future strategies | The visual implementation route selected for one segment. |
+| Template | `templateId` + template module | A registered implementation mechanism for one segment, now treated as a macro/preset path. |
+| Template choice | `templateId` | The current discriminator for the segment's registered implementation path. |
 | Narration / 台词 | `VideoSegment.narration.text` target model | The spoken script for one segment. |
 | Narration synthesis result | `VideoSegment.narration.audio` target model | Generated audio file plus duration, provider, voice, and related metadata owned by the segment. |
 | Captions / subtitles | `VideoSegment.narration.captions` target model | Segment-local timed readable text returned or normalized from narration synthesis and kept outside template-specific implementation data. |
-| Template parameters | `implementation` | The template-specific data needed by the selected renderer. |
-| Compiled segment | `VideoSegment` | Template choice + narration/audio metadata + validated implementation. |
+| Visual implementation data | `implementation` | Schema-valid data needed by the selected renderer, either template parameters or bounded Visual IR. |
+| Compiled segment | `VideoSegment` | Render strategy / template choice + narration/audio metadata + validated implementation. |
 | Full video | `VideoProject` | The assembled project used by preview, editing, and export. |
 
 Important modeling rules:
 
-- A `VideoSegment` has one primary `templateId`.
-- `templateId` determines the schema of `implementation`.
-- `implementation` is template-specific, not a universal project field.
+- For the current product model, a `VideoSegment` has one primary `templateId`.
+- `templateId` determines the schema of `implementation`; for `scene-graph`,
+  that schema is bounded Visual IR.
+- `implementation` is selected-renderer data, not a universal project field.
+- Fixed registered templates are macro/preset paths. Broader expression should
+  grow through `primitive_scene_graph`, future procedural generators, future
+  asset composites, and only later a restricted generated-component escape
+  hatch.
 - Narration text and generated audio should stay outside template-specific
   `implementation` fields and should not be hidden inside one template's
   private scene model. The target home is `VideoSegment.narration`.
@@ -114,7 +158,9 @@ Important modeling rules:
   narration metadata; project-level narration media layers are compatibility
   carriers, not the target ownership model.
 - `VideoSpec.scenes` is specific to the `scripted` template.
-- Future templates should define their own implementation fields.
+- Future macro templates should define their own implementation fields, but
+  visual variety should not be solved only by adding more full-segment
+  templates.
 - Do not model one segment as multiple template instances unless a concrete
   future workflow proves that template-internal composition is insufficient.
 
@@ -238,22 +284,22 @@ Narration provider non-responsibilities:
 - do not require waveform editing, ducking, beat sync, or timeline UI for the
   first implementation
 
-Why narration synthesis happens before template compilation:
+Why narration synthesis happens before visual implementation compilation:
 
 - Real spoken duration controls segment duration.
 - Visual pacing should fit the narration audio, not the other way around.
-- Template parameter generation can use the real number of frames.
+- Visual implementation generation can use the real number of frames.
 - Caption and subtitle timing should come from the same narration provider
   result when available, so audio and readable text share one timing source.
 
 Duration guard:
 
 - Each template should expose recommended duration constraints.
-- If generated narration is too long or too short for the selected template,
+- If generated narration is too long or too short for the selected render path,
   the system should choose a bounded repair path:
   - shorten or expand narration
   - split the segment
-  - choose a better template
+  - choose a better render strategy or template macro
   - ask the user only if automatic repair would change intent too much
 
 ### 3.3 Stage C: Caption Cue Normalization
@@ -319,14 +365,18 @@ Why caption normalization is a separate step:
 - F5-TTS can make captions substantially better by returning timing data from
   the same local provider request that produced the audio.
 - The user should be able to edit or regenerate subtitles without changing the
-  selected template's visual parameters.
+  segment's visual implementation data.
 - Caption rendering can later be styled globally or per segment while the
   caption cues remain stable data.
 
-### 3.4 Stage D: Segment Template Compilation
+### 3.4 Stage D: Visual Implementation Compilation
 
 After narration synthesis and caption normalization, the system compiles each
-segment into template-specific render data.
+segment into schema-valid visual implementation data. Current fixed templates
+remain `template_macro` paths. The `scene-graph` template is the current
+`primitive_scene_graph` Visual IR path. Later roadmap phases add procedural
+generators, media asset composites, and a restricted generated-component escape
+hatch.
 
 Compiler input:
 
@@ -334,9 +384,9 @@ Compiler input:
 - its `SegmentNarrationAsset`
 - its `SegmentCaptions`, when captions are enabled or generated
 - real `durationInFrames`
-- selected template's complete schema
-- selected template's implementation rules
-- selected template examples, if needed
+- selected render path's complete schema
+- selected render path's implementation rules
+- selected template or Visual IR examples, if needed
 - limited global project context
 
 Compiler output:
@@ -348,34 +398,34 @@ type CompiledVideoSegment = {
   templateId: TemplateId;
   narration?: SegmentNarrationAsset;
   visualBrief?: string;
-  implementation: TemplateImplementation;
+  implementation: TemplateImplementation; // template params or bounded Visual IR
   durationInFrames: number;
 };
 ```
 
 Compiler responsibilities:
 
-- fill only the selected template's schema
+- fill only the selected render path's schema
 - use the real narration audio duration as the timing anchor
-- respect caption-safe layout constraints when the template renders text near
-  the caption area
+- respect caption-safe layout constraints when the renderer places text near the
+  caption area
 - keep visual content aligned with `visualBrief` and narration
 - produce data that passes Zod validation
-- preserve the selected template unless repair requires a template change
+- preserve the selected render path unless repair requires a bounded fallback
 
 Compiler non-responsibilities:
 
 - do not re-plan the whole video by default
-- do not choose among all templates again unless duration or validation repair
-  requires it
+- do not choose among all render strategies again unless duration or validation
+  repair requires it
 - do not write Remotion source code
-- do not invent fields outside the selected template schema
+- do not invent fields outside the selected schema
 
 Validation and repair:
 
-- Every compiled segment must pass the selected template's Zod schema.
-- Repair prompts should be bounded and template-specific.
-- Repair should include validation errors, selected template schema, narration
+- Every compiled segment must pass the selected render path's Zod schema.
+- Repair prompts should be bounded and path-specific.
+- Repair should include validation errors, selected schema, narration
   duration, and the previous invalid output.
 - After a small number of failed repairs, the system should return a clear
   error instead of silently falling back to unrelated content.
@@ -408,8 +458,8 @@ The final architecture should use two levels of template context.
 
 The visual-quality direction is documented in
 `docs/SCENE_GRAPH_VIDEO_LANGUAGE_PLAN.md`, with the full multi-phase roadmap in
-`docs/VISUAL_IR_COMPILER_ROADMAP.md` and the first deterministic implementation
-slice recorded in `docs/GOAL_SCENE_GRAPH_VISUAL_IR_V1.md`.
+`docs/VISUAL_IR_COMPILER_ROADMAP.md`. Completed implementation goal and
+handoff notes are archived under `docs/archive/`.
 That plan does not replace this pipeline. It refines Stage D by treating
 registered templates as stable macro/preset paths and evolving `scene-graph`
 into the first bounded Visual IR compiler path. The aim is to compile
@@ -519,17 +569,18 @@ Recommended edit scopes:
 Regeneration rules:
 
 - If narration text changes, rerun narration synthesis, caption normalization,
-  and segment compilation.
+  and visual implementation compilation.
 - If narration text changes and captions are enabled, regenerate or realign
   captions for the affected segment.
 - If only the voice or narration provider changes, rerun narration synthesis
-  and segment compilation only when timing changes enough to affect visuals.
+  and visual implementation compilation only when timing changes enough to
+  affect visuals.
 - If only caption text or caption style changes, preserve narration audio and
-  template implementation unless layout constraints require visual repair.
+  visual implementation unless layout constraints require visual repair.
 - If only visual direction changes, reuse existing narration audio and rerun
-  template compilation.
-- If template changes, rerun template compilation and validate against the new
-  template schema.
+  visual implementation compilation.
+- If render strategy or template changes, rerun visual implementation
+  compilation and validate against the new schema.
 - Non-target segments should be preserved unless the user asks for broader
   re-planning.
 
@@ -547,21 +598,25 @@ brief
   -> preview/edit/export
 ```
 
-This path can stay while it is sufficient. The final target evolves it into:
+This path can stay while it is sufficient. The Visual IR compiler target
+evolves it into:
 
 ```txt
 brief
   -> StoryboardPlan
   -> per-segment narration synthesis
   -> audio + aligned captions
-  -> per-segment template compiler
+  -> render strategy decision
+  -> template macro or bounded Visual IR compiler
   -> assembled VideoProject
   -> preview/edit/export
 ```
 
 Do not collapse the product back into a one-call prompt -> `VideoProject`
-generation architecture. The active system is the staged authoring loop that
-proves preview, editing, template rendering, validation, and export.
+generation architecture. Do not collapse the visual roadmap back into adding
+more fixed templates only. The active system is the staged authoring loop that
+proves preview, editing, bounded visual implementation rendering, validation,
+and export.
 
 Current compatibility notes:
 

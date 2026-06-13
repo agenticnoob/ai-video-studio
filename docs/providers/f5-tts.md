@@ -24,7 +24,7 @@ generation once `F5_TTS_BASE_URL` points at a running service:
 StoryboardSegmentPlan.narration.text
   -> in-project F5-TTS provider
   -> segment-owned audio artifact + measured duration + aligned caption cues
-  -> selected-template compiler
+  -> visual implementation compiler
   -> assembled VideoProject
 ```
 
