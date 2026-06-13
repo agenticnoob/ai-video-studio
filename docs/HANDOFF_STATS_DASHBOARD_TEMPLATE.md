@@ -1,15 +1,14 @@
 # Handoff: Stats Dashboard Template
 
-Status: planned; implementation not started in this slice.
+Status: first implementation shipped.
 
 Use this handoff when the next task is to add a data-statistics Remotion
 template by reusing the existing primitive library.
 
 ## One-Sentence Context
 
-The repo already has enough chart and layout primitives to support a
-data-statistics template; the next job is to wrap those primitives in one new
-registered segment template instead of building another free-form chart system.
+The repo now has a first registered data-statistics segment template that wraps
+existing Remotion primitives instead of introducing a free-form chart system.
 
 ## Read First
 
@@ -57,24 +56,44 @@ Existing template wiring references:
 - `src/templates/registry.ts`
 - `src/templates/component-registry.tsx`
 
-Important observation:
+Current implementation:
 
 - `BarChart` is already prop-driven enough to reuse directly.
-- `LineChart`, `DonutChart`, `ComparisonChart`, and `StatCounter` are still
-  closer to demo primitives and likely need a thin parameterization pass before
-  template reuse.
+- `LineChart` and `DonutChart` now have semantic props for template reuse while
+  keeping their default catalog previews intact.
+- `BarChart`, `LineChart`, and `DonutChart` now have enough semantic props for
+  compact dashboard layouts.
+- `ComparisonChart` and `StatCounter` remain closer to demo primitives and can
+  be parameterized in a later enhancement if the template needs those block
+  types.
 
-## Recommended First Slice
+## Completed First Slice
 
-Implement in this order:
+- Added `src/templates/stats-dashboard/`.
+- Registered `stats-dashboard` through the existing template definition and
+  runtime bundle registries.
+- Upgraded the template into a controlled block-based dashboard contract:
+  - `layout`: `single`, `split`, `grid`, `hero-metric`, or `timeline`
+  - `blocks[]`: `kpi`, `insight`, `bar-chart`, `line-chart`, or
+    `donut-chart`
+  - optional `timeline[]` sequence steps for staged reveal
+- Added a compact editor for title/layout/duration plus JSON editing for
+  blocks and timeline.
+- Kept narration text/audio/captions outside template-specific
+  `implementation`.
+- Added `StatsDashboardSmokeProject` as a deterministic Remotion composition
+  loaded by `npm run smoke:staged-fixtures`.
+- Keep Studio preview `defaultProps` inline in `src/remotion/Root.tsx`.
+  Remotion Studio can save default props only when it can statically extract
+  the object literal from the root file; wrapper components or imported fixture
+  constants trigger `Could not find or extract defaultProps`.
 
-1. parameterize one or more existing chart primitives
-2. add `src/templates/stats-dashboard/`
-3. register the new template
-4. add a template editor
-5. run Docker-first validation
+## Recommended Next Slice
 
-Do not start by inventing a generic chart abstraction.
+1. visually review the first runtime layout in Studio or with a one-frame
+   render.
+2. harden MiniMax prompt examples if live generation picks weak chart data.
+3. only then consider adding `comparison` or `progress` block types.
 
 ## Proposed Template Intent
 
@@ -94,33 +113,43 @@ Avoid using it for:
 
 ## Proposed Template Contract
 
-Keep the first version compact.
+Keep the contract controlled rather than turning it into a generic chart DSL.
 
 Suggested top-level implementation fields:
 
 - `meta`
 - `theme`
 - `durationInFrames`
-- `variant`
+- `layout`
 - `kicker?`
-- `headline`
-- `insight`
-- `metric`
-- `chart`
+- `title`
+- `subtitle?`
+- `blocks[]`
+- `timeline?`
 - `footerNote?`
 
-Suggested `variant` values:
+Supported `layout` values:
 
-- `bar-comparison`
-- `line-trend`
-- `donut-share`
+- `single`
+- `split`
+- `grid`
+- `hero-metric`
+- `timeline`
+
+Supported block types:
+
+- `kpi`
+- `insight`
+- `bar-chart`
+- `line-chart`
+- `donut-chart`
 
 ## Editing Rules
 
 - keep `definition.ts` server-safe
 - keep runtime-only chart composition in `runtime.tsx`
 - do not leak primitive-only knobs into the LLM-visible schema unless they are
-  real product fields
+  promoted into block fields
 - keep all render-critical motion frame-driven with Remotion APIs
 - prefer a thin adapter layer over rewriting chart visuals from scratch
 
@@ -174,7 +203,7 @@ Scope:
 
 Questions:
 
-- how should variant switching work?
+- how should block layout and timeline switching work?
 - which fields need direct manual editing versus structured text areas?
 - what visual density feels like a data report rather than a spotlight card?
 
@@ -205,6 +234,5 @@ Do not widen into:
 
 ## Ready-For-Implementation Exit Condition
 
-This handoff has served its purpose when the next conversation can start by
-creating the template module and reusing the existing primitive library without
-re-deciding the product model.
+This handoff has served its original purpose: the template module exists and
+reuses the primitive library without re-deciding the product model.

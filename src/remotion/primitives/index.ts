@@ -82,6 +82,8 @@ export { default as SplitScreen } from "./media/SplitScreen";
 export { MetaBallsPrimitive } from "./backgrounds/MetaBallsPrimitive";
 export type { GradientShiftBackgroundProps } from "./backgrounds/GradientShiftBackground";
 export type { BarChartDatum, BarChartProps } from "./charts/BarChart";
+export type { DonutChartProps, DonutChartSegment } from "./charts/DonutChart";
+export type { LineChartDatum, LineChartProps } from "./charts/LineChart";
 export type { CursorKeyframe, CursorKeyframeTrack } from "./interaction/cursor-keyframes";
 export type { MetaBallsPrimitiveProps } from "./backgrounds/MetaBallsPrimitive";
 export { Kicker } from "./elements/Kicker";

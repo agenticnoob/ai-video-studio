@@ -1,192 +1,211 @@
+import type { CSSProperties, FC } from "react";
 import { interpolate, useCurrentFrame } from "remotion";
 
-function LineChart() {
+export type LineChartDatum = {
+  label: string;
+  value: number;
+};
+
+export type LineChartProps = {
+  background?: string;
+  containerStyle?: CSSProperties;
+  data?: LineChartDatum[];
+  gridColor?: string;
+  height?: number;
+  lineColor?: string;
+  padding?: number;
+  pointColor?: string;
+  title?: string;
+  width?: number;
+  yMax?: number;
+};
+
+const defaultData: LineChartDatum[] = [
+  { label: "Jan", value: 25 },
+  { label: "Feb", value: 40 },
+  { label: "Mar", value: 35 },
+  { label: "Apr", value: 55 },
+  { label: "May", value: 50 },
+  { label: "Jun", value: 70 },
+  { label: "Jul", value: 65 },
+  { label: "Aug", value: 80 },
+  { label: "Sep", value: 75 },
+  { label: "Oct", value: 90 },
+];
+
+const LineChart: FC<LineChartProps> = ({
+  background = "linear-gradient(to bottom right, #111827, #1f2937)",
+  containerStyle,
+  data = defaultData,
+  gridColor = "rgba(255,255,255,0.1)",
+  height = 500,
+  lineColor = "#4361ee",
+  padding = 70,
+  pointColor = "#f72585",
+  title = "Revenue Growth",
+  width = 900,
+  yMax,
+}) => {
   const frame = useCurrentFrame();
+  const safeData = data.length > 0 ? data : defaultData;
+  const maxValue = Math.max(yMax ?? 0, ...safeData.map((point) => point.value), 1);
 
-  const data = [
-    { x: 0, y: 25, label: "Jan" },
-    { x: 1, y: 40, label: "Feb" },
-    { x: 2, y: 35, label: "Mar" },
-    { x: 3, y: 55, label: "Apr" },
-    { x: 4, y: 50, label: "May" },
-    { x: 5, y: 70, label: "Jun" },
-    { x: 6, y: 65, label: "Jul" },
-    { x: 7, y: 80, label: "Aug" },
-    { x: 8, y: 75, label: "Sep" },
-    { x: 9, y: 90, label: "Oct" },
-  ];
+  const xScale = (index: number) =>
+    (index / Math.max(safeData.length - 1, 1)) * (width - padding * 2) + padding;
+  const yScale = (value: number) => height - padding - (value / maxValue) * (height - padding * 2);
 
-  const chartWidth = 900;
-  const chartHeight = 500;
-  const padding = 70;
+  const points = safeData
+    .map((point, index) => `${xScale(index)},${yScale(point.value)}`)
+    .join(" ");
 
-  const xScale = (x: number) =>
-    (x / (data.length - 1)) * (chartWidth - padding * 2) + padding;
-  const yScale = (y: number) =>
-    chartHeight - padding - (y / 100) * (chartHeight - padding * 2);
-
-  // Build polyline points
-  const points = data.map((d) => `${xScale(d.x)},${yScale(d.y)}`).join(" ");
-
-  // Calculate total polyline length (approximate)
   let totalLength = 0;
-  for (let i = 1; i < data.length; i++) {
-    const dx = xScale(data[i].x) - xScale(data[i - 1].x);
-    const dy = yScale(data[i].y) - yScale(data[i - 1].y);
+  for (let index = 1; index < safeData.length; index += 1) {
+    const dx = xScale(index) - xScale(index - 1);
+    const dy = yScale(safeData[index].value) - yScale(safeData[index - 1].value);
     totalLength += Math.sqrt(dx * dx + dy * dy);
   }
 
-  // Animate line drawing
   const dashOffset = interpolate(frame, [0, 60], [totalLength, 0], {
+    extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
+
+  const gridValues = [0, 0.25, 0.5, 0.75, 1].map((ratio) => Math.round(maxValue * ratio));
 
   return (
     <div
       style={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: "100%",
-        height: "100%",
-        display: "flex",
         alignItems: "center",
-        justifyContent: "center",
+        background,
+        display: "flex",
         fontFamily: "Inter, system-ui, sans-serif",
-        background: "linear-gradient(to bottom right, #111827, #1f2937)",
+        height: "100%",
+        justifyContent: "center",
+        width: "100%",
       }}
     >
       <div
         style={{
-          position: "relative",
-          width: `${chartWidth}px`,
-          height: `${chartHeight}px`,
           backgroundColor: "rgba(0, 0, 0, 0.2)",
-          borderRadius: "16px",
+          borderRadius: 16,
           boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
+          height,
           overflow: "hidden",
-          padding: "20px",
+          padding: 20,
+          position: "relative",
+          width,
+          ...containerStyle,
         }}
       >
-        <svg width={chartWidth} height={chartHeight}>
-          {/* Grid lines */}
-          {[0, 25, 50, 75, 100].map((val) => (
+        <svg height={height} width={width}>
+          {gridValues.map((value) => (
             <line
-              key={`grid-${val}`}
-              x1={padding}
-              y1={yScale(val)}
-              x2={chartWidth - padding}
-              y2={yScale(val)}
-              stroke="rgba(255,255,255,0.1)"
+              key={`grid-${value}`}
+              stroke={gridColor}
               strokeWidth="1"
+              x1={padding}
+              x2={width - padding}
+              y1={yScale(value)}
+              y2={yScale(value)}
             />
           ))}
 
-          {/* Y-axis labels */}
-          {[0, 25, 50, 75, 100].map((val) => (
+          {gridValues.map((value) => (
             <text
-              key={`y-${val}`}
-              x={padding - 15}
-              y={yScale(val) + 5}
-              textAnchor="end"
               fill="rgba(255,255,255,0.6)"
               fontSize="12"
+              key={`y-${value}`}
+              textAnchor="end"
+              x={padding - 15}
+              y={yScale(value) + 5}
             >
-              {val}
+              {value}
             </text>
           ))}
 
-          {/* X-axis line */}
           <line
-            x1={padding}
-            y1={chartHeight - padding}
-            x2={chartWidth - padding}
-            y2={chartHeight - padding}
             stroke="rgba(255,255,255,0.2)"
             strokeWidth="2"
-          />
-
-          {/* Y-axis line */}
-          <line
             x1={padding}
-            y1={padding}
+            x2={width - padding}
+            y1={height - padding}
+            y2={height - padding}
+          />
+          <line
+            stroke="rgba(255,255,255,0.2)"
+            strokeWidth="2"
+            x1={padding}
             x2={padding}
-            y2={chartHeight - padding}
-            stroke="rgba(255,255,255,0.2)"
-            strokeWidth="2"
+            y1={padding}
+            y2={height - padding}
           />
 
-          {/* X-axis labels */}
-          {data.map((point, i) => (
+          {safeData.map((point, index) => (
             <text
-              key={`x-label-${i}`}
-              x={xScale(point.x)}
-              y={chartHeight - padding + 25}
-              textAnchor="middle"
               fill="rgba(255,255,255,0.8)"
               fontSize="13"
               fontWeight="500"
+              key={`x-label-${point.label}-${index}`}
+              textAnchor="middle"
+              x={xScale(index)}
+              y={height - padding + 25}
             >
               {point.label}
             </text>
           ))}
 
-          {/* Animated polyline */}
           <polyline
-            points={points}
             fill="none"
-            stroke="#4361ee"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            points={points}
+            stroke={lineColor}
             strokeDasharray={totalLength}
             strokeDashoffset={dashOffset}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="3"
           />
 
-          {/* Data points */}
-          {data.map((point, i) => {
-            const pointProgress = interpolate(
-              frame,
-              [5 + i * 6, 10 + i * 6],
-              [0, 1],
-              { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
-            );
+          {safeData.map((point, index) => {
+            const pointProgress = interpolate(frame, [5 + index * 6, 10 + index * 6], [0, 1], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            });
 
             return (
               <circle
-                key={`point-${i}`}
-                cx={xScale(point.x)}
-                cy={yScale(point.y)}
+                cx={xScale(index)}
+                cy={yScale(point.value)}
+                fill={pointColor}
+                key={`point-${point.label}-${index}`}
+                opacity={pointProgress}
                 r={5 * pointProgress}
-                fill="#f72585"
                 stroke="white"
                 strokeWidth="2"
-                opacity={pointProgress}
               />
             );
           })}
         </svg>
 
-        {/* Chart title */}
-        <div
-          style={{
-            position: "absolute",
-            top: "25px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            fontSize: "28px",
-            fontWeight: "bold",
-            color: "white",
-            textShadow: "0 2px 4px rgba(0,0,0,0.3)",
-            letterSpacing: "-0.5px",
-          }}
-        >
-          Revenue Growth
-        </div>
+        {title ? (
+          <div
+            style={{
+              color: "white",
+              fontSize: 28,
+              fontWeight: "bold",
+              left: "50%",
+              letterSpacing: 0,
+              position: "absolute",
+              textShadow: "0 2px 4px rgba(0,0,0,0.3)",
+              top: 25,
+              transform: "translateX(-50%)",
+            }}
+          >
+            {title}
+          </div>
+        ) : null}
       </div>
     </div>
   );
-}
+};
 
 export default LineChart;

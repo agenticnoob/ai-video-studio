@@ -33,12 +33,14 @@ component list.
 
 | Primitive | File | Visual Effect | Current Use |
 |---|---|---|---|
-| `VideoPanel` | `src/remotion/primitives/elements/VideoPanel.tsx` | Large rounded content panel with themed background, border, shadow, entrance opacity, and slight slide/scale-in motion. | `scripted`, `spotlight` |
+| `VideoPanel` | `src/remotion/primitives/elements/VideoPanel.tsx` | Large rounded content panel with themed background, border, shadow, entrance opacity, and slight slide/scale-in motion. | `scripted`, `spotlight`, `stats-dashboard` |
 | `MetaBallsPrimitive` | `src/remotion/primitives/backgrounds/MetaBallsPrimitive.tsx` | Full-frame OGL/WebGL metaball shader with deterministic frame-driven blob motion and a cursor-like path ball. | Studio showcase |
 | `GradientShiftBackground` | `src/remotion/primitives/backgrounds/GradientShiftBackground.tsx` | Frame-driven ambient gradient that shifts color phases and angle over time. | Primitive catalog showcase |
-| `BarChart` | `src/remotion/primitives/charts/BarChart.tsx` | Animated SVG bar chart with staggered bar growth and value labels. | Primitive catalog showcase |
+| `BarChart` | `src/remotion/primitives/charts/BarChart.tsx` | Animated SVG bar chart with staggered bar growth, value labels, and prop-driven dimensions/container styling. | Primitive catalog showcase, `stats-dashboard` |
+| `LineChart` | `src/remotion/primitives/charts/LineChart.tsx` | Animated SVG line chart with prop-driven data, title, colors, dimensions, and y-axis maximum. | Primitive catalog showcase, `stats-dashboard` |
+| `DonutChart` | `src/remotion/primitives/charts/DonutChart.tsx` | Animated SVG donut chart with prop-driven segments, center text, dimensions, legend, and ring sizing. | Primitive catalog showcase, `stats-dashboard` |
 | `CursorKeyframeTrack` | `src/remotion/primitives/interaction/cursor-keyframes.ts` | Shared normalized cursor trajectory model and frame interpolation helpers for mouse-driven render effects. | `MetaBallsPrimitive` |
-| `Kicker` | `src/remotion/primitives/elements/Kicker.tsx` | Small uppercase label above primary content, using the template secondary color and wide letter spacing. | `scripted`, `spotlight` |
+| `Kicker` | `src/remotion/primitives/elements/Kicker.tsx` | Small uppercase label above primary content, using the template secondary color and wide letter spacing. | `scripted`, `spotlight`, `stats-dashboard` |
 | `CalloutGrid` | `src/remotion/primitives/layouts/CalloutGrid.tsx` | Horizontal grid of short key messages, each with an alternating primary/secondary top rule. | `spotlight` |
 | `LogoFadeReveal` | `src/remotion/primitives/logos/LogoFadeReveal.tsx` | Logo block and brand copy reveal with subtle spring motion. | Primitive catalog showcase |
 | `GalleryGrid` | `src/remotion/primitives/media/GalleryGrid.tsx` | Staggered six-cell gallery reveal for image or color-card layouts. | Primitive catalog showcase |
@@ -134,6 +136,10 @@ Current mapping examples:
 | `spotlight` | `implementation.kicker` | rendered when present | `children` on `Kicker` |
 | `spotlight` | `implementation.callouts` | passed directly | `callouts` on `CalloutGrid` |
 | `spotlight` | `implementation.durationInFrames` | used by `SpotlightVideo` | duration controls sweep animation range |
+| `stats-dashboard` | `implementation.blocks[].type` | switches each dashboard block renderer | KPI / insight / `BarChart` / `LineChart` / `DonutChart` |
+| `stats-dashboard` | `implementation.layout` | chooses same-screen dashboard composition | single / split / grid / hero metric |
+| `stats-dashboard` | `implementation.timeline[]` | reveals block groups over time | Remotion `<Sequence>` |
+| `stats-dashboard` | chart block data | normalized by the template runtime | chart `data` or `segments` props |
 
 Runtime-only props are intentionally not LLM-visible unless a template decides
 they are part of its implementation contract. Examples:
@@ -191,6 +197,8 @@ Use when:
 Current examples:
 - `scripted` wraps title, bullet, and quote scene content in `VideoPanel`
 - `spotlight` uses it as a large absolute-positioned focused-card surface
+- `stats-dashboard` uses it as a full-frame report panel for block-based
+  dashboard layouts
 
 ### `Kicker`
 
@@ -211,6 +219,8 @@ Use when:
 Current examples:
 - `TitleScene`, `BulletScene`, and `QuoteScene` use `Kicker`
 - `spotlight` uses `Kicker` above the large headline
+- `stats-dashboard` uses `Kicker` as an optional report label above the
+  dashboard headline
 
 ## Layouts
 
@@ -233,6 +243,8 @@ Use when:
 
 Current examples:
 - `spotlight` uses `CalloutGrid` as the bottom supporting-message row
+- `stats-dashboard` no longer derives callouts automatically from chart series;
+  narrative text should be modeled as explicit `insight` blocks
 
 ## Scenes
 

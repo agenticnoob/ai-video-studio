@@ -154,6 +154,8 @@ inside a segment:
   - `scripted`: `VideoSpec` implementation with internal `scenes`
   - `spotlight`: focused-card implementation with `headline`,
     `subheadline`, `callouts`, and `durationInFrames`
+  - `stats-dashboard`: data-statistics implementation with `layout`,
+    dashboard `blocks`, optional `timeline`, and `durationInFrames`
 
 ## Current highest-priority next milestone
 
@@ -194,7 +196,8 @@ Current product modeling decision:
 - keep one primary template per `VideoSegment`
 - `templateId` determines the schema of `implementation`
 - `implementation` is template-specific; current registered templates are
-  `scripted` (`VideoSpec`) and `spotlight` (`SpotlightSpec`)
+  `scripted` (`VideoSpec`), `spotlight` (`SpotlightSpec`), and
+  `stats-dashboard` (`StatsDashboardSpec`)
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
 - treat generated narration/TTS as part of the main generation pipeline, not
   as a generic media-layer feature to solve first

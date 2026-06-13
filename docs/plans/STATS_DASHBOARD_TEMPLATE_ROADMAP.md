@@ -1,7 +1,7 @@
 # Stats Dashboard Template Roadmap
 
-Status: planned; documentation and handoff only, no implementation in this
-slice.
+Status: first implementation shipped; continue with validation hardening and
+template-quality iteration.
 
 This document defines the next bounded template addition for
 `ai-video-studio`: a data-statistics segment template built by reusing the
@@ -44,12 +44,15 @@ The repo already contains reusable chart and layout primitives under
 - `Kicker`
 - `CalloutGrid`
 
-The missing piece is not "more chart effects". The missing piece is a
+The initial missing piece was not "more chart effects". The missing piece was a
 registered template that:
 
 - exposes a stable schema to the planner/compiler
 - reuses those existing Remotion primitives through a template runtime
 - provides a template editor for structured data entry
+
+That first registered template now exists under
+`src/templates/stats-dashboard/`.
 
 ## Bounded Scope
 
@@ -73,54 +76,58 @@ Out of scope:
 - persistence/history
 - moving narration or captions into `implementation`
 
-## Proposed First Implementation Shape
+## Implemented Template Shape
 
-Suggested implementation fields:
+Implemented top-level fields:
 
 ```txt
 meta
 theme
 durationInFrames
-variant
+layout
 kicker?
-headline
-insight
-metric
-chart
+title
+subtitle?
+blocks[]
+timeline?
 footerNote?
 ```
 
-Suggested `variant` values:
+Supported `layout` values:
 
-- `bar-comparison`
-- `line-trend`
-- `donut-share`
+- `single`
+- `split`
+- `grid`
+- `hero-metric`
+- `timeline`
 
-Suggested `metric` shape:
-
-```txt
-value
-label
-delta?
-deltaDirection?
-```
-
-Suggested `chart` shape:
+Supported block types:
 
 ```txt
-categories[]
-series[]
-unit?
-maxValue?
-highlightIndex?
+kpi
+insight
+bar-chart
+line-chart
+donut-chart
 ```
 
-This keeps the template LLM-visible contract compact and avoids leaking
-primitive-only rendering props into generation.
+Optional `timeline` step shape:
+
+```txt
+from
+durationInFrames
+blockIds[]
+layout?
+```
+
+This keeps the template LLM-visible contract controlled while still allowing
+single-chart, multi-chart, KPI-plus-chart, and sequenced dashboard layouts.
 
 ## Roadmap
 
 ### Phase 0: Parameterize reusable chart primitives
+
+Status: implemented for the first template path.
 
 Target:
 
@@ -135,6 +142,19 @@ First targets:
 - `src/remotion/primitives/charts/ComparisonChart.tsx`
 - `src/remotion/primitives/charts/StatCounter.tsx`
 
+Implemented:
+
+- `LineChart` now accepts semantic data, title, colors, dimensions, and y-axis
+  maximum while preserving its default preview behavior.
+- `DonutChart` now accepts semantic segments, center text, dimensions, legend
+  visibility, and ring sizing while preserving its default preview behavior.
+- `BarChart` now accepts semantic sizing/container props for compact dashboard
+  layouts.
+
+Deferred:
+
+- `ComparisonChart` and `StatCounter` are still optional future enhancements.
+
 Rules:
 
 - keep Remotion frame-driven animation only
@@ -142,6 +162,8 @@ Rules:
 - do not expose raw layout/motion knobs to the template schema unless needed
 
 ### Phase 1: Add template-local schema and definition
+
+Status: implemented.
 
 Target:
 
@@ -163,9 +185,12 @@ Rules:
 
 ### Phase 2: Add runtime renderer
 
+Status: implemented.
+
 Target:
 
-- compose `VideoPanel`, `Kicker`, and one chart primitive based on `variant`
+- compose `VideoPanel`, `Kicker`, and one or more dashboard block renderers
+  based on `blocks[]`
 - keep the template visually report-like and information-dense, not cinematic
   or narrative-first
 
@@ -177,25 +202,30 @@ Rules:
 
 ### Phase 3: Add editor and registration
 
+Status: implemented.
+
 Target:
 
 - register the template through:
   - `src/templates/registered-definitions.ts`
   - `src/templates/registered-bundles.ts`
 - expose a compact structured editor for:
-  - variant
-  - headline
-  - insight
-  - metric
-  - categories/series
+  - layout
+  - title/subtitle
+  - blocks JSON
+  - timeline JSON
   - footer note
 
 ### Phase 4: Validate and document
+
+Status: implemented for the first template path.
 
 Target:
 
 - Docker-first typecheck/lint/build
 - update docs if the primitive inventory or template inventory changed
+- deterministic Remotion composition loading now includes
+  `StatsDashboardSmokeProject`
 
 Suggested validation:
 

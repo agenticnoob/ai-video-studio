@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import type { CSSProperties, FC } from "react";
 import { interpolate, useCurrentFrame } from "remotion";
 
 export type BarChartDatum = {
@@ -9,9 +9,14 @@ export type BarChartDatum = {
 export type BarChartProps = {
   background?: string;
   colors?: string[];
+  containerStyle?: CSSProperties;
   data?: BarChartDatum[];
+  height?: number;
+  padding?: number;
   subtitle?: string;
   title?: string;
+  width?: number;
+  yMax?: number;
 };
 
 const defaultData: BarChartDatum[] = [
@@ -43,21 +48,22 @@ const defaultColors = [
 export const BarChart: FC<BarChartProps> = ({
   background = "linear-gradient(to bottom right, #111827, #1f2937)",
   colors = defaultColors,
+  containerStyle,
   data = defaultData,
+  height = 500,
+  padding = 60,
   subtitle = "Data visualization for 2023",
   title = "Monthly Performance",
+  width = 900,
+  yMax,
 }) => {
   const frame = useCurrentFrame();
-  const chartWidth = 900;
-  const chartHeight = 500;
-  const padding = 60;
   const safeData = data.length > 0 ? data : defaultData;
-  const maxValue = Math.max(...safeData.map((point) => point.value), 1);
-  const barWidth = ((chartWidth - padding * 2) / safeData.length) * 0.7;
+  const maxValue = Math.max(yMax ?? 0, ...safeData.map((point) => point.value), 1);
+  const barWidth = ((width - padding * 2) / safeData.length) * 0.7;
   const xScale = (index: number) =>
-    (index / Math.max(safeData.length - 1, 1)) * (chartWidth - padding * 2) + padding;
-  const yScale = (value: number) =>
-    chartHeight - padding - (value / maxValue) * (chartHeight - padding * 2);
+    (index / Math.max(safeData.length - 1, 1)) * (width - padding * 2) + padding;
+  const yScale = (value: number) => height - padding - (value / maxValue) * (height - padding * 2);
 
   return (
     <div
@@ -76,21 +82,22 @@ export const BarChart: FC<BarChartProps> = ({
           backgroundColor: "rgba(0, 0, 0, 0.2)",
           borderRadius: 8,
           boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
-          height: chartHeight,
+          height,
           overflow: "hidden",
           padding: 20,
           position: "relative",
-          width: chartWidth,
+          width,
+          ...containerStyle,
         }}
       >
-        <svg height={chartHeight} width={chartWidth}>
+        <svg height={height} width={width}>
           <line
             stroke="rgba(255, 255, 255, 0.2)"
             strokeWidth="2"
             x1={padding}
-            x2={chartWidth - padding}
-            y1={chartHeight - padding}
-            y2={chartHeight - padding}
+            x2={width - padding}
+            y1={height - padding}
+            y2={height - padding}
           />
           {safeData.map((point, index) => (
             <text
@@ -100,13 +107,13 @@ export const BarChart: FC<BarChartProps> = ({
               key={`x-label-${point.label}-${index}`}
               textAnchor="middle"
               x={xScale(index)}
-              y={chartHeight - padding + 25}
+              y={height - padding + 25}
             >
               {point.label}
             </text>
           ))}
           {safeData.map((point, index) => {
-            const fullHeight = (point.value / maxValue) * (chartHeight - padding * 2);
+            const fullHeight = (point.value / maxValue) * (height - padding * 2);
             const progress = interpolate(frame, [index * 3, 15 + index * 3], [0, 1], {
               extrapolateLeft: "clamp",
               extrapolateRight: "clamp",
@@ -140,34 +147,38 @@ export const BarChart: FC<BarChartProps> = ({
             );
           })}
         </svg>
-        <div
-          style={{
-            color: "white",
-            fontSize: 28,
-            fontWeight: 700,
-            left: "50%",
-            letterSpacing: 0,
-            position: "absolute",
-            textShadow: "0 2px 4px rgba(0,0,0,0.3)",
-            top: 25,
-            transform: "translateX(-50%)",
-          }}
-        >
-          {title}
-        </div>
-        <div
-          style={{
-            color: "rgba(255, 255, 255, 0.7)",
-            fontSize: 16,
-            left: "50%",
-            position: "absolute",
-            textShadow: "0 1px 2px rgba(0,0,0,0.2)",
-            top: 60,
-            transform: "translateX(-50%)",
-          }}
-        >
-          {subtitle}
-        </div>
+        {title ? (
+          <div
+            style={{
+              color: "white",
+              fontSize: 28,
+              fontWeight: 700,
+              left: "50%",
+              letterSpacing: 0,
+              position: "absolute",
+              textShadow: "0 2px 4px rgba(0,0,0,0.3)",
+              top: 25,
+              transform: "translateX(-50%)",
+            }}
+          >
+            {title}
+          </div>
+        ) : null}
+        {subtitle ? (
+          <div
+            style={{
+              color: "rgba(255, 255, 255, 0.7)",
+              fontSize: 16,
+              left: "50%",
+              position: "absolute",
+              textShadow: "0 1px 2px rgba(0,0,0,0.2)",
+              top: 60,
+              transform: "translateX(-50%)",
+            }}
+          >
+            {subtitle}
+          </div>
+        ) : null}
       </div>
     </div>
   );

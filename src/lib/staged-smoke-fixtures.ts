@@ -1,13 +1,22 @@
 import { segmentNarrationFromAsset, type SegmentNarrationAsset } from "./narration-asset-schema";
 import { normalizeSegmentCaptions } from "./captions";
-import { videoSegmentSchema, type VideoProject, type VideoSegment } from "./project-schema";
+import {
+  videoProjectSchema,
+  videoSegmentSchema,
+  type VideoProject,
+  type VideoSegment,
+} from "./project-schema";
 import {
   assembleStagedProject,
   orderPlanSegments,
   replaceSegmentAndNarrationLayer,
 } from "./staged-project-assembly";
 import { storyboardPlanSchema, type StoryboardPlan } from "./storyboard-plan-schema";
-import { SCRIPTED_TEMPLATE_ID, SPOTLIGHT_TEMPLATE_ID } from "./template-registry";
+import {
+  SCRIPTED_TEMPLATE_ID,
+  SPOTLIGHT_TEMPLATE_ID,
+  STATS_DASHBOARD_TEMPLATE_ID,
+} from "./template-registry";
 
 const createNarrationAsset = ({
   durationInFrames,
@@ -151,6 +160,28 @@ const spotlightSegment = videoSegmentSchema.parse({
 
 export const mixedTemplateCompiledSegments: VideoSegment[] = [scriptedSegment, spotlightSegment];
 
+export const scriptedTemplateSmokeProject: VideoProject = videoProjectSchema.parse({
+  meta: {
+    title: "Scripted Template Preview",
+    fps: 30,
+    width: 1280,
+    height: 720,
+  },
+  brief: "Render one scripted template segment.",
+  segments: [scriptedSegment],
+});
+
+export const spotlightTemplateSmokeProject: VideoProject = videoProjectSchema.parse({
+  meta: {
+    title: "Spotlight Template Preview",
+    fps: 30,
+    width: 1280,
+    height: 720,
+  },
+  brief: "Render one spotlight template segment.",
+  segments: [spotlightSegment],
+});
+
 const mixedTemplateCompiledSegmentsWithNarration = orderPlanSegments(
   mixedTemplateStoryboardPlan,
 ).map((segmentPlan, index) =>
@@ -246,3 +277,120 @@ export const mixedTemplateSmokeFixtureSummary = {
     (segment) => segment.narration?.captions?.cues.length ?? 0,
   ),
 };
+
+const statsDashboardSegment = videoSegmentSchema.parse({
+  id: "segment-1",
+  title: "Dashboard recap",
+  intent: "Summarize a data-backed quarterly growth result.",
+  templateId: STATS_DASHBOARD_TEMPLATE_ID,
+  implementation: {
+    meta: {
+      title: "Dashboard recap",
+      fps: 30,
+      width: 1280,
+      height: 720,
+    },
+    theme: {
+      background: "#0f172a",
+      panel: "rgba(248,250,252,0.10)",
+      primary: "#38bdf8",
+      secondary: "#f59e0b",
+      text: "#f8fafc",
+      muted: "#cbd5e1",
+    },
+    durationInFrames: 180,
+    layout: "timeline",
+    kicker: "Quarterly KPI",
+    title: "Revenue momentum is compounding",
+    subtitle: "A sequenced dashboard can reveal KPI, trend, and share blocks inside one segment.",
+    blocks: [
+      {
+        id: "revenue-kpi",
+        type: "kpi",
+        title: "Primary signal",
+        value: "+42%",
+        label: "Revenue growth",
+        delta: "+11 pts vs last quarter",
+        deltaDirection: "up",
+      },
+      {
+        id: "revenue-trend",
+        type: "line-chart",
+        title: "Revenue index",
+        chart: {
+          categories: ["Q1", "Q2", "Q3", "Q4"],
+          series: [
+            {
+              name: "Revenue index",
+              values: [42, 58, 73, 96],
+              color: "#38bdf8",
+            },
+          ],
+          unit: "index",
+          maxValue: 100,
+          highlightIndex: 3,
+        },
+      },
+      {
+        id: "channel-mix",
+        type: "donut-chart",
+        title: "Channel mix",
+        centerValue: "52%",
+        centerLabel: "Paid search",
+        segments: [
+          { label: "Paid search", value: 52, color: "#38bdf8" },
+          { label: "Organic", value: 28, color: "#22c55e" },
+          { label: "Referral", value: 20, color: "#f59e0b" },
+        ],
+      },
+      {
+        id: "takeaway",
+        type: "insight",
+        title: "Takeaway",
+        text: "Mid-quarter campaign tuning lifted both revenue velocity and paid-search share.",
+      },
+    ],
+    timeline: [
+      {
+        from: 0,
+        durationInFrames: 70,
+        blockIds: ["revenue-kpi"],
+        layout: "single",
+      },
+      {
+        from: 58,
+        durationInFrames: 82,
+        blockIds: ["revenue-trend"],
+        layout: "single",
+      },
+      {
+        from: 132,
+        durationInFrames: 48,
+        blockIds: ["revenue-kpi", "revenue-trend", "channel-mix", "takeaway"],
+        layout: "grid",
+      },
+    ],
+    footerNote: "Fixture data for deterministic template smoke.",
+  },
+});
+
+export const statsDashboardSmokeProject: VideoProject = videoProjectSchema.parse({
+  meta: {
+    title: "Stats Dashboard Smoke",
+    fps: 30,
+    width: 1280,
+    height: 720,
+  },
+  brief: "Render one data-statistics segment with segment-owned narration.",
+  segments: [statsDashboardSegment],
+});
+
+const assertStatsDashboardFixture = (): void => {
+  const [segment] = statsDashboardSmokeProject.segments;
+
+  if (segment.templateId !== STATS_DASHBOARD_TEMPLATE_ID) {
+    throw new Error("Stats-dashboard smoke fixture expected segment-1 to use stats-dashboard.");
+  }
+};
+
+assertStatsDashboardFixture();
