@@ -135,7 +135,7 @@ Validation performed so far:
 - The guard is process-local. It protects the normal Docker-first private
   deployment path, but multi-replica deployments still need an external lock or
   job queue before treating concurrency limits as global.
-- `out/renders/latest.mp4` remains a shared stable alias for the last completed
+- `AI_VIDEO_STUDIO_RENDER_OUTPUT_DIR/latest.mp4` remains a shared stable alias for the last completed
   render, so render concurrency should stay at `1` unless that product
   contract is changed.
 - This slice does not add project persistence, render history, job ids,
@@ -320,7 +320,7 @@ Current readiness:
   `.m4a`, and `.aac` reference audio plus required matching reference text.
 - Uploaded references are stored under `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR`;
   the Docker workflow defaults this to `/workspace/out/voice-references` and
-  mounts the same path read-only into the F5 container.
+  mounts the shared `/workspace/out` tree read-only into the F5 container.
 - Extended `/api/tts` and `/api/generate/staged` with
   `voiceClone: { enabled, referenceId, referenceText }`.
 - When `voiceClone.enabled` is true, the TTS boundary forces `f5-tts` and sends
@@ -428,7 +428,7 @@ Current readiness:
   - assigns cue timing proportionally from generated audio duration and cue
     text length
 - The Next-side TTS path now writes the final normalized caption payload next
-  to the generated audio artifact under `out/tts/...` as
+  to the generated audio artifact under `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR` as
   `<audio-name>.captions.json`.
 - The saved caption artifact reflects the same `VideoSegment.narration.captions`
   data used by preview/export, including MiniMax fallback captions when the
@@ -478,7 +478,7 @@ Current readiness:
   `F5_TTS_BASE_URL=http://127.0.0.1:7865 scripts/f5-tts-smoke.sh` with
   `mode=f5`, `modelLoaded=true`, WAV output, and fallback caption cues.
 - Next provider smoke passed through `scripts/f5-tts-next-smoke.sh`, confirming
-  `/api/tts` adapter output, local `out/tts` WAV artifacts, duration probing,
+  `/api/tts` adapter output, local `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR` WAV artifacts, duration probing,
   captions, and `/api/tts/assets/...` byte-range serving.
 - Deterministic staged smoke passed through `npm run smoke:f5-staged` using
   real F5 narration for mixed `scripted` + `spotlight` segments.
@@ -521,7 +521,7 @@ Current readiness:
   F5 model.
 - The smoke confirms:
   - `POST /api/tts` can call the `f5-tts` contract-smoke runtime
-  - the Next adapter writes a local `out/tts/...` WAV artifact
+  - the Next adapter writes a local `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR` WAV artifact
   - ffprobe duration probing succeeds
   - response narration has provider `f5-tts`, format `wav`, and caption cues
   - `/api/tts/assets/...` serves the generated artifact with byte-range support
@@ -601,7 +601,7 @@ Current readiness:
   - provider selection through `TTS_PROVIDER` /
     `AI_VIDEO_STUDIO_TTS_PROVIDER`
   - automatic F5 selection when `F5_TTS_BASE_URL` is configured
-  - local `out/tts/...` artifact writing and duration measurement
+  - local `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR` artifact writing and duration measurement
   - provider alignment/caption normalization when returned
   - MiniMax fallback when F5 fails, unless disabled
 - Kept MiniMax TTS as the working default when F5 is not configured.
@@ -1009,7 +1009,7 @@ Remaining next slices:
 - Added an internal MiniMax-backed TTS path:
   - `POST /api/tts` accepts a validated `StoryboardPlan` plus `segmentId`
   - `src/lib/tts` generates one planned segment's narration audio
-  - generated files are written under `out/tts/...`
+  - generated files are written under `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR`
   - `/api/tts/assets/...` serves the generated local audio artifact
   - `ffprobe` measures real audio duration and converts it to frames
 - Kept the current product boundary intact:
@@ -1568,8 +1568,8 @@ Current working flow:
 6. user selects a segment and edits / regenerates only that segment
 7. user clicks local export to render the current edited `VideoProject`
 8. server writes both:
-   - stable artifact: `out/renders/latest.mp4`
-   - unique artifact for this render: `out/renders/render-<timestamp>-<id>.mp4`
+   - stable artifact: `AI_VIDEO_STUDIO_RENDER_OUTPUT_DIR/latest.mp4`
+   - unique artifact for this render: `AI_VIDEO_STUDIO_RENDER_OUTPUT_DIR/render-<timestamp>-<id>.mp4`
 9. UI returns render state plus both download entries:
    - stable: `GET /api/render/latest`
    - unique: `GET /api/render/[renderId]`

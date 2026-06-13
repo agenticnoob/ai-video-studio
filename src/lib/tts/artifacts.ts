@@ -1,8 +1,7 @@
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 import type { NarrationAudioFormat } from "../narration-asset-schema";
-
-export const TTS_OUTPUT_DIRECTORY = "out/tts";
+import { getTtsOutputDirectory } from "../artifact-paths";
 
 const TTS_RUN_ID_PATTERN = /^tts-[a-z0-9-]+$/;
 const TTS_ASSET_PATH_PATTERN = /^tts-[a-z0-9-]+\/[a-z0-9-]+\.(mp3|wav|aac|m4a)$/;
@@ -51,11 +50,11 @@ export const getTtsArtifactOutputPath = (assetPath: string): string => {
     throw new Error(`Invalid TTS asset path: ${assetPath}`);
   }
 
-  return `${TTS_OUTPUT_DIRECTORY}/${assetPath}`;
+  return path.join(getTtsOutputDirectory(), assetPath);
 };
 
 export const getTtsArtifactAbsolutePath = (assetPath: string): string => {
-  return path.join(process.cwd(), getTtsArtifactOutputPath(assetPath));
+  return getTtsArtifactOutputPath(assetPath);
 };
 
 export const getTtsArtifactDownloadUrl = (assetPath: string): string => {

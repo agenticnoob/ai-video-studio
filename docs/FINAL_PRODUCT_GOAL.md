@@ -536,7 +536,7 @@ Current compatibility notes:
 - The current fallback caption path uses sentence punctuation as a hard split,
   comma punctuation as a soft split, merges short comma chunks forward for
   readability, and saves the normalized caption payload beside generated audio
-  under `out/tts/...` as `<audio-name>.captions.json`.
+  under `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR` as `<audio-name>.captions.json`.
 - Generated narration audio is served as seekable streamed byte ranges with
   immutable artifact caching, and Remotion preview pauses timeline advancement
   while narration audio is buffering.
@@ -635,14 +635,14 @@ Implemented:
 
 - `SegmentNarrationAsset` validation
 - MiniMax-backed internal `POST /api/tts` for one planned segment
-- local artifact writing under `out/tts/...`
+- local artifact writing under `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR`
 - `/api/tts/assets/...` serving for Remotion-consumable audio URLs
 - ffprobe duration measurement and frame normalization
 
 Deliverables:
 
 - TTS provider module
-- local audio artifact path such as `out/tts/...`
+- local audio artifact path such as `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR`
 - audio serving path that Remotion can consume
 - duration probing or provider-returned duration normalization
 - `SegmentNarrationAsset` metadata

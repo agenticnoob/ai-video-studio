@@ -72,7 +72,7 @@ export const RenderControls: React.FC<{
 
       {state.status === "idle" ? (
         <p className="mt-4 text-sm text-foreground">
-          稳定输出路径：<span className="font-mono text-foreground">out/renders/latest.mp4</span>
+          稳定输出路径会使用当前服务端配置的 render 输出目录，并写入 `latest.mp4`。
         </p>
       ) : null}
 
@@ -110,7 +110,7 @@ export const RenderControls: React.FC<{
               className="inline-flex bg-foreground px-3 py-2 font-medium text-background transition"
               href={state.latestDownloadUrl}
             >
-              下载 latest.mp4
+              下载稳定副本 latest.mp4
             </a>
           </div>
         </div>

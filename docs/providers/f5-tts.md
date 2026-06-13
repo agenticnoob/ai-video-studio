@@ -95,9 +95,9 @@ segment regeneration, and export.
     workflow defaults this to `/workspace/out/voice-references`.
   - `F5_TTS_FALLBACK_TO_MINIMAX=false` disables MiniMax fallback when F5 fails.
 - Write generated audio to local project artifacts, consistent with the current
-  `out/tts/...` path.
+  `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR` path.
 - Write the final normalized caption payload beside the generated audio under
-  `out/tts/...` as `<audio-name>.captions.json`.
+  `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR` as `<audio-name>.captions.json`.
 - Serve generated audio through `/api/tts/assets/...` with byte-range support.
 - Normalize provider captions/alignment into segment-owned caption data with
   segment-local timing.
@@ -211,6 +211,7 @@ Current runtime note:
   text. For custom voices, set both `F5_TTS_DEFAULT_REFERENCE_AUDIO` and
   `F5_TTS_DEFAULT_REFERENCE_TEXT`.
 - The Docker F5 overlay mounts the configured
-  `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR` into the runtime at the same path so
-  real-mode cloning can use files uploaded through the Next UI without a
-  second runtime-path setting.
+  shared `/workspace/out` tree into the runtime, so the configured
+  `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR` remains valid there and real-mode
+  cloning can use files uploaded through the Next UI without a second
+  runtime-path setting.

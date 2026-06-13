@@ -116,7 +116,7 @@ Already implemented:
   - `src/lib/tts/*`
   - `src/app/api/tts/route.ts`
   - `src/app/api/tts/assets/[...assetPath]/route.ts`
-- local generated audio artifacts under `out/tts/...`.
+- local generated audio artifacts under `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR`.
 - byte-range serving for generated TTS assets.
 - selected-template compilation using real narration audio duration.
 - segment-owned `narration` schema on `VideoSegment`.
@@ -149,7 +149,7 @@ Implemented in the F5/captions/runtime slices:
 - punctuation-aware F5 fallback cues when real alignment is unavailable:
   sentence punctuation is a hard split, comma punctuation is a soft split, and
   short comma chunks merge forward for readability.
-- sidecar caption artifact writing under `out/tts/...` as
+- sidecar caption artifact writing under `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR` as
   `<audio-name>.captions.json` after final Next-side caption normalization.
 - Remotion flattening/rendering for segment-owned captions.
 - selected-segment caption replacement through `VideoSegment.narration`.

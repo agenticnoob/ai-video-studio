@@ -2,7 +2,7 @@ import { readFile, stat } from "node:fs/promises";
 import { NextResponse } from "next/server";
 import {
   getLatestRenderAbsolutePath,
-  LATEST_RENDER_OUTPUT_PATH,
+  getLatestRenderOutputPath,
 } from "../../../../lib/render-artifacts";
 
 export const runtime = "nodejs";
@@ -27,7 +27,7 @@ export async function GET() {
   } catch {
     return NextResponse.json(
       {
-        error: `Render output is not available yet. Expected file: ${LATEST_RENDER_OUTPUT_PATH}`,
+        error: `Render output is not available yet. Expected file: ${getLatestRenderOutputPath()}`,
       },
       { status: 404 },
     );

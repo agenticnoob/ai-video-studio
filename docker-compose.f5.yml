@@ -20,7 +20,7 @@ services:
     volumes:
       - ./models/f5-tts:/models/f5-tts:ro
       - ./voices/f5-tts:/voices/f5-tts:ro
-      - ./out/voice-references:${AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR:-/workspace/out/voice-references}:ro
+      - ./out:/workspace/out:ro
     ports:
       - "${F5_TTS_HOST_BIND:-127.0.0.1}:${F5_TTS_HOST_PORT:-7865}:7865"
 
@@ -33,6 +33,8 @@ services:
       F5_TTS_ENDPOINT: "${F5_TTS_ENDPOINT:-http://f5-tts:7865/synthesize}"
       F5_TTS_VOICE_ID: "${F5_TTS_VOICE_ID:-default}"
       F5_TTS_FORMAT: "${F5_TTS_FORMAT:-wav}"
+      AI_VIDEO_STUDIO_RENDER_OUTPUT_DIR: "${AI_VIDEO_STUDIO_RENDER_OUTPUT_DIR:-/workspace/out/renders}"
+      AI_VIDEO_STUDIO_TTS_OUTPUT_DIR: "${AI_VIDEO_STUDIO_TTS_OUTPUT_DIR:-/workspace/out/tts}"
       F5_TTS_REFERENCE_AUDIO: "${F5_TTS_REFERENCE_AUDIO:-}"
       AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR: "${AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR:-/workspace/out/voice-references}"
       F5_TTS_FALLBACK_TO_MINIMAX: "${F5_TTS_FALLBACK_TO_MINIMAX:-true}"

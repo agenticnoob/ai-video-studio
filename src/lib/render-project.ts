@@ -10,11 +10,11 @@ import type {
 import { normalizeProject, type VideoProject } from "./project-schema";
 import {
   getLatestRenderAbsolutePath,
+  getLatestRenderOutputPath,
   getRenderArtifactAbsolutePath,
   getRenderArtifactDownloadUrl,
   getRenderArtifactOutputPath,
   LATEST_RENDER_DOWNLOAD_URL,
-  LATEST_RENDER_OUTPUT_PATH,
 } from "./render-artifacts";
 
 export const PROJECT_VIDEO_COMPOSITION_ID = "ProjectVideo";
@@ -135,13 +135,12 @@ const resolveRouteMediaForRender = (project: VideoProject): VideoProject => {
 
 export {
   getLatestRenderAbsolutePath,
+  getLatestRenderOutputPath,
   getRenderArtifactAbsolutePath,
   getRenderArtifactDownloadUrl,
   getRenderArtifactOutputPath,
   isValidRenderId,
   LATEST_RENDER_DOWNLOAD_URL,
-  LATEST_RENDER_OUTPUT_PATH,
-  RENDER_OUTPUT_DIRECTORY,
 } from "./render-artifacts";
 
 export const renderProjectVideo = async (
@@ -200,7 +199,7 @@ export const renderProjectVideo = async (
     absoluteOutputPath,
     downloadUrl: getRenderArtifactDownloadUrl(renderId),
     latestDownloadUrl: LATEST_RENDER_DOWNLOAD_URL,
-    latestOutputPath: LATEST_RENDER_OUTPUT_PATH,
+    latestOutputPath: getLatestRenderOutputPath(),
     outputPath,
     project,
     renderId,

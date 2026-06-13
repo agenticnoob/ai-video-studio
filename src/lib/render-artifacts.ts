@@ -1,7 +1,6 @@
 import path from "node:path";
+import { getRenderOutputDirectory } from "./artifact-paths";
 
-export const RENDER_OUTPUT_DIRECTORY = "out/renders";
-export const LATEST_RENDER_OUTPUT_PATH = "out/renders/latest.mp4";
 export const LATEST_RENDER_DOWNLOAD_URL = "/api/render/latest";
 
 const RENDER_ID_PATTERN = /^[a-z0-9-]+$/;
@@ -15,11 +14,11 @@ export const getRenderArtifactOutputPath = (renderId: string): string => {
     throw new Error(`Invalid renderId: ${renderId}`);
   }
 
-  return `${RENDER_OUTPUT_DIRECTORY}/${renderId}.mp4`;
+  return path.join(getRenderOutputDirectory(), `${renderId}.mp4`);
 };
 
 export const getRenderArtifactAbsolutePath = (renderId: string): string => {
-  return path.join(process.cwd(), getRenderArtifactOutputPath(renderId));
+  return getRenderArtifactOutputPath(renderId);
 };
 
 export const getRenderArtifactDownloadUrl = (renderId: string): string => {
@@ -27,5 +26,9 @@ export const getRenderArtifactDownloadUrl = (renderId: string): string => {
 };
 
 export const getLatestRenderAbsolutePath = (): string => {
-  return path.join(process.cwd(), LATEST_RENDER_OUTPUT_PATH);
+  return path.join(getRenderOutputDirectory(), "latest.mp4");
+};
+
+export const getLatestRenderOutputPath = (): string => {
+  return path.join(getRenderOutputDirectory(), "latest.mp4");
 };

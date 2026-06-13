@@ -4,9 +4,8 @@ import { randomUUID } from "node:crypto";
 
 import { z } from "zod";
 
+import { getVoiceReferenceDirectory } from "../artifact-paths";
 import { TtsConfigError } from "./errors";
-
-export const DEFAULT_VOICE_REFERENCE_DIRECTORY = "/workspace/out/voice-references";
 
 const allowedVoiceReferenceExtensions = ["wav", "mp3", "m4a", "aac"] as const;
 const allowedVoiceReferenceMimeTypes = new Set([
@@ -57,22 +56,6 @@ export type VoiceCloneRequest = z.infer<typeof voiceCloneRequestSchema>;
 export type ResolvedVoiceCloneReference = {
   referenceAudioPath: string;
   referenceText: string;
-};
-
-const getVoiceReferenceDirectory = (): string => {
-  const configuredDirectory = (
-    process.env.AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR ?? ""
-  ).trim();
-  const normalizedDirectory = (configuredDirectory || DEFAULT_VOICE_REFERENCE_DIRECTORY).replace(
-    /\/+$/,
-    "",
-  );
-
-  if (path.isAbsolute(normalizedDirectory)) {
-    return normalizedDirectory;
-  }
-
-  return path.join(/* turbopackIgnore: true */ process.cwd(), normalizedDirectory);
 };
 
 export const isAllowedVoiceReferenceMimeType = (mimeType: string): boolean => {

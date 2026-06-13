@@ -34,10 +34,10 @@ Current implementation status:
 - the first storyboard-planning contract is in place as a server-safe schema,
   compact registered-template manifest, and internal MiniMax planner facade
 - the first TTS asset boundary is in place for planned segments:
-  `SegmentNarrationAsset`, internal `POST /api/tts`, local `out/tts/...`
-  audio artifacts, sidecar `<audio-name>.captions.json` caption artifacts,
-  `/api/tts/assets/...` serving with byte-range support, and ffprobe duration
-  measurement
+  `SegmentNarrationAsset`, internal `POST /api/tts`, local TTS audio artifacts
+  under `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR`, sidecar
+  `<audio-name>.captions.json` caption artifacts, `/api/tts/assets/...`
+  serving with byte-range support, and ffprobe duration measurement
 - generated TTS audio assets are served through streamed byte ranges with
   immutable artifact caching, and Remotion preview pauses the timeline while
   narration audio is buffering
@@ -100,8 +100,8 @@ Current implementation status:
    nodes while the request is running
 7. user exports the current edited project through `POST /api/render`
 8. successful render writes:
-   - unique artifact: `out/renders/render-<timestamp>-<id>.mp4`
-   - stable artifact: `out/renders/latest.mp4`
+   - unique artifact: `AI_VIDEO_STUDIO_RENDER_OUTPUT_DIR/render-<timestamp>-<id>.mp4`
+   - stable artifact: `AI_VIDEO_STUDIO_RENDER_OUTPUT_DIR/latest.mp4`
 9. download routes:
    - unique artifact: `/api/render/[renderId]`
    - stable latest artifact: `/api/render/latest`
@@ -343,8 +343,9 @@ docker compose -f docker-compose.yml -f docker-compose.f5.yml up -d web
 scripts/f5-tts-next-smoke.sh
 ```
 
-This smoke calls `POST /api/tts`, writes a local `out/tts/...` artifact through
-the existing adapter, and verifies `/api/tts/assets/...` byte-range serving.
+This smoke calls `POST /api/tts`, writes a local artifact under
+`AI_VIDEO_STUDIO_TTS_OUTPUT_DIR` through the existing adapter, and verifies
+`/api/tts/assets/...` byte-range serving.
 It still uses contract-smoke audio, not a downloaded F5 model.
 
 Validate a deterministic staged project using F5 narration assets:
@@ -424,15 +425,18 @@ enter the transcript that matches the reference audio before generation. The
 Next app stores the uploaded reference under
 `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR`, which defaults to the ignored shared
 path `/workspace/out/voice-references` in the Docker workflow. The F5 overlay
-mounts the same directory read-only into the runtime, so upload and synthesis
-now use one shared file path instead of separate app/runtime path settings. When
+mounts the shared host `./out` tree read-only at `/workspace/out`, so the
+configured voice-reference path, TTS path, and render path all stay inside one
+shared artifact root. Upload and synthesis therefore use one shared file path
+instead of separate app/runtime path settings. When
 cloning is disabled, staged generation falls back to the configured default F5
 voice/reference behavior.
 
 Important distinction:
 - `./scripts/render.sh` is still the default/sample composition render path from the Docker wrapper
 - current edited-project export is the in-app action / `POST /api/render`
-- the edited-project export writes `out/renders/latest.mp4` plus a unique `out/renders/render-*.mp4`
+- the edited-project export writes `AI_VIDEO_STUDIO_RENDER_OUTPUT_DIR/latest.mp4`
+  plus a unique `AI_VIDEO_STUDIO_RENDER_OUTPUT_DIR/render-*.mp4`
 - generated route media such as `/api/tts/assets/...` is converted to an
   absolute Next app URL for Remotion export. Override the default
   `http://127.0.0.1:3000` with `AI_VIDEO_STUDIO_RENDER_ASSET_ORIGIN` when the
@@ -505,6 +509,9 @@ Recommended prod-specific overrides in `.env.prod`:
 - `PROD_APP_BIND=127.0.0.1`
 - `PROD_APP_PORT=10001`
 - `F5_TTS_HOST_BIND=127.0.0.1`
+- `AI_VIDEO_STUDIO_RENDER_OUTPUT_DIR="/workspace/out/renders"`
+- `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR="/workspace/out/tts"`
+- `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR="/workspace/out/voice-references"`
 - `AI_VIDEO_STUDIO_RENDER_ASSET_ORIGIN="http://127.0.0.1:3000"` for container-internal export fetches
 - `TTS_PROVIDER="f5-tts"`
 - `F5_TTS_BASE_URL="http://f5-tts:7865"`
@@ -523,7 +530,7 @@ Configured limits in `.env.example`:
 
 | Variable | Default | Purpose |
 |---|---:|---|
-| `AI_VIDEO_STUDIO_RENDER_CONCURRENCY` | `1` | Maximum concurrent `/api/render` exports in this Next process. Keep this at `1` while `out/renders/latest.mp4` remains a shared stable alias. |
+| `AI_VIDEO_STUDIO_RENDER_CONCURRENCY` | `1` | Maximum concurrent `/api/render` exports in this Next process. Keep this at `1` while `AI_VIDEO_STUDIO_RENDER_OUTPUT_DIR/latest.mp4` remains a shared stable alias. |
 | `AI_VIDEO_STUDIO_GENERATION_CONCURRENCY` | `1` | Maximum concurrent `/api/generate/staged` and fallback `/api/generate` requests in this Next process. |
 | `AI_VIDEO_STUDIO_TTS_CONCURRENCY` | `1` | Maximum concurrent TTS provider synthesis calls, including local F5 runtime calls. |
 | `AI_VIDEO_STUDIO_BUSY_MODE` | `reject` | `reject` returns HTTP `429` when the task type is busy; `queue` waits inside the HTTP request. |
@@ -536,7 +543,7 @@ Recommended private-team defaults:
   "busy, retry later" response instead of a long hanging request
 - use `queue` only for trusted local workflows where keeping the browser
   request open is acceptable
-- do not raise render concurrency while `out/renders/latest.mp4` remains a
+- do not raise render concurrency while `AI_VIDEO_STUDIO_RENDER_OUTPUT_DIR/latest.mp4` remains a
   shared "last completed render" alias
 
 The guard is process-local. It is enough for the Docker-first private-team

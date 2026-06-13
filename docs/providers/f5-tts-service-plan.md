@@ -81,8 +81,8 @@ Git. Use ignored local directories such as:
 ```txt
 models/f5-tts/
 voices/f5-tts/
-out/tts/
-out/voice-references/
+./out/tts/  -> default host persistence for AI_VIDEO_STUDIO_TTS_OUTPUT_DIR=/workspace/out/tts
+./out/voice-references/  -> default host persistence for AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR=/workspace/out/voice-references
 ```
 
 ## HTTP Contract
@@ -157,9 +157,9 @@ captions from narration text and measured audio duration when the runtime
 returns no usable cues.
 
 The Next TTS path also saves the final normalized caption payload next to the
-generated audio under `out/tts/...` as `<audio-name>.captions.json`, so the
-artifact on disk matches the `VideoSegment.narration.captions` data used by
-preview/export.
+generated audio under `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR` as
+`<audio-name>.captions.json`, so the artifact on disk matches the
+`VideoSegment.narration.captions` data used by preview/export.
 
 In the current contract-smoke wrapper, the returned audio is synthetic test WAV
 data and `modelLoaded` is false. Do not treat this as real F5 synthesis.
@@ -177,6 +177,7 @@ F5_TTS_BASE_URL=http://f5-tts:7865
 F5_TTS_ENDPOINT=http://f5-tts:7865/synthesize
 F5_TTS_VOICE_ID=default
 F5_TTS_FORMAT=wav
+AI_VIDEO_STUDIO_TTS_OUTPUT_DIR=/workspace/out/tts
 F5_TTS_REFERENCE_AUDIO=/voices/f5-tts/default.wav
 AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR=/workspace/out/voice-references
 F5_TTS_FALLBACK_TO_MINIMAX=true
@@ -233,9 +234,9 @@ Validated local state:
   `models/f5-tts/vocos-mel-24khz/` are sufficient for local real-mode
   validation.
 - `AI_VIDEO_STUDIO_VOICE_REFERENCE_DIR` defaults to the shared Docker path
-  `/workspace/out/voice-references`; the F5 container mounts the host
-  `./out/voice-references` directory there read-only so upload and synthesis
-  use the same file path.
+  `/workspace/out/voice-references`; the F5 container mounts the host `./out`
+  tree read-only at `/workspace/out` so upload and synthesis use the same file
+  path.
 - `scripts/f5-tts-smoke.sh` passed against real `mode=f5` output with
   `modelLoaded=true`.
 - `scripts/f5-tts-next-smoke.sh` passed against the Next `/api/tts` adapter,
@@ -268,7 +269,7 @@ Validated local state:
    when MiniMax planner/compiler configuration is available, and confirm:
    Status: implemented by `npm run smoke:staged-live`; the command skips with
    exit 0 when `MINIMAX_API_KEY` or `F5_TTS_BASE_URL` is missing.
-   - generated audio lands under `out/tts/...`
+   - generated audio lands under `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR`
    - generated normalized caption JSON lands beside the audio as
      `<audio-name>.captions.json`
    - `/api/tts/assets/...` serves the audio with byte-range support
@@ -278,7 +279,7 @@ Validated local state:
    Status: implemented and validated locally through the GPU overlay with the
    downloaded checkpoint, vocab, and Vocos vocoder.
 
-The deterministic smoke already confirms generated audio under `out/tts/...`,
+The deterministic smoke already confirms generated audio under `AI_VIDEO_STUDIO_TTS_OUTPUT_DIR`,
 byte-range serving for `/api/tts/assets/...`, segment-owned narration audio and
 captions, and optional `/api/render` export when
 `F5_TTS_STAGED_SMOKE_RENDER=true` is set.
