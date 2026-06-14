@@ -1,6 +1,27 @@
 # Iteration Status
 
-Last updated: Procedural Generator v1 Phase 4 guarded staged execution
+Last updated: Fallback content semantics hardening
+
+## Latest continuation — Fallback content semantics hardening
+
+- Fixed a user-visible fallback bug where template macro fallback could display
+  `visualBrief` instructions as if they were audience-facing video copy.
+- Added `src/lib/fallback-spotlight-content.ts` so fallback segments derive
+  visible `spotlight` text only from segment title, purpose, and narration
+  text.
+- Updated both SceneGraph compiler fallback and procedural generator macro
+  fallback to avoid internal strings such as validation failure messages or
+  visual-generation instructions in the rendered video.
+- Extended deterministic smoke fixtures to assert fallback content does not
+  expose `visualBrief` or internal failure/fallback text.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc 'npx prettier src/lib/fallback-spotlight-content.ts src/lib/procedural-generator-compiler.ts src/lib/staged-generation/segment.ts src/lib/staged-smoke-fixtures.ts docs/ITERATION_STATUS.md --write'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `git diff --check`
 
 ## Latest continuation — Procedural Generator v1 guarded staged execution
 

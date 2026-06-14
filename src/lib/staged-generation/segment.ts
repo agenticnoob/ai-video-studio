@@ -6,6 +6,7 @@ import type {
   StoryboardSegmentPlan,
   StrategyDecision,
 } from "../storyboard-plan-schema";
+import { buildFallbackSpotlightContent } from "../fallback-spotlight-content";
 import { generateSegmentNarrationAsset } from "../tts";
 import type { TtsProviderId } from "../tts/config";
 import type { VoiceCloneRequest } from "../tts/voice-references";
@@ -101,17 +102,6 @@ export const createExistingSegmentCompileFallback = ({
   };
 };
 
-const sentenceParts = (value: string): string[] =>
-  value
-    .split(/[.!?。！？,，;；]/)
-    .map((part) => part.trim())
-    .filter(Boolean);
-
-const truncateText = (value: string, maxLength: number): string => {
-  const trimmed = value.trim();
-  return trimmed.length <= maxLength ? trimmed : `${trimmed.slice(0, maxLength - 3)}...`;
-};
-
 export const createTemplateMacroCompileFallback = ({
   error,
   narration,
@@ -125,22 +115,20 @@ export const createTemplateMacroCompileFallback = ({
 }): CompilePlannedSegmentResult => {
   const attempts = getCompilerAttemptsFromError(error);
   const reason = getFallbackReason(error, "SceneGraph compilation failed.");
-  const title = truncateText(segment.title ?? segment.purpose, 120);
-  const narrationParts = sentenceParts(narration.text);
-  const callouts =
-    narrationParts.length > 0
-      ? narrationParts.slice(0, 4).map((part) => truncateText(part, 80))
-      : [truncateText(segment.visualBrief, 80)];
+  const content = buildFallbackSpotlightContent({
+    narrationText: narration.text,
+    segment,
+  });
   const durationInFrames = getTargetDurationInFrames(segment, narration);
   const videoSegment = videoSegmentSchema.parse({
     id: segment.id,
-    title,
+    title: content.title,
     intent: segment.purpose,
     narration: segmentNarrationFromAsset(narration),
     templateId: SPOTLIGHT_TEMPLATE_ID,
     implementation: {
       meta: {
-        title,
+        title: content.title,
         fps: 30,
         width: 1280,
         height: 720,
@@ -154,10 +142,10 @@ export const createTemplateMacroCompileFallback = ({
         muted: "#cbd5e1",
       },
       durationInFrames,
-      kicker: "Visual fallback",
-      headline: truncateText(segment.visualBrief || segment.purpose, 120),
-      subheadline: "SceneGraph validation failed, so this segment fell back to a stable macro.",
-      callouts,
+      kicker: content.kicker,
+      headline: content.headline,
+      subheadline: content.subheadline,
+      callouts: content.callouts,
     },
   });
 

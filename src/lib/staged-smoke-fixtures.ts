@@ -1,5 +1,6 @@
 import { segmentNarrationFromAsset, type SegmentNarrationAsset } from "./narration-asset-schema";
 import { normalizeSegmentCaptions } from "./captions";
+import { buildFallbackSpotlightContent } from "./fallback-spotlight-content";
 import {
   buildProceduralGeneratorDiagnostics,
   compileNodeGraphFlowToSceneGraph,
@@ -506,6 +507,10 @@ const assertProceduralGeneratorFixture = (): void => {
     project,
     segments: [compiledResult],
   });
+  const fallbackContent = buildFallbackSpotlightContent({
+    narrationText: narration.text,
+    segment: proceduralGeneratorPlannedSegment,
+  });
 
   if (nodeGraphFlowProceduralGeneratorFixture.renderStrategy !== "procedural_generator") {
     throw new Error("Procedural generator fixture expected procedural_generator strategy.");
@@ -542,6 +547,16 @@ const assertProceduralGeneratorFixture = (): void => {
   ) {
     throw new Error(
       "Procedural generator diagnostics expected planned generator and compiled path.",
+    );
+  }
+  if (
+    fallbackContent.headline === proceduralGeneratorPlannedSegment.visualBrief ||
+    fallbackContent.subheadline?.includes("failed") ||
+    fallbackContent.subheadline?.includes("fallback") ||
+    fallbackContent.callouts.includes(proceduralGeneratorPlannedSegment.visualBrief)
+  ) {
+    throw new Error(
+      "Fallback spotlight content must not expose visualBrief or internal failure text.",
     );
   }
 };

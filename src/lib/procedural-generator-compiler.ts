@@ -1,4 +1,5 @@
 import { segmentNarrationFromAsset, type SegmentNarrationAsset } from "./narration-asset-schema";
+import { buildFallbackSpotlightContent } from "./fallback-spotlight-content";
 import {
   buildProceduralGeneratorDiagnostics,
   compileNodeGraphFlowToSceneGraph,
@@ -36,11 +37,6 @@ export type CompileProceduralGeneratorSegmentRequest = {
   segment: StoryboardSegmentPlan;
 };
 
-const truncateText = (value: string, maxLength: number): string => {
-  const trimmed = value.trim();
-  return trimmed.length <= maxLength ? trimmed : `${trimmed.slice(0, maxLength - 3)}...`;
-};
-
 const compileProceduralGeneratorImplementation = (generator: ProceduralGenerator) => {
   if (generator.generatorId === "node-graph-flow") {
     return compileNodeGraphFlowToSceneGraph(generator as NodeGraphFlowGenerator);
@@ -55,16 +51,21 @@ const createTemplateMacroFallbackSegment = ({
 }: {
   narration: SegmentNarrationAsset;
   segment: StoryboardSegmentPlan;
-}): VideoSegment =>
-  videoSegmentSchema.parse({
+}): VideoSegment => {
+  const content = buildFallbackSpotlightContent({
+    narrationText: narration.text,
+    segment,
+  });
+
+  return videoSegmentSchema.parse({
     id: segment.id,
-    title: truncateText(segment.title ?? segment.purpose, 120),
+    title: content.title,
     intent: segment.purpose,
     narration: segmentNarrationFromAsset(narration),
     templateId: SPOTLIGHT_TEMPLATE_ID,
     implementation: {
       meta: {
-        title: truncateText(segment.title ?? segment.purpose, 120),
+        title: content.title,
         fps: 30,
         width: 1280,
         height: 720,
@@ -78,13 +79,13 @@ const createTemplateMacroFallbackSegment = ({
         muted: "#cbd5e1",
       },
       durationInFrames: narration.durationInFrames,
-      kicker: "Procedural fallback",
-      headline: truncateText(segment.visualBrief || segment.purpose, 120),
-      subheadline:
-        "Procedural generator compilation failed, so this segment fell back to a stable macro.",
-      callouts: [truncateText(segment.purpose, 80), truncateText(narration.text, 80)],
+      kicker: content.kicker,
+      headline: content.headline,
+      subheadline: content.subheadline,
+      callouts: content.callouts,
     },
   });
+};
 
 export const compileProceduralGeneratorSegment = ({
   generator,
