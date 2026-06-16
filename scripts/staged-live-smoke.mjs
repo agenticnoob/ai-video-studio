@@ -166,7 +166,7 @@ const assertSceneGraphVisualIr = (body) => {
   }
 };
 
-const assertProceduralGeneratorVisualIr = (body) => {
+const assertProceduralGeneratorVisualIr = (body, expectedGeneratorId = undefined) => {
   const [segment] = body.project?.segments || [];
   if (!segment) {
     fail("Procedural generator smoke response did not include a segment");
@@ -204,6 +204,11 @@ const assertProceduralGeneratorVisualIr = (body) => {
   if (compiler.proceduralGenerator?.compiledRenderStrategy !== "primitive_scene_graph") {
     fail(
       `Expected procedural generator compiledRenderStrategy primitive_scene_graph, received ${compiler.proceduralGenerator?.compiledRenderStrategy}`,
+    );
+  }
+  if (expectedGeneratorId && compiler.proceduralGenerator?.generatorId !== expectedGeneratorId) {
+    fail(
+      `Expected ${expectedGeneratorId} procedural generator, received ${compiler.proceduralGenerator?.generatorId}`,
     );
   }
   if (compiler.fallback) {
@@ -396,6 +401,87 @@ const requestProceduralGeneratorSmoke = async () => {
   return { body, segments };
 };
 
+const buildLinePathFlowPlan = () => ({
+  title: "Live Line Path Procedural Generator Smoke",
+  brief:
+    "Compile one provider-facing procedural generator segment through the deterministic line path flow path.",
+  language: "en",
+  globalStyle:
+    "Technical journey explainer with a visible milestone path, steady progression, and caption-safe layout.",
+  segments: [
+    {
+      id: "segment-1",
+      order: 1,
+      title: "Narration timing path",
+      purpose:
+        "Show the staged generation journey as a deterministic line path flow that compiles through SceneGraph.",
+      templateId: "scene-graph",
+      templateReason:
+        "The line path procedural generator is executed through the scene-graph renderer.",
+      strategyDecision: {
+        strategy: "procedural_generator",
+        confidence: 0.92,
+        reason: "The segment is a progression with ordered milestones and path reveal timing.",
+        fallbackStrategy: "template_macro",
+      },
+      proceduralGenerator: {
+        generatorId: "line-path-flow",
+        renderStrategy: "procedural_generator",
+        durationInFrames: 180,
+        captionSafeZone: true,
+        fallbackStrategy: "primitive_scene_graph",
+        fallbackReason: "If generator compilation fails, keep the segment on SceneGraph Visual IR.",
+        title: "Prompt to export path",
+        summary:
+          "A bounded line path showing brief, plan, voice, visual compile, and export milestones.",
+        tone: "primary",
+        showNodes: true,
+        points: [
+          { id: "brief", label: "Brief", x: 0.12, y: 0.62 },
+          { id: "plan", label: "Plan", x: 0.3, y: 0.42 },
+          { id: "voice", label: "Voice", x: 0.5, y: 0.5 },
+          { id: "visual", label: "Visual", x: 0.7, y: 0.34 },
+          { id: "export", label: "Export", x: 0.88, y: 0.58 },
+        ],
+        beats: [
+          { atFrame: 0, pointId: "brief", action: "reveal" },
+          { atFrame: 36, pointId: "plan", action: "advance" },
+          { atFrame: 78, pointId: "voice", action: "highlight" },
+          { atFrame: 126, pointId: "visual", action: "advance" },
+        ],
+      },
+      narration: {
+        text: "A bounded line path generator describes the journey from brief to export, then compiles into the same scene graph renderer.",
+        tone: "technical",
+      },
+      visualBrief:
+        "Use a line path flow with brief, plan, voice, visual compilation, and export milestones.",
+      pacingHint: "steady milestone reveal",
+      expectedDurationSeconds: 6,
+    },
+  ],
+});
+
+const requestLinePathFlowSmoke = async () => {
+  const body = await requestJson(`${NEXT_ORIGIN}/api/generate/staged`, {
+    method: "POST",
+    body: JSON.stringify({
+      mode: "plan",
+      provider: "f5-tts",
+      plan: buildLinePathFlowPlan(),
+    }),
+  });
+
+  const segments = body.project?.segments;
+  if (!Array.isArray(segments) || segments.length !== 1) {
+    fail("Line path flow smoke response did not include exactly one segment");
+  }
+  assertDiagnostics(body.diagnostics, 1);
+  assertProceduralGeneratorVisualIr(body, "line-path-flow");
+  await assertSegmentNarration(segments[0]);
+  return { body, segments };
+};
+
 const run = async () => {
   if (skipIfMissingConfig()) {
     return;
@@ -411,7 +497,7 @@ const run = async () => {
       mode: "brief",
       provider: "f5-tts",
       brief:
-        "Create a concise two-segment product demo for AI Video Studio. Explain staged planning, F5 narration, aligned captions, preview, and local export.",
+        "Create a concise two-segment technical demo for AI Video Studio. The first segment must show the AI agent workflow as a node graph or dependency flow from prompt to plan to narration to verification to export. The second segment can recap the preview and local export result.",
     }),
   });
 
@@ -433,6 +519,9 @@ const run = async () => {
   const { body: proceduralBody, segments: proceduralSegments } =
     await requestProceduralGeneratorSmoke();
 
+  console.log("Requesting live line path procedural generator staged project");
+  const { body: linePathBody, segments: linePathSegments } = await requestLinePathFlowSmoke();
+
   const summary = {
     audioSources: segments.map((segment) => segment.narration.audio.src),
     captionCueCounts: segments.map((segment) => segment.narration.captions.cues.length),
@@ -451,6 +540,13 @@ const run = async () => {
       compiledRenderStrategy: proceduralSegments[0].implementation.renderStrategy,
       strategyDecision: proceduralBody.diagnostics.compiler[0]?.strategyDecision,
       templateId: proceduralSegments[0].templateId,
+    },
+    linePathFlow: {
+      audioSource: linePathSegments[0].narration.audio.src,
+      compiler: linePathBody.diagnostics.compiler,
+      compiledRenderStrategy: linePathSegments[0].implementation.renderStrategy,
+      strategyDecision: linePathBody.diagnostics.compiler[0]?.strategyDecision,
+      templateId: linePathSegments[0].templateId,
     },
     segmentCount: segments.length,
     templateIds: segments.map((segment) => segment.templateId),

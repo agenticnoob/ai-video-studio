@@ -117,14 +117,15 @@ Current executable strategy note:
 - `template_macro` and direct `primitive_scene_graph` remain the active
   planner/compiler strategies for fixed macro and direct SceneGraph output.
 - `procedural_generator` has started as schema groundwork for bounded
-  deterministic modules such as `node-graph-flow` and `line-path-flow`; these
-  paths compile deterministically to SceneGraph, expose staged diagnostics
-  metadata, and support guarded execution for supplied generator payloads. The
-  provider-facing storyboard planner/tool schema can currently select
-  `procedural_generator` only for `scene-graph` segments with a bounded
-  `node-graph-flow` payload. The actual compiled render path remains
-  `primitive_scene_graph`, with `template_macro` fallback on generator
-  compilation failure.
+  deterministic modules such as `node-graph-flow`, `line-path-flow`, and
+  `terminal-session`; these paths compile deterministically to SceneGraph,
+  expose staged diagnostics metadata, and support guarded execution for
+  supplied generator payloads. The provider-facing storyboard planner/tool
+  schema can currently select `procedural_generator` only for `scene-graph`
+  segments with bounded `node-graph-flow` or `line-path-flow` payloads;
+  `terminal-session` remains supplied-plan groundwork. The actual compiled
+  render path remains `primitive_scene_graph`, with `template_macro` fallback
+  on generator compilation failure.
 
 ## 2. Authoritative Terminology
 
@@ -238,7 +239,7 @@ Planner responsibilities:
 - choose and explain the current render strategy for each segment before
   compilation; this phase supports `template_macro`, `primitive_scene_graph`,
   and bounded `procedural_generator` only for `scene-graph` +
-  `node-graph-flow`
+  `node-graph-flow` or `line-path-flow`
 - write a narration draft for each segment
 - describe the visual content each segment should roughly show
 - preserve global continuity across all segments

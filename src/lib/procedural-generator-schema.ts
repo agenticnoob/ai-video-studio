@@ -5,6 +5,7 @@ import { themeSchema } from "./video-schema";
 
 export const NODE_GRAPH_FLOW_GENERATOR_ID = "node-graph-flow" as const;
 export const LINE_PATH_FLOW_GENERATOR_ID = "line-path-flow" as const;
+export const TERMINAL_SESSION_GENERATOR_ID = "terminal-session" as const;
 
 const idSchema = z.string().trim().min(1).max(80);
 const shortTextSchema = z.string().trim().min(1).max(120);
@@ -13,6 +14,7 @@ const mediumTextSchema = z.string().trim().min(1).max(240);
 export const proceduralGeneratorIdSchema = z.enum([
   NODE_GRAPH_FLOW_GENERATOR_ID,
   LINE_PATH_FLOW_GENERATOR_ID,
+  TERMINAL_SESSION_GENERATOR_ID,
 ]);
 export const proceduralGeneratorFallbackStrategySchema = z.enum([
   "primitive_scene_graph",
@@ -71,6 +73,22 @@ const linePathFlowBeatSchema = z
     atFrame: z.number().int().nonnegative(),
     pointId: idSchema,
     action: z.enum(["reveal", "advance", "highlight"]).default("advance"),
+  })
+  .strict();
+
+const terminalSessionLineSchema = z
+  .object({
+    id: idSchema,
+    text: mediumTextSchema,
+    status: z.enum(["idle", "running", "success", "error"]).default("idle"),
+  })
+  .strict();
+
+const terminalSessionBeatSchema = z
+  .object({
+    atFrame: z.number().int().nonnegative(),
+    lineId: idSchema,
+    action: z.enum(["reveal", "run", "complete", "error", "focus"]).default("run"),
   })
   .strict();
 
@@ -186,14 +204,67 @@ export const linePathFlowGeneratorSchema = proceduralGeneratorBaseSchema
     });
   });
 
+export const terminalSessionGeneratorSchema = proceduralGeneratorBaseSchema
+  .extend({
+    generatorId: z.literal(TERMINAL_SESSION_GENERATOR_ID),
+    title: shortTextSchema,
+    summary: mediumTextSchema.optional(),
+    theme: themeSchema.default({
+      background: "#08111f",
+      panel: "rgba(248,250,252,0.10)",
+      primary: "#7dd3fc",
+      secondary: "#f59e0b",
+      text: "#f8fafc",
+      muted: "#cbd5e1",
+    }),
+    status: z.enum(["idle", "running", "success", "error"]).default("running"),
+    prompt: z.string().trim().min(1).max(20).default("$"),
+    lines: z.array(terminalSessionLineSchema).min(1).max(8),
+    beats: z.array(terminalSessionBeatSchema).max(16).default([]),
+  })
+  .strict()
+  .superRefine((generator, context) => {
+    const lineIds = new Set<string>();
+
+    generator.lines.forEach((line, index) => {
+      if (lineIds.has(line.id)) {
+        context.addIssue({
+          code: "custom",
+          message: `Line id "${line.id}" must be unique.`,
+          path: ["lines", index, "id"],
+        });
+      }
+      lineIds.add(line.id);
+    });
+
+    generator.beats.forEach((beat, index) => {
+      if (!lineIds.has(beat.lineId)) {
+        context.addIssue({
+          code: "custom",
+          message: `Beat lineId "${beat.lineId}" must reference a declared line id.`,
+          path: ["beats", index, "lineId"],
+        });
+      }
+      if (beat.atFrame >= generator.durationInFrames) {
+        context.addIssue({
+          code: "custom",
+          message: `Beat at frame ${beat.atFrame} is outside generator duration.`,
+          path: ["beats", index, "atFrame"],
+        });
+      }
+    });
+  });
+
 export const proceduralGeneratorSchema = z.discriminatedUnion("generatorId", [
   nodeGraphFlowGeneratorSchema,
   linePathFlowGeneratorSchema,
+  terminalSessionGeneratorSchema,
 ]);
 
 export type ProceduralGenerator = z.infer<typeof proceduralGeneratorSchema>;
 export type NodeGraphFlowGenerator = z.infer<typeof nodeGraphFlowGeneratorSchema>;
 export type LinePathFlowGenerator = z.infer<typeof linePathFlowGeneratorSchema>;
+export type TerminalSessionGenerator = z.infer<typeof terminalSessionGeneratorSchema>;
 export type ProceduralGeneratorCompiledRenderStrategy = "primitive_scene_graph" | "template_macro";
 export type ProceduralGeneratorDiagnostics = {
   compiledRenderStrategy: ProceduralGeneratorCompiledRenderStrategy;
@@ -268,6 +339,18 @@ const linePathBeatActionToSceneBeatAction = (
   }
   if (action === "advance") {
     return "advance-step";
+  }
+  return "reveal-layer";
+};
+
+const terminalBeatActionToSceneBeatAction = (
+  action: TerminalSessionGenerator["beats"][number]["action"],
+): "reveal-layer" | "emphasize-text" | "advance-step" => {
+  if (action === "complete") {
+    return "advance-step";
+  }
+  if (action === "error" || action === "focus") {
+    return "emphasize-text";
   }
   return "reveal-layer";
 };
@@ -455,6 +538,91 @@ export const compileLinePathFlowToSceneGraph = (generator: LinePathFlowGenerator
       atFrame: beat.atFrame,
       action: linePathBeatActionToSceneBeatAction(beat.action),
       targetLayerId: "line-path-flow",
+    })),
+  });
+};
+
+export const compileTerminalSessionToSceneGraph = (
+  generator: TerminalSessionGenerator,
+): SceneGraph => {
+  const durationInFrames = generator.durationInFrames;
+
+  return sceneGraphSchema.parse({
+    meta: {
+      title: generator.title,
+      fps: 30,
+      width: 1280,
+      height: 720,
+    },
+    theme: generator.theme,
+    sceneType: "process",
+    renderStrategy: "primitive_scene_graph",
+    composition: "code-terminal",
+    layout: "code-terminal-split",
+    durationInFrames,
+    camera: {
+      movement: "drift",
+      intensity: "subtle",
+    },
+    transitionIn: {
+      type: "slide-up",
+      durationInFrames: 12,
+    },
+    transitionOut: {
+      type: "soft-wipe",
+      durationInFrames: 12,
+    },
+    captionSafeZone: generator.captionSafeZone,
+    layers: [
+      {
+        id: "terminal-session-bg",
+        type: "background",
+        treatment: "noise-grid",
+      },
+      {
+        id: "terminal-session-title",
+        type: "text",
+        text: generator.title,
+        role: "eyebrow",
+        layout: "left",
+        startFrame: 0,
+        durationInFrames: Math.min(72, durationInFrames),
+      },
+      {
+        id: "terminal-session-panel",
+        type: "terminal-panel",
+        title: generator.summary ?? generator.title,
+        lines: generator.lines.slice(0, 8).map((line) => `${generator.prompt} ${line.text}`),
+        status: generator.status,
+        layout: "center",
+        motionPreset: "type-text",
+        startFrame: 18,
+        durationInFrames: Math.max(36, durationInFrames - 44),
+      },
+      ...(generator.summary
+        ? [
+            {
+              id: "terminal-session-summary",
+              type: "callout" as const,
+              text: generator.summary,
+              anchor: "right" as const,
+              motionPreset: "fade-in" as const,
+              startFrame: Math.max(42, Math.floor(durationInFrames * 0.58)),
+              durationInFrames: Math.max(30, Math.floor(durationInFrames * 0.32)),
+            },
+          ]
+        : []),
+      {
+        id: "terminal-session-caption-zone",
+        type: "caption",
+        source: "segment-narration",
+      },
+    ],
+    beats: generator.beats.slice(0, 16).map((beat, index) => ({
+      id: `terminal-session-beat-${index + 1}`,
+      atFrame: beat.atFrame,
+      action: terminalBeatActionToSceneBeatAction(beat.action),
+      targetLayerId: "terminal-session-panel",
     })),
   });
 };

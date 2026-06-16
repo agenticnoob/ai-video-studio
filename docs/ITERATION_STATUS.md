@@ -1,6 +1,72 @@
 # Iteration Status
 
-Last updated: Line path procedural generator groundwork
+Last updated: Terminal session procedural generator groundwork
+
+## Latest continuation — Terminal session procedural generator groundwork
+
+- Added the third bounded procedural generator family, `terminal-session`, as
+  deterministic groundwork after `node-graph-flow` and `line-path-flow`
+  provider-facing surfaces were validated.
+- Extended `src/lib/procedural-generator-schema.ts` with a strict
+  `terminal-session` contract: generator id, duration, caption-safe metadata,
+  title/summary, terminal status, prompt, bounded command lines, beats, and
+  explicit fallback strategy.
+- Added deterministic compile-to-SceneGraph support that maps
+  `terminal-session` payloads into actual `primitive_scene_graph` output using
+  the existing `terminal-panel` primitive and caption-safe SceneGraph renderer
+  path.
+- Wired `compileProceduralGeneratorSegment()` so supplied plan-mode
+  `terminal-session` payloads use the same staged compile and diagnostics path
+  as `node-graph-flow` and `line-path-flow`.
+- Added deterministic smoke fixture coverage for direct schema validation,
+  direct SceneGraph compilation, staged segment compilation, and staged
+  diagnostics.
+- Kept provider-facing planner/tool schema unchanged; provider-backed
+  automatic procedural selection remains limited to `node-graph-flow` and
+  `line-path-flow` until `terminal-session` has its own planner prompt/schema
+  hardening.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+
+## Latest continuation — Line path provider-facing planner surface
+
+- Exposed the second bounded procedural generator family,
+  `line-path-flow`, to the provider-facing storyboard planner/tool schema for
+  `scene-graph` segments.
+- Kept the planner surface guarded: provider-backed procedural generation is
+  still limited to `scene-graph` segments with a valid bounded generator
+  payload, and actual rendering still compiles deterministically into
+  `primitive_scene_graph`.
+- Updated MiniMax storyboard planning prompts so `node-graph-flow` is preferred
+  for workflows, agents, systems, and dependency graphs, while
+  `line-path-flow` is preferred for journeys, timelines, progressions,
+  funnels, milestone paths, and narration-driven path reveals.
+- Added deterministic fixture assertions that the storyboard planning tool
+  exposes `line-path-flow` payloads with bounded points and beat `pointId`
+  references.
+- Extended `scripts/staged-live-smoke.mjs` with a forced `line-path-flow`
+  plan-mode request that verifies planned `procedural_generator`, generator id
+  `line-path-flow`, actual compiled `primitive_scene_graph`, no fallback,
+  F5 narration/captions, and range audio.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `docker compose run --rm web bash -lc 'npm run start >/tmp/ai-video-studio-next.log 2>&1 & server_pid=$!; ready=0; for i in $(seq 1 45); do node -e "fetch(\"http://127.0.0.1:3000\").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" && ready=1 && break; sleep 1; done; if [ "$ready" != "1" ]; then cat /tmp/ai-video-studio-next.log; kill $server_pid >/dev/null 2>&1 || true; exit 1; fi; npm run smoke:staged-live; status=$?; kill $server_pid >/dev/null 2>&1 || true; exit $status'`
+  - normal brief passed with provider-selected `procedural_generator` /
+    `node-graph-flow`, actual compiled `primitive_scene_graph`, no fallback,
+    F5 narration/captions, and range audio
+  - forced `primitive_scene_graph` scene-graph plan-mode smoke passed
+  - forced `procedural_generator` `node-graph-flow` plan-mode smoke passed
+    with actual compiled `primitive_scene_graph` and no fallback
+  - forced `procedural_generator` `line-path-flow` plan-mode smoke passed
+    with actual compiled `primitive_scene_graph` and no fallback
 
 ## Latest continuation — Line path procedural generator groundwork
 
@@ -20,9 +86,10 @@ Last updated: Line path procedural generator groundwork
 - Added deterministic smoke fixture coverage for direct schema validation,
   direct SceneGraph compilation, staged segment compilation, and staged
   diagnostics.
-- Kept provider-facing planner/tool schema unchanged; provider-backed
-  automatic procedural selection remains limited to `node-graph-flow` until
-  `line-path-flow` has its own planner prompt/schema hardening.
+- Kept provider-facing planner/tool schema unchanged in that slice;
+  provider-backed automatic procedural selection remained limited to
+  `node-graph-flow` until the later planner prompt/schema hardening exposed
+  `line-path-flow`.
 
 Validation performed so far:
 - `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`

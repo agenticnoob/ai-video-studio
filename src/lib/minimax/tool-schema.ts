@@ -33,7 +33,7 @@ const themeJsonSchema = {
   required: ["background", "panel", "primary", "secondary", "text", "muted"],
 } as const;
 
-const proceduralGeneratorJsonSchema = {
+const nodeGraphFlowGeneratorJsonSchema = {
   type: "object",
   additionalProperties: false,
   properties: {
@@ -114,6 +114,68 @@ const proceduralGeneratorJsonSchema = {
     },
   },
   required: ["generatorId", "renderStrategy", "durationInFrames", "title", "nodes", "edges"],
+} as const;
+
+const linePathFlowGeneratorJsonSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    generatorId: { type: "string", const: "line-path-flow" },
+    renderStrategy: { type: "string", const: "procedural_generator" },
+    durationInFrames: { type: "integer", minimum: 45, maximum: 1200 },
+    captionSafeZone: { type: "boolean" },
+    fallbackStrategy: {
+      type: "string",
+      enum: ["primitive_scene_graph", "template_macro"],
+    },
+    fallbackReason: { type: "string" },
+    title: { type: "string" },
+    summary: { type: "string" },
+    theme: themeJsonSchema,
+    tone: {
+      type: "string",
+      enum: ["primary", "secondary", "success", "warning"],
+    },
+    showNodes: { type: "boolean" },
+    points: {
+      type: "array",
+      minItems: 2,
+      maxItems: 8,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          id: { type: "string" },
+          label: { type: "string" },
+          x: { type: "number", minimum: 0, maximum: 1 },
+          y: { type: "number", minimum: 0, maximum: 1 },
+        },
+        required: ["id", "label", "x", "y"],
+      },
+    },
+    beats: {
+      type: "array",
+      maxItems: 16,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          atFrame: { type: "integer", minimum: 0 },
+          pointId: { type: "string" },
+          action: {
+            type: "string",
+            enum: ["reveal", "advance", "highlight"],
+          },
+        },
+        required: ["atFrame", "pointId"],
+      },
+    },
+  },
+  required: ["generatorId", "renderStrategy", "durationInFrames", "title", "points"],
+} as const;
+
+const proceduralGeneratorJsonSchema = {
+  oneOf: [nodeGraphFlowGeneratorJsonSchema, linePathFlowGeneratorJsonSchema],
 } as const;
 
 /**

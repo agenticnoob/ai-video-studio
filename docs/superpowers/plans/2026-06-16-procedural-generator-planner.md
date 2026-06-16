@@ -10,6 +10,45 @@
 
 ---
 
+## Continuation: Line Path Flow Provider Surface
+
+**Goal:** Let provider-facing storyboard planning emit the second bounded procedural generator, `line-path-flow`, for `scene-graph` segments.
+
+**Architecture:** Reuse the existing deterministic `line-path-flow` compiler path. The provider only emits validated structured data; staged generation still compiles it into actual `primitive_scene_graph` output and falls back to `template_macro` if compilation fails.
+
+### Task 4: Line Path Tool Schema
+
+**Files:**
+- Modify: `src/lib/minimax/tool-schema.ts`
+- Test: `src/lib/staged-smoke-fixtures.ts`
+
+- [x] Add a failing deterministic assertion that `EMIT_STORYBOARD_PLAN_TOOL` accepts a `line-path-flow` payload with points and beats.
+- [x] Run `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'` and confirm the assertion fails because the tool schema still only exposes `node-graph-flow`.
+- [x] Update the MiniMax storyboard tool schema to expose a bounded `oneOf` union for `node-graph-flow` and `line-path-flow`.
+- [x] Re-run staged fixtures and confirm the assertion passes.
+
+### Task 5: Planner Prompt And Live Smoke
+
+**Files:**
+- Modify: `src/lib/minimax/prompts.ts`
+- Modify: `scripts/staged-live-smoke.mjs`
+
+- [x] Update planner instructions so `node-graph-flow` is preferred for workflows/agents/dependencies and `line-path-flow` is preferred for timelines, progressions, journeys, funnels, or milestone paths.
+- [x] Add a forced `line-path-flow` plan-mode live smoke request that verifies diagnostics show planned `procedural_generator`, generator id `line-path-flow`, actual compiled `primitive_scene_graph`, and no fallback.
+- [x] Keep the existing normal-brief natural selection assertion scoped to `node-graph-flow`; do not make live smoke depend on provider naturally choosing `line-path-flow`.
+
+### Task 6: Docs And Validation
+
+**Files:**
+- Modify: `docs/ITERATION_STATUS.md`
+- Modify: `docs/VISUAL_IR_COMPILER_ROADMAP.md`
+- Modify: `docs/FINAL_PRODUCT_GOAL.md`
+- Modify: `docs/PRODUCT_REQUIREMENTS.md`
+- Modify: `README.md`
+
+- [x] Update active docs to say provider-facing planning now supports both `node-graph-flow` and `line-path-flow`, still only for `scene-graph` procedural generator segments.
+- [x] Run Docker-first validation: staged fixtures, `tsc`, `lint`, `build`, live smoke when env is configured, and `git diff --check`.
+
 ### Task 1: Schema Acceptance
 
 **Files:**

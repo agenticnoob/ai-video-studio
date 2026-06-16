@@ -4,10 +4,12 @@ import {
   buildProceduralGeneratorDiagnostics,
   compileLinePathFlowToSceneGraph,
   compileNodeGraphFlowToSceneGraph,
+  compileTerminalSessionToSceneGraph,
   type LinePathFlowGenerator,
   type NodeGraphFlowGenerator,
   type ProceduralGenerator,
   type ProceduralGeneratorDiagnostics,
+  type TerminalSessionGenerator,
 } from "./procedural-generator-schema";
 import { videoSegmentSchema, type VideoSegment } from "./project-schema";
 import type {
@@ -45,6 +47,9 @@ const compileProceduralGeneratorImplementation = (generator: ProceduralGenerator
   }
   if (generator.generatorId === "line-path-flow") {
     return compileLinePathFlowToSceneGraph(generator as LinePathFlowGenerator);
+  }
+  if (generator.generatorId === "terminal-session") {
+    return compileTerminalSessionToSceneGraph(generator as TerminalSessionGenerator);
   }
 
   const unsupportedGenerator = generator as { generatorId?: string };

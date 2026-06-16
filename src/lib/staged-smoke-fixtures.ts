@@ -7,8 +7,10 @@ import {
   buildProceduralGeneratorDiagnostics,
   compileLinePathFlowToSceneGraph,
   compileNodeGraphFlowToSceneGraph,
+  compileTerminalSessionToSceneGraph,
   linePathFlowGeneratorSchema,
   nodeGraphFlowGeneratorSchema,
+  terminalSessionGeneratorSchema,
 } from "./procedural-generator-schema";
 import { compileProceduralGeneratorSegment } from "./procedural-generator-compiler";
 import {
@@ -97,23 +99,39 @@ const getStoryboardPlanToolSegmentSchema = (): Record<string, unknown> => {
 const assertProviderProceduralGeneratorSurface = (): void => {
   const segmentSchema = getStoryboardPlanToolSegmentSchema();
   const properties = segmentSchema.properties as Record<string, unknown> | undefined;
+  const proceduralGeneratorSchema = properties?.proceduralGenerator as
+    | Record<string, unknown>
+    | undefined;
   const strategyDecision = properties?.strategyDecision as
     | { properties?: { strategy?: { enum?: string[] } } }
     | undefined;
   const strategyEnum = strategyDecision?.properties?.strategy?.enum ?? [];
+  const proceduralGeneratorJson = JSON.stringify(proceduralGeneratorSchema);
   const prompt = buildStoryboardPlanPrompt({
-    brief: "Show an agent workflow as a node graph flow.",
+    brief: "Show an agent workflow and a customer journey as bounded procedural flows.",
   });
   const systemPrompt = prompt.messages[0]?.content ?? "";
 
   if (!strategyEnum.includes("procedural_generator")) {
     throw new Error("Storyboard plan tool schema should expose procedural_generator.");
   }
-  if (!properties?.proceduralGenerator) {
+  if (!proceduralGeneratorSchema) {
     throw new Error("Storyboard plan tool schema should expose proceduralGenerator payloads.");
   }
   if (!systemPrompt.includes("node-graph-flow")) {
     throw new Error("Storyboard plan prompt should describe node-graph-flow generator usage.");
+  }
+  if (!proceduralGeneratorJson.includes("line-path-flow")) {
+    throw new Error("Storyboard plan tool schema should expose line-path-flow generator usage.");
+  }
+  if (!proceduralGeneratorJson.includes("points")) {
+    throw new Error("Storyboard plan tool schema should expose line-path-flow points.");
+  }
+  if (!proceduralGeneratorJson.includes("pointId")) {
+    throw new Error("Storyboard plan tool schema should expose line-path-flow beat pointId.");
+  }
+  if (!systemPrompt.includes("line-path-flow")) {
+    throw new Error("Storyboard plan prompt should describe line-path-flow generator usage.");
   }
 };
 
@@ -724,6 +742,117 @@ const assertLinePathFlowProceduralGeneratorFixture = (): void => {
 };
 
 assertLinePathFlowProceduralGeneratorFixture();
+
+export const terminalSessionProceduralGeneratorFixture = terminalSessionGeneratorSchema.parse({
+  generatorId: "terminal-session",
+  renderStrategy: "procedural_generator",
+  durationInFrames: 150,
+  captionSafeZone: true,
+  fallbackStrategy: "primitive_scene_graph",
+  fallbackReason: "If the terminal session compiler fails, fall back to SceneGraph Visual IR.",
+  title: "Terminal verification loop",
+  summary: "A deterministic terminal session showing install, typecheck, smoke, and export steps.",
+  status: "success",
+  prompt: "$",
+  lines: [
+    { id: "install", text: "npm install", status: "success" },
+    { id: "typecheck", text: "npx tsc --noEmit", status: "success" },
+    { id: "smoke", text: "npm run smoke:staged-fixtures", status: "running" },
+    { id: "export", text: "npm run render", status: "idle" },
+  ],
+  beats: [
+    { atFrame: 0, lineId: "install", action: "reveal" },
+    { atFrame: 30, lineId: "typecheck", action: "complete" },
+    { atFrame: 72, lineId: "smoke", action: "run" },
+    { atFrame: 116, lineId: "export", action: "focus" },
+  ],
+});
+
+const terminalSessionPlannedSegment: StoryboardSegmentPlan = {
+  id: "procedural-terminal-session",
+  order: 1,
+  title: "Procedural terminal session",
+  purpose: "Exercise a deterministic terminal session generator through the staged segment result.",
+  templateId: SCENE_GRAPH_TEMPLATE_ID,
+  templateReason: "The terminal session generator compiles through the scene-graph renderer.",
+  strategyDecision: proceduralGeneratorStrategyDecision,
+  proceduralGenerator: terminalSessionProceduralGeneratorFixture,
+  narration: {
+    text: "A bounded terminal session generator can express command progress without adding a new template.",
+    tone: "technical",
+  },
+  visualBrief: "A terminal session compiled from a bounded procedural generator payload.",
+  expectedDurationSeconds: 5,
+};
+
+const assertTerminalSessionProceduralGeneratorFixture = (): void => {
+  const diagnostics = buildProceduralGeneratorDiagnostics(
+    terminalSessionProceduralGeneratorFixture,
+  );
+  const compiled = compileTerminalSessionToSceneGraph(terminalSessionProceduralGeneratorFixture);
+  const narration = createNarrationAsset({
+    durationInFrames: terminalSessionProceduralGeneratorFixture.durationInFrames,
+    segmentId: terminalSessionPlannedSegment.id,
+    text: terminalSessionPlannedSegment.narration.text,
+  });
+  const compiledResult = compileProceduralGeneratorSegment({
+    generator: terminalSessionProceduralGeneratorFixture,
+    narration,
+    segment: terminalSessionPlannedSegment,
+  });
+  const plan = storyboardPlanSchema.parse({
+    title: "Terminal Session Procedural Generator Smoke",
+    brief: "Compile one bounded terminal session generator into the existing scene graph path.",
+    language: "en",
+    segments: [terminalSessionPlannedSegment],
+  });
+  const project = videoProjectSchema.parse({
+    meta: {
+      title: "Terminal Session Procedural Generator Smoke",
+      fps: 30,
+      width: 1280,
+      height: 720,
+    },
+    brief: plan.brief,
+    segments: [compiledResult.segment],
+  });
+  const stagedDiagnostics = buildStagedProjectDiagnostics({
+    plan,
+    project,
+    segments: [compiledResult],
+  });
+
+  if (
+    diagnostics.generatorId !== "terminal-session" ||
+    diagnostics.compiledRenderStrategy !== "primitive_scene_graph"
+  ) {
+    throw new Error("Terminal session diagnostics expected primitive_scene_graph compile path.");
+  }
+  if (
+    compiled.renderStrategy !== "primitive_scene_graph" ||
+    compiled.composition !== "code-terminal" ||
+    !compiled.layers.some((layer) => layer.type === "terminal-panel")
+  ) {
+    throw new Error("Terminal session fixture expected compiled terminal-panel SceneGraph.");
+  }
+  if (
+    compiledResult.renderStrategy !== "primitive_scene_graph" ||
+    compiledResult.segment.templateId !== SCENE_GRAPH_TEMPLATE_ID
+  ) {
+    throw new Error("Terminal session staged result expected scene-graph compile output.");
+  }
+  if (
+    stagedDiagnostics.compiler[0]?.proceduralGenerator?.generatorId !== "terminal-session" ||
+    stagedDiagnostics.compiler[0]?.proceduralGenerator?.compiledRenderStrategy !==
+      "primitive_scene_graph" ||
+    stagedDiagnostics.compiler[0]?.strategyDecision.strategy !== "procedural_generator" ||
+    stagedDiagnostics.compiler[0]?.renderStrategy !== "primitive_scene_graph"
+  ) {
+    throw new Error("Terminal session diagnostics expected planned generator and compiled path.");
+  }
+};
+
+assertTerminalSessionProceduralGeneratorFixture();
 
 export const sceneGraphShotLanguagePlan = {
   visualStyle: "Cinematic product explainer with deep blue surfaces and amber continuity marks.",

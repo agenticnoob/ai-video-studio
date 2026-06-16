@@ -116,12 +116,18 @@ ${buildPlannerTemplateManifestPrompt()}
 
 # Procedural generator v1
 - If strategyDecision.strategy is "procedural_generator", include proceduralGenerator.
-- The only supported proceduralGenerator.generatorId is "node-graph-flow".
+- Supported proceduralGenerator.generatorId values are "node-graph-flow" and "line-path-flow".
+- Use "node-graph-flow" for deterministic workflow, agent loop, system pipeline, dependency graph, state machine, or node-and-edge visuals.
+- Use "line-path-flow" for deterministic journeys, timelines, progressions, funnels, milestone paths, sequencing paths, or narration-driven path reveals.
 - proceduralGenerator.renderStrategy must be "procedural_generator".
-- Use 2-12 nodes and 1-18 edges. Every edge.from, edge.to, and beat.nodeId must reference declared node ids.
-- Use lane values only from "input", "plan", "build", "verify", "output".
-- Use status values only from "idle", "active", "success", "error".
-- Use beat action values only from "reveal", "activate", "complete", "error".
+- For "node-graph-flow", use 2-12 nodes and 1-18 edges. Every edge.from, edge.to, and beat.nodeId must reference declared node ids.
+- For "node-graph-flow", use lane values only from "input", "plan", "build", "verify", "output".
+- For "node-graph-flow", use status values only from "idle", "active", "success", "error".
+- For "node-graph-flow", use beat action values only from "reveal", "activate", "complete", "error".
+- For "line-path-flow", use 2-8 points. Each point must have id, label, x, and y, where x and y are normalized numbers from 0 to 1.
+- For "line-path-flow", every beat.pointId must reference a declared point id.
+- For "line-path-flow", use tone values only from "primary", "secondary", "success", "warning".
+- For "line-path-flow", use beat action values only from "reveal", "advance", "highlight".
 - Set proceduralGenerator.durationInFrames from the expected segment duration when possible; otherwise choose a reasonable duration for the narration.
 - Do not include proceduralGenerator on template_macro or primitive_scene_graph segments.
 
