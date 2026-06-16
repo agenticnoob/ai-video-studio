@@ -211,6 +211,34 @@ const assertProceduralGeneratorVisualIr = (body) => {
   }
 };
 
+const assertNaturalProceduralGeneratorSelection = (body) => {
+  const proceduralCompiler = (body.diagnostics?.compiler || []).find(
+    (compiler) =>
+      compiler.strategyDecision?.strategy === "procedural_generator" &&
+      compiler.proceduralGenerator?.generatorId === "node-graph-flow",
+  );
+
+  if (!proceduralCompiler) {
+    fail(
+      `Expected normal brief to naturally select node-graph-flow procedural_generator; received compiler diagnostics ${JSON.stringify(
+        body.diagnostics?.compiler,
+      )}`,
+    );
+  }
+  if (proceduralCompiler.renderStrategy !== "primitive_scene_graph") {
+    fail(
+      `Expected natural procedural generator to compile to primitive_scene_graph, received ${proceduralCompiler.renderStrategy}`,
+    );
+  }
+  if (proceduralCompiler.fallback) {
+    fail(
+      `Natural procedural generator unexpectedly fell back: ${JSON.stringify(
+        proceduralCompiler.fallback,
+      )}`,
+    );
+  }
+};
+
 const buildSceneGraphPlan = () => ({
   title: "Live SceneGraph Visual IR Smoke",
   brief:
@@ -392,6 +420,7 @@ const run = async () => {
     fail("Response did not include project.segments");
   }
   assertDiagnostics(body.diagnostics, segments.length);
+  assertNaturalProceduralGeneratorSelection(body);
 
   for (const segment of segments) {
     await assertSegmentNarration(segment);

@@ -1,6 +1,34 @@
 # Iteration Status
 
-Last updated: Procedural generator provider-facing planner surface
+Last updated: Procedural generator live-smoke hardening
+
+## Latest continuation — Procedural generator live-smoke hardening
+
+- Tightened `scripts/staged-live-smoke.mjs` so the normal provider-backed
+  brief must naturally select a bounded `procedural_generator` /
+  `node-graph-flow` segment, not only pass the forced plan-mode generator
+  request.
+- The normal-brief assertion now verifies that the provider-selected generator
+  compiles to actual `primitive_scene_graph` diagnostics and does not fallback.
+- Re-ran the provider-backed live smoke. The normal brief selected a
+  `scene-graph` + `procedural_generator` segment, compiled the generator to
+  `primitive_scene_graph`, attached F5 narration/captions, and served range
+  audio.
+- The latest live run exercised existing bounded planner repair
+  (`attempts: 2`, `repaired: true`) before producing a valid
+  `node-graph-flow` payload.
+- No provider near-miss repair was added because the live output validated
+  cleanly through the existing bounded schema and compiler path.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc 'npm run start >/tmp/ai-video-studio-next.log 2>&1 & server_pid=$!; ready=0; for i in $(seq 1 45); do node -e "fetch(\"http://127.0.0.1:3000\").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" && ready=1 && break; sleep 1; done; if [ "$ready" != "1" ]; then cat /tmp/ai-video-studio-next.log; kill $server_pid >/dev/null 2>&1 || true; exit 1; fi; npm run smoke:staged-live; status=$?; kill $server_pid >/dev/null 2>&1 || true; exit $status'`
+  - normal brief passed with provider-selected `procedural_generator` on a
+    `scene-graph` segment after bounded planner repair, actual compiled
+    `primitive_scene_graph`, no fallback, F5 narration/captions, and range
+    audio
+  - forced `primitive_scene_graph` scene-graph plan-mode smoke passed
+  - forced `procedural_generator` `node-graph-flow` plan-mode smoke passed
+    with actual compiled `primitive_scene_graph` and no fallback
 
 ## Latest continuation — Procedural generator provider-facing planner surface
 

@@ -287,13 +287,16 @@ Current groundwork:
 - Provider-backed planning is not open-ended; no other generator ids,
   `media_asset_composite`, `generated_component`, generated TSX, or arbitrary
   code execution are accepted.
+- provider-backed live smoke now includes a normal brief that naturally
+  selects `node-graph-flow`, compiles it into actual `primitive_scene_graph`,
+  and fails if the generator silently falls back.
 
-Next acceptance before planner/provider selection:
+Next hardening:
 
-- run provider-backed live smoke for a brief that should naturally choose
-  `node-graph-flow`
-- harden bounded repair/fallback around invalid provider generator payloads if
-  live output exposes common near-misses
+- harden bounded repair/fallback around invalid provider generator payloads
+  only when live output exposes repeated, well-scoped near-misses
+- add the next procedural generator family only after `node-graph-flow` remains
+  stable under deterministic fixtures and provider-backed live smoke
 
 These modules should output bounded Visual IR or render through controlled
 runtime components, not arbitrary code.

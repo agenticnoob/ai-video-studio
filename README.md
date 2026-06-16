@@ -265,7 +265,8 @@ Current code checkpoint:
   with a project-level `ShotLanguagePlan` and Visual IR v1 full-bleed,
   node-graph/path/code/terminal, and lockup treatments; Remotion Studio exposes
   `SceneGraphTemplatePreview`
-- live staged smoke covers a normal provider-backed brief, a forced
+- live staged smoke covers a normal provider-backed brief that must naturally
+  select bounded `procedural_generator` / `node-graph-flow`, a forced
   `primitive_scene_graph` scene-graph plan, and a forced `procedural_generator`
   `node-graph-flow` plan with real F5 narration/captions and range audio
 - local export uses the generic `ProjectVideo` Remotion composition; template
