@@ -49,25 +49,24 @@ repeated scene-graph compiler failure to a deterministic `spotlight` macro
 segment when there is no existing segment to preserve. `scripts/staged-live-smoke.mjs`
 now covers the normal provider-backed brief path, a forced
 `primitive_scene_graph` plan smoke, a forced `procedural_generator`
-`node-graph-flow` plan smoke, and a forced `line-path-flow` plan smoke with
-real F5 narration.
+`node-graph-flow` plan smoke, a forced `line-path-flow` plan smoke, and a
+forced `terminal-session` plan smoke with real F5 narration.
 The Render Strategy Decision v1 landing adds validated planner
 `strategyDecision` data for every segment. The currently accepted provider
 planner strategies are `template_macro`, `primitive_scene_graph`, and bounded
-`procedural_generator` only for `scene-graph` + `node-graph-flow` or
-`line-path-flow`; future media-composite and generated-component strategies
-remain roadmap-only. The current Phase 4 procedural-generator groundwork now
-includes deterministic compile-to-SceneGraph paths:
+`procedural_generator` only for `scene-graph` + `node-graph-flow`,
+`line-path-flow`, or `terminal-session`; future media-composite and
+generated-component strategies remain roadmap-only. The current Phase 4
+procedural-generator groundwork now includes deterministic compile-to-SceneGraph paths:
 `src/lib/procedural-generator-schema.ts` defines bounded `node-graph-flow`,
 `line-path-flow`, and `terminal-session` contracts plus diagnostics helpers.
 `src/lib/procedural-generator-compiler.ts` compiles generator payloads into
 normal `scene-graph` `VideoSegment` results with staged diagnostics for
 planned generator output, compiled render strategy, and bounded macro
 fallback. The MiniMax storyboard planner/tool schema can now emit bounded
-`node-graph-flow` and `line-path-flow` payloads on `scene-graph` segments, and
-live staged smoke has validated provider-selected `procedural_generator`
-compiling to actual `primitive_scene_graph`. `terminal-session` remains
-supplied-plan deterministic groundwork.
+`node-graph-flow`, `line-path-flow`, and `terminal-session` payloads on
+`scene-graph` segments, and live staged smoke has validated provider-selected
+`procedural_generator` compiling to actual `primitive_scene_graph`.
 
 Current implementation snapshot:
 
@@ -76,14 +75,14 @@ Current implementation snapshot:
 - `src/lib/procedural-generator-schema.ts` defines bounded procedural
   generator contracts and compile diagnostics for future generator modules.
 - `src/lib/procedural-generator-compiler.ts` compiles `node-graph-flow`,
-  `line-path-flow`, and supplied `terminal-session` payloads into
-  `scene-graph` segment results without importing provider or Node-only staged
-  generation code.
+  `line-path-flow`, and `terminal-session` payloads into `scene-graph`
+  segment results without importing provider or Node-only staged generation
+  code.
 - `src/lib/storyboard-plan-schema.ts` accepts optional
   `proceduralGenerator` payloads only for `scene-graph` segments whose
   `strategyDecision.strategy` is `procedural_generator`; the MiniMax planner
-  tool schema exposes only the bounded `node-graph-flow` and `line-path-flow`
-  payload shapes.
+  tool schema exposes only the bounded `node-graph-flow`, `line-path-flow`,
+  and `terminal-session` payload shapes.
 - `src/templates/registry.ts` derives the planner template manifest from
   server-safe registered template definitions.
 - `src/lib/minimax/prompts.ts`, `src/lib/minimax/tool-schema.ts`,
@@ -199,13 +198,13 @@ Template context should be split by generation stage:
 - Strategy decision context: currently validated inside each planned segment as
   `strategyDecision`, bounded to executable `template_macro`, direct
   `primitive_scene_graph`, and provider-facing `procedural_generator` only for
-  `scene-graph` + `node-graph-flow` or `line-path-flow`.
+  `scene-graph` + `node-graph-flow`, `line-path-flow`, or
+  `terminal-session`.
 - Procedural generator context: provider-facing planner/tool schemas expose
-  bounded `node-graph-flow` and `line-path-flow` payloads on `scene-graph`
-  segments. Supplied plan-mode payloads can also use `terminal-session`. These
-  payloads are structured data only and compile deterministically into actual
-  `primitive_scene_graph`, with `template_macro` fallback on generator compile
-  failure.
+  bounded `node-graph-flow`, `line-path-flow`, and `terminal-session` payloads
+  on `scene-graph` segments. These payloads are structured data only and
+  compile deterministically into actual `primitive_scene_graph`, with
+  `template_macro` fallback on generator compile failure.
 - Narration provider context: segment narration text, language, voice or
   speaker profile, and deterministic artifact identity; it should return audio
   metadata and aligned captions when available.

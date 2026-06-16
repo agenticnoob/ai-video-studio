@@ -1,8 +1,72 @@
 # Iteration Status
 
-Last updated: Terminal session procedural generator groundwork
+Last updated: External Remotion Skill pattern capture
 
-## Latest continuation — Terminal session procedural generator groundwork
+## Latest continuation — External Remotion Skill pattern capture
+
+- Reviewed `wshuyi/remotion-video-skill` as an external Claude Code Skill for
+  standalone Remotion video generation.
+- Captured the useful lessons as workflow and compiler-input patterns instead
+  of importing the standalone scaffold: skillized Remotion guidance,
+  audio-first timing, resumable provider work, scene-based explanation grammar,
+  and render guardrails.
+- Added `docs/REMOTION_GENERATION_PATTERNS.md` as the active local reference.
+- Linked the new reference from README, the Visual IR roadmap, AGENTS startup
+  notes, and the repo-local Remotion skill.
+- Preserved the current product boundary: no generated unrestricted TSX, no
+  direct adoption of `audioConfig.ts` as source of truth, no Edge TTS default
+  path, and no template proliferation from external examples.
+
+Validation performed so far:
+- `git diff --check`
+
+## Previous continuation — Terminal session provider-facing planner surface
+
+- Promoted the third bounded procedural generator family, `terminal-session`,
+  from supplied plan-mode groundwork to the provider-facing MiniMax storyboard
+  planner/tool schema.
+- Added a strict provider JSON schema for `terminal-session`: generator id,
+  duration, caption-safe metadata, title/summary, terminal status, prompt,
+  bounded command lines, beats with line references, and explicit fallback
+  strategy.
+- Updated full storyboard and selected-segment revision prompts so
+  `terminal-session` is used only for CLI, build, test, deploy, install,
+  migration dry-run, smoke check, or command-output walkthrough visuals.
+- Removed the temporary provider parser gate that rejected
+  `terminal-session`; provider output now relies on the unified
+  `StoryboardPlan` and procedural generator schemas for validation.
+- Extended deterministic smoke fixtures to assert provider tool schema,
+  full-planner prompt, segment-revision prompt, parser acceptance, staged
+  diagnostics, and deterministic compile-to-SceneGraph behavior for
+  `terminal-session`.
+- Extended `scripts/staged-live-smoke.mjs` with a forced
+  `terminal-session` plan-mode request that verifies planned
+  `procedural_generator`, generator id `terminal-session`, actual compiled
+  `primitive_scene_graph`, no fallback, F5 narration/captions, and range audio.
+- Kept execution deterministic: `terminal-session` still compiles through the
+  existing procedural compiler into actual `primitive_scene_graph`; no
+  generated TSX, dynamic imports, package installation, or arbitrary command
+  execution is allowed.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `docker compose run --rm web bash -lc 'npm run start >/tmp/ai-video-studio-next.log 2>&1 & server_pid=$!; ready=0; for i in $(seq 1 45); do node -e "fetch(\"http://127.0.0.1:3000\").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" && ready=1 && break; sleep 1; done; if [ "$ready" != "1" ]; then cat /tmp/ai-video-studio-next.log; kill $server_pid >/dev/null 2>&1 || true; exit 1; fi; npm run smoke:staged-live; status=$?; kill $server_pid >/dev/null 2>&1 || true; exit $status'`
+  - normal brief passed with provider-selected `procedural_generator` /
+    `node-graph-flow`, actual compiled `primitive_scene_graph`, no fallback,
+    F5 narration/captions, and range audio
+  - forced `primitive_scene_graph` scene-graph plan-mode smoke passed
+  - forced `procedural_generator` `node-graph-flow` plan-mode smoke passed
+    with actual compiled `primitive_scene_graph` and no fallback
+  - forced `procedural_generator` `line-path-flow` plan-mode smoke passed
+    with actual compiled `primitive_scene_graph` and no fallback
+  - forced `procedural_generator` `terminal-session` plan-mode smoke passed
+    with actual compiled `primitive_scene_graph` and no fallback
+- `git diff --check`
+
+## Previous continuation — Terminal session procedural generator groundwork
 
 - Added the third bounded procedural generator family, `terminal-session`, as
   deterministic groundwork after `node-graph-flow` and `line-path-flow`
@@ -25,6 +89,10 @@ Last updated: Terminal session procedural generator groundwork
   automatic procedural selection remains limited to `node-graph-flow` and
   `line-path-flow` until `terminal-session` has its own planner prompt/schema
   hardening.
+- Added a provider parser gate so MiniMax storyboard-plan output is rejected if
+  it tries to use supplied-plan-only `terminal-session`; hand-supplied
+  `mode: "plan"` payloads still validate through the broader internal
+  `StoryboardPlan` schema.
 
 Validation performed so far:
 - `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`

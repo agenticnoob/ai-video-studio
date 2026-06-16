@@ -9,6 +9,12 @@ metadata:
 
 Use this skills whenever you are dealing with Remotion code to obtain the domain-specific knowledge.
 
+In this repository, also read `docs/REMOTION_GENERATION_PATTERNS.md` when the
+task involves AI-assisted Remotion generation, external Remotion examples,
+procedural generator ideas, tutorial/explainer video grammar, or audio-driven
+timing. Keep the local `VideoProject` / Visual IR compiler boundaries intact;
+do not import standalone Remotion project scaffolding as the product model.
+
 ## New project setup
 
 When in an empty folder or workspace with no existing Remotion project, scaffold one using:

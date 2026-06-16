@@ -1,7 +1,8 @@
 import { segmentNarrationFromAsset, type SegmentNarrationAsset } from "./narration-asset-schema";
 import { normalizeSegmentCaptions } from "./captions";
 import { buildFallbackSpotlightContent } from "./fallback-spotlight-content";
-import { buildStoryboardPlanPrompt } from "./minimax/prompts";
+import { buildSegmentPlanRevisionPrompt, buildStoryboardPlanPrompt } from "./minimax/prompts";
+import { parseStoryboardPlanToolCallArguments } from "./minimax/parse-storyboard-plan";
 import { EMIT_STORYBOARD_PLAN_TOOL } from "./minimax/tool-schema";
 import {
   buildProceduralGeneratorDiagnostics,
@@ -133,9 +134,51 @@ const assertProviderProceduralGeneratorSurface = (): void => {
   if (!systemPrompt.includes("line-path-flow")) {
     throw new Error("Storyboard plan prompt should describe line-path-flow generator usage.");
   }
+  if (!proceduralGeneratorJson.includes("terminal-session")) {
+    throw new Error("Storyboard plan tool schema should expose terminal-session generator usage.");
+  }
+  if (!proceduralGeneratorJson.includes("lines")) {
+    throw new Error("Storyboard plan tool schema should expose terminal-session lines.");
+  }
+  if (!proceduralGeneratorJson.includes("lineId")) {
+    throw new Error("Storyboard plan tool schema should expose terminal-session beat lineId.");
+  }
+  if (!systemPrompt.includes("terminal-session")) {
+    throw new Error("Storyboard plan prompt should describe terminal-session generator usage.");
+  }
 };
 
 assertProviderProceduralGeneratorSurface();
+
+const assertSegmentRevisionProceduralGeneratorSurface = (): void => {
+  const prompt = buildSegmentPlanRevisionPrompt({
+    project: {
+      meta: {
+        title: "Segment Revision Prompt Smoke",
+        fps: 30,
+        width: 1280,
+        height: 720,
+      },
+      brief: "Show a workflow and a customer journey.",
+      segments: [],
+    },
+    revisionPrompt: "Turn this segment into a milestone journey.",
+    segmentId: "segment-1",
+  });
+  const systemPrompt = prompt.messages[0]?.content ?? "";
+
+  if (!systemPrompt.includes("node-graph-flow")) {
+    throw new Error("Segment revision prompt should describe node-graph-flow generator usage.");
+  }
+  if (!systemPrompt.includes("line-path-flow")) {
+    throw new Error("Segment revision prompt should describe line-path-flow generator usage.");
+  }
+  if (!systemPrompt.includes("terminal-session")) {
+    throw new Error("Segment revision prompt should describe terminal-session generator usage.");
+  }
+};
+
+assertSegmentRevisionProceduralGeneratorSurface();
 
 export const mixedTemplateStoryboardPlan: StoryboardPlan = storyboardPlanSchema.parse({
   title: "Mixed Template Staged Smoke",
@@ -602,6 +645,9 @@ const assertProceduralGeneratorFixture = (): void => {
   if (!compiled.layers.some((layer) => layer.type === "node-graph")) {
     throw new Error("Procedural generator fixture expected a compiled node-graph layer.");
   }
+  if (compiled.layers.some((layer) => layer.type === "line-path")) {
+    throw new Error("Node graph flow fixture should not include a line-path layer.");
+  }
   if (
     compiledResult.renderStrategy !== "primitive_scene_graph" ||
     compiledResult.segment.templateId !== SCENE_GRAPH_TEMPLATE_ID
@@ -853,6 +899,23 @@ const assertTerminalSessionProceduralGeneratorFixture = (): void => {
 };
 
 assertTerminalSessionProceduralGeneratorFixture();
+
+const assertProviderParserAcceptsTerminalSessionGenerator = (): void => {
+  const plan = parseStoryboardPlanToolCallArguments(
+    JSON.stringify({
+      title: "Provider Terminal Session Acceptance Smoke",
+      brief: "Provider output may now execute a bounded terminal-session generator.",
+      language: "en",
+      segments: [terminalSessionPlannedSegment],
+    }),
+  );
+
+  if (plan.segments[0]?.proceduralGenerator?.generatorId !== "terminal-session") {
+    throw new Error("Provider storyboard parser should accept terminal-session payloads.");
+  }
+};
+
+assertProviderParserAcceptsTerminalSessionGenerator();
 
 export const sceneGraphShotLanguagePlan = {
   visualStyle: "Cinematic product explainer with deep blue surfaces and amber continuity marks.",

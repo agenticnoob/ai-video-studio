@@ -288,37 +288,6 @@ const statusToTerminalStatus = (
   return status;
 };
 
-const statusToPathTone = (
-  status: NodeGraphFlowGenerator["edges"][number]["status"],
-): "primary" | "secondary" | "success" | "warning" => {
-  if (status === "success") {
-    return "success";
-  }
-  if (status === "error") {
-    return "warning";
-  }
-  if (status === "active") {
-    return "secondary";
-  }
-  return "primary";
-};
-
-const buildLinePathPoints = (generator: NodeGraphFlowGenerator) => {
-  const count = Math.max(generator.nodes.length, 2);
-
-  return generator.nodes.slice(0, 8).map((node, index) => {
-    const progress = count === 1 ? 0.5 : index / (count - 1);
-    const x = generator.direction === "left-to-right" ? 0.12 + progress * 0.76 : 0.5;
-    const y = generator.direction === "top-to-bottom" ? 0.18 + progress * 0.58 : 0.58;
-
-    return {
-      x,
-      y,
-      label: node.label,
-    };
-  });
-};
-
 const generatorBeatActionToSceneBeatAction = (
   action: NodeGraphFlowGenerator["beats"][number]["action"],
 ): "reveal-layer" | "emphasize-text" | "advance-step" | "change-camera" | "exit-layer" => {
@@ -360,11 +329,6 @@ export const compileNodeGraphFlowToSceneGraph = (generator: NodeGraphFlowGenerat
   const terminalStatus = statusToTerminalStatus(activeNode?.status ?? "success");
   const durationInFrames = generator.durationInFrames;
   const graphDuration = Math.max(30, durationInFrames - 32);
-  const pathTone = statusToPathTone(
-    generator.edges.find((edge) => edge.status === "active")?.status ??
-      generator.edges.find((edge) => edge.status === "success")?.status ??
-      "idle",
-  );
 
   return sceneGraphSchema.parse({
     meta: {
@@ -417,16 +381,6 @@ export const compileNodeGraphFlowToSceneGraph = (generator: NodeGraphFlowGenerat
         motionPreset: "draw-path",
         startFrame: 14,
         durationInFrames: graphDuration,
-      },
-      {
-        id: "generator-path",
-        type: "line-path",
-        points: buildLinePathPoints(generator),
-        tone: pathTone,
-        showNodes: true,
-        motionPreset: "draw-path",
-        startFrame: 26,
-        durationInFrames: Math.max(24, durationInFrames - 44),
       },
       {
         id: "generator-status",

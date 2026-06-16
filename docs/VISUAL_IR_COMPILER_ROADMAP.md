@@ -43,6 +43,11 @@ Remotion remains the deterministic rendering backend. The app should compile
 bounded data into Remotion components; it should not let LLMs write
 unrestricted Remotion source as the normal path.
 
+External Remotion projects and skills can inform workflow, primitives, and
+procedural-generator candidates. Capture those lessons through
+`docs/REMOTION_GENERATION_PATTERNS.md`; do not import standalone Remotion
+scaffolds or provider-facing codegen paths directly into the product model.
+
 ## 2. Stable Boundaries
 
 Keep these boundaries throughout all phases:
@@ -247,9 +252,8 @@ Current landing:
 
 Status: started with schema groundwork, deterministic compile-to-SceneGraph
 support, staged diagnostics wiring, guarded staged execution, and
-provider-facing planner/tool schema support for both `node-graph-flow` and
-`line-path-flow`. Deterministic `terminal-session` groundwork is also in place
-for supplied plan-mode payloads.
+provider-facing planner/tool schema support for `node-graph-flow`,
+`line-path-flow`, and `terminal-session`.
 
 Add deterministic modules for recurring complex visuals that are too specific
 for generic layers but too useful to be full templates.
@@ -263,6 +267,10 @@ Candidate generators:
 - `timeline-sequence`
 - `data-flow-map`
 - `status-loop`
+- `step-by-step-explainer`
+- `calculation-flow`
+- `semantic-highlight`
+- `concept-build-up`
 
 Current groundwork:
 
@@ -283,31 +291,27 @@ Current groundwork:
 - staged diagnostics can represent planned `procedural_generator` output, the
   actual compiled `primitive_scene_graph` path, and a bounded `template_macro`
   fallback for generator compilation failure.
-- `StoryboardSegmentPlan.proceduralGenerator` can carry a bounded generator
-  payload for manually supplied `scene-graph` plan-mode requests.
 - The provider-facing storyboard planner/tool schema can now emit
   `procedural_generator` only for `scene-graph` segments with bounded
-  `node-graph-flow` or `line-path-flow` payloads.
+  `node-graph-flow`, `line-path-flow`, or `terminal-session` payloads.
 - Execution remains deterministic: generated payloads compile through the
   existing procedural compiler into actual `primitive_scene_graph` output, with
   `template_macro` fallback on compile failure.
 - Provider-backed planning is not open-ended; no other generator ids,
   `media_asset_composite`, `generated_component`, generated TSX, or arbitrary
-  code execution are accepted. `terminal-session` is not provider-facing yet.
+  code execution are accepted.
 - provider-backed live smoke now includes a normal brief that naturally
   selects `node-graph-flow`, plus forced plan-mode smokes for
-  `node-graph-flow` and `line-path-flow`; all compile into actual
-  `primitive_scene_graph` and fail if the generator silently falls back.
+  `node-graph-flow`, `line-path-flow`, and `terminal-session`; all compile
+  into actual `primitive_scene_graph` and fail if the generator silently falls
+  back.
 
 Next hardening:
 
 - harden bounded repair/fallback around invalid provider generator payloads
   only when live output exposes repeated, well-scoped near-misses
-- harden bounded repair/fallback around `line-path-flow` provider output only
-  if live output exposes repeated, well-scoped near-misses
-- expose `terminal-session` to provider-backed planning only after its prompt
-  and tool schema are bounded as tightly as the existing provider-facing
-  generators
+- harden bounded repair/fallback around specific generator families only if
+  live output exposes repeated, well-scoped near-misses
 
 These modules should output bounded Visual IR or render through controlled
 runtime components, not arbitrary code.

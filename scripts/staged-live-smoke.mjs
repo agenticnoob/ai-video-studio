@@ -482,6 +482,86 @@ const requestLinePathFlowSmoke = async () => {
   return { body, segments };
 };
 
+const buildTerminalSessionPlan = () => ({
+  title: "Live Terminal Session Procedural Generator Smoke",
+  brief:
+    "Compile one provider-facing procedural generator segment through the deterministic terminal session path.",
+  language: "en",
+  globalStyle:
+    "Technical CLI explainer with a focused terminal panel, readable command progress, and caption-safe layout.",
+  segments: [
+    {
+      id: "segment-1",
+      order: 1,
+      title: "Verification terminal session",
+      purpose:
+        "Show a deterministic terminal session for install, typecheck, smoke, and export commands.",
+      templateId: "scene-graph",
+      templateReason:
+        "The terminal session procedural generator is executed through the scene-graph renderer.",
+      strategyDecision: {
+        strategy: "procedural_generator",
+        confidence: 0.91,
+        reason: "The segment is a command sequence with terminal lines and verification status.",
+        fallbackStrategy: "template_macro",
+      },
+      proceduralGenerator: {
+        generatorId: "terminal-session",
+        renderStrategy: "procedural_generator",
+        durationInFrames: 180,
+        captionSafeZone: true,
+        fallbackStrategy: "primitive_scene_graph",
+        fallbackReason: "If generator compilation fails, keep the segment on SceneGraph Visual IR.",
+        title: "Verification loop",
+        summary:
+          "A bounded terminal session showing install, typecheck, fixture smoke, and export.",
+        status: "success",
+        prompt: "web$",
+        lines: [
+          { id: "install", text: "npm install", status: "success" },
+          { id: "typecheck", text: "npx tsc --noEmit", status: "success" },
+          { id: "smoke", text: "npm run smoke:staged-fixtures", status: "success" },
+          { id: "export", text: "npm run render", status: "running" },
+        ],
+        beats: [
+          { atFrame: 0, lineId: "install", action: "reveal" },
+          { atFrame: 36, lineId: "typecheck", action: "complete" },
+          { atFrame: 78, lineId: "smoke", action: "complete" },
+          { atFrame: 126, lineId: "export", action: "run" },
+        ],
+      },
+      narration: {
+        text: "A bounded terminal session generator describes command progress, then compiles into the same scene graph renderer.",
+        tone: "technical",
+      },
+      visualBrief:
+        "Use a terminal panel with install, typecheck, smoke, and export commands plus visible status changes.",
+      pacingHint: "steady command reveal",
+      expectedDurationSeconds: 6,
+    },
+  ],
+});
+
+const requestTerminalSessionSmoke = async () => {
+  const body = await requestJson(`${NEXT_ORIGIN}/api/generate/staged`, {
+    method: "POST",
+    body: JSON.stringify({
+      mode: "plan",
+      provider: "f5-tts",
+      plan: buildTerminalSessionPlan(),
+    }),
+  });
+
+  const segments = body.project?.segments;
+  if (!Array.isArray(segments) || segments.length !== 1) {
+    fail("Terminal session smoke response did not include exactly one segment");
+  }
+  assertDiagnostics(body.diagnostics, 1);
+  assertProceduralGeneratorVisualIr(body, "terminal-session");
+  await assertSegmentNarration(segments[0]);
+  return { body, segments };
+};
+
 const run = async () => {
   if (skipIfMissingConfig()) {
     return;
@@ -522,6 +602,10 @@ const run = async () => {
   console.log("Requesting live line path procedural generator staged project");
   const { body: linePathBody, segments: linePathSegments } = await requestLinePathFlowSmoke();
 
+  console.log("Requesting live terminal session procedural generator staged project");
+  const { body: terminalSessionBody, segments: terminalSessionSegments } =
+    await requestTerminalSessionSmoke();
+
   const summary = {
     audioSources: segments.map((segment) => segment.narration.audio.src),
     captionCueCounts: segments.map((segment) => segment.narration.captions.cues.length),
@@ -547,6 +631,13 @@ const run = async () => {
       compiledRenderStrategy: linePathSegments[0].implementation.renderStrategy,
       strategyDecision: linePathBody.diagnostics.compiler[0]?.strategyDecision,
       templateId: linePathSegments[0].templateId,
+    },
+    terminalSession: {
+      audioSource: terminalSessionSegments[0].narration.audio.src,
+      compiler: terminalSessionBody.diagnostics.compiler,
+      compiledRenderStrategy: terminalSessionSegments[0].implementation.renderStrategy,
+      strategyDecision: terminalSessionBody.diagnostics.compiler[0]?.strategyDecision,
+      templateId: terminalSessionSegments[0].templateId,
     },
     segmentCount: segments.length,
     templateIds: segments.map((segment) => segment.templateId),

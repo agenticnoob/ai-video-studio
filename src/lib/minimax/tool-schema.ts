@@ -174,8 +174,72 @@ const linePathFlowGeneratorJsonSchema = {
   required: ["generatorId", "renderStrategy", "durationInFrames", "title", "points"],
 } as const;
 
+const terminalSessionGeneratorJsonSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    generatorId: { type: "string", const: "terminal-session" },
+    renderStrategy: { type: "string", const: "procedural_generator" },
+    durationInFrames: { type: "integer", minimum: 45, maximum: 1200 },
+    captionSafeZone: { type: "boolean" },
+    fallbackStrategy: {
+      type: "string",
+      enum: ["primitive_scene_graph", "template_macro"],
+    },
+    fallbackReason: { type: "string" },
+    title: { type: "string" },
+    summary: { type: "string" },
+    theme: themeJsonSchema,
+    status: {
+      type: "string",
+      enum: ["idle", "running", "success", "error"],
+    },
+    prompt: { type: "string" },
+    lines: {
+      type: "array",
+      minItems: 1,
+      maxItems: 8,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          id: { type: "string" },
+          text: { type: "string" },
+          status: {
+            type: "string",
+            enum: ["idle", "running", "success", "error"],
+          },
+        },
+        required: ["id", "text"],
+      },
+    },
+    beats: {
+      type: "array",
+      maxItems: 16,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          atFrame: { type: "integer", minimum: 0 },
+          lineId: { type: "string" },
+          action: {
+            type: "string",
+            enum: ["reveal", "run", "complete", "error", "focus"],
+          },
+        },
+        required: ["atFrame", "lineId"],
+      },
+    },
+  },
+  required: ["generatorId", "renderStrategy", "durationInFrames", "title", "lines"],
+} as const;
+
 const proceduralGeneratorJsonSchema = {
-  oneOf: [nodeGraphFlowGeneratorJsonSchema, linePathFlowGeneratorJsonSchema],
+  oneOf: [
+    nodeGraphFlowGeneratorJsonSchema,
+    linePathFlowGeneratorJsonSchema,
+    terminalSessionGeneratorJsonSchema,
+  ],
 } as const;
 
 /**

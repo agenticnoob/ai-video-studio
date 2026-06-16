@@ -107,7 +107,7 @@ ${buildPlannerTemplateManifestPrompt()}
 # Render strategy decision v1
 - Current supported strategies are "template_macro", "primitive_scene_graph", and bounded "procedural_generator".
 - Use "primitive_scene_graph" only when templateId is "scene-graph".
-- Use "procedural_generator" only when templateId is "scene-graph" and the segment is best represented as a deterministic workflow, node graph, agent loop, system pipeline, or dependency flow.
+- Use "procedural_generator" only when templateId is "scene-graph" and the segment is best represented as a deterministic workflow, node graph, agent loop, system pipeline, dependency flow, journey, timeline, progression, terminal command session, build/test/deploy trace, or command output walkthrough.
 - Use "template_macro" for scripted, spotlight, stats-dashboard, and any other fixed registered macro template.
 - Set fallbackStrategy to "template_macro" for scene-graph segments so the compiler can fall back to a stable macro if Visual IR validation fails.
 - Set fallbackStrategy to "template_macro" for template_macro segments.
@@ -116,9 +116,10 @@ ${buildPlannerTemplateManifestPrompt()}
 
 # Procedural generator v1
 - If strategyDecision.strategy is "procedural_generator", include proceduralGenerator.
-- Supported proceduralGenerator.generatorId values are "node-graph-flow" and "line-path-flow".
+- Supported proceduralGenerator.generatorId values are "node-graph-flow", "line-path-flow", and "terminal-session".
 - Use "node-graph-flow" for deterministic workflow, agent loop, system pipeline, dependency graph, state machine, or node-and-edge visuals.
 - Use "line-path-flow" for deterministic journeys, timelines, progressions, funnels, milestone paths, sequencing paths, or narration-driven path reveals.
+- Use "terminal-session" for deterministic CLI, build, test, deploy, install, migration dry-run, smoke check, or command-output walkthroughs where terminal lines are the main visual object.
 - proceduralGenerator.renderStrategy must be "procedural_generator".
 - For "node-graph-flow", use 2-12 nodes and 1-18 edges. Every edge.from, edge.to, and beat.nodeId must reference declared node ids.
 - For "node-graph-flow", use lane values only from "input", "plan", "build", "verify", "output".
@@ -128,6 +129,11 @@ ${buildPlannerTemplateManifestPrompt()}
 - For "line-path-flow", every beat.pointId must reference a declared point id.
 - For "line-path-flow", use tone values only from "primary", "secondary", "success", "warning".
 - For "line-path-flow", use beat action values only from "reveal", "advance", "highlight".
+- For "terminal-session", use 1-8 lines. Every line must have id and text; keep command/output text concise and caption-safe.
+- For "terminal-session", use status values only from "idle", "running", "success", "error".
+- For "terminal-session", every beat.lineId must reference a declared line id.
+- For "terminal-session", use beat action values only from "reveal", "run", "complete", "error", "focus".
+- For "terminal-session", use prompt as a short shell prompt such as "$" or "web$".
 - Set proceduralGenerator.durationInFrames from the expected segment duration when possible; otherwise choose a reasonable duration for the narration.
 - Do not include proceduralGenerator on template_macro or primitive_scene_graph segments.
 
@@ -403,12 +409,31 @@ This is the planning stage only. Do not generate final template implementation f
 - Keep the current template unless the revision request clearly asks for a different presentation style.
 - Include strategyDecision. Use "primitive_scene_graph" only with templateId "scene-graph";
   use "procedural_generator" only with templateId "scene-graph" when the segment
-  is best represented as a deterministic node-graph-flow payload; otherwise use
-  "template_macro". Use fallbackStrategy "template_macro" for this phase.
+  is best represented as a deterministic workflow, node graph, agent loop,
+  system pipeline, dependency flow, journey, timeline, progression, funnel,
+  milestone path, sequencing path, narration-driven path reveal, terminal
+  command session, build/test/deploy trace, or command output walkthrough;
+  otherwise use "template_macro". Use fallbackStrategy "template_macro" for
+  this phase.
 - If strategyDecision.strategy is "procedural_generator", include a bounded
-  proceduralGenerator object with generatorId "node-graph-flow",
-  renderStrategy "procedural_generator", 2-12 nodes, 1-18 edges, and edge/beat
-  references that point only at declared node ids.
+  proceduralGenerator object with generatorId "node-graph-flow" or
+  "line-path-flow" or "terminal-session".
+- Use "node-graph-flow" for deterministic workflow, agent loop, system
+  pipeline, dependency graph, state machine, or node-and-edge visuals.
+- Use "line-path-flow" for deterministic journeys, timelines, progressions,
+  funnels, milestone paths, sequencing paths, or narration-driven path reveals.
+- Use "terminal-session" for deterministic CLI, build, test, deploy, install,
+  migration dry-run, smoke check, or command-output walkthroughs where terminal
+  lines are the main visual object.
+- For "node-graph-flow", use renderStrategy "procedural_generator", 2-12
+  nodes, 1-18 edges, and edge/beat references that point only at declared node
+  ids.
+- For "line-path-flow", use renderStrategy "procedural_generator", 2-8 points,
+  normalized x/y coordinates from 0 to 1, and beat pointId references that
+  point only at declared point ids.
+- For "terminal-session", use renderStrategy "procedural_generator", 1-8
+  concise terminal lines, status values from "idle", "running", "success",
+  "error", and beat lineId references that point only at declared line ids.
 - Write narration.text as the actual spoken script for this segment, not as an instruction.
 - Keep narration concise enough for a short product-demo segment.
 - Describe visualBrief for this segment without inventing media URLs or Remotion source code.

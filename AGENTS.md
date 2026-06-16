@@ -18,7 +18,11 @@ Before planning or editing, read these files in order:
    F5-TTS runtime service or Docker service setup
 8. `docs/PRODUCT_ARCHITECTURE.md` and `docs/TEMPLATE_ARCHITECTURE.md` when the
    task needs architecture or template-module details
-9. `README.md`
+9. `docs/REMOTION_GENERATION_PATTERNS.md` when the task involves external
+   Remotion examples, AI-assisted Remotion generation patterns, tutorial /
+   explainer visual grammar, procedural generator ideas, or audio-driven
+   timing patterns
+10. `README.md`
 
 Completed goals, old handoffs, prior structure plans, and reference research
 live under `docs/archive/`. Read archived files only when investigating old
@@ -36,6 +40,7 @@ These files together explain:
 - F5-TTS / aligned captions provider target when relevant
 - F5-TTS runtime service plan when relevant
 - architecture and template-module details when relevant
+- external Remotion generation patterns when relevant
 - Docker-first local workflow
 
 Local configuration is now unified around one tracked template and one ignored

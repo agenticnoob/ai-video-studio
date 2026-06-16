@@ -56,9 +56,9 @@ Current implementation status:
 - procedural-generator groundwork includes `node-graph-flow`,
   `line-path-flow`, and `terminal-session` schemas, diagnostics helpers,
   deterministic compile-to-SceneGraph paths, and guarded execution paths.
-  Provider planning can select only `node-graph-flow` and `line-path-flow` for
-  `scene-graph` segments; `terminal-session` is supplied-plan groundwork. All
-  actual rendering still compiles through `primitive_scene_graph`
+  Provider planning can select bounded `node-graph-flow`, `line-path-flow`,
+  and `terminal-session` payloads for `scene-graph` segments. All actual
+  rendering still compiles through `primitive_scene_graph`
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration
 - staged selected-segment regeneration reruns the target segment's planning,
@@ -121,12 +121,13 @@ Current modeling direction:
   visual implementation from the real audio duration and segment visual brief
 - each planned segment should carry an explicit `strategyDecision` before
   compilation; provider-backed `procedural_generator` selection is currently
-  limited to bounded `scene-graph` + `node-graph-flow` or `line-path-flow`
-  payloads that compile through the existing deterministic SceneGraph path
+  limited to bounded `scene-graph` + `node-graph-flow`, `line-path-flow`, or
+  `terminal-session` payloads that compile through the existing deterministic
+  SceneGraph path
 - `procedural_generator` work should start from bounded deterministic module
   contracts such as `node-graph-flow`, `line-path-flow`, and
-  `terminal-session`, then add compiler/renderer execution before exposing
-  each generator to planner output
+  `terminal-session`, then expose each generator to planner output only after
+  its deterministic compiler path and provider schema are in place
 - `implementation` is template-specific; current registered templates are:
   - `scripted`: `VideoSpec` with internal `scenes`
   - `spotlight`: `SpotlightSpec` with `headline`, `subheadline`,
@@ -180,9 +181,13 @@ Current modeling direction:
   landing starts Procedural Generator v1 with `node-graph-flow`,
   `line-path-flow`, and `terminal-session` schema groundwork, deterministic
   compile-to-SceneGraph support, staged diagnostics metadata, guarded
-  execution, and provider-facing planner support for the first two generators.
+  execution, and provider-facing planner support for all three generators.
   Execution remains deterministic and falls back to `template_macro` on
   generator compile failure.
+- external Remotion generation patterns are captured in
+  `docs/REMOTION_GENERATION_PATTERNS.md`; use them as workflow and primitive
+  inspiration without importing standalone project scaffolding or widening the
+  provider contract.
 - `docs/FINAL_PRODUCT_GOAL.md` now documents the stable generation-pipeline
   contracts that support the Visual IR compiler roadmap; it is not the primary
   roadmap source.
@@ -271,8 +276,8 @@ Current code checkpoint:
 - live staged smoke covers a normal provider-backed brief that must naturally
   select bounded `procedural_generator` / `node-graph-flow`, a forced
   `primitive_scene_graph` scene-graph plan, and a forced `procedural_generator`
-  `node-graph-flow` plan plus forced `line-path-flow` plan with real F5
-  narration/captions and range audio
+  `node-graph-flow` plan plus forced `line-path-flow` and `terminal-session`
+  plans with real F5 narration/captions and range audio
 - local export uses the generic `ProjectVideo` Remotion composition; template
   preview compositions remain available for focused Studio checks
 - optional local F5 runtime service is implemented with contract-smoke and
@@ -290,8 +295,9 @@ Best next bounded slice:
 - behavior-preserving structure cleanup now has dedicated module boundaries for
   staged generation, TTS/F5 provider selection and fallback, frontend
   generation state, Remotion timeline flattening, and smoke entrypoints
-- harden bounded repair/normalization for provider-generated `node-graph-flow`
-  or `line-path-flow` payloads if live output exposes repeated near-misses
+- harden bounded repair/normalization for provider-generated `node-graph-flow`,
+  `line-path-flow`, or `terminal-session` payloads if live output exposes
+  repeated near-misses
 - keep `POST /api/generate/staged` live smoke covering MiniMax planner/compiler
   plus real F5 narration for normal brief, direct `primitive_scene_graph`, and
   bounded `procedural_generator` paths; it skips when required credentials are
