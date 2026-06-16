@@ -10,14 +10,19 @@ import {
 export const MAX_STORYBOARD_SEGMENTS = 6;
 
 export const templateIdSchema = z.enum(registeredTemplateIds as [TemplateId, ...TemplateId[]]);
-export const renderStrategySchema = z.enum(["template_macro", "primitive_scene_graph"]);
+export const renderStrategySchema = z.enum([
+  "template_macro",
+  "primitive_scene_graph",
+  "procedural_generator",
+]);
+export const compiledRenderStrategySchema = z.enum(["template_macro", "primitive_scene_graph"]);
 
 export const strategyDecisionSchema = z
   .object({
     strategy: renderStrategySchema,
     confidence: z.number().min(0).max(1),
     reason: z.string().trim().min(1).max(600),
-    fallbackStrategy: renderStrategySchema,
+    fallbackStrategy: compiledRenderStrategySchema,
   })
   .strict();
 
@@ -45,13 +50,17 @@ export const storyboardSegmentPlanSchema = z
   })
   .strict()
   .superRefine((segment, ctx) => {
-    const expectedStrategy =
-      segment.templateId === SCENE_GRAPH_TEMPLATE_ID ? "primitive_scene_graph" : "template_macro";
+    const isSceneGraphSegment = segment.templateId === SCENE_GRAPH_TEMPLATE_ID;
+    const allowedStrategies = isSceneGraphSegment
+      ? new Set(["primitive_scene_graph", "procedural_generator"])
+      : new Set(["template_macro"]);
 
-    if (segment.strategyDecision.strategy !== expectedStrategy) {
+    if (!allowedStrategies.has(segment.strategyDecision.strategy)) {
       ctx.addIssue({
         code: "custom",
-        message: `strategyDecision.strategy must be "${expectedStrategy}" for templateId "${segment.templateId}".`,
+        message: isSceneGraphSegment
+          ? `strategyDecision.strategy must be "primitive_scene_graph" or "procedural_generator" for templateId "${segment.templateId}".`
+          : `strategyDecision.strategy must be "template_macro" for templateId "${segment.templateId}".`,
         path: ["strategyDecision", "strategy"],
       });
     }
@@ -69,6 +78,30 @@ export const storyboardSegmentPlanSchema = z
         code: "custom",
         message: "proceduralGenerator is only supported for scene-graph segments.",
         path: ["proceduralGenerator"],
+      });
+    }
+
+    if (
+      segment.strategyDecision.strategy === "procedural_generator" &&
+      !segment.proceduralGenerator
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        message:
+          "proceduralGenerator is required when strategyDecision.strategy is procedural_generator.",
+        path: ["proceduralGenerator"],
+      });
+    }
+
+    if (
+      segment.proceduralGenerator &&
+      segment.strategyDecision.strategy !== "procedural_generator"
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        message:
+          "proceduralGenerator requires strategyDecision.strategy to be procedural_generator.",
+        path: ["strategyDecision", "strategy"],
       });
     }
   });
@@ -122,6 +155,7 @@ export const storyboardPlanSchema = z
 
 export type StoryboardNarrationPlan = z.infer<typeof storyboardNarrationPlanSchema>;
 export type RenderStrategy = z.infer<typeof renderStrategySchema>;
+export type CompiledRenderStrategy = z.infer<typeof compiledRenderStrategySchema>;
 export type StrategyDecision = z.infer<typeof strategyDecisionSchema>;
 export type StoryboardSegmentPlan = z.infer<typeof storyboardSegmentPlanSchema>;
 export type StoryboardPlan = z.infer<typeof storyboardPlanSchema>;

@@ -246,8 +246,8 @@ Current landing:
 ### Phase 4: Procedural Generator v1
 
 Status: started with schema groundwork, deterministic compile-to-SceneGraph
-support, staged diagnostics wiring, and guarded staged execution for
-`node-graph-flow`.
+support, staged diagnostics wiring, guarded staged execution, and
+provider-facing planner/tool schema support for `node-graph-flow`.
 
 Add deterministic modules for recurring complex visuals that are too specific
 for generic layers but too useful to be full templates.
@@ -278,15 +278,22 @@ Current groundwork:
   fallback for generator compilation failure.
 - `StoryboardSegmentPlan.proceduralGenerator` can carry a bounded generator
   payload for manually supplied `scene-graph` plan-mode requests.
-- This is not connected to planner strategy selection or provider compilation
-  yet. Active provider-backed planning still emits only `template_macro` and
-  `primitive_scene_graph`.
+- The provider-facing storyboard planner/tool schema can now emit
+  `procedural_generator` only for `scene-graph` segments with a bounded
+  `node-graph-flow` payload.
+- Execution remains deterministic: generated payloads compile through the
+  existing procedural compiler into actual `primitive_scene_graph` output, with
+  `template_macro` fallback on compile failure.
+- Provider-backed planning is not open-ended; no other generator ids,
+  `media_asset_composite`, `generated_component`, generated TSX, or arbitrary
+  code execution are accepted.
 
 Next acceptance before planner/provider selection:
 
-- add provider-facing planner/tool schema support for procedural generator
-  payloads
-- only then allow `procedural_generator` in `StoryboardPlan.strategyDecision`
+- run provider-backed live smoke for a brief that should naturally choose
+  `node-graph-flow`
+- harden bounded repair/fallback around invalid provider generator payloads if
+  live output exposes common near-misses
 
 These modules should output bounded Visual IR or render through controlled
 runtime components, not arbitrary code.

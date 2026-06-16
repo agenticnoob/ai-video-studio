@@ -53,10 +53,11 @@ Current implementation status:
   `StoryboardSegmentPlan`: current executable strategies are bounded to
   `template_macro` and `primitive_scene_graph`, with staged diagnostics showing
   both the planned decision and the actual post-fallback render path
-- the first procedural-generator groundwork exists as a `node-graph-flow`
-  schema, diagnostics helper, deterministic compile-to-SceneGraph path, and
-  guarded plan-mode execution path; it is not yet selectable by
-  planner/provider generation
+- the first procedural-generator path exists as a `node-graph-flow` schema,
+  diagnostics helper, deterministic compile-to-SceneGraph path, guarded
+  execution path, and provider-facing planner/tool schema surface; provider
+  planning can select it only for `scene-graph` segments, and actual rendering
+  still compiles through `primitive_scene_graph`
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration
 - staged selected-segment regeneration reruns the target segment's planning,
@@ -118,8 +119,9 @@ Current modeling direction:
   aligned captions per segment second, then compile the segment's selected
   visual implementation from the real audio duration and segment visual brief
 - each planned segment should carry an explicit `strategyDecision` before
-  compilation; future strategies remain roadmap-only until their compiler paths
-  are implemented
+  compilation; `procedural_generator` is currently limited to bounded
+  `scene-graph` + `node-graph-flow` payloads that compile through the existing
+  deterministic SceneGraph path
 - `procedural_generator` work should start from bounded deterministic module
   contracts such as `node-graph-flow`, then add compiler/renderer execution
   before exposing the strategy to planner output
@@ -175,9 +177,9 @@ Current modeling direction:
   review/repair, and eventual micro-template memory. The current bounded
   landing starts Procedural Generator v1 with `node-graph-flow` schema
   groundwork, deterministic compile-to-SceneGraph support, and staged
-  diagnostics metadata. Guarded plan-mode requests can supply a bounded
-  generator payload, while provider-backed planning remains limited to
-  executable `template_macro` and `primitive_scene_graph` paths.
+  diagnostics metadata. Provider-facing storyboard planning can now supply a
+  bounded generator payload for `scene-graph` segments, while execution remains
+  deterministic and falls back to `template_macro` on generator compile failure.
 - `docs/FINAL_PRODUCT_GOAL.md` now documents the stable generation-pipeline
   contracts that support the Visual IR compiler roadmap; it is not the primary
   roadmap source.
@@ -263,6 +265,9 @@ Current code checkpoint:
   with a project-level `ShotLanguagePlan` and Visual IR v1 full-bleed,
   node-graph/path/code/terminal, and lockup treatments; Remotion Studio exposes
   `SceneGraphTemplatePreview`
+- live staged smoke covers a normal provider-backed brief, a forced
+  `primitive_scene_graph` scene-graph plan, and a forced `procedural_generator`
+  `node-graph-flow` plan with real F5 narration/captions and range audio
 - local export uses the generic `ProjectVideo` Remotion composition; template
   preview compositions remain available for focused Studio checks
 - optional local F5 runtime service is implemented with contract-smoke and
@@ -280,12 +285,12 @@ Best next bounded slice:
 - behavior-preserving structure cleanup now has dedicated module boundaries for
   staged generation, TTS/F5 provider selection and fallback, frontend
   generation state, Remotion timeline flattening, and smoke entrypoints
-- add provider-backed Visual IR generation and bounded repair for
-  `primitive_scene_graph`, using the deterministic renderer vocabulary already
-  in place
-  `POST /api/generate/staged` live smoke that combines MiniMax
-  planner/compiler with real F5 narration; it skips when required credentials
-  are missing
+- harden bounded repair/normalization for provider-generated
+  `node-graph-flow` payloads if live output exposes repeated near-misses
+- keep `POST /api/generate/staged` live smoke covering MiniMax planner/compiler
+  plus real F5 narration for normal brief, direct `primitive_scene_graph`, and
+  bounded `procedural_generator` paths; it skips when required credentials are
+  missing
 - avoid persistence/history, generic media-layer compositing, and
   multi-template-per-segment orchestration unless explicitly reopened
 

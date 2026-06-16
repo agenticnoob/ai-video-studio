@@ -1,6 +1,8 @@
 import { segmentNarrationFromAsset, type SegmentNarrationAsset } from "./narration-asset-schema";
 import { normalizeSegmentCaptions } from "./captions";
 import { buildFallbackSpotlightContent } from "./fallback-spotlight-content";
+import { buildStoryboardPlanPrompt } from "./minimax/prompts";
+import { EMIT_STORYBOARD_PLAN_TOOL } from "./minimax/tool-schema";
 import {
   buildProceduralGeneratorDiagnostics,
   compileNodeGraphFlowToSceneGraph,
@@ -67,6 +69,53 @@ const primitiveSceneGraphStrategyDecision = {
   reason: "This segment needs bounded Visual IR primitives instead of a fixed macro.",
   fallbackStrategy: "template_macro",
 } as const;
+
+const proceduralGeneratorStrategyDecision = {
+  strategy: "procedural_generator",
+  confidence: 0.88,
+  reason: "This segment needs a deterministic node graph flow generator.",
+  fallbackStrategy: "template_macro",
+} as const;
+
+const getStoryboardPlanToolSegmentSchema = (): Record<string, unknown> => {
+  const parameters = EMIT_STORYBOARD_PLAN_TOOL.function.parameters as {
+    properties?: {
+      segments?: {
+        items?: Record<string, unknown>;
+      };
+    };
+  };
+  const segmentSchema = parameters.properties?.segments?.items;
+  if (!segmentSchema) {
+    throw new Error("Storyboard plan tool schema should expose segment items.");
+  }
+  return segmentSchema;
+};
+
+const assertProviderProceduralGeneratorSurface = (): void => {
+  const segmentSchema = getStoryboardPlanToolSegmentSchema();
+  const properties = segmentSchema.properties as Record<string, unknown> | undefined;
+  const strategyDecision = properties?.strategyDecision as
+    | { properties?: { strategy?: { enum?: string[] } } }
+    | undefined;
+  const strategyEnum = strategyDecision?.properties?.strategy?.enum ?? [];
+  const prompt = buildStoryboardPlanPrompt({
+    brief: "Show an agent workflow as a node graph flow.",
+  });
+  const systemPrompt = prompt.messages[0]?.content ?? "";
+
+  if (!strategyEnum.includes("procedural_generator")) {
+    throw new Error("Storyboard plan tool schema should expose procedural_generator.");
+  }
+  if (!properties?.proceduralGenerator) {
+    throw new Error("Storyboard plan tool schema should expose proceduralGenerator payloads.");
+  }
+  if (!systemPrompt.includes("node-graph-flow")) {
+    throw new Error("Storyboard plan prompt should describe node-graph-flow generator usage.");
+  }
+};
+
+assertProviderProceduralGeneratorSurface();
 
 export const mixedTemplateStoryboardPlan: StoryboardPlan = storyboardPlanSchema.parse({
   title: "Mixed Template Staged Smoke",
@@ -463,7 +512,7 @@ const proceduralGeneratorPlannedSegment: StoryboardSegmentPlan = {
     "Exercise deterministic procedural generator compilation through the staged segment result.",
   templateId: SCENE_GRAPH_TEMPLATE_ID,
   templateReason: "The procedural generator currently compiles through the scene-graph renderer.",
-  strategyDecision: primitiveSceneGraphStrategyDecision,
+  strategyDecision: proceduralGeneratorStrategyDecision,
   proceduralGenerator: nodeGraphFlowProceduralGeneratorFixture,
   narration: {
     text: "A bounded generator can now compile into the same scene graph render path before planner selection widens.",
@@ -543,6 +592,7 @@ const assertProceduralGeneratorFixture = (): void => {
     stagedDiagnostics.compiler[0]?.proceduralGenerator?.renderStrategy !== "procedural_generator" ||
     stagedDiagnostics.compiler[0]?.proceduralGenerator?.compiledRenderStrategy !==
       "primitive_scene_graph" ||
+    stagedDiagnostics.compiler[0]?.strategyDecision.strategy !== "procedural_generator" ||
     stagedDiagnostics.compiler[0]?.renderStrategy !== "primitive_scene_graph"
   ) {
     throw new Error(

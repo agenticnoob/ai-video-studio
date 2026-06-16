@@ -1,6 +1,41 @@
 # Iteration Status
 
-Last updated: Fallback content semantics hardening
+Last updated: Procedural generator provider-facing planner surface
+
+## Latest continuation — Procedural generator provider-facing planner surface
+
+- Extended `StoryboardSegmentPlan.strategyDecision.strategy` so `scene-graph`
+  segments can choose bounded `procedural_generator` output.
+- Kept the strategy guarded: `procedural_generator` requires a valid
+  `proceduralGenerator` payload, only `scene-graph` segments can carry that
+  payload, and fixed macro templates still must use `template_macro`.
+- Exposed the first provider-facing planner/tool schema for
+  `node-graph-flow`, including bounded nodes, edges, beats, lanes, statuses,
+  duration, and fallback fields.
+- Updated MiniMax storyboard planning prompts so provider output may choose
+  `procedural_generator` only for deterministic workflow/node graph/agent
+  loop/system flow segments, without emitting Remotion/React code.
+- Preserved deterministic execution: supplied generator payloads still compile
+  through `compileProceduralGeneratorSegment()` into actual
+  `primitive_scene_graph` output, with `template_macro` fallback on compile
+  failure.
+- Extended staged smoke fixtures so diagnostics show planned
+  `procedural_generator` alongside actual compiled `primitive_scene_graph`.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `git diff --check`
+- `docker compose run --rm web bash -lc 'npm run start >/tmp/ai-video-studio-next.log 2>&1 & server_pid=$!; ready=0; for i in $(seq 1 45); do node -e "fetch(\"http://127.0.0.1:3000\").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" && ready=1 && break; sleep 1; done; if [ "$ready" != "1" ]; then cat /tmp/ai-video-studio-next.log; kill $server_pid >/dev/null 2>&1 || true; exit 1; fi; npm run smoke:staged-live; status=$?; kill $server_pid >/dev/null 2>&1 || true; exit $status'`
+  - live smoke passed the normal brief request with provider-selected
+    `procedural_generator` on a `scene-graph` segment, compiled actual
+    `primitive_scene_graph`, F5 narration/captions, and range audio
+  - live smoke passed the forced `primitive_scene_graph` scene-graph request
+  - live smoke passed the forced `procedural_generator` `node-graph-flow`
+    plan-mode request with actual compiled `primitive_scene_graph` and no
+    fallback
 
 ## Latest continuation — Fallback content semantics hardening
 
@@ -335,9 +370,10 @@ Validation performed so far:
 - `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion render src/remotion/index.ts ProjectVideo /workspace/out/project-video-export-smoke.mp4 --log=error'`
 - `git diff --check`
 
-Next recommended bounded slice:
-- add provider-backed Visual IR generation and bounded repair for
-  `primitive_scene_graph` only, using the new presets and layer vocabulary.
+Historical next recommended bounded slice, now completed by later Visual IR
+Generation v1 work:
+- later work implemented provider-backed `primitive_scene_graph` generation
+  and bounded repair using the new presets and layer vocabulary.
 - keep `generated_component` as a future restricted escape hatch, not the
   current path.
 

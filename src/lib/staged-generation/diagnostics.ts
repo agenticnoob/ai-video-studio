@@ -1,5 +1,6 @@
 import type { GenerateStagedProjectResult, GenerateStagedSegmentRevisionResult } from "./pipeline";
 import type { ProceduralGeneratorDiagnostics } from "../procedural-generator-schema";
+import type { CompiledRenderStrategy, StrategyDecision } from "../storyboard-plan-schema";
 
 type PlannerDiagnostics = {
   attempts: number;
@@ -14,14 +15,9 @@ type CompilerDiagnostics = {
   };
   proceduralGenerator?: ProceduralGeneratorDiagnostics;
   repaired: boolean;
-  renderStrategy: "primitive_scene_graph" | "template_macro";
+  renderStrategy: CompiledRenderStrategy;
   segmentId: string;
-  strategyDecision: {
-    confidence: number;
-    fallbackStrategy: "primitive_scene_graph" | "template_macro";
-    reason: string;
-    strategy: "primitive_scene_graph" | "template_macro";
-  };
+  strategyDecision: StrategyDecision;
   templateId: string;
 };
 

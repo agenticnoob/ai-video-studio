@@ -44,10 +44,12 @@ Product direction:
   structured parameters
 - AI should also emit an explicit render strategy decision for each planned
   segment before compilation; current executable strategies are bounded to
-  `template_macro` and `primitive_scene_graph`
+  `template_macro`, direct `primitive_scene_graph`, and `procedural_generator`
+  only for `scene-graph` + `node-graph-flow`
 - procedural generator work should be introduced as deterministic bounded
-  module contracts first; the current `node-graph-flow` groundwork is not
-  planner-selectable until compiler/renderer execution exists
+  module contracts first; the current `node-graph-flow` path is
+  provider-planner selectable only through a bounded schema and still compiles
+  deterministically into actual `primitive_scene_graph`
 - final generation should be staged: storyboard planning first, per-segment
   TTS second, selected visual implementation compilation third, project
   assembly last

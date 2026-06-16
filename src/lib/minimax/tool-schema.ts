@@ -19,6 +19,103 @@ const metaJsonSchema = {
   required: ["title", "fps", "width", "height"],
 } as const;
 
+const themeJsonSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    background: { type: "string" },
+    panel: { type: "string" },
+    primary: { type: "string" },
+    secondary: { type: "string" },
+    text: { type: "string" },
+    muted: { type: "string" },
+  },
+  required: ["background", "panel", "primary", "secondary", "text", "muted"],
+} as const;
+
+const proceduralGeneratorJsonSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    generatorId: { type: "string", const: "node-graph-flow" },
+    renderStrategy: { type: "string", const: "procedural_generator" },
+    durationInFrames: { type: "integer", minimum: 45, maximum: 1200 },
+    captionSafeZone: { type: "boolean" },
+    fallbackStrategy: {
+      type: "string",
+      enum: ["primitive_scene_graph", "template_macro"],
+    },
+    fallbackReason: { type: "string" },
+    title: { type: "string" },
+    summary: { type: "string" },
+    theme: themeJsonSchema,
+    direction: {
+      type: "string",
+      enum: ["left-to-right", "top-to-bottom"],
+    },
+    nodes: {
+      type: "array",
+      minItems: 2,
+      maxItems: 12,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          id: { type: "string" },
+          label: { type: "string" },
+          detail: { type: "string" },
+          lane: {
+            type: "string",
+            enum: ["input", "plan", "build", "verify", "output"],
+          },
+          status: {
+            type: "string",
+            enum: ["idle", "active", "success", "error"],
+          },
+        },
+        required: ["id", "label"],
+      },
+    },
+    edges: {
+      type: "array",
+      minItems: 1,
+      maxItems: 18,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          from: { type: "string" },
+          to: { type: "string" },
+          label: { type: "string" },
+          status: {
+            type: "string",
+            enum: ["idle", "active", "success", "error"],
+          },
+        },
+        required: ["from", "to"],
+      },
+    },
+    beats: {
+      type: "array",
+      maxItems: 20,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          atFrame: { type: "integer", minimum: 0 },
+          nodeId: { type: "string" },
+          action: {
+            type: "string",
+            enum: ["reveal", "activate", "complete", "error"],
+          },
+        },
+        required: ["atFrame", "nodeId"],
+      },
+    },
+  },
+  required: ["generatorId", "renderStrategy", "durationInFrames", "title", "nodes", "edges"],
+} as const;
+
 /**
  * Single `emit_result` tool for the registered template union. The forced
  * single-tool strategy is inherited from the live MiniMax T1/T2 probe; the
@@ -85,7 +182,7 @@ export const EMIT_STORYBOARD_PLAN_TOOL: MinimaxTool = {
                 properties: {
                   strategy: {
                     type: "string",
-                    enum: ["template_macro", "primitive_scene_graph"],
+                    enum: ["template_macro", "primitive_scene_graph", "procedural_generator"],
                   },
                   confidence: { type: "number", minimum: 0, maximum: 1 },
                   reason: { type: "string" },
@@ -106,6 +203,7 @@ export const EMIT_STORYBOARD_PLAN_TOOL: MinimaxTool = {
                 required: ["text"],
               },
               visualBrief: { type: "string" },
+              proceduralGenerator: proceduralGeneratorJsonSchema,
               pacingHint: { type: "string" },
               expectedDurationSeconds: { type: "number", exclusiveMinimum: 0, maximum: 120 },
             },

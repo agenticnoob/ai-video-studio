@@ -1,7 +1,7 @@
 import { segmentNarrationFromAsset, type SegmentNarrationAsset } from "../narration-asset-schema";
 import { videoSegmentSchema, type VideoSegment } from "../project-schema";
 import type {
-  RenderStrategy,
+  CompiledRenderStrategy,
   StoryboardPlan,
   StoryboardSegmentPlan,
   StrategyDecision,
@@ -34,7 +34,7 @@ export type CompilePlannedSegmentResult = {
   narration: SegmentNarrationAsset;
   proceduralGenerator?: ProceduralGeneratorDiagnostics;
   repaired: boolean;
-  renderStrategy: RenderStrategy;
+  renderStrategy: CompiledRenderStrategy;
   segment: VideoSegment;
   strategyDecision: StrategyDecision;
 };
@@ -62,7 +62,7 @@ const getTargetDurationInFrames = (
   return Math.max(narration.durationInFrames, recommended.min);
 };
 
-const getCompileRenderStrategy = (templateId: TemplateId): RenderStrategy =>
+const getCompileRenderStrategy = (templateId: TemplateId): CompiledRenderStrategy =>
   templateId === SCENE_GRAPH_TEMPLATE_ID ? "primitive_scene_graph" : "template_macro";
 
 export const canFallbackToExistingSegment = (segment: StoryboardSegmentPlan): boolean =>

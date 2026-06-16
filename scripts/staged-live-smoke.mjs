@@ -166,6 +166,51 @@ const assertSceneGraphVisualIr = (body) => {
   }
 };
 
+const assertProceduralGeneratorVisualIr = (body) => {
+  const [segment] = body.project?.segments || [];
+  if (!segment) {
+    fail("Procedural generator smoke response did not include a segment");
+  }
+  if (segment.templateId !== "scene-graph") {
+    fail(`Expected scene-graph template for procedural generator, received ${segment.templateId}`);
+  }
+  if (segment.implementation?.renderStrategy !== "primitive_scene_graph") {
+    fail(
+      `Expected procedural generator to compile to primitive_scene_graph, received ${segment.implementation?.renderStrategy}`,
+    );
+  }
+
+  const [compiler] = body.diagnostics?.compiler || [];
+  if (!compiler) {
+    fail("Procedural generator smoke response did not include compiler diagnostics");
+  }
+  if (compiler.strategyDecision?.strategy !== "procedural_generator") {
+    fail(
+      `Expected procedural_generator strategy decision, received ${compiler.strategyDecision?.strategy}`,
+    );
+  }
+  if (compiler.renderStrategy !== "primitive_scene_graph") {
+    fail(
+      `Expected primitive_scene_graph compiled diagnostics, received ${compiler.renderStrategy}`,
+    );
+  }
+  if (compiler.proceduralGenerator?.renderStrategy !== "procedural_generator") {
+    fail(
+      `Expected procedural generator diagnostics, received ${JSON.stringify(
+        compiler.proceduralGenerator,
+      )}`,
+    );
+  }
+  if (compiler.proceduralGenerator?.compiledRenderStrategy !== "primitive_scene_graph") {
+    fail(
+      `Expected procedural generator compiledRenderStrategy primitive_scene_graph, received ${compiler.proceduralGenerator?.compiledRenderStrategy}`,
+    );
+  }
+  if (compiler.fallback) {
+    fail(`Procedural generator smoke unexpectedly fell back: ${JSON.stringify(compiler.fallback)}`);
+  }
+};
+
 const buildSceneGraphPlan = () => ({
   title: "Live SceneGraph Visual IR Smoke",
   brief:
@@ -238,6 +283,91 @@ const requestSceneGraphSmoke = async () => {
   throw lastError;
 };
 
+const buildProceduralGeneratorPlan = () => ({
+  title: "Live Procedural Generator Smoke",
+  brief:
+    "Compile one provider-facing procedural generator segment through the deterministic node graph flow path.",
+  language: "en",
+  globalStyle:
+    "Technical product explainer with a clear node graph flow, visible state changes, and caption-safe layout.",
+  segments: [
+    {
+      id: "segment-1",
+      order: 1,
+      title: "Agent workflow node graph",
+      purpose:
+        "Show an AI agent workflow as a deterministic node graph flow that compiles through SceneGraph.",
+      templateId: "scene-graph",
+      templateReason:
+        "The procedural generator is currently executed through the scene-graph renderer.",
+      strategyDecision: {
+        strategy: "procedural_generator",
+        confidence: 0.94,
+        reason: "The segment is a workflow with nodes, edges, and staged state transitions.",
+        fallbackStrategy: "template_macro",
+      },
+      proceduralGenerator: {
+        generatorId: "node-graph-flow",
+        renderStrategy: "procedural_generator",
+        durationInFrames: 180,
+        captionSafeZone: true,
+        fallbackStrategy: "primitive_scene_graph",
+        fallbackReason: "If generator compilation fails, keep the segment on SceneGraph Visual IR.",
+        title: "Agent workflow",
+        summary: "A bounded node graph showing prompt, plan, act, verify, and export stages.",
+        direction: "left-to-right",
+        nodes: [
+          { id: "prompt", label: "Prompt", detail: "intent", lane: "input", status: "success" },
+          { id: "plan", label: "Plan", detail: "tasks", lane: "plan", status: "success" },
+          { id: "act", label: "Act", detail: "tools", lane: "build", status: "active" },
+          { id: "verify", label: "Verify", detail: "checks", lane: "verify", status: "idle" },
+          { id: "export", label: "Export", detail: "video", lane: "output", status: "idle" },
+        ],
+        edges: [
+          { from: "prompt", to: "plan", status: "success" },
+          { from: "plan", to: "act", status: "success" },
+          { from: "act", to: "verify", status: "active" },
+          { from: "verify", to: "export", status: "idle" },
+        ],
+        beats: [
+          { atFrame: 0, nodeId: "prompt", action: "reveal" },
+          { atFrame: 36, nodeId: "plan", action: "complete" },
+          { atFrame: 78, nodeId: "act", action: "activate" },
+          { atFrame: 126, nodeId: "verify", action: "activate" },
+        ],
+      },
+      narration: {
+        text: "A bounded procedural generator describes the agent workflow as nodes and edges, then compiles into the same scene graph renderer.",
+        tone: "technical",
+      },
+      visualBrief:
+        "Use a node graph flow with prompt, plan, action, verification, and export states.",
+      pacingHint: "clear workflow reveal",
+      expectedDurationSeconds: 6,
+    },
+  ],
+});
+
+const requestProceduralGeneratorSmoke = async () => {
+  const body = await requestJson(`${NEXT_ORIGIN}/api/generate/staged`, {
+    method: "POST",
+    body: JSON.stringify({
+      mode: "plan",
+      provider: "f5-tts",
+      plan: buildProceduralGeneratorPlan(),
+    }),
+  });
+
+  const segments = body.project?.segments;
+  if (!Array.isArray(segments) || segments.length !== 1) {
+    fail("Procedural generator smoke response did not include exactly one segment");
+  }
+  assertDiagnostics(body.diagnostics, 1);
+  assertProceduralGeneratorVisualIr(body);
+  await assertSegmentNarration(segments[0]);
+  return { body, segments };
+};
+
 const run = async () => {
   if (skipIfMissingConfig()) {
     return;
@@ -270,6 +400,10 @@ const run = async () => {
   console.log("Requesting live scene-graph Visual IR staged project");
   const { body: sceneGraphBody, segments: sceneGraphSegments } = await requestSceneGraphSmoke();
 
+  console.log("Requesting live procedural generator staged project");
+  const { body: proceduralBody, segments: proceduralSegments } =
+    await requestProceduralGeneratorSmoke();
+
   const summary = {
     audioSources: segments.map((segment) => segment.narration.audio.src),
     captionCueCounts: segments.map((segment) => segment.narration.captions.cues.length),
@@ -281,6 +415,13 @@ const run = async () => {
       renderStrategy: sceneGraphSegments[0].implementation.renderStrategy,
       strategyDecision: sceneGraphBody.diagnostics.compiler[0]?.strategyDecision,
       templateId: sceneGraphSegments[0].templateId,
+    },
+    proceduralGenerator: {
+      audioSource: proceduralSegments[0].narration.audio.src,
+      compiler: proceduralBody.diagnostics.compiler,
+      compiledRenderStrategy: proceduralSegments[0].implementation.renderStrategy,
+      strategyDecision: proceduralBody.diagnostics.compiler[0]?.strategyDecision,
+      templateId: proceduralSegments[0].templateId,
     },
     segmentCount: segments.length,
     templateIds: segments.map((segment) => segment.templateId),

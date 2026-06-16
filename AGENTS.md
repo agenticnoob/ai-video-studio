@@ -137,8 +137,12 @@ The first staged-generation groundwork is also in place:
   deterministic compiler path with `primitive_scene_graph`, composition/layout
   presets, motion presets, and internal primitives for full-bleed title, node
   graph, line path, code panel, terminal panel, browser-window placeholder,
-  cursor, and lockup treatments. Provider-backed Visual IR generation/repair
-  is the next slice; unrestricted generated TSX remains out of scope.
+  cursor, and lockup treatments. Provider-backed `primitive_scene_graph`
+  generation/repair is implemented, and the provider-facing planner/tool
+  schema can now select bounded `procedural_generator` only for
+  `scene-graph` + `node-graph-flow` payloads. Those payloads compile
+  deterministically into actual `primitive_scene_graph`; unrestricted
+  generated TSX remains out of scope.
 - Scene graph provider-output hardening is intentionally bounded: selected
   template parsing can unwrap one `implementation` / `result` / `data` field
   and parse JSON-string payloads, while the SceneGraph schema normalizes only
@@ -218,8 +222,9 @@ Keep the next iteration focused on:
    schema-valid `implementation`
 9. preserve validation, bounded repair, and non-target segment preservation
 10. use deterministic smoke fixtures and a full provider-backed
-   `POST /api/generate/staged` live smoke to harden mixed registered-template
-   output before widening scope
+   `POST /api/generate/staged` live smoke to harden mixed registered-template,
+   direct `primitive_scene_graph`, and bounded `procedural_generator`
+   `node-graph-flow` output before widening scope
 11. do not widen into persistence/history, generic media-layer work, or
    multi-template-per-segment orchestration unless the task explicitly asks for it
 

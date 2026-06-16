@@ -114,14 +114,16 @@ scalable as visual strategies grow beyond fixed templates.
 
 Current executable strategy note:
 
-- `template_macro` and `primitive_scene_graph` are the only active planner and
-  compiler strategies.
+- `template_macro` and direct `primitive_scene_graph` remain the active
+  planner/compiler strategies for fixed macro and direct SceneGraph output.
 - `procedural_generator` has started as schema groundwork for bounded
   deterministic modules such as `node-graph-flow`; it now has a deterministic
   compile-to-SceneGraph path, staged diagnostics metadata, and guarded
-  plan-mode execution for supplied generator payloads. It is not
-  planner/provider selectable until provider-facing planner/tool support is
-  added.
+  execution for supplied generator payloads. The provider-facing storyboard
+  planner/tool schema can now select `procedural_generator` only for
+  `scene-graph` segments with a bounded `node-graph-flow` payload. The actual
+  compiled render path remains `primitive_scene_graph`, with `template_macro`
+  fallback on generator compilation failure.
 
 ## 2. Authoritative Terminology
 
@@ -148,9 +150,9 @@ Important modeling rules:
   that schema is bounded Visual IR.
 - `implementation` is selected-renderer data, not a universal project field.
 - Fixed registered templates are macro/preset paths. Broader expression should
-  grow through `primitive_scene_graph`, future procedural generators, future
-  asset composites, and only later a restricted generated-component escape
-  hatch.
+  grow through `primitive_scene_graph`, bounded procedural generators such as
+  the current `node-graph-flow`, future asset composites, and only later a
+  restricted generated-component escape hatch.
 - Narration text and generated audio should stay outside template-specific
   `implementation` fields and should not be hidden inside one template's
   private scene model. The target home is `VideoSegment.narration`.
@@ -211,7 +213,7 @@ type StoryboardSegmentPlan = {
   templateId: TemplateId;
   templateReason: string;
   strategyDecision: {
-    strategy: "template_macro" | "primitive_scene_graph";
+    strategy: "template_macro" | "primitive_scene_graph" | "procedural_generator";
     confidence: number;
     reason: string;
     fallbackStrategy: "template_macro" | "primitive_scene_graph";
@@ -221,6 +223,7 @@ type StoryboardSegmentPlan = {
     tone?: string;
   };
   visualBrief: string;
+  proceduralGenerator?: NodeGraphFlowGenerator;
   pacingHint?: string;
   expectedDurationSeconds?: number;
 };
@@ -232,8 +235,9 @@ Planner responsibilities:
 - decide each segment's communication purpose
 - choose the best `templateId` from the template manifest
 - choose and explain the current render strategy for each segment before
-  compilation; this phase supports only `template_macro` and
-  `primitive_scene_graph`
+  compilation; this phase supports `template_macro`, `primitive_scene_graph`,
+  and bounded `procedural_generator` only for `scene-graph` +
+  `node-graph-flow`
 - write a narration draft for each segment
 - describe the visual content each segment should roughly show
 - preserve global continuity across all segments

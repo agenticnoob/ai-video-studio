@@ -9,7 +9,7 @@ import {
 } from "./procedural-generator-schema";
 import { videoSegmentSchema, type VideoSegment } from "./project-schema";
 import type {
-  RenderStrategy,
+  CompiledRenderStrategy,
   StoryboardSegmentPlan,
   StrategyDecision,
 } from "./storyboard-plan-schema";
@@ -26,7 +26,7 @@ export type ProceduralGeneratorSegmentCompileResult = {
   narration: SegmentNarrationAsset;
   proceduralGenerator: ProceduralGeneratorDiagnostics;
   repaired: boolean;
-  renderStrategy: RenderStrategy;
+  renderStrategy: CompiledRenderStrategy;
   segment: VideoSegment;
   strategyDecision: StrategyDecision;
 };

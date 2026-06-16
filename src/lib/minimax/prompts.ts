@@ -105,13 +105,25 @@ The output must:
 ${buildPlannerTemplateManifestPrompt()}
 
 # Render strategy decision v1
-- Current supported strategies are "template_macro" and "primitive_scene_graph".
+- Current supported strategies are "template_macro", "primitive_scene_graph", and bounded "procedural_generator".
 - Use "primitive_scene_graph" only when templateId is "scene-graph".
+- Use "procedural_generator" only when templateId is "scene-graph" and the segment is best represented as a deterministic workflow, node graph, agent loop, system pipeline, or dependency flow.
 - Use "template_macro" for scripted, spotlight, stats-dashboard, and any other fixed registered macro template.
 - Set fallbackStrategy to "template_macro" for scene-graph segments so the compiler can fall back to a stable macro if Visual IR validation fails.
 - Set fallbackStrategy to "template_macro" for template_macro segments.
 - Keep confidence between 0 and 1, and explain the strategy choice in reason.
-- Do not emit procedural_generator, media_asset_composite, or generated_component in this phase.
+- Do not emit media_asset_composite or generated_component in this phase.
+
+# Procedural generator v1
+- If strategyDecision.strategy is "procedural_generator", include proceduralGenerator.
+- The only supported proceduralGenerator.generatorId is "node-graph-flow".
+- proceduralGenerator.renderStrategy must be "procedural_generator".
+- Use 2-12 nodes and 1-18 edges. Every edge.from, edge.to, and beat.nodeId must reference declared node ids.
+- Use lane values only from "input", "plan", "build", "verify", "output".
+- Use status values only from "idle", "active", "success", "error".
+- Use beat action values only from "reveal", "activate", "complete", "error".
+- Set proceduralGenerator.durationInFrames from the expected segment duration when possible; otherwise choose a reasonable duration for the narration.
+- Do not include proceduralGenerator on template_macro or primitive_scene_graph segments.
 
 # Planning boundaries
 - Do not generate implementation, scenes, callouts, theme, colors, or template props.
@@ -384,7 +396,13 @@ This is the planning stage only. Do not generate final template implementation f
 - Choose one registered primary template from: ${templateIds.map((id) => `"${id}"`).join(", ")}.
 - Keep the current template unless the revision request clearly asks for a different presentation style.
 - Include strategyDecision. Use "primitive_scene_graph" only with templateId "scene-graph";
-  otherwise use "template_macro". Use fallbackStrategy "template_macro" for this phase.
+  use "procedural_generator" only with templateId "scene-graph" when the segment
+  is best represented as a deterministic node-graph-flow payload; otherwise use
+  "template_macro". Use fallbackStrategy "template_macro" for this phase.
+- If strategyDecision.strategy is "procedural_generator", include a bounded
+  proceduralGenerator object with generatorId "node-graph-flow",
+  renderStrategy "procedural_generator", 2-12 nodes, 1-18 edges, and edge/beat
+  references that point only at declared node ids.
 - Write narration.text as the actual spoken script for this segment, not as an instruction.
 - Keep narration concise enough for a short product-demo segment.
 - Describe visualBrief for this segment without inventing media URLs or Remotion source code.
