@@ -246,8 +246,9 @@ Current landing:
 ### Phase 4: Procedural Generator v1
 
 Status: started with schema groundwork, deterministic compile-to-SceneGraph
-support, staged diagnostics wiring, guarded staged execution, and
-provider-facing planner/tool schema support for `node-graph-flow`.
+support, staged diagnostics wiring, guarded staged execution, provider-facing
+planner/tool schema support for `node-graph-flow`, and deterministic
+`line-path-flow` groundwork.
 
 Add deterministic modules for recurring complex visuals that are too specific
 for generic layers but too useful to be full templates.
@@ -264,15 +265,17 @@ Candidate generators:
 
 Current groundwork:
 
-- `src/lib/procedural-generator-schema.ts` defines the first bounded
-  `node-graph-flow` generator contract.
-- The contract carries `renderStrategy: "procedural_generator"`, generator id,
-  duration, caption-safe intent, nodes, edges, beats, and explicit fallback
-  strategy.
-- deterministic smoke fixtures validate the schema, diagnostics helper, and
-  compile-to-SceneGraph path.
+- `src/lib/procedural-generator-schema.ts` defines bounded
+  `node-graph-flow` and `line-path-flow` generator contracts.
+- The contracts carry `renderStrategy: "procedural_generator"`, generator id,
+  duration, caption-safe intent, generator-specific payload data, beats, and
+  explicit fallback strategy.
+- deterministic smoke fixtures validate the schemas, diagnostics helper, and
+  compile-to-SceneGraph paths.
 - `node-graph-flow` can now compile into bounded `primitive_scene_graph`
   `SceneGraph` data that reuses the existing scene-graph renderer.
+- `line-path-flow` can now compile into bounded `primitive_scene_graph`
+  `SceneGraph` data using the existing `line-path` primitive.
 - staged diagnostics can represent planned `procedural_generator` output, the
   actual compiled `primitive_scene_graph` path, and a bounded `template_macro`
   fallback for generator compilation failure.
@@ -295,8 +298,8 @@ Next hardening:
 
 - harden bounded repair/fallback around invalid provider generator payloads
   only when live output exposes repeated, well-scoped near-misses
-- add the next procedural generator family only after `node-graph-flow` remains
-  stable under deterministic fixtures and provider-backed live smoke
+- expose `line-path-flow` to provider-backed planning only after its prompt and
+  tool schema are bounded as tightly as `node-graph-flow`
 
 These modules should output bounded Visual IR or render through controlled
 runtime components, not arbitrary code.

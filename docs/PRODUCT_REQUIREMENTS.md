@@ -49,7 +49,9 @@ Product direction:
 - procedural generator work should be introduced as deterministic bounded
   module contracts first; the current `node-graph-flow` path is
   provider-planner selectable only through a bounded schema and still compiles
-  deterministically into actual `primitive_scene_graph`
+  deterministically into actual `primitive_scene_graph`; `line-path-flow`
+  currently exists as deterministic schema/compiler groundwork and is not yet
+  exposed to provider-backed planner selection
 - final generation should be staged: storyboard planning first, per-segment
   TTS second, selected visual implementation compilation third, project
   assembly last

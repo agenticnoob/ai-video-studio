@@ -117,13 +117,14 @@ Current executable strategy note:
 - `template_macro` and direct `primitive_scene_graph` remain the active
   planner/compiler strategies for fixed macro and direct SceneGraph output.
 - `procedural_generator` has started as schema groundwork for bounded
-  deterministic modules such as `node-graph-flow`; it now has a deterministic
-  compile-to-SceneGraph path, staged diagnostics metadata, and guarded
-  execution for supplied generator payloads. The provider-facing storyboard
-  planner/tool schema can now select `procedural_generator` only for
-  `scene-graph` segments with a bounded `node-graph-flow` payload. The actual
-  compiled render path remains `primitive_scene_graph`, with `template_macro`
-  fallback on generator compilation failure.
+  deterministic modules such as `node-graph-flow` and `line-path-flow`; these
+  paths compile deterministically to SceneGraph, expose staged diagnostics
+  metadata, and support guarded execution for supplied generator payloads. The
+  provider-facing storyboard planner/tool schema can currently select
+  `procedural_generator` only for `scene-graph` segments with a bounded
+  `node-graph-flow` payload. The actual compiled render path remains
+  `primitive_scene_graph`, with `template_macro` fallback on generator
+  compilation failure.
 
 ## 2. Authoritative Terminology
 
@@ -151,8 +152,8 @@ Important modeling rules:
 - `implementation` is selected-renderer data, not a universal project field.
 - Fixed registered templates are macro/preset paths. Broader expression should
   grow through `primitive_scene_graph`, bounded procedural generators such as
-  the current `node-graph-flow`, future asset composites, and only later a
-  restricted generated-component escape hatch.
+  the current `node-graph-flow` and `line-path-flow`, future asset composites,
+  and only later a restricted generated-component escape hatch.
 - Narration text and generated audio should stay outside template-specific
   `implementation` fields and should not be hidden inside one template's
   private scene model. The target home is `VideoSegment.narration`.

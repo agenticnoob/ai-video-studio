@@ -4,12 +4,16 @@ import { sceneGraphSchema, type SceneGraph } from "./scene-graph-schema";
 import { themeSchema } from "./video-schema";
 
 export const NODE_GRAPH_FLOW_GENERATOR_ID = "node-graph-flow" as const;
+export const LINE_PATH_FLOW_GENERATOR_ID = "line-path-flow" as const;
 
 const idSchema = z.string().trim().min(1).max(80);
 const shortTextSchema = z.string().trim().min(1).max(120);
 const mediumTextSchema = z.string().trim().min(1).max(240);
 
-export const proceduralGeneratorIdSchema = z.enum([NODE_GRAPH_FLOW_GENERATOR_ID]);
+export const proceduralGeneratorIdSchema = z.enum([
+  NODE_GRAPH_FLOW_GENERATOR_ID,
+  LINE_PATH_FLOW_GENERATOR_ID,
+]);
 export const proceduralGeneratorFallbackStrategySchema = z.enum([
   "primitive_scene_graph",
   "template_macro",
@@ -50,6 +54,23 @@ const nodeGraphFlowBeatSchema = z
     atFrame: z.number().int().nonnegative(),
     nodeId: idSchema,
     action: z.enum(["reveal", "activate", "complete", "error"]).default("activate"),
+  })
+  .strict();
+
+const linePathFlowPointSchema = z
+  .object({
+    id: idSchema,
+    label: shortTextSchema,
+    x: z.number().min(0).max(1),
+    y: z.number().min(0).max(1),
+  })
+  .strict();
+
+const linePathFlowBeatSchema = z
+  .object({
+    atFrame: z.number().int().nonnegative(),
+    pointId: idSchema,
+    action: z.enum(["reveal", "advance", "highlight"]).default("advance"),
   })
   .strict();
 
@@ -114,12 +135,65 @@ export const nodeGraphFlowGeneratorSchema = proceduralGeneratorBaseSchema
     });
   });
 
+export const linePathFlowGeneratorSchema = proceduralGeneratorBaseSchema
+  .extend({
+    generatorId: z.literal(LINE_PATH_FLOW_GENERATOR_ID),
+    title: shortTextSchema,
+    summary: mediumTextSchema.optional(),
+    theme: themeSchema.default({
+      background: "#08111f",
+      panel: "rgba(248,250,252,0.10)",
+      primary: "#7dd3fc",
+      secondary: "#f59e0b",
+      text: "#f8fafc",
+      muted: "#cbd5e1",
+    }),
+    tone: z.enum(["primary", "secondary", "success", "warning"]).default("primary"),
+    showNodes: z.boolean().default(true),
+    points: z.array(linePathFlowPointSchema).min(2).max(8),
+    beats: z.array(linePathFlowBeatSchema).max(16).default([]),
+  })
+  .strict()
+  .superRefine((generator, context) => {
+    const pointIds = new Set<string>();
+
+    generator.points.forEach((point, index) => {
+      if (pointIds.has(point.id)) {
+        context.addIssue({
+          code: "custom",
+          message: `Point id "${point.id}" must be unique.`,
+          path: ["points", index, "id"],
+        });
+      }
+      pointIds.add(point.id);
+    });
+
+    generator.beats.forEach((beat, index) => {
+      if (!pointIds.has(beat.pointId)) {
+        context.addIssue({
+          code: "custom",
+          message: `Beat pointId "${beat.pointId}" must reference a declared point id.`,
+          path: ["beats", index, "pointId"],
+        });
+      }
+      if (beat.atFrame >= generator.durationInFrames) {
+        context.addIssue({
+          code: "custom",
+          message: `Beat at frame ${beat.atFrame} is outside generator duration.`,
+          path: ["beats", index, "atFrame"],
+        });
+      }
+    });
+  });
+
 export const proceduralGeneratorSchema = z.discriminatedUnion("generatorId", [
   nodeGraphFlowGeneratorSchema,
+  linePathFlowGeneratorSchema,
 ]);
 
 export type ProceduralGenerator = z.infer<typeof proceduralGeneratorSchema>;
 export type NodeGraphFlowGenerator = z.infer<typeof nodeGraphFlowGeneratorSchema>;
+export type LinePathFlowGenerator = z.infer<typeof linePathFlowGeneratorSchema>;
 export type ProceduralGeneratorCompiledRenderStrategy = "primitive_scene_graph" | "template_macro";
 export type ProceduralGeneratorDiagnostics = {
   compiledRenderStrategy: ProceduralGeneratorCompiledRenderStrategy;
@@ -182,6 +256,18 @@ const generatorBeatActionToSceneBeatAction = (
   }
   if (action === "error") {
     return "emphasize-text";
+  }
+  return "reveal-layer";
+};
+
+const linePathBeatActionToSceneBeatAction = (
+  action: LinePathFlowGenerator["beats"][number]["action"],
+): "reveal-layer" | "emphasize-text" | "advance-step" => {
+  if (action === "highlight") {
+    return "emphasize-text";
+  }
+  if (action === "advance") {
+    return "advance-step";
   }
   return "reveal-layer";
 };
@@ -283,6 +369,92 @@ export const compileNodeGraphFlowToSceneGraph = (generator: NodeGraphFlowGenerat
       atFrame: beat.atFrame,
       action: generatorBeatActionToSceneBeatAction(beat.action),
       targetLayerId: beat.action === "reveal" ? "generator-graph" : "generator-status",
+    })),
+  });
+};
+
+export const compileLinePathFlowToSceneGraph = (generator: LinePathFlowGenerator): SceneGraph => {
+  const durationInFrames = generator.durationInFrames;
+
+  return sceneGraphSchema.parse({
+    meta: {
+      title: generator.title,
+      fps: 30,
+      width: 1280,
+      height: 720,
+    },
+    theme: generator.theme,
+    sceneType: "process",
+    renderStrategy: "primitive_scene_graph",
+    composition: "path",
+    layout: "path-horizontal",
+    durationInFrames,
+    camera: {
+      movement: "drift",
+      intensity: "subtle",
+    },
+    transitionIn: {
+      type: "slide-up",
+      durationInFrames: 12,
+    },
+    transitionOut: {
+      type: "soft-wipe",
+      durationInFrames: 12,
+    },
+    captionSafeZone: generator.captionSafeZone,
+    layers: [
+      {
+        id: "line-path-bg",
+        type: "background",
+        treatment: "noise-grid",
+      },
+      {
+        id: "line-path-title",
+        type: "text",
+        text: generator.title,
+        role: "eyebrow",
+        layout: "left",
+        startFrame: 0,
+        durationInFrames: Math.min(72, durationInFrames),
+      },
+      {
+        id: "line-path-flow",
+        type: "line-path",
+        points: generator.points.map((point) => ({
+          x: point.x,
+          y: point.y,
+          label: point.label,
+        })),
+        tone: generator.tone,
+        showNodes: generator.showNodes,
+        motionPreset: "draw-path",
+        startFrame: 18,
+        durationInFrames: Math.max(30, durationInFrames - 40),
+      },
+      ...(generator.summary
+        ? [
+            {
+              id: "line-path-summary",
+              type: "callout" as const,
+              text: generator.summary,
+              anchor: "center" as const,
+              motionPreset: "fade-in" as const,
+              startFrame: Math.max(36, Math.floor(durationInFrames * 0.55)),
+              durationInFrames: Math.max(30, Math.floor(durationInFrames * 0.34)),
+            },
+          ]
+        : []),
+      {
+        id: "line-path-caption-zone",
+        type: "caption",
+        source: "segment-narration",
+      },
+    ],
+    beats: generator.beats.slice(0, 16).map((beat, index) => ({
+      id: `line-path-beat-${index + 1}`,
+      atFrame: beat.atFrame,
+      action: linePathBeatActionToSceneBeatAction(beat.action),
+      targetLayerId: "line-path-flow",
     })),
   });
 };

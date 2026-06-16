@@ -53,11 +53,13 @@ Current implementation status:
   `StoryboardSegmentPlan`: current executable strategies are bounded to
   `template_macro` and `primitive_scene_graph`, with staged diagnostics showing
   both the planned decision and the actual post-fallback render path
-- the first procedural-generator path exists as a `node-graph-flow` schema,
+- procedural-generator groundwork includes `node-graph-flow` schema,
   diagnostics helper, deterministic compile-to-SceneGraph path, guarded
   execution path, and provider-facing planner/tool schema surface; provider
   planning can select it only for `scene-graph` segments, and actual rendering
-  still compiles through `primitive_scene_graph`
+  still compiles through `primitive_scene_graph`. `line-path-flow` is also
+  available as deterministic schema/compiler groundwork for supplied plan-mode
+  payloads
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration
 - staged selected-segment regeneration reruns the target segment's planning,
@@ -119,12 +121,12 @@ Current modeling direction:
   aligned captions per segment second, then compile the segment's selected
   visual implementation from the real audio duration and segment visual brief
 - each planned segment should carry an explicit `strategyDecision` before
-  compilation; `procedural_generator` is currently limited to bounded
-  `scene-graph` + `node-graph-flow` payloads that compile through the existing
-  deterministic SceneGraph path
+  compilation; provider-backed `procedural_generator` selection is currently
+  limited to bounded `scene-graph` + `node-graph-flow` payloads that compile
+  through the existing deterministic SceneGraph path
 - `procedural_generator` work should start from bounded deterministic module
-  contracts such as `node-graph-flow`, then add compiler/renderer execution
-  before exposing the strategy to planner output
+  contracts such as `node-graph-flow` and `line-path-flow`, then add
+  compiler/renderer execution before exposing each generator to planner output
 - `implementation` is template-specific; current registered templates are:
   - `scripted`: `VideoSpec` with internal `scenes`
   - `spotlight`: `SpotlightSpec` with `headline`, `subheadline`,
@@ -176,10 +178,11 @@ Current modeling direction:
   `media_asset_composite`, future restricted `generated_component`,
   review/repair, and eventual micro-template memory. The current bounded
   landing starts Procedural Generator v1 with `node-graph-flow` schema
-  groundwork, deterministic compile-to-SceneGraph support, and staged
-  diagnostics metadata. Provider-facing storyboard planning can now supply a
-  bounded generator payload for `scene-graph` segments, while execution remains
-  deterministic and falls back to `template_macro` on generator compile failure.
+  groundwork, deterministic compile-to-SceneGraph support, staged diagnostics
+  metadata, and provider-facing planner support. `line-path-flow` is now
+  available as deterministic schema/compiler groundwork for supplied
+  plan-mode payloads, while execution remains deterministic and falls back to
+  `template_macro` on generator compile failure.
 - `docs/FINAL_PRODUCT_GOAL.md` now documents the stable generation-pipeline
   contracts that support the Visual IR compiler roadmap; it is not the primary
   roadmap source.

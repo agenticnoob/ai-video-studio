@@ -1,6 +1,32 @@
 # Iteration Status
 
-Last updated: Procedural generator live-smoke hardening
+Last updated: Line path procedural generator groundwork
+
+## Latest continuation — Line path procedural generator groundwork
+
+- Added the second bounded procedural generator family,
+  `line-path-flow`, as deterministic groundwork after `node-graph-flow` passed
+  fixture and provider-backed live smoke coverage.
+- Extended `src/lib/procedural-generator-schema.ts` with a strict
+  `line-path-flow` contract: generator id, duration, caption-safe metadata,
+  title/summary, tone, node visibility, normalized path points, beats, and
+  explicit fallback strategy.
+- Added deterministic compile-to-SceneGraph support that maps
+  `line-path-flow` payloads into actual `primitive_scene_graph` output using
+  the existing `line-path` layer and caption-safe SceneGraph renderer path.
+- Wired `compileProceduralGeneratorSegment()` so supplied plan-mode
+  `line-path-flow` payloads use the same staged compile and diagnostics path
+  as `node-graph-flow`.
+- Added deterministic smoke fixture coverage for direct schema validation,
+  direct SceneGraph compilation, staged segment compilation, and staged
+  diagnostics.
+- Kept provider-facing planner/tool schema unchanged; provider-backed
+  automatic procedural selection remains limited to `node-graph-flow` until
+  `line-path-flow` has its own planner prompt/schema hardening.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
 
 ## Latest continuation — Procedural generator live-smoke hardening
 

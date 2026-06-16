@@ -5,7 +5,9 @@ import { buildStoryboardPlanPrompt } from "./minimax/prompts";
 import { EMIT_STORYBOARD_PLAN_TOOL } from "./minimax/tool-schema";
 import {
   buildProceduralGeneratorDiagnostics,
+  compileLinePathFlowToSceneGraph,
   compileNodeGraphFlowToSceneGraph,
+  linePathFlowGeneratorSchema,
   nodeGraphFlowGeneratorSchema,
 } from "./procedural-generator-schema";
 import { compileProceduralGeneratorSegment } from "./procedural-generator-compiler";
@@ -612,6 +614,116 @@ const assertProceduralGeneratorFixture = (): void => {
 };
 
 assertProceduralGeneratorFixture();
+
+export const linePathFlowProceduralGeneratorFixture = linePathFlowGeneratorSchema.parse({
+  generatorId: "line-path-flow",
+  renderStrategy: "procedural_generator",
+  durationInFrames: 150,
+  captionSafeZone: true,
+  fallbackStrategy: "primitive_scene_graph",
+  fallbackReason: "If the procedural compiler fails, fall back to SceneGraph Visual IR.",
+  title: "Narration timing path",
+  summary: "A deterministic line path showing how narration timing drives visual compilation.",
+  tone: "primary",
+  showNodes: true,
+  points: [
+    { id: "brief", label: "Brief", x: 0.12, y: 0.62 },
+    { id: "plan", label: "Plan", x: 0.3, y: 0.42 },
+    { id: "voice", label: "Voice", x: 0.5, y: 0.5 },
+    { id: "visual", label: "Visual", x: 0.7, y: 0.34 },
+    { id: "export", label: "Export", x: 0.88, y: 0.58 },
+  ],
+  beats: [
+    { atFrame: 0, pointId: "brief", action: "reveal" },
+    { atFrame: 30, pointId: "plan", action: "advance" },
+    { atFrame: 66, pointId: "voice", action: "highlight" },
+    { atFrame: 108, pointId: "visual", action: "advance" },
+  ],
+});
+
+const linePathFlowPlannedSegment: StoryboardSegmentPlan = {
+  id: "procedural-line-path-flow",
+  order: 1,
+  title: "Procedural line path",
+  purpose: "Exercise a deterministic line path generator through the staged segment result.",
+  templateId: SCENE_GRAPH_TEMPLATE_ID,
+  templateReason: "The line-path generator compiles through the scene-graph renderer.",
+  strategyDecision: proceduralGeneratorStrategyDecision,
+  proceduralGenerator: linePathFlowProceduralGeneratorFixture,
+  narration: {
+    text: "A bounded line path generator can express timing and progression without a new template.",
+    tone: "technical",
+  },
+  visualBrief: "A line path flow compiled from a bounded procedural generator payload.",
+  expectedDurationSeconds: 5,
+};
+
+const assertLinePathFlowProceduralGeneratorFixture = (): void => {
+  const diagnostics = buildProceduralGeneratorDiagnostics(linePathFlowProceduralGeneratorFixture);
+  const compiled = compileLinePathFlowToSceneGraph(linePathFlowProceduralGeneratorFixture);
+  const narration = createNarrationAsset({
+    durationInFrames: linePathFlowProceduralGeneratorFixture.durationInFrames,
+    segmentId: linePathFlowPlannedSegment.id,
+    text: linePathFlowPlannedSegment.narration.text,
+  });
+  const compiledResult = compileProceduralGeneratorSegment({
+    generator: linePathFlowProceduralGeneratorFixture,
+    narration,
+    segment: linePathFlowPlannedSegment,
+  });
+  const plan = storyboardPlanSchema.parse({
+    title: "Line Path Procedural Generator Smoke",
+    brief: "Compile one bounded line path generator into the existing scene graph path.",
+    language: "en",
+    segments: [linePathFlowPlannedSegment],
+  });
+  const project = videoProjectSchema.parse({
+    meta: {
+      title: "Line Path Procedural Generator Smoke",
+      fps: 30,
+      width: 1280,
+      height: 720,
+    },
+    brief: plan.brief,
+    segments: [compiledResult.segment],
+  });
+  const stagedDiagnostics = buildStagedProjectDiagnostics({
+    plan,
+    project,
+    segments: [compiledResult],
+  });
+
+  if (
+    diagnostics.generatorId !== "line-path-flow" ||
+    diagnostics.compiledRenderStrategy !== "primitive_scene_graph"
+  ) {
+    throw new Error("Line path flow diagnostics expected primitive_scene_graph compile path.");
+  }
+  if (
+    compiled.renderStrategy !== "primitive_scene_graph" ||
+    compiled.composition !== "path" ||
+    !compiled.layers.some((layer) => layer.type === "line-path")
+  ) {
+    throw new Error("Line path flow fixture expected compiled line-path SceneGraph.");
+  }
+  if (
+    compiledResult.renderStrategy !== "primitive_scene_graph" ||
+    compiledResult.segment.templateId !== SCENE_GRAPH_TEMPLATE_ID
+  ) {
+    throw new Error("Line path flow staged result expected scene-graph compile output.");
+  }
+  if (
+    stagedDiagnostics.compiler[0]?.proceduralGenerator?.generatorId !== "line-path-flow" ||
+    stagedDiagnostics.compiler[0]?.proceduralGenerator?.compiledRenderStrategy !==
+      "primitive_scene_graph" ||
+    stagedDiagnostics.compiler[0]?.strategyDecision.strategy !== "procedural_generator" ||
+    stagedDiagnostics.compiler[0]?.renderStrategy !== "primitive_scene_graph"
+  ) {
+    throw new Error("Line path flow diagnostics expected planned generator and compiled path.");
+  }
+};
+
+assertLinePathFlowProceduralGeneratorFixture();
 
 export const sceneGraphShotLanguagePlan = {
   visualStyle: "Cinematic product explainer with deep blue surfaces and amber continuity marks.",

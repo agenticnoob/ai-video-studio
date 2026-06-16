@@ -2,7 +2,9 @@ import { segmentNarrationFromAsset, type SegmentNarrationAsset } from "./narrati
 import { buildFallbackSpotlightContent } from "./fallback-spotlight-content";
 import {
   buildProceduralGeneratorDiagnostics,
+  compileLinePathFlowToSceneGraph,
   compileNodeGraphFlowToSceneGraph,
+  type LinePathFlowGenerator,
   type NodeGraphFlowGenerator,
   type ProceduralGenerator,
   type ProceduralGeneratorDiagnostics,
@@ -41,8 +43,14 @@ const compileProceduralGeneratorImplementation = (generator: ProceduralGenerator
   if (generator.generatorId === "node-graph-flow") {
     return compileNodeGraphFlowToSceneGraph(generator as NodeGraphFlowGenerator);
   }
+  if (generator.generatorId === "line-path-flow") {
+    return compileLinePathFlowToSceneGraph(generator as LinePathFlowGenerator);
+  }
 
-  throw new Error(`Unsupported procedural generator "${generator.generatorId}".`);
+  const unsupportedGenerator = generator as { generatorId?: string };
+  throw new Error(
+    `Unsupported procedural generator "${unsupportedGenerator.generatorId ?? "unknown"}".`,
+  );
 };
 
 const createTemplateMacroFallbackSegment = ({
