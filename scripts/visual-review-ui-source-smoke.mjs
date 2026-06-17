@@ -41,18 +41,23 @@ const main = async () => {
   assertIncludes(panelSource, "still.analysis.blankFrameScore", "Visual review panel");
   assertIncludes(panelSource, "still.analysis.contrastScore", "Visual review panel");
   assertIncludes(panelSource, "still.analysis.edgeContentRatio", "Visual review panel");
+  assertIncludes(panelSource, "still.analysis.fineDetailRatio", "Visual review panel");
   assertIncludes(panelSource, "near_blank_frame", "Visual review panel");
   assertIncludes(panelSource, "low_contrast_frame", "Visual review panel");
   assertIncludes(panelSource, "unsafe_margin_frame", "Visual review panel");
+  assertIncludes(panelSource, "fine_detail_frame", "Visual review panel");
   assertIncludes(panelSource, 'from "next/image"', "Visual review panel");
   assertIncludes(panelSource, "Image", "Visual review panel");
   assertIncludes(schemaSource, "visualReviewStillAnalysisSchema", "Visual review schema");
   assertIncludes(schemaSource, "contrastScore", "Visual review schema");
   assertIncludes(schemaSource, "edgeContentRatio", "Visual review schema");
+  assertIncludes(schemaSource, "fineDetailRatio", "Visual review schema");
   assertIncludes(stillAnalysisSource, "LOW_CONTRAST_LUMA_RANGE", "Visual review still analysis");
   assertIncludes(stillAnalysisSource, "UNSAFE_MARGIN_EDGE_RATIO", "Visual review still analysis");
+  assertIncludes(stillAnalysisSource, "FINE_DETAIL_RATIO", "Visual review still analysis");
   assertIncludes(stillAnalysisSource, "low_contrast_frame", "Visual review still analysis");
   assertIncludes(stillAnalysisSource, "unsafe_margin_frame", "Visual review still analysis");
+  assertIncludes(stillAnalysisSource, "fine_detail_frame", "Visual review still analysis");
   assertIncludes(
     stillAnalysisSource,
     "Representative still appears low contrast",
@@ -61,6 +66,11 @@ const main = async () => {
   assertIncludes(
     stillAnalysisSource,
     "Representative still has content too close to the frame edge",
+    "Visual review still analysis",
+  );
+  assertIncludes(
+    stillAnalysisSource,
+    "Representative still may contain overly fine detail",
     "Visual review still analysis",
   );
   assertIncludes(renderProjectSource, "analyzeVisualReviewStill", "Visual review still renderer");

@@ -36,12 +36,15 @@ const EDGE_SAFE_AREA_RATIO = 0.07;
 const UNSAFE_MARGIN_EDGE_RATIO = 0.18;
 const EDGE_CONTENT_LUMA_DELTA = 18;
 const EDGE_CONTENT_ALPHA_DELTA = 24;
+const FINE_DETAIL_LUMA_DELTA = 42;
+const FINE_DETAIL_RATIO = 0.34;
 
 const createUnsupportedAnalysis = (): VisualReviewStillAnalysis => ({
   blankFrameScore: 0,
   contrastScore: 0,
   dominantColorRatio: 0,
   edgeContentRatio: 0,
+  fineDetailRatio: 0,
   lumaRange: 0,
   pixelCount: 0,
   status: "unsupported",
@@ -261,8 +264,11 @@ const analyzePngBuffer = (buffer: Buffer): VisualReviewStillAnalysis => {
   const inflated = new Uint8Array(inflateSync(parsed.imageData));
   let offset = 0;
   let previous: ByteArray = new Uint8Array(scanlineLength);
+  let previousLumaRow: number[] | undefined;
   let pixelCount = 0;
   let edgePixelCount = 0;
+  let detailComparisonCount = 0;
+  let fineDetailCount = 0;
   const edgeSamples: Array<{ a: number; luma: number }> = [];
   let minLuma = 255;
   let maxLuma = 0;
@@ -283,6 +289,7 @@ const analyzePngBuffer = (buffer: Buffer): VisualReviewStillAnalysis => {
       previous,
       scanline: inflated.subarray(scanlineStart, scanlineEnd),
     });
+    const lumaRow: number[] = [];
 
     for (let column = 0; column < parsed.metadata.width; column += 1) {
       const pixel = samplePixel({
@@ -293,6 +300,23 @@ const analyzePngBuffer = (buffer: Buffer): VisualReviewStillAnalysis => {
       });
       const luma = 0.2126 * pixel.r + 0.7152 * pixel.g + 0.0722 * pixel.b;
       const colorKey = `${pixel.r},${pixel.g},${pixel.b},${pixel.a}`;
+      const leftLuma = lumaRow[column - 1];
+      const upLuma = previousLumaRow?.[column];
+
+      if (leftLuma !== undefined) {
+        detailComparisonCount += 1;
+        if (Math.abs(luma - leftLuma) >= FINE_DETAIL_LUMA_DELTA) {
+          fineDetailCount += 1;
+        }
+      }
+      if (upLuma !== undefined) {
+        detailComparisonCount += 1;
+        if (Math.abs(luma - upLuma) >= FINE_DETAIL_LUMA_DELTA) {
+          fineDetailCount += 1;
+        }
+      }
+
+      lumaRow.push(luma);
       colorCounts.set(colorKey, (colorCounts.get(colorKey) ?? 0) + 1);
       minLuma = Math.min(minLuma, luma);
       maxLuma = Math.max(maxLuma, luma);
@@ -311,6 +335,7 @@ const analyzePngBuffer = (buffer: Buffer): VisualReviewStillAnalysis => {
     }
 
     previous = scanline;
+    previousLumaRow = lumaRow;
     offset = scanlineEnd;
   }
 
@@ -336,19 +361,30 @@ const analyzePngBuffer = (buffer: Buffer): VisualReviewStillAnalysis => {
   const edgeContentRatio = edgePixelCount > 0 ? edgeContentCount / edgePixelCount : 0;
   const isUnsafeMargin =
     !isNearBlank && !isLowContrast && edgeContentRatio >= UNSAFE_MARGIN_EDGE_RATIO;
+  const fineDetailRatio =
+    detailComparisonCount > 0 ? fineDetailCount / detailComparisonCount : 0;
+  const isFineDetail =
+    !isNearBlank &&
+    !isLowContrast &&
+    !isUnsafeMargin &&
+    contrastScore >= 0.24 &&
+    fineDetailRatio >= FINE_DETAIL_RATIO;
   const status = isNearBlank
     ? "near_blank_frame"
     : isLowContrast
       ? "low_contrast_frame"
       : isUnsafeMargin
         ? "unsafe_margin_frame"
-        : "analyzed";
+        : isFineDetail
+          ? "fine_detail_frame"
+          : "analyzed";
 
   return {
     blankFrameScore: Number(blankFrameScore.toFixed(4)),
     contrastScore: Number(contrastScore.toFixed(4)),
     dominantColorRatio: Number(dominantColorRatio.toFixed(4)),
     edgeContentRatio: Number(edgeContentRatio.toFixed(4)),
+    fineDetailRatio: Number(fineDetailRatio.toFixed(4)),
     lumaRange: Number(lumaRange.toFixed(2)),
     pixelCount,
     status,
@@ -395,6 +431,19 @@ export const buildVisualReviewStillAnalysisFindings = ({
         severity: "warning",
         suggestedRepair:
           "Inspect this frame and regenerate the target segment if foreground content is hard to read.",
+        targetId: segmentId,
+      },
+    ];
+  }
+
+  if (analysis.status === "fine_detail_frame") {
+    return [
+      {
+        frame,
+        message: `Representative still may contain overly fine detail: fine detail ratio ${analysis.fineDetailRatio}.`,
+        severity: "warning",
+        suggestedRepair:
+          "Inspect this frame and regenerate the target segment if text or dense details are too small to read.",
         targetId: segmentId,
       },
     ];

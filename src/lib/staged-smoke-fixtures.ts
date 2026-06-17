@@ -375,6 +375,7 @@ const assertVisualReviewStillExtractionSchemaFixture = (): void => {
           contrastScore: 0.71,
           dominantColorRatio: 0.2,
           edgeContentRatio: 0.08,
+          fineDetailRatio: 0.11,
           lumaRange: 180,
           pixelCount: 921600,
           status: "analyzed",
@@ -417,6 +418,26 @@ const assertVisualReviewStillExtractionSchemaFixture = (): void => {
 
   if (unsafeMarginAnalysis.stills[0]?.analysis.status !== "unsafe_margin_frame") {
     throw new Error("Visual review still analysis fixture should accept unsafe margin status.");
+  }
+
+  const fineDetailAnalysis = visualReviewStillExtractionSchema.parse({
+    status: "rendered",
+    stillCount: 1,
+    stills: [
+      {
+        ...extraction.stills[0],
+        analysis: {
+          ...extraction.stills[0].analysis,
+          fineDetailRatio: 0.38,
+          status: "fine_detail_frame",
+        },
+        stillId: "asset-plan-segment-segment-end-frame-000089",
+      },
+    ],
+  });
+
+  if (fineDetailAnalysis.stills[0]?.analysis.status !== "fine_detail_frame") {
+    throw new Error("Visual review still analysis fixture should accept fine detail status.");
   }
 };
 

@@ -436,9 +436,9 @@ Current landing:
   calls the still extraction route, shows backend progress, summarizes static
   findings, and displays the generated representative PNG stills.
 - each rendered still now carries bounded server-side pixel analysis metadata
-  for near-blank, low-contrast, and unsafe-margin frame detection, and those
-  still-analysis warnings are surfaced as explicit review findings instead of
-  triggering automatic repair.
+  for near-blank, low-contrast, unsafe-margin, and fine-detail density frame
+  detection, and those still-analysis warnings are surfaced as explicit review
+  findings instead of triggering automatic repair.
 - no browser/canvas review, automatic repair, or provider prompt repair loop
   is active yet.
 
@@ -492,11 +492,12 @@ is worth keeping.
 ```txt
 Implement Review / Repair Loop v1 incrementally:
 keep deterministic `VisualReviewFinding` diagnostics, representative
-review-frame planning, and explicit still image extraction stable, then add
-bounded browser/canvas review and target-segment repair in later slices. The
-next slices should preserve VideoProject preview/export compatibility, avoid
-browser automation as the default validation path, and keep repair behavior
-explicit rather than silently rewriting segments.
+review-frame planning, explicit still image extraction, and bounded
+still-analysis findings stable, then add browser/canvas review and
+target-segment repair in later slices. The next slices should preserve
+VideoProject preview/export compatibility, avoid browser automation as the
+default validation path, and keep repair behavior explicit rather than
+silently rewriting segments.
 ```
 
 Do not widen Phase 6 into a full visual QA system. First keep proving that

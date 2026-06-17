@@ -160,7 +160,8 @@ The first staged-generation groundwork is also in place:
   `ProjectVideo` into PNG artifacts and returning strict still metadata. The
   Studio export workspace exposes this as a manual visual-review action with
   backend progress, static findings, generated still thumbnails, and bounded
-  per-still pixel analysis for near-blank and low-contrast frame detection;
+  per-still pixel analysis for near-blank, low-contrast, unsafe-margin, and
+  fine-detail density frame detection;
   browser/canvas review and automatic segment repair are not active yet.
   Unrestricted generated TSX and executable `media_asset_composite` rendering
   remain out of scope.
