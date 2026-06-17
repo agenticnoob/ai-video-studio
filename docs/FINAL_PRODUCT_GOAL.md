@@ -124,8 +124,8 @@ Current executable strategy note:
   schema can currently select `procedural_generator` only for `scene-graph`
   segments with bounded `node-graph-flow`, `line-path-flow`, or
   `terminal-session` payloads. The actual compiled render path remains
-  `primitive_scene_graph`, with `template_macro` fallback on generator
-  compilation failure.
+  `primitive_scene_graph`, with generator duration aligned to real narration
+  duration and `template_macro` fallback on generator compilation failure.
 
 ## 2. Authoritative Terminology
 

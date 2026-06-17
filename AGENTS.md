@@ -145,10 +145,11 @@ The first staged-generation groundwork is also in place:
   cursor, and lockup treatments. Provider-backed `primitive_scene_graph`
   generation/repair is implemented, and the provider-facing planner/tool
   schema can now select bounded `procedural_generator` only for
-  `scene-graph` + `node-graph-flow` or `line-path-flow` payloads. Those
-  payloads compile deterministically into actual `primitive_scene_graph`.
-  `terminal-session` is deterministic schema/compiler groundwork for supplied
-  plan-mode payloads only; unrestricted generated TSX remains out of scope.
+  `scene-graph` + `node-graph-flow`, `line-path-flow`, or `terminal-session`
+  payloads. Those payloads compile deterministically into actual
+  `primitive_scene_graph`, with generator duration aligned to real narration
+  duration so the project timeline does not advance before segment audio
+  finishes. Unrestricted generated TSX remains out of scope.
 - Scene graph provider-output hardening is intentionally bounded: selected
   template parsing can unwrap one `implementation` / `result` / `data` field
   and parse JSON-string payloads, while the SceneGraph schema normalizes only

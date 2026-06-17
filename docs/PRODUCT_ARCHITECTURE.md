@@ -66,7 +66,10 @@ planned generator output, compiled render strategy, and bounded macro
 fallback. The MiniMax storyboard planner/tool schema can now emit bounded
 `node-graph-flow`, `line-path-flow`, and `terminal-session` payloads on
 `scene-graph` segments, and live staged smoke has validated provider-selected
-`procedural_generator` compiling to actual `primitive_scene_graph`.
+`procedural_generator` compiling to actual `primitive_scene_graph`. The
+procedural compiler aligns generator payload duration to real narration
+duration before segment assembly, so the project timeline does not advance to
+the next segment before generated audio finishes.
 
 Current implementation snapshot:
 

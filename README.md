@@ -58,7 +58,8 @@ Current implementation status:
   deterministic compile-to-SceneGraph paths, and guarded execution paths.
   Provider planning can select bounded `node-graph-flow`, `line-path-flow`,
   and `terminal-session` payloads for `scene-graph` segments. All actual
-  rendering still compiles through `primitive_scene_graph`
+  rendering still compiles through `primitive_scene_graph`, and generator
+  segment duration is aligned to real narration duration before assembly
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration
 - staged selected-segment regeneration reruns the target segment's planning,

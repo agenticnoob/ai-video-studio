@@ -58,6 +58,22 @@ const compileProceduralGeneratorImplementation = (generator: ProceduralGenerator
   );
 };
 
+const alignGeneratorDurationToNarration = (
+  generator: ProceduralGenerator,
+  narration: SegmentNarrationAsset,
+): ProceduralGenerator => {
+  const durationInFrames = Math.max(generator.durationInFrames, narration.durationInFrames);
+
+  if (durationInFrames === generator.durationInFrames) {
+    return generator;
+  }
+
+  return {
+    ...generator,
+    durationInFrames,
+  } as ProceduralGenerator;
+};
+
 const createTemplateMacroFallbackSegment = ({
   narration,
   segment,
@@ -105,11 +121,13 @@ export const compileProceduralGeneratorSegment = ({
   narration,
   segment,
 }: CompileProceduralGeneratorSegmentRequest): ProceduralGeneratorSegmentCompileResult => {
+  const durationAlignedGenerator = alignGeneratorDurationToNarration(generator, narration);
+
   try {
-    const implementation = compileProceduralGeneratorImplementation(generator);
+    const implementation = compileProceduralGeneratorImplementation(durationAlignedGenerator);
     const videoSegment = videoSegmentSchema.parse({
       id: segment.id,
-      title: segment.title ?? generator.generatorId,
+      title: segment.title ?? durationAlignedGenerator.generatorId,
       intent: segment.purpose,
       narration: segmentNarrationFromAsset(narration),
       templateId: SCENE_GRAPH_TEMPLATE_ID,
@@ -119,7 +137,7 @@ export const compileProceduralGeneratorSegment = ({
     return {
       compilerAttempts: 1,
       narration,
-      proceduralGenerator: buildProceduralGeneratorDiagnostics(generator),
+      proceduralGenerator: buildProceduralGeneratorDiagnostics(durationAlignedGenerator),
       repaired: false,
       renderStrategy: "primitive_scene_graph",
       segment: videoSegment,
@@ -136,7 +154,7 @@ export const compileProceduralGeneratorSegment = ({
         type: "template_macro",
       },
       narration,
-      proceduralGenerator: buildProceduralGeneratorDiagnostics(generator, {
+      proceduralGenerator: buildProceduralGeneratorDiagnostics(durationAlignedGenerator, {
         compiledRenderStrategy: "template_macro",
         fallback: {
           reason,

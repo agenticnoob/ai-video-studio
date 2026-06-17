@@ -589,7 +589,7 @@ const assertProceduralGeneratorFixture = (): void => {
   const diagnostics = buildProceduralGeneratorDiagnostics(nodeGraphFlowProceduralGeneratorFixture);
   const compiled = compileNodeGraphFlowToSceneGraph(nodeGraphFlowProceduralGeneratorFixture);
   const narration = createNarrationAsset({
-    durationInFrames: nodeGraphFlowProceduralGeneratorFixture.durationInFrames,
+    durationInFrames: nodeGraphFlowProceduralGeneratorFixture.durationInFrames + 60,
     segmentId: proceduralGeneratorPlannedSegment.id,
     text: proceduralGeneratorPlannedSegment.narration.text,
   });
@@ -653,6 +653,9 @@ const assertProceduralGeneratorFixture = (): void => {
     compiledResult.segment.templateId !== SCENE_GRAPH_TEMPLATE_ID
   ) {
     throw new Error("Procedural generator staged result expected scene-graph compile output.");
+  }
+  if (compiledResult.segment.durationInFrames < narration.durationInFrames) {
+    throw new Error("Procedural generator segment duration must cover narration duration.");
   }
   if (
     stagedDiagnostics.compiler[0]?.proceduralGenerator?.renderStrategy !== "procedural_generator" ||

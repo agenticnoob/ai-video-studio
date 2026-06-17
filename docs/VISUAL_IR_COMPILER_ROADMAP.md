@@ -297,6 +297,9 @@ Current groundwork:
 - Execution remains deterministic: generated payloads compile through the
   existing procedural compiler into actual `primitive_scene_graph` output, with
   `template_macro` fallback on compile failure.
+- Procedural generator payload duration is aligned to real narration duration
+  at the compiler boundary, so segment timing cannot cut off generated audio
+  before the next storyboard segment starts.
 - Provider-backed planning is not open-ended; no other generator ids,
   `media_asset_composite`, `generated_component`, generated TSX, or arbitrary
   code execution are accepted.

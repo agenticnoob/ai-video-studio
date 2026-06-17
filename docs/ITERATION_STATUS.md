@@ -1,8 +1,31 @@
 # Iteration Status
 
-Last updated: External Remotion Skill pattern capture
+Last updated: Procedural generator narration-duration alignment
 
-## Latest continuation — External Remotion Skill pattern capture
+## Latest continuation — Procedural generator narration-duration alignment
+
+- Fixed a procedural-generator timing bug where generator payload
+  `durationInFrames` could be shorter than the generated narration audio,
+  causing the project timeline to advance to the next segment before narration
+  finished.
+- Aligned procedural generator duration at the compiler boundary by raising
+  the generator payload duration to at least
+  `SegmentNarrationAsset.durationInFrames` before deterministic
+  compile-to-SceneGraph execution and diagnostics.
+- Added deterministic fixture coverage that reproduces a short generator
+  payload with longer narration and asserts the compiled segment duration
+  covers the narration duration.
+- Preserved the previous single-primary-visual fix for `node-graph-flow` so it
+  no longer includes a `line-path` layer inside the same generated SceneGraph.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `git diff --check`
+
+## Previous continuation — External Remotion Skill pattern capture
 
 - Reviewed `wshuyi/remotion-video-skill` as an external Claude Code Skill for
   standalone Remotion video generation.
