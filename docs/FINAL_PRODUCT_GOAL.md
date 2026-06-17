@@ -141,7 +141,7 @@ Current executable strategy note:
   metadata; the Studio page exposes this as a manual visual-review action with
   progress, findings, generated still thumbnails, and bounded per-still pixel
   analysis for near-blank, low-contrast, unsafe-margin, and fine-detail
-  density frame detection.
+  density plus letterbox/pillarbox empty-border frame detection.
   Browser/canvas review and automatic segment repair remain deferred.
 
 ## 2. Authoritative Terminology

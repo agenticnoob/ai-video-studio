@@ -21,6 +21,7 @@ export const visualReviewFrameSchema = z
 export const visualReviewStillAnalysisSchema = z
   .object({
     blankFrameScore: z.number().min(0).max(1),
+    borderBandRatio: z.number().min(0).max(1),
     contrastScore: z.number().min(0).max(1),
     dominantColorRatio: z.number().min(0).max(1),
     edgeContentRatio: z.number().min(0).max(1),
@@ -33,6 +34,7 @@ export const visualReviewStillAnalysisSchema = z
       "low_contrast_frame",
       "unsafe_margin_frame",
       "fine_detail_frame",
+      "letterbox_frame",
       "unsupported",
     ]),
   })

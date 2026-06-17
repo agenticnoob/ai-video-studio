@@ -38,9 +38,14 @@ const EDGE_CONTENT_LUMA_DELTA = 18;
 const EDGE_CONTENT_ALPHA_DELTA = 24;
 const FINE_DETAIL_LUMA_DELTA = 42;
 const FINE_DETAIL_RATIO = 0.34;
+const LETTERBOX_BAND_RATIO = 0.08;
+const LETTERBOX_DARK_LUMA = 24;
+const LETTERBOX_MIN_CONTENT_LUMA_RANGE = 72;
+const LETTERBOX_MAX_CENTER_DARK_RATIO = 0.45;
 
 const createUnsupportedAnalysis = (): VisualReviewStillAnalysis => ({
   blankFrameScore: 0,
+  borderBandRatio: 0,
   contrastScore: 0,
   dominantColorRatio: 0,
   edgeContentRatio: 0,
@@ -269,10 +274,20 @@ const analyzePngBuffer = (buffer: Buffer): VisualReviewStillAnalysis => {
   let edgePixelCount = 0;
   let detailComparisonCount = 0;
   let fineDetailCount = 0;
+  let centerDarkPixelCount = 0;
+  let centerPixelCount = 0;
+  let horizontalBandDarkPixelCount = 0;
+  let horizontalBandPixelCount = 0;
+  let verticalBandDarkPixelCount = 0;
+  let verticalBandPixelCount = 0;
   const edgeSamples: Array<{ a: number; luma: number }> = [];
   let minLuma = 255;
   let maxLuma = 0;
+  let centerMinLuma = 255;
+  let centerMaxLuma = 0;
   const colorCounts = new Map<string, number>();
+  const horizontalBandInset = Math.max(1, Math.ceil(parsed.metadata.height * LETTERBOX_BAND_RATIO));
+  const verticalBandInset = Math.max(1, Math.ceil(parsed.metadata.width * LETTERBOX_BAND_RATIO));
 
   for (let row = 0; row < parsed.metadata.height; row += 1) {
     const filterType = inflated[offset];
@@ -320,6 +335,32 @@ const analyzePngBuffer = (buffer: Buffer): VisualReviewStillAnalysis => {
       colorCounts.set(colorKey, (colorCounts.get(colorKey) ?? 0) + 1);
       minLuma = Math.min(minLuma, luma);
       maxLuma = Math.max(maxLuma, luma);
+
+      const isHorizontalBand =
+        row < horizontalBandInset || row >= parsed.metadata.height - horizontalBandInset;
+      const isVerticalBand =
+        column < verticalBandInset || column >= parsed.metadata.width - verticalBandInset;
+      if (isHorizontalBand) {
+        horizontalBandPixelCount += 1;
+        if (luma <= LETTERBOX_DARK_LUMA) {
+          horizontalBandDarkPixelCount += 1;
+        }
+      }
+      if (isVerticalBand) {
+        verticalBandPixelCount += 1;
+        if (luma <= LETTERBOX_DARK_LUMA) {
+          verticalBandDarkPixelCount += 1;
+        }
+      }
+      if (!isHorizontalBand && !isVerticalBand) {
+        centerPixelCount += 1;
+        centerMinLuma = Math.min(centerMinLuma, luma);
+        centerMaxLuma = Math.max(centerMaxLuma, luma);
+        if (luma <= LETTERBOX_DARK_LUMA) {
+          centerDarkPixelCount += 1;
+        }
+      }
+
       if (
         isEdgePixel({
           column,
@@ -363,12 +404,27 @@ const analyzePngBuffer = (buffer: Buffer): VisualReviewStillAnalysis => {
     !isNearBlank && !isLowContrast && edgeContentRatio >= UNSAFE_MARGIN_EDGE_RATIO;
   const fineDetailRatio =
     detailComparisonCount > 0 ? fineDetailCount / detailComparisonCount : 0;
+  const horizontalBandRatio =
+    horizontalBandPixelCount > 0 ? horizontalBandDarkPixelCount / horizontalBandPixelCount : 0;
+  const verticalBandRatio =
+    verticalBandPixelCount > 0 ? verticalBandDarkPixelCount / verticalBandPixelCount : 0;
+  const borderBandRatio = Math.max(horizontalBandRatio, verticalBandRatio);
+  const centerDarkRatio = centerPixelCount > 0 ? centerDarkPixelCount / centerPixelCount : 0;
+  const centerLumaRange = centerPixelCount > 0 ? centerMaxLuma - centerMinLuma : 0;
   const isFineDetail =
     !isNearBlank &&
     !isLowContrast &&
     !isUnsafeMargin &&
     contrastScore >= 0.24 &&
     fineDetailRatio >= FINE_DETAIL_RATIO;
+  const isLetterbox =
+    !isNearBlank &&
+    !isLowContrast &&
+    !isUnsafeMargin &&
+    !isFineDetail &&
+    centerLumaRange >= LETTERBOX_MIN_CONTENT_LUMA_RANGE &&
+    centerDarkRatio <= LETTERBOX_MAX_CENTER_DARK_RATIO &&
+    borderBandRatio >= 0.92;
   const status = isNearBlank
     ? "near_blank_frame"
     : isLowContrast
@@ -377,10 +433,13 @@ const analyzePngBuffer = (buffer: Buffer): VisualReviewStillAnalysis => {
         ? "unsafe_margin_frame"
         : isFineDetail
           ? "fine_detail_frame"
-          : "analyzed";
+          : isLetterbox
+            ? "letterbox_frame"
+            : "analyzed";
 
   return {
     blankFrameScore: Number(blankFrameScore.toFixed(4)),
+    borderBandRatio: Number(borderBandRatio.toFixed(4)),
     contrastScore: Number(contrastScore.toFixed(4)),
     dominantColorRatio: Number(dominantColorRatio.toFixed(4)),
     edgeContentRatio: Number(edgeContentRatio.toFixed(4)),
@@ -444,6 +503,19 @@ export const buildVisualReviewStillAnalysisFindings = ({
         severity: "warning",
         suggestedRepair:
           "Inspect this frame and regenerate the target segment if text or dense details are too small to read.",
+        targetId: segmentId,
+      },
+    ];
+  }
+
+  if (analysis.status === "letterbox_frame") {
+    return [
+      {
+        frame,
+        message: `Representative still appears letterboxed or pillarboxed: border band ratio ${analysis.borderBandRatio}.`,
+        severity: "warning",
+        suggestedRepair:
+          "Inspect this frame and regenerate the target segment if empty border bands are unintended.",
         targetId: segmentId,
       },
     ];

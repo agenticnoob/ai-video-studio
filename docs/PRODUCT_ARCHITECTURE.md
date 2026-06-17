@@ -80,8 +80,9 @@ the still-extraction input boundary. `POST /api/visual-review/stills` renders
 those frames through `ProjectVideo` into PNG artifacts, and the Studio export
 workspace calls that route through a manual visual-review panel with backend
 progress, static findings, still thumbnails, and bounded per-still pixel
-analysis for near-blank, low-contrast, unsafe-margin, and fine-detail density
-frame detection. Browser/canvas review and automatic repair remain deferred.
+analysis for near-blank, low-contrast, unsafe-margin, fine-detail density, and
+letterbox/pillarbox empty-border frame detection. Browser/canvas review and
+automatic repair remain deferred.
 
 Current implementation snapshot:
 

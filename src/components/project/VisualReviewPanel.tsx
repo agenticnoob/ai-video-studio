@@ -28,6 +28,7 @@ const reviewReasonLabelMap = {
 const stillAnalysisStatusLabelMap = {
   analyzed: "已分析",
   fine_detail_frame: "细节风险",
+  letterbox_frame: "空边风险",
   low_contrast_frame: "低对比",
   near_blank_frame: "近空帧",
   unsafe_margin_frame: "边距风险",
@@ -185,6 +186,12 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
                   <span>detail</span>
                   <span className="font-mono">
                     {Math.round(still.analysis.fineDetailRatio * 100)}%
+                  </span>
+                </div>
+                <div className="mt-1 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <span>band</span>
+                  <span className="font-mono">
+                    {Math.round(still.analysis.borderBandRatio * 100)}%
                   </span>
                 </div>
               </a>

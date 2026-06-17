@@ -372,6 +372,7 @@ const assertVisualReviewStillExtractionSchemaFixture = (): void => {
       {
         analysis: {
           blankFrameScore: 0.12,
+          borderBandRatio: 0.04,
           contrastScore: 0.71,
           dominantColorRatio: 0.2,
           edgeContentRatio: 0.08,
@@ -438,6 +439,26 @@ const assertVisualReviewStillExtractionSchemaFixture = (): void => {
 
   if (fineDetailAnalysis.stills[0]?.analysis.status !== "fine_detail_frame") {
     throw new Error("Visual review still analysis fixture should accept fine detail status.");
+  }
+
+  const letterboxAnalysis = visualReviewStillExtractionSchema.parse({
+    status: "rendered",
+    stillCount: 1,
+    stills: [
+      {
+        ...extraction.stills[0],
+        analysis: {
+          ...extraction.stills[0].analysis,
+          borderBandRatio: 0.95,
+          status: "letterbox_frame",
+        },
+        stillId: "asset-plan-segment-segment-end-frame-000120",
+      },
+    ],
+  });
+
+  if (letterboxAnalysis.stills[0]?.analysis.status !== "letterbox_frame") {
+    throw new Error("Visual review still analysis fixture should accept letterbox status.");
   }
 };
 

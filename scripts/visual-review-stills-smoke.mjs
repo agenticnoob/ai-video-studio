@@ -86,12 +86,14 @@ const main = async () => {
     typeof firstStill.analysis.contrastScore !== "number" ||
     typeof firstStill.analysis.edgeContentRatio !== "number" ||
     typeof firstStill.analysis.fineDetailRatio !== "number" ||
+    typeof firstStill.analysis.borderBandRatio !== "number" ||
     ![
       "analyzed",
       "near_blank_frame",
       "low_contrast_frame",
       "unsafe_margin_frame",
       "fine_detail_frame",
+      "letterbox_frame",
       "unsupported",
     ].includes(firstStill.analysis.status)
   ) {
@@ -106,7 +108,8 @@ const main = async () => {
       !messages.includes("Representative still appears near blank") &&
       !messages.includes("Representative still appears low contrast") &&
       !messages.includes("Representative still has content too close to the frame edge") &&
-      !messages.includes("Representative still may contain overly fine detail")
+      !messages.includes("Representative still may contain overly fine detail") &&
+      !messages.includes("Representative still appears letterboxed or pillarboxed")
     ) {
       throw new Error("Visual review still warnings should include still-analysis context.");
     }
