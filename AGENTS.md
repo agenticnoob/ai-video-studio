@@ -154,8 +154,9 @@ The first staged-generation groundwork is also in place:
   and fallback for future media composites, but this remains planner and
   diagnostics data only. Phase 6 review/repair groundwork has started as a
   static `visualReview` preflight in staged diagnostics for deterministic
-  duration, caption, and unresolved planned-asset issues; still extraction,
-  browser/canvas review, and automatic segment repair are not active yet.
+  duration, caption, unresolved planned-asset issues, and representative
+  review-frame planning; still image extraction, browser/canvas review, and
+  automatic segment repair are not active yet.
   Unrestricted generated TSX and executable `media_asset_composite` rendering
   remain out of scope.
 - Scene graph provider-output hardening is intentionally bounded: selected

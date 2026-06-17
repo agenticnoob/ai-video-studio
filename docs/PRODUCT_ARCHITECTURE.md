@@ -74,7 +74,9 @@ The current Phase 6 groundwork adds a shared staged `visualReview` static
 preflight diagnostics boundary. It flags deterministic issues already visible
 from validated project data, such as narration duration overruns, caption cues
 that exceed a segment, long caption text, and unresolved planned assets from
-the current non-executable `assetPlan` phase. Representative still extraction,
+the current non-executable `assetPlan` phase. It also emits deterministic
+representative `reviewFrames[]` for each segment's start, midpoint, and end as
+the later still-extraction input boundary. Still image extraction,
 browser/canvas review, and automatic repair remain deferred.
 
 Current implementation snapshot:

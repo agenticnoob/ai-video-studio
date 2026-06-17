@@ -1,12 +1,25 @@
 import type { VideoProject, VideoSegment } from "../project-schema";
+import { getSegmentTimelineWindows } from "../project-timeline";
 import type { AssetRequirement } from "../storyboard-plan-schema";
-import type { VisualReviewDiagnostics, VisualReviewFinding } from "../visual-review-schema";
+import type {
+  VisualReviewDiagnostics,
+  VisualReviewFinding,
+  VisualReviewFrame,
+} from "../visual-review-schema";
 
-const summarizeFindings = (findings: VisualReviewFinding[]): VisualReviewDiagnostics => ({
+const summarizeFindings = ({
+  findings,
+  reviewFrames,
+}: {
+  findings: VisualReviewFinding[];
+  reviewFrames: VisualReviewFrame[];
+}): VisualReviewDiagnostics => ({
   status: "static_preflight",
   errorCount: findings.filter((finding) => finding.severity === "error").length,
   findingCount: findings.length,
   findings,
+  reviewFrameCount: reviewFrames.length,
+  reviewFrames,
   warningCount: findings.filter((finding) => finding.severity === "warning").length,
 });
 
@@ -49,6 +62,31 @@ const reviewSegmentTiming = (segment: VideoSegment): VisualReviewFinding[] => {
   return findings;
 };
 
+const buildRepresentativeReviewFrames = (project: VideoProject): VisualReviewFrame[] => {
+  return getSegmentTimelineWindows(project).flatMap((window) => {
+    const endFrame = window.startFrame + Math.max(0, window.durationInFrames - 1);
+    const midpointFrame = window.startFrame + Math.floor(window.durationInFrames / 2);
+
+    return [
+      {
+        frame: window.startFrame,
+        reason: "segment_start",
+        segmentId: window.segmentId,
+      },
+      {
+        frame: midpointFrame,
+        reason: "segment_midpoint",
+        segmentId: window.segmentId,
+      },
+      {
+        frame: endFrame,
+        reason: "segment_end",
+        segmentId: window.segmentId,
+      },
+    ];
+  });
+};
+
 export const buildStaticVisualReviewDiagnostics = ({
   project,
   requiredAssets,
@@ -57,6 +95,7 @@ export const buildStaticVisualReviewDiagnostics = ({
   requiredAssets?: AssetRequirement[];
 }): VisualReviewDiagnostics => {
   const findings: VisualReviewFinding[] = project.segments.flatMap(reviewSegmentTiming);
+  const reviewFrames = buildRepresentativeReviewFrames(project);
 
   for (const asset of requiredAssets ?? []) {
     findings.push({
@@ -67,5 +106,5 @@ export const buildStaticVisualReviewDiagnostics = ({
     });
   }
 
-  return summarizeFindings(findings);
+  return summarizeFindings({ findings, reviewFrames });
 };

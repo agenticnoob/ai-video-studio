@@ -133,9 +133,10 @@ Current executable strategy note:
   does not introduce broad media-library UI.
 - Phase 6 has started with static visual-review preflight diagnostics:
   staged diagnostics include structured `VisualReviewFinding` data for
-  deterministic duration, caption, and unresolved planned-asset issues. Still
-  extraction, browser/canvas review, and automatic segment repair remain
-  deferred.
+  deterministic duration, caption, and unresolved planned-asset issues, plus
+  deterministic `reviewFrames[]` for each segment's start, midpoint, and end
+  as the later still-extraction input boundary. Still image extraction,
+  browser/canvas review, and automatic segment repair remain deferred.
 
 ## 2. Authoritative Terminology
 
@@ -536,10 +537,10 @@ Initial render strategy vocabulary:
   product path.
 
 The current bounded roadmap stage is Review / Repair Loop v1 groundwork:
-surface deterministic `VisualReviewFinding` diagnostics first, then add
-representative still extraction and bounded target-segment repair in later
-slices. Later phases should still follow the order defined by
-`docs/VISUAL_IR_COMPILER_ROADMAP.md`.
+surface deterministic `VisualReviewFinding` diagnostics and representative
+`reviewFrames[]` planning first, then add still image extraction and bounded
+target-segment repair in later slices. Later phases should still follow the
+order defined by `docs/VISUAL_IR_COMPILER_ROADMAP.md`.
 
 ### 4.1 Planner Template Manifest
 

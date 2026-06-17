@@ -1,6 +1,25 @@
 # Iteration Status
 
-Last updated: Visual Review static preflight v1
+Last updated: Visual Review representative frame plan v1
+
+## Latest continuation — Visual Review representative frame plan v1
+
+- Continued Phase 6 without introducing browser automation, screenshot
+  rendering, or automatic repair.
+- Extended the strict `VisualReviewDiagnostics` contract with
+  `reviewFrames[]` and `reviewFrameCount`, using absolute project-frame
+  targets plus bounded reasons: `segment_start`, `segment_midpoint`, and
+  `segment_end`.
+- The staged `visualReview` static preflight now returns three representative
+  review frames per segment alongside existing duration, caption, and
+  unresolved planned-asset findings.
+- Deterministic staged smoke fixtures now assert review-frame planning for a
+  one-segment asset-plan case and a two-segment mixed-template project.
+- Representative still image extraction, browser/canvas review, and
+  segment-targeted automatic repair remain deferred to later Phase 6 slices.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
 
 ## Latest continuation — Visual Review static preflight v1
 

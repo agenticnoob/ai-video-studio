@@ -58,8 +58,10 @@ Product direction:
   remote URLs or make `media_asset_composite` executable yet
 - review/repair should start as structured diagnostics: the current static
   `visualReview` preflight may flag deterministic duration, caption, and
-  unresolved planned-asset issues, while still extraction, browser/canvas
-  review, and automatic target-segment repair remain future bounded slices
+  unresolved planned-asset issues and provide representative `reviewFrames[]`
+  for each segment's start, midpoint, and end, while still image extraction,
+  browser/canvas review, and automatic target-segment repair remain future
+  bounded slices
 - final generation should be staged: storyboard planning first, per-segment
   TTS second, selected visual implementation compilation third, project
   assembly last

@@ -67,8 +67,10 @@ Current implementation status:
   `media_asset_composite` rendering yet
 - review/repair groundwork has started for Phase 6: staged diagnostics include
   a static `visualReview` preflight with structured findings for deterministic
-  duration, caption, and unresolved planned-asset issues. Still extraction,
-  browser/canvas visual review, and automatic segment repair are not active yet
+  duration, caption, and unresolved planned-asset issues, plus representative
+  review frames for each segment's start, midpoint, and end. Still image
+  extraction, browser/canvas visual review, and automatic segment repair are
+  not active yet
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration
 - staged selected-segment regeneration reruns the target segment's planning,

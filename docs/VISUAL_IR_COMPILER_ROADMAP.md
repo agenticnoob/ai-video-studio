@@ -378,7 +378,8 @@ Current landing:
 
 ### Phase 6: Review / Repair Loop v1
 
-Status: started as a static preflight diagnostics boundary.
+Status: started as a static preflight diagnostics and representative frame-plan
+boundary.
 
 Add quality closure after rendering or still extraction.
 
@@ -415,13 +416,18 @@ Acceptance:
 Current landing:
 
 - `src/lib/visual-review-schema.ts` defines strict
-  `VisualReviewFinding` and `VisualReviewDiagnostics` contracts.
+  `VisualReviewFinding`, `VisualReviewFrame`, and `VisualReviewDiagnostics`
+  contracts.
 - staged diagnostics now include `visualReview.status: "static_preflight"`
   for full staged generation and selected-segment regeneration.
 - the static preflight flags deterministic issues available before still
   extraction: narration audio longer than visual segment duration, caption cues
   that extend past the segment, long caption text, and unresolved planned
   assets from the non-executable `assetPlan` phase.
+- staged diagnostics now also include `visualReview.reviewFrames[]`, a
+  deterministic list of absolute project frames to inspect for each segment's
+  start, midpoint, and end. This is the stable input boundary for later still
+  extraction.
 - no representative still extraction, browser/canvas review, automatic repair,
   or provider prompt repair loop is active yet.
 
@@ -474,11 +480,11 @@ is worth keeping.
 
 ```txt
 Implement Review / Repair Loop v1 incrementally:
-start with deterministic `VisualReviewFinding` diagnostics in staged
-generation, then add representative still extraction and bounded segment-level
-repair in later slices. The first slice should preserve VideoProject
-preview/export compatibility, avoid browser automation as the default
-validation path, and keep repair behavior explicit rather than silently
+start with deterministic `VisualReviewFinding` diagnostics and representative
+review-frame planning in staged generation, then add still image extraction and
+bounded segment-level repair in later slices. The first slices should preserve
+VideoProject preview/export compatibility, avoid browser automation as the
+default validation path, and keep repair behavior explicit rather than silently
 rewriting segments.
 ```
 

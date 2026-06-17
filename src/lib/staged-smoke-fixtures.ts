@@ -296,6 +296,7 @@ const assertAssetPlanSchemaFixture = (): void => {
     visualReview: {
       findingCount: number;
       findings: Array<{ severity: string; targetId?: string }>;
+      reviewFrames?: Array<{ frame: number; reason: string; segmentId: string }>;
       status: string;
     };
   };
@@ -318,6 +319,13 @@ const assertAssetPlanSchemaFixture = (): void => {
     !stagedDiagnostics.visualReview.findings.every((finding) => finding.severity === "info")
   ) {
     throw new Error("Asset plan visual review preflight should expose unresolved asset findings.");
+  }
+  if (
+    stagedDiagnostics.visualReview.reviewFrames?.length !== 3 ||
+    stagedDiagnostics.visualReview.reviewFrames[0]?.frame !== 0 ||
+    stagedDiagnostics.visualReview.reviewFrames[1]?.reason !== "segment_midpoint"
+  ) {
+    throw new Error("Asset plan visual review preflight should expose representative review frames.");
   }
 };
 
@@ -620,6 +628,16 @@ const assertMixedTemplateFixture = (): void => {
   }
   if (diagnostics.visualReview.findingCount !== 0) {
     throw new Error("Mixed-template visual review preflight should not flag valid fixtures.");
+  }
+  if (
+    diagnostics.visualReview.reviewFrames.length !== 6 ||
+    diagnostics.visualReview.reviewFrames[0]?.segmentId !== "segment-1" ||
+    diagnostics.visualReview.reviewFrames[0]?.frame !== 0 ||
+    diagnostics.visualReview.reviewFrames[2]?.reason !== "segment_end" ||
+    diagnostics.visualReview.reviewFrames[3]?.segmentId !== "segment-2" ||
+    diagnostics.visualReview.reviewFrames[3]?.frame !== firstSegment.durationInFrames
+  ) {
+    throw new Error("Mixed-template diagnostics should expose representative review frames.");
   }
 };
 
