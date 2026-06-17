@@ -29,6 +29,7 @@ const stillAnalysisStatusLabelMap = {
   analyzed: "已分析",
   low_contrast_frame: "低对比",
   near_blank_frame: "近空帧",
+  unsafe_margin_frame: "边距风险",
   unsupported: "未分析",
 } as const;
 
@@ -171,6 +172,12 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
                   <span>contrast</span>
                   <span className="font-mono">
                     {Math.round(still.analysis.contrastScore * 100)}%
+                  </span>
+                </div>
+                <div className="mt-1 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <span>margin</span>
+                  <span className="font-mono">
+                    {Math.round(still.analysis.edgeContentRatio * 100)}%
                   </span>
                 </div>
               </a>

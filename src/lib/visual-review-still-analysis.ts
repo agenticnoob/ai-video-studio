@@ -16,6 +16,10 @@ type PixelSample = {
   g: number;
   r: number;
 };
+type PixelAggregate = PixelSample & {
+  count: number;
+  luma: number;
+};
 type ByteArray = Uint8Array<ArrayBufferLike>;
 
 const PNG_SIGNATURE_BYTES = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a] as const;
@@ -28,11 +32,16 @@ const COLOR_CHANNELS_BY_TYPE = new Map<number, number>([
 const NEAR_BLANK_DOMINANT_COLOR_RATIO = 0.985;
 const NEAR_BLANK_LUMA_RANGE = 8;
 const LOW_CONTRAST_LUMA_RANGE = 36;
+const EDGE_SAFE_AREA_RATIO = 0.07;
+const UNSAFE_MARGIN_EDGE_RATIO = 0.18;
+const EDGE_CONTENT_LUMA_DELTA = 18;
+const EDGE_CONTENT_ALPHA_DELTA = 24;
 
 const createUnsupportedAnalysis = (): VisualReviewStillAnalysis => ({
   blankFrameScore: 0,
   contrastScore: 0,
   dominantColorRatio: 0,
+  edgeContentRatio: 0,
   lumaRange: 0,
   pixelCount: 0,
   status: "unsupported",
@@ -67,7 +76,7 @@ const unfilterScanline = ({
   const output = new Uint8Array(scanline.length);
 
   for (let index = 0; index < scanline.length; index += 1) {
-    const left = index >= bytesPerPixel ? output[index - bytesPerPixel] ?? 0 : 0;
+    const left = index >= bytesPerPixel ? (output[index - bytesPerPixel] ?? 0) : 0;
     const up = previous[index] ?? 0;
     const upLeft = index >= bytesPerPixel ? (previous[index - bytesPerPixel] ?? 0) : 0;
     const raw = scanline[index] ?? 0;
@@ -188,6 +197,54 @@ const samplePixel = ({
   };
 };
 
+const getDominantPixelAggregate = (
+  colorCounts: Map<string, number>,
+): PixelAggregate | undefined => {
+  let dominantColorKey: string | undefined;
+  let dominantColorCount = 0;
+
+  colorCounts.forEach((count, colorKey) => {
+    if (count > dominantColorCount) {
+      dominantColorCount = count;
+      dominantColorKey = colorKey;
+    }
+  });
+
+  if (!dominantColorKey) {
+    return undefined;
+  }
+
+  const [r = 0, g = 0, b = 0, a = 255] = dominantColorKey
+    .split(",")
+    .map((value) => Number.parseInt(value, 10));
+
+  return {
+    a,
+    b,
+    count: dominantColorCount,
+    g,
+    luma: 0.2126 * r + 0.7152 * g + 0.0722 * b,
+    r,
+  };
+};
+
+const isEdgePixel = ({
+  column,
+  height,
+  row,
+  width,
+}: {
+  column: number;
+  height: number;
+  row: number;
+  width: number;
+}): boolean => {
+  const insetX = Math.max(1, Math.ceil(width * EDGE_SAFE_AREA_RATIO));
+  const insetY = Math.max(1, Math.ceil(height * EDGE_SAFE_AREA_RATIO));
+
+  return column < insetX || column >= width - insetX || row < insetY || row >= height - insetY;
+};
+
 const analyzePngBuffer = (buffer: Buffer): VisualReviewStillAnalysis => {
   const parsed = parsePng(buffer);
   if (!parsed || parsed.metadata.bitDepth !== 8) {
@@ -205,6 +262,8 @@ const analyzePngBuffer = (buffer: Buffer): VisualReviewStillAnalysis => {
   let offset = 0;
   let previous: ByteArray = new Uint8Array(scanlineLength);
   let pixelCount = 0;
+  let edgePixelCount = 0;
+  const edgeSamples: Array<{ a: number; luma: number }> = [];
   let minLuma = 255;
   let maxLuma = 0;
   const colorCounts = new Map<string, number>();
@@ -237,6 +296,17 @@ const analyzePngBuffer = (buffer: Buffer): VisualReviewStillAnalysis => {
       colorCounts.set(colorKey, (colorCounts.get(colorKey) ?? 0) + 1);
       minLuma = Math.min(minLuma, luma);
       maxLuma = Math.max(maxLuma, luma);
+      if (
+        isEdgePixel({
+          column,
+          height: parsed.metadata.height,
+          row,
+          width: parsed.metadata.width,
+        })
+      ) {
+        edgeSamples.push({ a: pixel.a, luma });
+        edgePixelCount += 1;
+      }
       pixelCount += 1;
     }
 
@@ -244,10 +314,8 @@ const analyzePngBuffer = (buffer: Buffer): VisualReviewStillAnalysis => {
     offset = scanlineEnd;
   }
 
-  let dominantColorCount = 0;
-  colorCounts.forEach((count) => {
-    dominantColorCount = Math.max(dominantColorCount, count);
-  });
+  const dominantPixel = getDominantPixelAggregate(colorCounts);
+  const dominantColorCount = dominantPixel?.count ?? 0;
   const dominantColorRatio = pixelCount > 0 ? dominantColorCount / pixelCount : 0;
   const lumaRange = maxLuma - minLuma;
   const blankFrameScore = Math.max(
@@ -258,16 +326,29 @@ const analyzePngBuffer = (buffer: Buffer): VisualReviewStillAnalysis => {
   const isNearBlank =
     dominantColorRatio >= NEAR_BLANK_DOMINANT_COLOR_RATIO && lumaRange <= NEAR_BLANK_LUMA_RANGE;
   const isLowContrast = !isNearBlank && pixelCount > 0 && lumaRange <= LOW_CONTRAST_LUMA_RANGE;
+  const edgeContentCount = dominantPixel
+    ? edgeSamples.filter(
+        (sample) =>
+          Math.abs(sample.luma - dominantPixel.luma) >= EDGE_CONTENT_LUMA_DELTA ||
+          Math.abs(sample.a - dominantPixel.a) >= EDGE_CONTENT_ALPHA_DELTA,
+      ).length
+    : 0;
+  const edgeContentRatio = edgePixelCount > 0 ? edgeContentCount / edgePixelCount : 0;
+  const isUnsafeMargin =
+    !isNearBlank && !isLowContrast && edgeContentRatio >= UNSAFE_MARGIN_EDGE_RATIO;
   const status = isNearBlank
     ? "near_blank_frame"
     : isLowContrast
       ? "low_contrast_frame"
-      : "analyzed";
+      : isUnsafeMargin
+        ? "unsafe_margin_frame"
+        : "analyzed";
 
   return {
     blankFrameScore: Number(blankFrameScore.toFixed(4)),
     contrastScore: Number(contrastScore.toFixed(4)),
     dominantColorRatio: Number(dominantColorRatio.toFixed(4)),
+    edgeContentRatio: Number(edgeContentRatio.toFixed(4)),
     lumaRange: Number(lumaRange.toFixed(2)),
     pixelCount,
     status,
@@ -306,17 +387,30 @@ export const buildVisualReviewStillAnalysisFindings = ({
     ];
   }
 
-  if (analysis.status !== "low_contrast_frame") {
+  if (analysis.status === "low_contrast_frame") {
+    return [
+      {
+        frame,
+        message: `Representative still appears low contrast: contrast score ${analysis.contrastScore}, luma range ${analysis.lumaRange}.`,
+        severity: "warning",
+        suggestedRepair:
+          "Inspect this frame and regenerate the target segment if foreground content is hard to read.",
+        targetId: segmentId,
+      },
+    ];
+  }
+
+  if (analysis.status !== "unsafe_margin_frame") {
     return [];
   }
 
   return [
     {
       frame,
-      message: `Representative still appears low contrast: contrast score ${analysis.contrastScore}, luma range ${analysis.lumaRange}.`,
+      message: `Representative still has content too close to the frame edge: edge content ratio ${analysis.edgeContentRatio}.`,
       severity: "warning",
       suggestedRepair:
-        "Inspect this frame and regenerate the target segment if foreground content is hard to read.",
+        "Inspect this frame and regenerate the target segment if important content sits outside the safe area.",
       targetId: segmentId,
     },
   ];

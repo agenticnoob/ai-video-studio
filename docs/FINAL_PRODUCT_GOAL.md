@@ -140,8 +140,8 @@ Current executable strategy note:
   artifacts for those frames through `ProjectVideo` and returns strict still
   metadata; the Studio page exposes this as a manual visual-review action with
   progress, findings, generated still thumbnails, and bounded per-still pixel
-  analysis for near-blank and low-contrast frame detection. Browser/canvas
-  review and automatic segment repair remain deferred.
+  analysis for near-blank, low-contrast, and unsafe-margin frame detection.
+  Browser/canvas review and automatic segment repair remain deferred.
 
 ## 2. Authoritative Terminology
 

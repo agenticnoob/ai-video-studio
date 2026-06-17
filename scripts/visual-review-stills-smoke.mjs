@@ -84,9 +84,14 @@ const main = async () => {
     !firstStill.analysis ||
     typeof firstStill.analysis.blankFrameScore !== "number" ||
     typeof firstStill.analysis.contrastScore !== "number" ||
-    !["analyzed", "near_blank_frame", "low_contrast_frame", "unsupported"].includes(
-      firstStill.analysis.status,
-    )
+    typeof firstStill.analysis.edgeContentRatio !== "number" ||
+    ![
+      "analyzed",
+      "near_blank_frame",
+      "low_contrast_frame",
+      "unsafe_margin_frame",
+      "unsupported",
+    ].includes(firstStill.analysis.status)
   ) {
     throw new Error("Visual review still smoke expected per-still analysis metadata.");
   }
@@ -97,7 +102,8 @@ const main = async () => {
     const messages = body.visualReview.findings.map((finding) => finding.message).join("\n");
     if (
       !messages.includes("Representative still appears near blank") &&
-      !messages.includes("Representative still appears low contrast")
+      !messages.includes("Representative still appears low contrast") &&
+      !messages.includes("Representative still has content too close to the frame edge")
     ) {
       throw new Error("Visual review still warnings should include still-analysis context.");
     }

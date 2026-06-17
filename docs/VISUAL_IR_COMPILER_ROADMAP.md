@@ -436,9 +436,9 @@ Current landing:
   calls the still extraction route, shows backend progress, summarizes static
   findings, and displays the generated representative PNG stills.
 - each rendered still now carries bounded server-side pixel analysis metadata
-  for near-blank and low-contrast frame detection, and those still-analysis
-  warnings are surfaced as explicit review findings instead of triggering
-  automatic repair.
+  for near-blank, low-contrast, and unsafe-margin frame detection, and those
+  still-analysis warnings are surfaced as explicit review findings instead of
+  triggering automatic repair.
 - no browser/canvas review, automatic repair, or provider prompt repair loop
   is active yet.
 

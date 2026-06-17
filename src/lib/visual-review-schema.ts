@@ -23,9 +23,16 @@ export const visualReviewStillAnalysisSchema = z
     blankFrameScore: z.number().min(0).max(1),
     contrastScore: z.number().min(0).max(1),
     dominantColorRatio: z.number().min(0).max(1),
+    edgeContentRatio: z.number().min(0).max(1),
     lumaRange: z.number().min(0).max(255),
     pixelCount: z.number().int().min(0),
-    status: z.enum(["analyzed", "near_blank_frame", "low_contrast_frame", "unsupported"]),
+    status: z.enum([
+      "analyzed",
+      "near_blank_frame",
+      "low_contrast_frame",
+      "unsafe_margin_frame",
+      "unsupported",
+    ]),
   })
   .strict();
 

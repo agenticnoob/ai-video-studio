@@ -374,6 +374,7 @@ const assertVisualReviewStillExtractionSchemaFixture = (): void => {
           blankFrameScore: 0.12,
           contrastScore: 0.71,
           dominantColorRatio: 0.2,
+          edgeContentRatio: 0.08,
           lumaRange: 180,
           pixelCount: 921600,
           status: "analyzed",
@@ -397,6 +398,25 @@ const assertVisualReviewStillExtractionSchemaFixture = (): void => {
   }
   if (extraction.stills[0]?.contentType !== "image/png") {
     throw new Error("Visual review still extraction fixture should describe PNG still artifacts.");
+  }
+  const unsafeMarginAnalysis = visualReviewStillExtractionSchema.parse({
+    status: "rendered",
+    stillCount: 1,
+    stills: [
+      {
+        ...extraction.stills[0],
+        analysis: {
+          ...extraction.stills[0].analysis,
+          edgeContentRatio: 0.42,
+          status: "unsafe_margin_frame",
+        },
+        stillId: "asset-plan-segment-segment-midpoint-frame-000045",
+      },
+    ],
+  });
+
+  if (unsafeMarginAnalysis.stills[0]?.analysis.status !== "unsafe_margin_frame") {
+    throw new Error("Visual review still analysis fixture should accept unsafe margin status.");
   }
 };
 
