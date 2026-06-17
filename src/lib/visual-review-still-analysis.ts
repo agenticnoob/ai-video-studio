@@ -27,9 +27,11 @@ const COLOR_CHANNELS_BY_TYPE = new Map<number, number>([
 ]);
 const NEAR_BLANK_DOMINANT_COLOR_RATIO = 0.985;
 const NEAR_BLANK_LUMA_RANGE = 8;
+const LOW_CONTRAST_LUMA_RANGE = 36;
 
 const createUnsupportedAnalysis = (): VisualReviewStillAnalysis => ({
   blankFrameScore: 0,
+  contrastScore: 0,
   dominantColorRatio: 0,
   lumaRange: 0,
   pixelCount: 0,
@@ -252,13 +254,19 @@ const analyzePngBuffer = (buffer: Buffer): VisualReviewStillAnalysis => {
     dominantColorRatio,
     Math.max(0, Math.min(1, 1 - lumaRange / 255)),
   );
-  const status =
-    dominantColorRatio >= NEAR_BLANK_DOMINANT_COLOR_RATIO && lumaRange <= NEAR_BLANK_LUMA_RANGE
-      ? "near_blank_frame"
+  const contrastScore = Math.max(0, Math.min(1, lumaRange / 255));
+  const isNearBlank =
+    dominantColorRatio >= NEAR_BLANK_DOMINANT_COLOR_RATIO && lumaRange <= NEAR_BLANK_LUMA_RANGE;
+  const isLowContrast = !isNearBlank && pixelCount > 0 && lumaRange <= LOW_CONTRAST_LUMA_RANGE;
+  const status = isNearBlank
+    ? "near_blank_frame"
+    : isLowContrast
+      ? "low_contrast_frame"
       : "analyzed";
 
   return {
     blankFrameScore: Number(blankFrameScore.toFixed(4)),
+    contrastScore: Number(contrastScore.toFixed(4)),
     dominantColorRatio: Number(dominantColorRatio.toFixed(4)),
     lumaRange: Number(lumaRange.toFixed(2)),
     pixelCount,
@@ -285,17 +293,30 @@ export const buildVisualReviewStillAnalysisFindings = ({
   frame: number;
   segmentId: string;
 }): VisualReviewFinding[] => {
-  if (analysis.status !== "near_blank_frame") {
+  if (analysis.status === "near_blank_frame") {
+    return [
+      {
+        frame,
+        message: `Representative still appears near blank: dominant color ratio ${analysis.dominantColorRatio}, luma range ${analysis.lumaRange}.`,
+        severity: "warning",
+        suggestedRepair:
+          "Inspect this frame and regenerate the target segment if the blank frame is unintended.",
+        targetId: segmentId,
+      },
+    ];
+  }
+
+  if (analysis.status !== "low_contrast_frame") {
     return [];
   }
 
   return [
     {
       frame,
-      message: `Representative still appears near blank: dominant color ratio ${analysis.dominantColorRatio}, luma range ${analysis.lumaRange}.`,
+      message: `Representative still appears low contrast: contrast score ${analysis.contrastScore}, luma range ${analysis.lumaRange}.`,
       severity: "warning",
       suggestedRepair:
-        "Inspect this frame and regenerate the target segment if the blank frame is unintended.",
+        "Inspect this frame and regenerate the target segment if foreground content is hard to read.",
       targetId: segmentId,
     },
   ];

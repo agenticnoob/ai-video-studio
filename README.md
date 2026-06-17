@@ -73,7 +73,7 @@ Current implementation status:
   `POST /api/visual-review/stills` and return PNG artifact metadata; the Studio
   export workspace now exposes this as a manual visual-review action with
   progress, findings, generated still thumbnails, and bounded per-still pixel
-  analysis for near-blank frame detection.
+  analysis for near-blank and low-contrast frame detection.
   Browser/canvas visual review and automatic segment repair are not active yet
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration

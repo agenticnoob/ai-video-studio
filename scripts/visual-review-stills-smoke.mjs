@@ -83,7 +83,10 @@ const main = async () => {
   if (
     !firstStill.analysis ||
     typeof firstStill.analysis.blankFrameScore !== "number" ||
-    !["analyzed", "near_blank_frame", "unsupported"].includes(firstStill.analysis.status)
+    typeof firstStill.analysis.contrastScore !== "number" ||
+    !["analyzed", "near_blank_frame", "low_contrast_frame", "unsupported"].includes(
+      firstStill.analysis.status,
+    )
   ) {
     throw new Error("Visual review still smoke expected per-still analysis metadata.");
   }
@@ -92,7 +95,10 @@ const main = async () => {
   }
   if (body.visualReview.warningCount > 0) {
     const messages = body.visualReview.findings.map((finding) => finding.message).join("\n");
-    if (!messages.includes("Representative still appears near blank")) {
+    if (
+      !messages.includes("Representative still appears near blank") &&
+      !messages.includes("Representative still appears low contrast")
+    ) {
       throw new Error("Visual review still warnings should include still-analysis context.");
     }
   }

@@ -11,12 +11,21 @@ const assertIncludes = (source, needle, label) => {
 };
 
 const main = async () => {
-  const [pageSource, hookSource, panelSource, schemaSource, renderProjectSource, routeSource, packageSource] =
-    await Promise.all([
+  const [
+    pageSource,
+    hookSource,
+    panelSource,
+    schemaSource,
+    stillAnalysisSource,
+    renderProjectSource,
+    routeSource,
+    packageSource,
+  ] = await Promise.all([
     readSource("src/app/page.tsx"),
     readSource("src/helpers/use-visual-review.ts"),
     readSource("src/components/project/VisualReviewPanel.tsx"),
     readSource("src/lib/visual-review-schema.ts"),
+    readSource("src/lib/visual-review-still-analysis.ts"),
     readSource("src/lib/render-project.ts"),
     readSource("src/app/api/visual-review/stills/route.ts"),
     readSource("package.json"),
@@ -30,10 +39,20 @@ const main = async () => {
   assertIncludes(panelSource, "ActivityProgress", "Visual review panel");
   assertIncludes(panelSource, "downloadUrl", "Visual review panel");
   assertIncludes(panelSource, "still.analysis.blankFrameScore", "Visual review panel");
+  assertIncludes(panelSource, "still.analysis.contrastScore", "Visual review panel");
   assertIncludes(panelSource, "near_blank_frame", "Visual review panel");
+  assertIncludes(panelSource, "low_contrast_frame", "Visual review panel");
   assertIncludes(panelSource, 'from "next/image"', "Visual review panel");
   assertIncludes(panelSource, "Image", "Visual review panel");
   assertIncludes(schemaSource, "visualReviewStillAnalysisSchema", "Visual review schema");
+  assertIncludes(schemaSource, "contrastScore", "Visual review schema");
+  assertIncludes(stillAnalysisSource, "LOW_CONTRAST_LUMA_RANGE", "Visual review still analysis");
+  assertIncludes(stillAnalysisSource, "low_contrast_frame", "Visual review still analysis");
+  assertIncludes(
+    stillAnalysisSource,
+    "Representative still appears low contrast",
+    "Visual review still analysis",
+  );
   assertIncludes(renderProjectSource, "analyzeVisualReviewStill", "Visual review still renderer");
   assertIncludes(routeSource, "mergeStillAnalysisFindings", "Visual review still route");
   assertIncludes(packageSource, "smoke:visual-review-stills", "package scripts");

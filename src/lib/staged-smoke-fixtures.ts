@@ -372,6 +372,7 @@ const assertVisualReviewStillExtractionSchemaFixture = (): void => {
       {
         analysis: {
           blankFrameScore: 0.12,
+          contrastScore: 0.71,
           dominantColorRatio: 0.2,
           lumaRange: 180,
           pixelCount: 921600,

@@ -27,6 +27,7 @@ const reviewReasonLabelMap = {
 
 const stillAnalysisStatusLabelMap = {
   analyzed: "已分析",
+  low_contrast_frame: "低对比",
   near_blank_frame: "近空帧",
   unsupported: "未分析",
 } as const;
@@ -164,6 +165,12 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
                   <span>{stillAnalysisStatusLabelMap[still.analysis.status]}</span>
                   <span className="font-mono">
                     blank {Math.round(still.analysis.blankFrameScore * 100)}%
+                  </span>
+                </div>
+                <div className="mt-1 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <span>contrast</span>
+                  <span className="font-mono">
+                    {Math.round(still.analysis.contrastScore * 100)}%
                   </span>
                 </div>
               </a>
