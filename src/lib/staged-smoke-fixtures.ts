@@ -293,6 +293,11 @@ const assertAssetPlanSchemaFixture = (): void => {
       requiredAssetCount: number;
       requiredAssets: Array<{ id: string; kind: string; fallback: string }>;
     };
+    visualReview: {
+      findingCount: number;
+      findings: Array<{ severity: string; targetId?: string }>;
+      status: string;
+    };
   };
 
   if (planWithAssets.assetPlan?.requiredAssets.length !== 2) {
@@ -306,6 +311,13 @@ const assertAssetPlanSchemaFixture = (): void => {
     stagedDiagnostics.assetPlan.requiredAssets[0]?.id !== "dashboard-screenshot"
   ) {
     throw new Error("Asset plan diagnostics should expose required asset refs.");
+  }
+  if (
+    stagedDiagnostics.visualReview.status !== "static_preflight" ||
+    stagedDiagnostics.visualReview.findingCount !== 2 ||
+    !stagedDiagnostics.visualReview.findings.every((finding) => finding.severity === "info")
+  ) {
+    throw new Error("Asset plan visual review preflight should expose unresolved asset findings.");
   }
 };
 
@@ -557,6 +569,18 @@ export const mixedTemplateSegmentRevisionProject: VideoProject = replaceSegmentA
 const assertMixedTemplateFixture = (): void => {
   const [firstSegment, secondSegment] = mixedTemplateStagedProject.segments;
   const [revisedFirstSegment, revisedSecondSegment] = mixedTemplateSegmentRevisionProject.segments;
+  const diagnostics = buildStagedProjectDiagnostics({
+    plan: mixedTemplateStoryboardPlan,
+    project: mixedTemplateStagedProject,
+    segments: mixedTemplateStagedProject.segments.map((segment) => ({
+      compilerAttempts: 1,
+      narration: mixedTemplateNarrationAssets[segment.id],
+      repaired: false,
+      renderStrategy: "template_macro",
+      segment,
+      strategyDecision: templateMacroStrategyDecision,
+    })),
+  });
 
   if (firstSegment.templateId !== SCRIPTED_TEMPLATE_ID) {
     throw new Error("Mixed-template smoke fixture expected segment-1 to use scripted.");
@@ -590,6 +614,12 @@ const assertMixedTemplateFixture = (): void => {
   }
   if (!revisedSecondSegment.narration?.captions?.cues.length) {
     throw new Error("Mixed-template smoke fixture should replace target segment captions.");
+  }
+  if (diagnostics.visualReview.status !== "static_preflight") {
+    throw new Error("Mixed-template diagnostics expected static visual review preflight.");
+  }
+  if (diagnostics.visualReview.findingCount !== 0) {
+    throw new Error("Mixed-template visual review preflight should not flag valid fixtures.");
   }
 };
 

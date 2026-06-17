@@ -70,6 +70,12 @@ fallback. The MiniMax storyboard planner/tool schema can now emit bounded
 procedural compiler aligns generator payload duration to real narration
 duration before segment assembly, so the project timeline does not advance to
 the next segment before generated audio finishes.
+The current Phase 6 groundwork adds a shared staged `visualReview` static
+preflight diagnostics boundary. It flags deterministic issues already visible
+from validated project data, such as narration duration overruns, caption cues
+that exceed a segment, long caption text, and unresolved planned assets from
+the current non-executable `assetPlan` phase. Representative still extraction,
+browser/canvas review, and automatic repair remain deferred.
 
 Current implementation snapshot:
 
@@ -112,6 +118,10 @@ Current implementation snapshot:
 - `src/lib/staged-generation/*`, the MiniMax template compiler helpers, and
   `POST /api/generate/staged` provide the staged assembly path from brief or
   plan input to `VideoProject`.
+- `src/lib/visual-review-schema.ts` and
+  `src/lib/staged-generation/visual-review.ts` define the current static
+  visual-review diagnostics boundary for staged generation and selected-segment
+  revision output.
 - The active page generation flow uses `/api/generate/staged`.
 - The active selected-segment regeneration flow also uses
   `/api/generate/staged`: one target segment is replanned, regenerated through

@@ -152,8 +152,12 @@ The first staged-generation groundwork is also in place:
   finishes. Phase 5 asset-plan groundwork has started: `StoryboardPlan` can
   carry `assetPlan.requiredAssets[]` with stable ids, bounded kinds, purpose,
   and fallback for future media composites, but this remains planner and
-  diagnostics data only. Unrestricted generated TSX and executable
-  `media_asset_composite` rendering remain out of scope.
+  diagnostics data only. Phase 6 review/repair groundwork has started as a
+  static `visualReview` preflight in staged diagnostics for deterministic
+  duration, caption, and unresolved planned-asset issues; still extraction,
+  browser/canvas review, and automatic segment repair are not active yet.
+  Unrestricted generated TSX and executable `media_asset_composite` rendering
+  remain out of scope.
 - Scene graph provider-output hardening is intentionally bounded: selected
   template parsing can unwrap one `implementation` / `result` / `data` field
   and parse JSON-string payloads, while the SceneGraph schema normalizes only

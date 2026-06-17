@@ -1,6 +1,26 @@
 # Iteration Status
 
-Last updated: Asset Plan boundary v1
+Last updated: Visual Review static preflight v1
+
+## Latest continuation — Visual Review static preflight v1
+
+- Started Phase 6 as a non-invasive diagnostics boundary rather than a
+  screenshot review loop or automatic repair system.
+- Added a strict `VisualReviewFinding` / `VisualReviewDiagnostics` contract for
+  `info`, `warning`, and `error` findings with optional frame, target id, and
+  suggested repair copy.
+- Added staged static preflight diagnostics for deterministic issues available
+  before still extraction: narration audio longer than visual segment duration,
+  caption cues that extend past the segment, long caption text, and
+  unresolved planned assets from the current non-executable `assetPlan` phase.
+- Wired `visualReview` into full staged generation diagnostics and selected
+  segment revision diagnostics without changing `VideoProject`,
+  preview/export rendering, provider prompts, or repair behavior.
+- Kept representative still extraction, browser/canvas review, and
+  segment-targeted repair deferred to later Phase 6 slices.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
 
 ## Latest continuation — Asset Plan boundary v1
 

@@ -5,6 +5,8 @@ import type {
   CompiledRenderStrategy,
   StrategyDecision,
 } from "../storyboard-plan-schema";
+import type { VisualReviewDiagnostics } from "../visual-review-schema";
+import { buildStaticVisualReviewDiagnostics } from "./visual-review";
 
 type PlannerDiagnostics = {
   attempts: number;
@@ -37,6 +39,7 @@ export type StagedGenerationDiagnostics = {
   narrationSegmentCount: number;
   planner?: PlannerDiagnostics;
   segmentCount: number;
+  visualReview: VisualReviewDiagnostics;
 };
 
 export const buildStagedProjectDiagnostics = (
@@ -84,6 +87,10 @@ export const buildStagedProjectDiagnostics = (
     ),
     narrationLayerCount: narrationSegmentCount,
     segmentCount: result.segments.length,
+    visualReview: buildStaticVisualReviewDiagnostics({
+      project: result.project,
+      requiredAssets,
+    }),
   };
 };
 
@@ -114,5 +121,11 @@ export const buildStagedSegmentRevisionDiagnostics = (
     narrationProviders: result.narration.provider ? [result.narration.provider] : [],
     narrationLayerCount: narrationSegmentCount,
     segmentCount: 1,
+    visualReview: buildStaticVisualReviewDiagnostics({
+      project: {
+        ...result.project,
+        segments: [result.segment],
+      },
+    }),
   };
 };

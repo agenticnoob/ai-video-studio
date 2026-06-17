@@ -126,11 +126,16 @@ Current executable strategy note:
   `terminal-session` payloads. The actual compiled render path remains
   `primitive_scene_graph`, with generator duration aligned to real narration
   duration and `template_macro` fallback on generator compilation failure.
-- Phase 5 has started as a planner-stage `assetPlan` boundary: storyboard
+- Phase 5 has landed as a planner-stage `assetPlan` boundary: storyboard
   plans may request concrete future assets by stable id, kind, purpose, and
   fallback. This is diagnostic planning data only; it does not make
   `media_asset_composite` executable, does not allow invented remote URLs, and
   does not introduce broad media-library UI.
+- Phase 6 has started with static visual-review preflight diagnostics:
+  staged diagnostics include structured `VisualReviewFinding` data for
+  deterministic duration, caption, and unresolved planned-asset issues. Still
+  extraction, browser/canvas review, and automatic segment repair remain
+  deferred.
 
 ## 2. Authoritative Terminology
 
@@ -530,10 +535,10 @@ Initial render strategy vocabulary:
 - `generated_component`: future restricted escape hatch only; not the default
   product path.
 
-The current bounded roadmap stage is Asset Plan v1: capture concrete asset
-requirements as validated planner data and staged diagnostics before adding
-asset resolution, upload UI, or executable `media_asset_composite` rendering.
-Later phases should still follow the order defined by
+The current bounded roadmap stage is Review / Repair Loop v1 groundwork:
+surface deterministic `VisualReviewFinding` diagnostics first, then add
+representative still extraction and bounded target-segment repair in later
+slices. Later phases should still follow the order defined by
 `docs/VISUAL_IR_COMPILER_ROADMAP.md`.
 
 ### 4.1 Planner Template Manifest

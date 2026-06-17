@@ -378,6 +378,8 @@ Current landing:
 
 ### Phase 6: Review / Repair Loop v1
 
+Status: started as a static preflight diagnostics boundary.
+
 Add quality closure after rendering or still extraction.
 
 Checks:
@@ -409,6 +411,19 @@ Acceptance:
 - representative stills are generated for review
 - findings can trigger bounded repair for the target segment only
 - repeated failure returns a clear diagnostic instead of silent bad output
+
+Current landing:
+
+- `src/lib/visual-review-schema.ts` defines strict
+  `VisualReviewFinding` and `VisualReviewDiagnostics` contracts.
+- staged diagnostics now include `visualReview.status: "static_preflight"`
+  for full staged generation and selected-segment regeneration.
+- the static preflight flags deterministic issues available before still
+  extraction: narration audio longer than visual segment duration, caption cues
+  that extend past the segment, long caption text, and unresolved planned
+  assets from the non-executable `assetPlan` phase.
+- no representative still extraction, browser/canvas review, automatic repair,
+  or provider prompt repair loop is active yet.
 
 ### Phase 7: Generated Component Escape Hatch
 
@@ -458,17 +473,18 @@ is worth keeping.
 ## 5. Current Bounded Goal
 
 ```txt
-Implement Asset Plan v1 as a planner-stage boundary:
-let StoryboardPlan request concrete future assets by stable id, kind, purpose,
-and fallback; expose those requests through staged diagnostics; forbid invented
-remote URLs or executable media fields; preserve VideoProject preview/export
-compatibility; and defer broad media library UI, asset upload/resolution,
-timeline editing, and actual media_asset_composite rendering.
+Implement Review / Repair Loop v1 incrementally:
+start with deterministic `VisualReviewFinding` diagnostics in staged
+generation, then add representative still extraction and bounded segment-level
+repair in later slices. The first slice should preserve VideoProject
+preview/export compatibility, avoid browser automation as the default
+validation path, and keep repair behavior explicit rather than silently
+rewriting segments.
 ```
 
-Do not start Phase 5 by building a full media library or compositing engine.
-First prove that asset requirements can be planned, validated, diagnosed, and
-kept out of template-private implementation params.
+Do not start Phase 6 by building a full visual QA system. First prove that
+review findings can be represented, surfaced through diagnostics, and kept
+separate from rendering and provider generation.
 
 ## 6. Non-goals Until Explicitly Reopened
 

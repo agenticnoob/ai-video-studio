@@ -65,6 +65,10 @@ Current implementation status:
   kinds, purpose, and fallback. This is planner/diagnostics data only; it does
   not introduce remote URL fields, upload UI, or executable
   `media_asset_composite` rendering yet
+- review/repair groundwork has started for Phase 6: staged diagnostics include
+  a static `visualReview` preflight with structured findings for deterministic
+  duration, caption, and unresolved planned-asset issues. Still extraction,
+  browser/canvas visual review, and automatic segment repair are not active yet
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration
 - staged selected-segment regeneration reruns the target segment's planning,
