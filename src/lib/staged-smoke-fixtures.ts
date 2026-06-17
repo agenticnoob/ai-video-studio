@@ -37,6 +37,8 @@ import {
   SPOTLIGHT_TEMPLATE_ID,
   STATS_DASHBOARD_TEMPLATE_ID,
 } from "./template-registry";
+import { createVisualReviewStillArtifact } from "./visual-review-still-artifacts";
+import { visualReviewStillExtractionSchema } from "./visual-review-schema";
 
 const createNarrationAsset = ({
   durationInFrames,
@@ -359,6 +361,66 @@ const assertProviderAssetPlanSurface = (): void => {
 };
 
 assertProviderAssetPlanSurface();
+
+const assertVisualReviewStillExtractionSchemaFixture = (): void => {
+  const extraction = visualReviewStillExtractionSchema.parse({
+    status: "rendered",
+    stillCount: 1,
+    stills: [
+      {
+        contentType: "image/png",
+        downloadUrl:
+          "/api/visual-review/stills/review-fixture/asset-plan-segment-segment-start-frame-000000",
+        frame: 0,
+        outputPath:
+          "/workspace/out/visual-review-stills/review-fixture/asset-plan-segment-segment-start-frame-000000.png",
+        reason: "segment_start",
+        segmentId: "asset-plan-segment",
+        sizeInBytes: 1234,
+        stillId: "asset-plan-segment-segment-start-frame-000000",
+      },
+    ],
+  });
+
+  if (extraction.stillCount !== extraction.stills.length) {
+    throw new Error("Visual review still extraction fixture should count rendered stills.");
+  }
+  if (extraction.stills[0]?.contentType !== "image/png") {
+    throw new Error("Visual review still extraction fixture should describe PNG still artifacts.");
+  }
+};
+
+assertVisualReviewStillExtractionSchemaFixture();
+
+const assertVisualReviewStillArtifactFixture = (): void => {
+  const artifact = createVisualReviewStillArtifact({
+    extractionId: "review-fixture",
+    reviewFrame: {
+      frame: 42,
+      reason: "segment_midpoint",
+      segmentId: "segment-1",
+    },
+  });
+
+  if (artifact.stillId !== "segment-1-segment-midpoint-frame-000042") {
+    throw new Error("Visual review still artifact should derive a stable still id.");
+  }
+  if (
+    artifact.downloadUrl !==
+    "/api/visual-review/stills/review-fixture/segment-1-segment-midpoint-frame-000042"
+  ) {
+    throw new Error("Visual review still artifact should expose the still download route.");
+  }
+  if (
+    !artifact.outputPath.endsWith(
+      "/visual-review-stills/review-fixture/segment-1-segment-midpoint-frame-000042.png",
+    )
+  ) {
+    throw new Error("Visual review still artifact should write under visual-review-stills.");
+  }
+};
+
+assertVisualReviewStillArtifactFixture();
 
 const assertSegmentRevisionProceduralGeneratorSurface = (): void => {
   const prompt = buildSegmentPlanRevisionPrompt({

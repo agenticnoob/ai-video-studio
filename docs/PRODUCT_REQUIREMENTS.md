@@ -59,8 +59,9 @@ Product direction:
 - review/repair should start as structured diagnostics: the current static
   `visualReview` preflight may flag deterministic duration, caption, and
   unresolved planned-asset issues and provide representative `reviewFrames[]`
-  for each segment's start, midpoint, and end, while still image extraction,
-  browser/canvas review, and automatic target-segment repair remain future
+  for each segment's start, midpoint, and end; explicit still image extraction
+  can render those frames through `POST /api/visual-review/stills`, while
+  browser/canvas review and automatic target-segment repair remain future
   bounded slices
 - final generation should be staged: storyboard planning first, per-segment
   TTS second, selected visual implementation compilation third, project

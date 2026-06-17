@@ -68,9 +68,10 @@ Current implementation status:
 - review/repair groundwork has started for Phase 6: staged diagnostics include
   a static `visualReview` preflight with structured findings for deterministic
   duration, caption, and unresolved planned-asset issues, plus representative
-  review frames for each segment's start, midpoint, and end. Still image
-  extraction, browser/canvas visual review, and automatic segment repair are
-  not active yet
+  review frames for each segment's start, midpoint, and end. Explicit still
+  image extraction can render those frames through
+  `POST /api/visual-review/stills` and return PNG artifact metadata.
+  Browser/canvas visual review and automatic segment repair are not active yet
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration
 - staged selected-segment regeneration reruns the target segment's planning,
@@ -398,6 +399,13 @@ List Remotion compositions and load the deterministic staged smoke fixtures:
 ```bash
 cd /data/projects/labs/ai-video-studio
 docker compose run --rm web npm run smoke:staged-fixtures
+```
+
+Validate explicit visual-review still extraction against the deterministic
+staged fixture:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose run --rm web bash -lc 'npm run build && npm run start >/tmp/ai-video-studio-next.log 2>&1 & server_pid=$!; ready=0; for i in $(seq 1 45); do node -e "fetch(\"http://127.0.0.1:3000\").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" && ready=1 && break; sleep 1; done; if [ "$ready" != "1" ]; then cat /tmp/ai-video-studio-next.log; kill $server_pid >/dev/null 2>&1 || true; exit 1; fi; npm run smoke:visual-review-stills; status=$?; kill $server_pid >/dev/null 2>&1 || true; exit $status'
 ```
 
 Render representative scene graph stills:

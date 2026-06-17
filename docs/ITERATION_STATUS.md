@@ -1,6 +1,32 @@
 # Iteration Status
 
-Last updated: Visual Review representative frame plan v1
+Last updated: Visual Review still extraction v1
+
+## Latest continuation — Visual Review still extraction v1
+
+- Continued Phase 6 by turning representative `reviewFrames[]` into an
+  explicit still-image extraction boundary.
+- Added strict `VisualReviewStill` / `VisualReviewStillExtraction` metadata for
+  rendered PNG artifacts, stable still ids, output paths, download URLs, and
+  byte sizes.
+- Added a server-side Remotion `renderStill` helper that renders the existing
+  generic `ProjectVideo` composition at each planned review frame while
+  preserving route-media URL rewriting.
+- Added `POST /api/visual-review/stills` as an explicit review action: it
+  rebuilds static visual-review diagnostics for the submitted `VideoProject`,
+  renders the representative stills, and returns diagnostics plus still
+  artifact metadata. Staged generation still does not render screenshots by
+  default.
+- Added `/api/visual-review/stills/[extractionId]/[stillId]` for reading
+  generated PNG artifacts.
+- Added `npm run smoke:visual-review-stills` for a deterministic local API
+  smoke against `mixedTemplateStagedProject`.
+- Browser/canvas review and automatic target-segment repair remain deferred to
+  later Phase 6 slices.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
 
 ## Latest continuation — Visual Review representative frame plan v1
 

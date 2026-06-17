@@ -5,6 +5,7 @@ import { pathToFileURL } from "node:url";
 import type { bundle as bundleFn } from "@remotion/bundler";
 import type {
   renderMedia as renderMediaFn,
+  renderStill as renderStillFn,
   selectComposition as selectCompositionFn,
 } from "@remotion/renderer";
 import { normalizeProject, type VideoProject } from "./project-schema";
@@ -13,6 +14,15 @@ import {
   getRenderArtifactDownloadUrl,
   getRenderArtifactOutputPath,
 } from "./render-artifacts";
+import {
+  createVisualReviewStillArtifact,
+  type VisualReviewStillArtifact,
+} from "./visual-review-still-artifacts";
+import type {
+  VisualReviewFrame,
+  VisualReviewStill,
+  VisualReviewStillExtraction,
+} from "./visual-review-schema";
 
 export const PROJECT_VIDEO_COMPOSITION_ID = "ProjectVideo";
 const DEFAULT_RENDER_ASSET_ORIGIN = "http://127.0.0.1:3000";
@@ -35,6 +45,7 @@ type RemotionBundlerModule = {
 
 type RemotionRendererModule = {
   renderMedia: typeof renderMediaFn;
+  renderStill: typeof renderStillFn;
   selectComposition: typeof selectCompositionFn;
 };
 
@@ -54,6 +65,12 @@ export type ProjectRenderResult = {
 };
 
 export type ProjectRenderProgressReporter = (
+  stepId: "prepare" | "bundle" | "composition" | "render" | "artifact",
+  status: "running" | "success" | "failure",
+  detail?: string,
+) => void;
+
+export type VisualReviewStillProgressReporter = (
   stepId: "prepare" | "bundle" | "composition" | "render" | "artifact",
   status: "running" | "success" | "failure",
   detail?: string,
@@ -190,5 +207,82 @@ export const renderProjectVideo = async (
     project,
     renderId,
     sizeInBytes: outputStats.size,
+  };
+};
+
+export const renderVisualReviewStills = async ({
+  extractionId,
+  onProgress,
+  project: projectInput,
+  reviewFrames,
+}: {
+  extractionId: string;
+  onProgress?: VisualReviewStillProgressReporter;
+  project: VideoProject;
+  reviewFrames: VisualReviewFrame[];
+}): Promise<VisualReviewStillExtraction> => {
+  onProgress?.("prepare", "running", "Loading Remotion renderer modules.");
+  const [{ bundle }, { renderStill, selectComposition }, { webpackOverride }] = await Promise.all([
+    importAtRuntime<RemotionBundlerModule>("@remotion/bundler"),
+    importAtRuntime<RemotionRendererModule>("@remotion/renderer"),
+    importAtRuntime<WebpackOverrideModule>(webpackOverrideModuleUrl),
+  ]);
+  onProgress?.("prepare", "success", "Remotion renderer modules loaded.");
+
+  const project = resolveRouteMediaForRender(normalizeProject(projectInput));
+  const artifacts: Array<VisualReviewStillArtifact & { reviewFrame: VisualReviewFrame }> =
+    reviewFrames.map((reviewFrame) => ({
+      ...createVisualReviewStillArtifact({ extractionId, reviewFrame }),
+      reviewFrame,
+    }));
+
+  onProgress?.("bundle", "running", "Bundling Remotion project.");
+  const bundledProject = await bundle({
+    entryPoint: remotionEntryPoint,
+    webpackOverride,
+  });
+  onProgress?.("bundle", "success", "Remotion project bundled.");
+
+  onProgress?.("composition", "running", "Selecting ProjectVideo composition.");
+  const composition = await selectComposition({
+    id: PROJECT_VIDEO_COMPOSITION_ID,
+    inputProps: project,
+    serveUrl: bundledProject,
+  });
+  onProgress?.("composition", "success", "ProjectVideo composition selected.");
+
+  const stills: VisualReviewStill[] = [];
+  onProgress?.("render", "running", `Rendering ${artifacts.length} review stills.`);
+
+  for (const artifact of artifacts) {
+    await mkdir(path.dirname(artifact.outputPath), { recursive: true });
+    const { contentType } = await renderStill({
+      composition,
+      frame: artifact.reviewFrame.frame,
+      inputProps: project,
+      output: artifact.outputPath,
+      serveUrl: bundledProject,
+    });
+    const outputStats = await stat(artifact.outputPath);
+
+    stills.push({
+      contentType: contentType === "image/png" ? contentType : "image/png",
+      downloadUrl: artifact.downloadUrl,
+      frame: artifact.reviewFrame.frame,
+      outputPath: artifact.outputPath,
+      reason: artifact.reviewFrame.reason,
+      segmentId: artifact.reviewFrame.segmentId,
+      sizeInBytes: outputStats.size,
+      stillId: artifact.stillId,
+    });
+  }
+
+  onProgress?.("render", "success", "Review stills rendered.");
+  onProgress?.("artifact", "success", "Review still artifacts ready.");
+
+  return {
+    status: "rendered",
+    stillCount: stills.length,
+    stills,
   };
 };

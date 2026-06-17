@@ -378,8 +378,8 @@ Current landing:
 
 ### Phase 6: Review / Repair Loop v1
 
-Status: started as a static preflight diagnostics and representative frame-plan
-boundary.
+Status: started as static preflight diagnostics, representative frame planning,
+and explicit still-image extraction.
 
 Add quality closure after rendering or still extraction.
 
@@ -428,8 +428,12 @@ Current landing:
   deterministic list of absolute project frames to inspect for each segment's
   start, midpoint, and end. This is the stable input boundary for later still
   extraction.
-- no representative still extraction, browser/canvas review, automatic repair,
-  or provider prompt repair loop is active yet.
+- `POST /api/visual-review/stills` can explicitly render those representative
+  frames through Remotion `renderStill` against the generic `ProjectVideo`
+  composition and returns strict PNG still artifact metadata. This is not run
+  during normal staged generation.
+- no browser/canvas review, automatic repair, or provider prompt repair loop
+  is active yet.
 
 ### Phase 7: Generated Component Escape Hatch
 
@@ -480,17 +484,18 @@ is worth keeping.
 
 ```txt
 Implement Review / Repair Loop v1 incrementally:
-start with deterministic `VisualReviewFinding` diagnostics and representative
-review-frame planning in staged generation, then add still image extraction and
-bounded segment-level repair in later slices. The first slices should preserve
-VideoProject preview/export compatibility, avoid browser automation as the
-default validation path, and keep repair behavior explicit rather than silently
-rewriting segments.
+keep deterministic `VisualReviewFinding` diagnostics, representative
+review-frame planning, and explicit still image extraction stable, then add
+bounded browser/canvas review and target-segment repair in later slices. The
+next slices should preserve VideoProject preview/export compatibility, avoid
+browser automation as the default validation path, and keep repair behavior
+explicit rather than silently rewriting segments.
 ```
 
-Do not start Phase 6 by building a full visual QA system. First prove that
-review findings can be represented, surfaced through diagnostics, and kept
-separate from rendering and provider generation.
+Do not widen Phase 6 into a full visual QA system. First keep proving that
+review findings, frame planning, and still artifacts can be represented,
+surfaced through diagnostics, and kept separate from provider generation and
+silent repair behavior.
 
 ## 6. Non-goals Until Explicitly Reopened
 

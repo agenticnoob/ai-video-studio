@@ -18,6 +18,33 @@ export const visualReviewFrameSchema = z
   })
   .strict();
 
+export const visualReviewStillSchema = visualReviewFrameSchema
+  .extend({
+    contentType: z.literal("image/png"),
+    downloadUrl: z.string().trim().min(1).max(500).startsWith("/"),
+    outputPath: z.string().trim().min(1).max(1000),
+    sizeInBytes: z.number().int().min(0),
+    stillId: z.string().trim().min(1).max(200),
+  })
+  .strict();
+
+export const visualReviewStillExtractionSchema = z
+  .object({
+    status: z.literal("rendered"),
+    stillCount: z.number().int().min(0),
+    stills: z.array(visualReviewStillSchema),
+  })
+  .strict()
+  .superRefine((value, context) => {
+    if (value.stillCount !== value.stills.length) {
+      context.addIssue({
+        code: "custom",
+        message: "stillCount must match stills.length.",
+        path: ["stillCount"],
+      });
+    }
+  });
+
 export const visualReviewDiagnosticsSchema = z
   .object({
     status: z.literal("static_preflight"),
@@ -32,4 +59,6 @@ export const visualReviewDiagnosticsSchema = z
 
 export type VisualReviewFinding = z.infer<typeof visualReviewFindingSchema>;
 export type VisualReviewFrame = z.infer<typeof visualReviewFrameSchema>;
+export type VisualReviewStill = z.infer<typeof visualReviewStillSchema>;
+export type VisualReviewStillExtraction = z.infer<typeof visualReviewStillExtractionSchema>;
 export type VisualReviewDiagnostics = z.infer<typeof visualReviewDiagnosticsSchema>;

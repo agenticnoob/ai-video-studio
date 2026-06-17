@@ -135,8 +135,10 @@ Current executable strategy note:
   staged diagnostics include structured `VisualReviewFinding` data for
   deterministic duration, caption, and unresolved planned-asset issues, plus
   deterministic `reviewFrames[]` for each segment's start, midpoint, and end
-  as the later still-extraction input boundary. Still image extraction,
-  browser/canvas review, and automatic segment repair remain deferred.
+  as the still-extraction input boundary. Explicit still image extraction is
+  now available through `POST /api/visual-review/stills`, which renders PNG
+  artifacts for those frames through `ProjectVideo` and returns strict still
+  metadata. Browser/canvas review and automatic segment repair remain deferred.
 
 ## 2. Authoritative Terminology
 
@@ -537,10 +539,11 @@ Initial render strategy vocabulary:
   product path.
 
 The current bounded roadmap stage is Review / Repair Loop v1 groundwork:
-surface deterministic `VisualReviewFinding` diagnostics and representative
-`reviewFrames[]` planning first, then add still image extraction and bounded
-target-segment repair in later slices. Later phases should still follow the
-order defined by `docs/VISUAL_IR_COMPILER_ROADMAP.md`.
+surface deterministic `VisualReviewFinding` diagnostics, representative
+`reviewFrames[]` planning, and explicit still image extraction first, then add
+bounded browser/canvas review and target-segment repair in later slices. Later
+phases should still follow the order defined by
+`docs/VISUAL_IR_COMPILER_ROADMAP.md`.
 
 ### 4.1 Planner Template Manifest
 
