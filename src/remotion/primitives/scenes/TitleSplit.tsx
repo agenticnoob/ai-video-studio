@@ -20,11 +20,7 @@ function TitleSplit() {
     to: 0,
   });
 
-  const glowOpacity = interpolate(
-    Math.sin(frame * 0.1),
-    [-1, 1],
-    [0.3, 0.8],
-  );
+  const glowOpacity = interpolate(Math.sin(frame * 0.1), [-1, 1], [0.3, 0.8]);
 
   const meetProgress = interpolate(frame, [0, 20], [0, 1], {
     extrapolateLeft: "clamp",
@@ -55,9 +51,10 @@ function TitleSplit() {
           WebkitTextStroke: "2px white",
           transform: `translateY(${topY}px)`,
           fontFamily: "Inter, sans-serif",
-          textShadow: meetProgress === 1
-            ? `0 0 ${20 * glowOpacity}px rgba(59, 130, 246, ${glowOpacity})`
-            : "none",
+          textShadow:
+            meetProgress === 1
+              ? `0 0 ${20 * glowOpacity}px rgba(59, 130, 246, ${glowOpacity})`
+              : "none",
         }}
       >
         CREATIVE
@@ -71,9 +68,10 @@ function TitleSplit() {
           letterSpacing: "0.15em",
           transform: `translateY(${bottomY}px)`,
           fontFamily: "Inter, sans-serif",
-          textShadow: meetProgress === 1
-            ? `0 0 ${20 * glowOpacity}px rgba(59, 130, 246, ${glowOpacity})`
-            : "none",
+          textShadow:
+            meetProgress === 1
+              ? `0 0 ${20 * glowOpacity}px rgba(59, 130, 246, ${glowOpacity})`
+              : "none",
         }}
       >
         STUDIO

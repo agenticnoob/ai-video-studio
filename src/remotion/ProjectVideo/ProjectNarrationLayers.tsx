@@ -12,11 +12,7 @@ export const ProjectNarrationLayers: React.FC<ProjectNarrationLayersProps> = ({ 
   return (
     <>
       {getSegmentNarrationLayers(project).map((layer) => (
-        <Sequence
-          key={layer.key}
-          from={layer.startFrame}
-          durationInFrames={layer.durationInFrames}
-        >
+        <Sequence key={layer.key} from={layer.startFrame} durationInFrames={layer.durationInFrames}>
           <Audio pauseWhenBuffering src={layer.src} />
         </Sequence>
       ))}

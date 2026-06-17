@@ -13,7 +13,7 @@ function MasonryGallery() {
     { col: 2, height: "55%", gradient: "linear-gradient(135deg, #7c3aed, #7209b7)", delay: 11 },
   ];
 
-  const columns: typeof blocks[] = [[], [], []];
+  const columns: (typeof blocks)[] = [[], [], []];
   blocks.forEach((block) => columns[block.col].push(block));
 
   return (

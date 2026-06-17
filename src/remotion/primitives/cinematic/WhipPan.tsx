@@ -18,15 +18,10 @@ function WhipPan() {
   });
 
   // Motion blur stretch effect during fast pan
-  const stretchX = interpolate(
-    frame,
-    [panStart, (panStart + panEnd) / 2, panEnd],
-    [1, 1.6, 1],
-    {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    }
-  );
+  const stretchX = interpolate(frame, [panStart, (panStart + panEnd) / 2, panEnd], [1, 1.6, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
 
   return (
     <div
@@ -71,9 +66,7 @@ function WhipPan() {
         >
           Scene A
         </h2>
-        <p style={{ color: "#93c5fd", fontSize: "1.1rem", marginTop: "0.5rem" }}>
-          Blue content
-        </p>
+        <p style={{ color: "#93c5fd", fontSize: "1.1rem", marginTop: "0.5rem" }}>Blue content</p>
       </div>
 
       {/* Scene B - Purple */}
@@ -109,9 +102,7 @@ function WhipPan() {
         >
           Scene B
         </h2>
-        <p style={{ color: "#c084fc", fontSize: "1.1rem", marginTop: "0.5rem" }}>
-          Purple content
-        </p>
+        <p style={{ color: "#c084fc", fontSize: "1.1rem", marginTop: "0.5rem" }}>Purple content</p>
       </div>
     </div>
   );

@@ -137,6 +137,11 @@ ${buildPlannerTemplateManifestPrompt()}
 - Set proceduralGenerator.durationInFrames from the expected segment duration when possible; otherwise choose a reasonable duration for the narration.
 - Do not include proceduralGenerator on template_macro or primitive_scene_graph segments.
 
+# Asset plan boundary
+- If the video will need concrete visual evidence later, add top-level assetPlan.requiredAssets with stable ids, kind, purpose, and fallback.
+- Use assetPlan ids such as "dashboard-screenshot" or "pricing-chart-data"; do not use URLs, file paths, src fields, or remote media references.
+- Do not invent asset URLs. AssetPlan only requests future assets; it does not make media_asset_composite executable in this phase.
+
 # Planning boundaries
 - Do not generate implementation, scenes, callouts, theme, colors, or template props.
 - Do not invent template ids.
@@ -147,7 +152,7 @@ ${buildPlannerTemplateManifestPrompt()}
 # Tool-calling contract (CRITICAL)
 You MUST emit the result by calling the function tool named "emit_result".
 Pass the complete StoryboardPlan object (top-level keys: title, brief, segments,
-and optional language/globalStyle) as the function arguments JSON string. Do
+and optional language/globalStyle/assetPlan) as the function arguments JSON string. Do
 not return the JSON in the assistant content channel — it will be ignored.`;
 
 const buildStoryboardRepairInstructions = ({

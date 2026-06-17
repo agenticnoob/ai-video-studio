@@ -97,9 +97,7 @@ function SlideWipe() {
         >
           Old Scene
         </h2>
-        <p style={{ color: "#93c5fd", fontSize: "1.1rem", marginTop: "0.5rem" }}>
-          Sliding away...
-        </p>
+        <p style={{ color: "#93c5fd", fontSize: "1.1rem", marginTop: "0.5rem" }}>Sliding away...</p>
       </div>
     </div>
   );

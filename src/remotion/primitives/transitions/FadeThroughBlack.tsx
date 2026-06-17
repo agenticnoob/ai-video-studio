@@ -27,7 +27,7 @@ function FadeThroughBlack() {
     {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
-    }
+    },
   );
 
   return (
@@ -74,9 +74,7 @@ function FadeThroughBlack() {
         >
           Scene 1
         </h2>
-        <p style={{ color: "#93c5fd", fontSize: "1.1rem", marginTop: "0.5rem" }}>
-          Fading out...
-        </p>
+        <p style={{ color: "#93c5fd", fontSize: "1.1rem", marginTop: "0.5rem" }}>Fading out...</p>
       </div>
 
       {/* Scene 2 */}
@@ -110,9 +108,7 @@ function FadeThroughBlack() {
         >
           Scene 2
         </h2>
-        <p style={{ color: "#c084fc", fontSize: "1.1rem", marginTop: "0.5rem" }}>
-          Fading in...
-        </p>
+        <p style={{ color: "#c084fc", fontSize: "1.1rem", marginTop: "0.5rem" }}>Fading in...</p>
       </div>
 
       {/* Black overlay for the through-black transition */}

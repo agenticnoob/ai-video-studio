@@ -60,6 +60,11 @@ Current implementation status:
   and `terminal-session` payloads for `scene-graph` segments. All actual
   rendering still compiles through `primitive_scene_graph`, and generator
   segment duration is aligned to real narration duration before assembly
+- asset-plan groundwork has started for Phase 5: `StoryboardPlan` can carry
+  top-level `assetPlan.requiredAssets[]` entries with stable ids, bounded
+  kinds, purpose, and fallback. This is planner/diagnostics data only; it does
+  not introduce remote URL fields, upload UI, or executable
+  `media_asset_composite` rendering yet
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration
 - staged selected-segment regeneration reruns the target segment's planning,
@@ -129,6 +134,9 @@ Current modeling direction:
   contracts such as `node-graph-flow`, `line-path-flow`, and
   `terminal-session`, then expose each generator to planner output only after
   its deterministic compiler path and provider schema are in place
+- future media composites should start from validated `assetPlan` requirements
+  by stable asset id/kind/purpose/fallback before adding asset resolution,
+  upload UI, timeline controls, or executable `media_asset_composite`
 - `implementation` is template-specific; current registered templates are:
   - `scripted`: `VideoSpec` with internal `scenes`
   - `spotlight`: `SpotlightSpec` with `headline`, `subheadline`,
@@ -184,7 +192,8 @@ Current modeling direction:
   compile-to-SceneGraph support, staged diagnostics metadata, guarded
   execution, and provider-facing planner support for all three generators.
   Execution remains deterministic and falls back to `template_macro` on
-  generator compile failure.
+  generator compile failure. Phase 5 has also started with a non-executable
+  asset-plan boundary for future media composites.
 - external Remotion generation patterns are captured in
   `docs/REMOTION_GENERATION_PATTERNS.md`; use them as workflow and primitive
   inspiration without importing standalone project scaffolding or widening the

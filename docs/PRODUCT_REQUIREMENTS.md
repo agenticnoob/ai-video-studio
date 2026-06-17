@@ -52,6 +52,10 @@ Product direction:
   `terminal-session` paths are provider-planner selectable only through
   bounded schemas and still compile deterministically into actual
   `primitive_scene_graph`
+- asset planning should be introduced before media compositing: the current
+  planner may request future assets through `assetPlan.requiredAssets[]` using
+  stable ids, bounded kinds, purpose, and fallback, but it must not invent
+  remote URLs or make `media_asset_composite` executable yet
 - final generation should be staged: storyboard planning first, per-segment
   TTS second, selected visual implementation compilation third, project
   assembly last

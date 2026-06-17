@@ -12,11 +12,7 @@ function SubscribeReminder() {
 
   const translateY = interpolate(slideIn, [0, 1], [100, 0]);
 
-  const bellPulse = interpolate(
-    Math.sin(frame * 0.15),
-    [-1, 1],
-    [1, 1.15],
-  );
+  const bellPulse = interpolate(Math.sin(frame * 0.15), [-1, 1], [1, 1.15]);
 
   return (
     <div

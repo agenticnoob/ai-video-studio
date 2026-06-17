@@ -97,6 +97,10 @@ const getStoryboardPlanToolSegmentSchema = (): Record<string, unknown> => {
   return segmentSchema;
 };
 
+const getStoryboardPlanToolParameters = (): Record<string, unknown> => {
+  return EMIT_STORYBOARD_PLAN_TOOL.function.parameters;
+};
+
 const assertProviderProceduralGeneratorSurface = (): void => {
   const segmentSchema = getStoryboardPlanToolSegmentSchema();
   const properties = segmentSchema.properties as Record<string, unknown> | undefined;
@@ -149,6 +153,192 @@ const assertProviderProceduralGeneratorSurface = (): void => {
 };
 
 assertProviderProceduralGeneratorSurface();
+
+const assertAssetPlanSchemaFixture = (): void => {
+  const planWithAssets = storyboardPlanSchema.parse({
+    title: "Asset Plan Boundary Smoke",
+    brief: "Plan a product walkthrough that will later need concrete screenshots.",
+    language: "en",
+    globalStyle: "Clear product walkthrough with concrete visual evidence placeholders.",
+    assetPlan: {
+      requiredAssets: [
+        {
+          id: "dashboard-screenshot",
+          kind: "product_screenshot",
+          purpose: "Show the product dashboard during the proof segment.",
+          fallback: "Use a caption-safe scene-graph browser-window placeholder.",
+        },
+        {
+          id: "launch-icon",
+          kind: "icon",
+          purpose: "Mark the launch milestone in the opener.",
+          fallback: "Use a simple text lockup if the icon is unavailable.",
+        },
+      ],
+    },
+    segments: [
+      {
+        id: "asset-plan-segment",
+        order: 1,
+        title: "Asset plan boundary",
+        purpose: "Verify the planner can request concrete assets by id without media URLs.",
+        templateId: SCENE_GRAPH_TEMPLATE_ID,
+        templateReason:
+          "SceneGraph can render a placeholder while concrete assets remain unresolved.",
+        strategyDecision: primitiveSceneGraphStrategyDecision,
+        narration: {
+          text: "The planner can name required assets without turning them into arbitrary URLs.",
+          tone: "technical",
+        },
+        visualBrief: "A browser-window placeholder that can later resolve dashboard-screenshot.",
+        expectedDurationSeconds: 5,
+      },
+    ],
+  });
+  const invalidUrlLikeAsset = storyboardPlanSchema.safeParse({
+    ...planWithAssets,
+    assetPlan: {
+      requiredAssets: [
+        {
+          id: "https://example.com/dashboard.png",
+          kind: "product_screenshot",
+          purpose: "This should be rejected because asset ids are stable refs, not URLs.",
+          fallback: "Use a browser-window placeholder.",
+        },
+      ],
+    },
+  });
+  const stagedDiagnostics = buildStagedProjectDiagnostics({
+    plan: planWithAssets,
+    project: {
+      meta: {
+        title: "Asset Plan Boundary Smoke",
+        fps: 30,
+        width: 1280,
+        height: 720,
+      },
+      brief: planWithAssets.brief,
+      segments: [
+        videoSegmentSchema.parse({
+          id: "asset-plan-segment",
+          title: "Asset plan boundary",
+          intent: "Verify the planner can request concrete assets by id without media URLs.",
+          templateId: SPOTLIGHT_TEMPLATE_ID,
+          implementation: {
+            meta: {
+              title: "Asset plan boundary",
+              fps: 30,
+              width: 1280,
+              height: 720,
+            },
+            theme: {
+              background: "#101827",
+              panel: "rgba(248,250,252,0.10)",
+              primary: "#7dd3fc",
+              secondary: "#f59e0b",
+              text: "#f8fafc",
+              muted: "#cbd5e1",
+            },
+            durationInFrames: 150,
+            kicker: "Asset plan",
+            headline: "Stable refs first",
+            subheadline: "Media composite can resolve assets later.",
+            callouts: ["ids", "kinds", "fallbacks"],
+          },
+        }),
+      ],
+    },
+    segments: [
+      {
+        compilerAttempts: 1,
+        narration: createNarrationAsset({
+          durationInFrames: 150,
+          segmentId: "asset-plan-segment",
+          text: "The planner can name required assets without turning them into arbitrary URLs.",
+        }),
+        repaired: false,
+        renderStrategy: "template_macro",
+        segment: videoSegmentSchema.parse({
+          id: "asset-plan-segment",
+          title: "Asset plan boundary",
+          intent: "Verify the planner can request concrete assets by id without media URLs.",
+          templateId: SPOTLIGHT_TEMPLATE_ID,
+          implementation: {
+            meta: {
+              title: "Asset plan boundary",
+              fps: 30,
+              width: 1280,
+              height: 720,
+            },
+            theme: {
+              background: "#101827",
+              panel: "rgba(248,250,252,0.10)",
+              primary: "#7dd3fc",
+              secondary: "#f59e0b",
+              text: "#f8fafc",
+              muted: "#cbd5e1",
+            },
+            durationInFrames: 150,
+            kicker: "Asset plan",
+            headline: "Stable refs first",
+            subheadline: "Media composite can resolve assets later.",
+            callouts: ["ids", "kinds", "fallbacks"],
+          },
+        }),
+        strategyDecision: primitiveSceneGraphStrategyDecision,
+      },
+    ],
+  }) as {
+    assetPlan?: {
+      requiredAssetCount: number;
+      requiredAssets: Array<{ id: string; kind: string; fallback: string }>;
+    };
+  };
+
+  if (planWithAssets.assetPlan?.requiredAssets.length !== 2) {
+    throw new Error("Asset plan fixture expected two planned asset requirements.");
+  }
+  if (invalidUrlLikeAsset.success) {
+    throw new Error("Asset plan fixture should reject URL-like asset ids.");
+  }
+  if (
+    stagedDiagnostics.assetPlan?.requiredAssetCount !== 2 ||
+    stagedDiagnostics.assetPlan.requiredAssets[0]?.id !== "dashboard-screenshot"
+  ) {
+    throw new Error("Asset plan diagnostics should expose required asset refs.");
+  }
+};
+
+assertAssetPlanSchemaFixture();
+
+const assertProviderAssetPlanSurface = (): void => {
+  const parameters = getStoryboardPlanToolParameters();
+  const properties = parameters.properties as Record<string, unknown> | undefined;
+  const assetPlanSchema = properties?.assetPlan as Record<string, unknown> | undefined;
+  const assetPlanJson = JSON.stringify(assetPlanSchema);
+  const prompt = buildStoryboardPlanPrompt({
+    brief: "Create a product walkthrough using dashboard screenshots later.",
+  });
+  const systemPrompt = prompt.messages[0]?.content ?? "";
+
+  if (!assetPlanSchema) {
+    throw new Error("Storyboard plan tool schema should expose assetPlan.");
+  }
+  if (!assetPlanJson.includes("requiredAssets")) {
+    throw new Error("Storyboard plan tool schema should expose requiredAssets.");
+  }
+  if (assetPlanJson.includes("url") || assetPlanJson.includes("src")) {
+    throw new Error("Asset plan tool schema must not expose URL or src fields.");
+  }
+  if (!systemPrompt.includes("assetPlan")) {
+    throw new Error("Storyboard plan prompt should describe assetPlan usage.");
+  }
+  if (!systemPrompt.includes("Do not invent asset URLs")) {
+    throw new Error("Storyboard plan prompt should forbid invented asset URLs.");
+  }
+};
+
+assertProviderAssetPlanSurface();
 
 const assertSegmentRevisionProceduralGeneratorSurface = (): void => {
   const prompt = buildSegmentPlanRevisionPrompt({

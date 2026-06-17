@@ -40,10 +40,7 @@ type RenderResponse = {
 const isRenderSuccessResponse = (
   response: RenderResponse,
 ): response is Required<
-  Pick<
-    RenderResponse,
-    "downloadUrl" | "outputPath" | "renderId" | "sizeInBytes"
-  >
+  Pick<RenderResponse, "downloadUrl" | "outputPath" | "renderId" | "sizeInBytes">
 > => {
   return (
     typeof response.downloadUrl === "string" &&

@@ -45,17 +45,20 @@ class InProcessLimiter {
   private activeCount = 0;
   private readonly queue: QueuedWaiter[] = [];
 
-  async run<T>({
-    limit,
-    mode,
-    queueTimeoutMs,
-    taskId,
-  }: {
-    limit: number;
-    mode: BusyMode;
-    queueTimeoutMs: number;
-    taskId: ConcurrencyTaskId;
-  }, task: () => Promise<T>): Promise<T> {
+  async run<T>(
+    {
+      limit,
+      mode,
+      queueTimeoutMs,
+      taskId,
+    }: {
+      limit: number;
+      mode: BusyMode;
+      queueTimeoutMs: number;
+      taskId: ConcurrencyTaskId;
+    },
+    task: () => Promise<T>,
+  ): Promise<T> {
     await this.acquire({ limit, mode, queueTimeoutMs, taskId });
 
     try {

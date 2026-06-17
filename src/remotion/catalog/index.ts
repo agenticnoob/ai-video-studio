@@ -1,4 +1,7 @@
-export { PrimitiveCatalogPreview, type PrimitiveCatalogPreviewProps } from "./PrimitiveCatalogPreview";
+export {
+  PrimitiveCatalogPreview,
+  type PrimitiveCatalogPreviewProps,
+} from "./PrimitiveCatalogPreview";
 export {
   defaultPrimitiveCatalogId,
   primitiveCatalog,

@@ -36,18 +36,12 @@ function ImageCarousel() {
         {slides.map((slide, i) => {
           const offset = i - progress;
           const translateX = offset * 280;
-          const scale = interpolate(
-            Math.abs(offset),
-            [0, 1, 2],
-            [1, 0.75, 0.55],
-            { extrapolateRight: "clamp" }
-          );
-          const opacity = interpolate(
-            Math.abs(offset),
-            [0, 1, 2],
-            [1, 0.5, 0.2],
-            { extrapolateRight: "clamp" }
-          );
+          const scale = interpolate(Math.abs(offset), [0, 1, 2], [1, 0.75, 0.55], {
+            extrapolateRight: "clamp",
+          });
+          const opacity = interpolate(Math.abs(offset), [0, 1, 2], [1, 0.5, 0.2], {
+            extrapolateRight: "clamp",
+          });
 
           return (
             <div

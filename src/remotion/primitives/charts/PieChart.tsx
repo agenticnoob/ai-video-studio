@@ -71,12 +71,10 @@ function PieChart() {
             const currentOffset = cumulativeOffset;
             cumulativeOffset += segmentLength;
 
-            const segmentProgress = interpolate(
-              frame,
-              [i * 10, 15 + i * 10],
-              [0, 1],
-              { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
-            );
+            const segmentProgress = interpolate(frame, [i * 10, 15 + i * 10], [0, 1], {
+              extrapolateRight: "clamp",
+              extrapolateLeft: "clamp",
+            });
 
             const animatedLength = segmentLength * segmentProgress;
 
@@ -114,12 +112,10 @@ function PieChart() {
           }}
         >
           {segments.map((segment, i) => {
-            const legendOpacity = interpolate(
-              frame,
-              [5 + i * 10, 15 + i * 10],
-              [0, 1],
-              { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
-            );
+            const legendOpacity = interpolate(frame, [5 + i * 10, 15 + i * 10], [0, 1], {
+              extrapolateRight: "clamp",
+              extrapolateLeft: "clamp",
+            });
 
             return (
               <div

@@ -54,19 +54,15 @@ function ProgressBars() {
 
         {/* Bars */}
         {skills.map((skill, i) => {
-          const barProgress = interpolate(
-            frame,
-            [5 + i * 8, 25 + i * 8],
-            [0, skill.value],
-            { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
-          );
+          const barProgress = interpolate(frame, [5 + i * 8, 25 + i * 8], [0, skill.value], {
+            extrapolateRight: "clamp",
+            extrapolateLeft: "clamp",
+          });
 
-          const labelOpacity = interpolate(
-            frame,
-            [i * 8, 5 + i * 8],
-            [0, 1],
-            { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
-          );
+          const labelOpacity = interpolate(frame, [i * 8, 5 + i * 8], [0, 1], {
+            extrapolateRight: "clamp",
+            extrapolateLeft: "clamp",
+          });
 
           return (
             <div

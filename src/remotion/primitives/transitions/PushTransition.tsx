@@ -98,9 +98,7 @@ function PushTransition() {
         >
           Scene B
         </h2>
-        <p style={{ color: "#c084fc", fontSize: "1.1rem", marginTop: "0.5rem" }}>
-          Pushing in...
-        </p>
+        <p style={{ color: "#c084fc", fontSize: "1.1rem", marginTop: "0.5rem" }}>Pushing in...</p>
       </div>
     </div>
   );

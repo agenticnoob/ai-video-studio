@@ -84,7 +84,9 @@ export const useVoiceClone = (): UseVoiceCloneResult => {
         referenceText: data.referenceText ?? current.referenceText,
       }));
     } catch (caughtError) {
-      setVoiceReferenceError(caughtError instanceof Error ? caughtError.message : "上传参考音频失败。");
+      setVoiceReferenceError(
+        caughtError instanceof Error ? caughtError.message : "上传参考音频失败。",
+      );
     } finally {
       setIsUploadingVoiceReference(false);
     }

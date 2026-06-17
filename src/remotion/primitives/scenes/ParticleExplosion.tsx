@@ -63,9 +63,7 @@ function ParticleExplosion() {
             transform: `translate(-50%, -50%) translate(${particle.x}px, ${particle.y}px) scale(${particle.scale})`,
             width: "12px",
             height: "12px",
-            backgroundColor: `hsl(${
-              200 + (i / PARTICLE_COUNT) * 40
-            }, 85%, 70%)`,
+            backgroundColor: `hsl(${200 + (i / PARTICLE_COUNT) * 40}, 85%, 70%)`,
             borderRadius: "50%",
             opacity: particle.opacity,
             boxShadow: "0 0 5px rgba(255,255,255,0.3)",

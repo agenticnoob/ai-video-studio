@@ -16,7 +16,7 @@ function StatCounter() {
     interpolate(frame, [10, 60], [0, 1247], {
       extrapolateRight: "clamp",
       extrapolateLeft: "clamp",
-    })
+    }),
   );
 
   const subStatsOpacity = interpolate(frame, [40, 55], [0, 1], {

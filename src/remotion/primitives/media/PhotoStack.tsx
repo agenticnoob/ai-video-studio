@@ -5,9 +5,24 @@ function PhotoStack() {
   const { fps } = useVideoConfig();
 
   const photos = [
-    { label: "Photo 1", rotation: -5, gradient: "linear-gradient(135deg, #1d4ed8, #3b82f6)", delay: 0 },
-    { label: "Photo 2", rotation: 0, gradient: "linear-gradient(135deg, #7c3aed, #a855f7)", delay: 8 },
-    { label: "Photo 3", rotation: 5, gradient: "linear-gradient(135deg, #059669, #34d399)", delay: 16 },
+    {
+      label: "Photo 1",
+      rotation: -5,
+      gradient: "linear-gradient(135deg, #1d4ed8, #3b82f6)",
+      delay: 0,
+    },
+    {
+      label: "Photo 2",
+      rotation: 0,
+      gradient: "linear-gradient(135deg, #7c3aed, #a855f7)",
+      delay: 8,
+    },
+    {
+      label: "Photo 3",
+      rotation: 5,
+      gradient: "linear-gradient(135deg, #059669, #34d399)",
+      delay: 16,
+    },
   ];
 
   return (

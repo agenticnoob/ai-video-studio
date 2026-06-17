@@ -1,8 +1,28 @@
 # Iteration Status
 
-Last updated: Procedural generator narration-duration alignment
+Last updated: Asset Plan boundary v1
 
-## Latest continuation — Procedural generator narration-duration alignment
+## Latest continuation — Asset Plan boundary v1
+
+- Started Phase 5 as a non-executable planner-stage asset boundary rather than
+  a media library or compositor.
+- Added a strict top-level `StoryboardPlan.assetPlan.requiredAssets[]`
+  contract with stable asset ids, bounded asset kinds, purpose, fallback copy,
+  duplicate-id rejection, and URL-like id rejection.
+- Exposed `assetPlan` through the provider-facing storyboard planner/tool
+  schema and prompt while keeping URL, `src`, path, and arbitrary remote media
+  fields out of the contract.
+- Added staged diagnostics for planned asset requirements so future asset
+  resolution can be inspected without changing the current preview/export
+  render path.
+- Kept `media_asset_composite` non-executable; current rendered output remains
+  `template_macro`, `primitive_scene_graph`, or bounded
+  `procedural_generator` compiled to `primitive_scene_graph`.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+
+## Previous continuation — Procedural generator narration-duration alignment
 
 - Fixed a procedural-generator timing bug where generator payload
   `durationInFrames` could be shorter than the generated narration audio,

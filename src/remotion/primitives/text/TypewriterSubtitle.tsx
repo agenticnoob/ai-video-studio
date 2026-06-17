@@ -7,7 +7,7 @@ function TypewriterSubtitle() {
   const visibleCharacters = Math.floor(
     interpolate(frame, [0, 45], [0, text.length], {
       extrapolateRight: "clamp",
-    })
+    }),
   );
 
   return (
@@ -26,7 +26,6 @@ function TypewriterSubtitle() {
         .slice(0, visibleCharacters)
         .split("")
         .map((char, index) => {
-
           return (
             <span
               key={index}

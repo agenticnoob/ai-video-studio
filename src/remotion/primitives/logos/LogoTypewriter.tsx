@@ -18,7 +18,7 @@ function LogoTypewriter() {
   const charsPerFrame = 0.15;
   const charsVisible = Math.min(
     Math.floor(Math.max(0, frame - typeStart) * charsPerFrame),
-    text.length
+    text.length,
   );
   const displayedText = text.slice(0, charsVisible);
 

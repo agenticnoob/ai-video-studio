@@ -57,11 +57,7 @@ function LogoStrokeDraw() {
           </linearGradient>
         </defs>
         {/* Hexagon fill */}
-        <polygon
-          points={hexPoints}
-          fill="url(#logoFillGrad)"
-          opacity={fillOpacity * 0.3}
-        />
+        <polygon points={hexPoints} fill="url(#logoFillGrad)" opacity={fillOpacity * 0.3} />
         {/* Hexagon stroke */}
         <polygon
           points={hexPoints}
@@ -73,11 +69,7 @@ function LogoStrokeDraw() {
           strokeLinejoin="round"
         />
         {/* Triangle fill */}
-        <polygon
-          points={triPoints}
-          fill="url(#logoFillGrad)"
-          opacity={fillOpacity}
-        />
+        <polygon points={triPoints} fill="url(#logoFillGrad)" opacity={fillOpacity} />
         {/* Triangle stroke */}
         <polygon
           points={triPoints}

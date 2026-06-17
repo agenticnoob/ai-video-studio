@@ -1,10 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, type FC } from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
 import { Camera, Mesh, Program, Renderer, Transform, Triangle, Vec3 } from "ogl";
-import {
-  getCursorPixelPointAtFrame,
-  type CursorKeyframe,
-} from "../interaction/cursor-keyframes";
+import { getCursorPixelPointAtFrame, type CursorKeyframe } from "../interaction/cursor-keyframes";
 
 type CursorPath = "orbit" | "sweep" | "figureEight" | "recorded";
 
@@ -127,21 +124,15 @@ const parseHexColor = (hex: string): [number, number, number] => {
 };
 
 const hash31 = (p: number): [number, number, number] => {
-  const r: [number, number, number] = [
-    fract(p * 0.1031),
-    fract(p * 0.103),
-    fract(p * 0.0973),
-  ];
-  const dotVal =
-    r[0] * (r[1] + 33.33) + r[1] * (r[2] + 33.33) + r[2] * (r[0] + 33.33);
+  const r: [number, number, number] = [fract(p * 0.1031), fract(p * 0.103), fract(p * 0.0973)];
+  const dotVal = r[0] * (r[1] + 33.33) + r[1] * (r[2] + 33.33) + r[2] * (r[0] + 33.33);
 
   return [fract(r[0] + dotVal), fract(r[1] + dotVal), fract(r[2] + dotVal)];
 };
 
 const hash33 = ([x, y, z]: [number, number, number]): [number, number, number] => {
   const p: [number, number, number] = [fract(x * 0.1031), fract(y * 0.103), fract(z * 0.0973)];
-  const dotVal =
-    p[0] * (p[1] + 33.33) + p[1] * (p[0] + 33.33) + p[2] * (p[2] + 33.33);
+  const dotVal = p[0] * (p[1] + 33.33) + p[1] * (p[0] + 33.33) + p[2] * (p[2] + 33.33);
   const mixed: [number, number, number] = [
     fract(p[0] + dotVal),
     fract(p[1] + dotVal),
@@ -366,7 +357,7 @@ export const MetaBallsPrimitive: FC<MetaBallsPrimitiveProps> = ({
 
     const automatedCursor =
       cursorPath === "recorded"
-        ? getCursorPixelPointAtFrame({
+        ? (getCursorPixelPointAtFrame({
             frame,
             height,
             keyframes: cursorKeyframes,
@@ -378,7 +369,7 @@ export const MetaBallsPrimitive: FC<MetaBallsPrimitiveProps> = ({
             speed,
             time,
             width,
-          })
+          }))
         : getAutomatedCursorPixelPosition({
             cursorPath,
             height,

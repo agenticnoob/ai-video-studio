@@ -6,7 +6,12 @@ function NotificationPop() {
 
   const notifications = [
     { title: "New Message", body: "Hey! Check out this update.", color: "#3b82f6", delay: 0 },
-    { title: "Task Complete", body: "Your render finished successfully.", color: "#a855f7", delay: 20 },
+    {
+      title: "Task Complete",
+      body: "Your render finished successfully.",
+      color: "#a855f7",
+      delay: 20,
+    },
     { title: "New Follower", body: "Someone started following you.", color: "#4361ee", delay: 40 },
   ];
 

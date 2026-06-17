@@ -27,7 +27,8 @@ export const RenderControls: React.FC<{
         <div>
           <h2 className="text-base font-semibold text-foreground">本地导出</h2>
           <p className="mt-2 text-sm leading-6 text-foreground">
-            使用当前编辑态 VideoProject 触发本地 Remotion render；每次成功导出都会生成一个唯一产物文件。
+            使用当前编辑态 VideoProject 触发本地 Remotion
+            render；每次成功导出都会生成一个唯一产物文件。
           </p>
         </div>
         <div className="bg-foreground px-3 py-1 text-xs uppercase text-background">

@@ -7,10 +7,7 @@ type ParallaxPanProps = {
   scale?: number;
 };
 
-const getTranslate = (
-  direction: NonNullable<ParallaxPanProps["direction"]>,
-  progress: number
-) => {
+const getTranslate = (direction: NonNullable<ParallaxPanProps["direction"]>, progress: number) => {
   if (direction === "left-right") {
     return { x: -20 * progress, y: 0 };
   }

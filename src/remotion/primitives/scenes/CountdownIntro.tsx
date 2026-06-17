@@ -24,12 +24,10 @@ function CountdownIntro() {
     config: { damping: 8, stiffness: 100 },
   });
 
-  const goOpacity = interpolate(
-    frame,
-    [totalCountdownFrames, totalCountdownFrames + 5],
-    [0, 1],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
-  );
+  const goOpacity = interpolate(frame, [totalCountdownFrames, totalCountdownFrames + 5], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
 
   return (
     <div
@@ -44,19 +42,8 @@ function CountdownIntro() {
       }}
     >
       <div style={{ position: "relative", width: 180, height: 180 }}>
-        <svg
-          width={180}
-          height={180}
-          style={{ transform: "rotate(-90deg)" }}
-        >
-          <circle
-            cx={90}
-            cy={90}
-            r={70}
-            fill="none"
-            stroke="#1e293b"
-            strokeWidth={6}
-          />
+        <svg width={180} height={180} style={{ transform: "rotate(-90deg)" }}>
+          <circle cx={90} cy={90} r={70} fill="none" stroke="#1e293b" strokeWidth={6} />
           {!isCountdownDone && (
             <circle
               cx={90}

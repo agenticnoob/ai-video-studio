@@ -79,11 +79,7 @@ export const ProjectCaptionLayers: React.FC<ProjectCaptionLayersProps> = ({ proj
   return (
     <>
       {getSegmentCaptionLayers(project).map((layer) => (
-        <Sequence
-          key={layer.key}
-          from={layer.startFrame}
-          durationInFrames={layer.durationInFrames}
-        >
+        <Sequence key={layer.key} from={layer.startFrame} durationInFrames={layer.durationInFrames}>
           <CaptionCue cue={layer.cue} position={layer.position} />
         </Sequence>
       ))}

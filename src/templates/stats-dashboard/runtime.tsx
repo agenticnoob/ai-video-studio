@@ -35,7 +35,10 @@ const compactChartSize = {
   width: 500,
 };
 
-const shouldUseCompactText = (spec: StatsDashboardSpec, timelineSteps: StatsDashboardTimelineStep[]) => {
+const shouldUseCompactText = (
+  spec: StatsDashboardSpec,
+  timelineSteps: StatsDashboardTimelineStep[],
+) => {
   const maxVisibleBlocks = Math.max(
     ...timelineSteps.map((step) => step.blockIds.length),
     spec.blocks.length,
@@ -222,9 +225,9 @@ const DashboardBlockRenderer: FC<{
   const series = block.chart.series[0];
 
   return (
-      <div style={blockFrameStyle(theme)}>
-        {!compact ? (
-          <BlockTitle theme={theme}>{block.title ?? series?.name ?? "Comparison"}</BlockTitle>
+    <div style={blockFrameStyle(theme)}>
+      {!compact ? (
+        <BlockTitle theme={theme}>{block.title ?? series?.name ?? "Comparison"}</BlockTitle>
       ) : null}
       <BarChart
         background="transparent"

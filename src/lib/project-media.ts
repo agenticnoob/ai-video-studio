@@ -1,8 +1,4 @@
-import {
-  getSegmentDuration,
-  normalizeProject,
-  type VideoProject,
-} from "./project-schema";
+import { getSegmentDuration, normalizeProject, type VideoProject } from "./project-schema";
 
 const getNarrationLayerId = (segmentId: string): string => `${segmentId}-narration-audio`;
 

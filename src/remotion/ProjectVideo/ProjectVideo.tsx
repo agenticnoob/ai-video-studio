@@ -1,10 +1,7 @@
 import React from "react";
 import { Sequence } from "remotion";
 
-import {
-  getRenderableMediaLayers,
-  getSegmentTimelineWindows,
-} from "../../lib/project-timeline";
+import { getRenderableMediaLayers, getSegmentTimelineWindows } from "../../lib/project-timeline";
 import type { VideoProject } from "../../lib/project-schema";
 import { renderRegisteredSegment } from "../template-component-registry";
 import { ProjectCaptionLayers } from "./ProjectCaptionLayers";
@@ -17,11 +14,7 @@ export const ProjectVideo: React.FC<VideoProject> = (project) => {
       <ProjectNarrationLayers project={project} />
       <ProjectMediaLayers layers={getRenderableMediaLayers(project)} />
       {getSegmentTimelineWindows(project).map(({ durationInFrames, segment, startFrame }) => (
-        <Sequence
-          key={segment.id}
-          from={startFrame}
-          durationInFrames={durationInFrames}
-        >
+        <Sequence key={segment.id} from={startFrame} durationInFrames={durationInFrames}>
           {renderRegisteredSegment(segment)}
         </Sequence>
       ))}

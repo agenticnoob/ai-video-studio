@@ -50,11 +50,10 @@ function ProgressSteps() {
             frame,
             [stepStart, stepStart + framesPerStep * 0.6],
             [0, 1],
-            { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+            { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
           );
 
-          const isActive =
-            frame >= stepStart && frame < stepStart + framesPerStep;
+          const isActive = frame >= stepStart && frame < stepStart + framesPerStep;
           const isComplete = frame >= stepStart + framesPerStep * 0.6;
 
           const pulse = isActive
@@ -73,15 +72,12 @@ function ProgressSteps() {
                   frame,
                   [stepStart + framesPerStep * 0.5, stepStart + framesPerStep],
                   [0, 1],
-                  { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+                  { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
                 )
               : 0;
 
           return (
-            <div
-              key={i}
-              style={{ display: "flex", alignItems: "center" }}
-            >
+            <div key={i} style={{ display: "flex", alignItems: "center" }}>
               <div
                 style={{
                   display: "flex",

@@ -28,12 +28,7 @@ export const renderScriptedBlockContent = (
       );
     case "quote":
       return (
-        <QuoteScene
-          author={scene.author}
-          kicker={scene.kicker}
-          quote={scene.quote}
-          theme={theme}
-        />
+        <QuoteScene author={scene.author} kicker={scene.kicker} quote={scene.quote} theme={theme} />
       );
   }
 };

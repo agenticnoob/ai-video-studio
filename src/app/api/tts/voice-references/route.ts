@@ -17,7 +17,10 @@ export async function POST(request: Request) {
   try {
     formData = await request.formData();
   } catch {
-    return NextResponse.json({ error: "Request body must be multipart form data." }, { status: 400 });
+    return NextResponse.json(
+      { error: "Request body must be multipart form data." },
+      { status: 400 },
+    );
   }
 
   const audio = formData.get("audio");

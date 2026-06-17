@@ -3,6 +3,8 @@ node_modules/
 out/
 build/
 coverage/
+.agents/
+.claude/settings.local.json
 docs/
 AGENTS.md
 README.md

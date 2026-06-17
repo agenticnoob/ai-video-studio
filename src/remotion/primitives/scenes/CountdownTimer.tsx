@@ -6,10 +6,7 @@ function CountdownTimer() {
 
   const framesPerNumber = Math.floor(fps * 0.8);
   const totalNumbers = 6; // 5, 4, 3, 2, 1, GO
-  const currentIndex = Math.min(
-    Math.floor(frame / framesPerNumber),
-    totalNumbers - 1
-  );
+  const currentIndex = Math.min(Math.floor(frame / framesPerNumber), totalNumbers - 1);
   const frameInSegment = frame - currentIndex * framesPerNumber;
 
   const numbers = ["5", "4", "3", "2", "1", "GO"];
@@ -25,7 +22,7 @@ function CountdownTimer() {
     frameInSegment,
     [0, 5, framesPerNumber - 8, framesPerNumber],
     [0, 1, 1, 0],
-    { extrapolateRight: "clamp" }
+    { extrapolateRight: "clamp" },
   );
 
   const isGo = currentIndex === totalNumbers - 1;
@@ -50,9 +47,7 @@ function CountdownTimer() {
           fontWeight: "bold",
           fontFamily: "Inter, sans-serif",
           color: "white",
-          background: isGo
-            ? "linear-gradient(135deg, #3b82f6, #7209b7)"
-            : "none",
+          background: isGo ? "linear-gradient(135deg, #3b82f6, #7209b7)" : "none",
           WebkitBackgroundClip: isGo ? "text" : undefined,
           WebkitTextFillColor: isGo ? "transparent" : undefined,
           textAlign: "center",

@@ -242,6 +242,49 @@ const proceduralGeneratorJsonSchema = {
   ],
 } as const;
 
+const assetRequirementJsonSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    id: {
+      type: "string",
+      pattern: "^[a-z][a-z0-9_-]*$",
+      description: "Stable asset ref such as dashboard-screenshot.",
+    },
+    kind: {
+      type: "string",
+      enum: [
+        "product_screenshot",
+        "screen_recording",
+        "generated_image",
+        "generated_video",
+        "icon",
+        "illustration",
+        "stock_clip",
+        "code_snippet",
+        "terminal_output",
+        "chart_data",
+      ],
+    },
+    purpose: { type: "string" },
+    fallback: { type: "string" },
+  },
+  required: ["id", "kind", "purpose", "fallback"],
+} as const;
+
+const assetPlanJsonSchema = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    requiredAssets: {
+      type: "array",
+      maxItems: 12,
+      items: assetRequirementJsonSchema,
+    },
+  },
+  required: ["requiredAssets"],
+} as const;
+
 /**
  * Single `emit_result` tool for the registered template union. The forced
  * single-tool strategy is inherited from the live MiniMax T1/T2 probe; the
@@ -288,6 +331,7 @@ export const EMIT_STORYBOARD_PLAN_TOOL: MinimaxTool = {
         brief: { type: "string" },
         language: { type: "string" },
         globalStyle: { type: "string" },
+        assetPlan: assetPlanJsonSchema,
         segments: {
           type: "array",
           minItems: 1,

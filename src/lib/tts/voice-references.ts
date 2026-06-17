@@ -19,8 +19,7 @@ const allowedVoiceReferenceMimeTypes = new Set([
   "audio/x-m4a",
   "audio/x-wav",
 ]);
-const voiceReferenceIdPattern =
-  /^voice-ref-\d{8}t\d{6}z-[a-z0-9]{8}\.(wav|mp3|m4a|aac)$/;
+const voiceReferenceIdPattern = /^voice-ref-\d{8}t\d{6}z-[a-z0-9]{8}\.(wav|mp3|m4a|aac)$/;
 
 export const MAX_VOICE_REFERENCE_BYTES = 20 * 1024 * 1024;
 
@@ -72,7 +71,10 @@ export const getVoiceReferenceExtension = (filename: string): string | undefined
 };
 
 export const createVoiceReferenceId = (extension: string): string => {
-  const timestamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d{3}z$/i, "z");
+  const timestamp = new Date()
+    .toISOString()
+    .replace(/[-:]/g, "")
+    .replace(/\.\d{3}z$/i, "z");
   return `voice-ref-${timestamp}-${randomUUID().slice(0, 8)}.${extension}`.toLowerCase();
 };
 

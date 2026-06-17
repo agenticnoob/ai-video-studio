@@ -328,6 +328,8 @@ Acceptance:
 
 ### Phase 5: Asset Plan / Media Composite v1
 
+Status: started as a non-executable asset-plan boundary.
+
 Introduce concrete visual assets as first-class planned inputs, not as random
 URLs inside template params.
 
@@ -360,6 +362,19 @@ Acceptance:
 - preview/export can resolve the same asset references
 - missing assets have clear fallback behavior
 - no broad media library UI is required for the first version
+
+Current landing:
+
+- `StoryboardPlan` can carry a top-level `assetPlan.requiredAssets[]` with
+  stable asset ids, bounded asset kinds, purpose, and fallback copy.
+- The provider-facing storyboard planner/tool schema can request assets by id
+  and kind, but does not expose URL, `src`, file path, or arbitrary remote
+  media fields.
+- staged diagnostics expose planned asset requirements so future asset
+  resolution/composite work can be inspected without changing preview/export.
+- `media_asset_composite` remains non-executable; current rendering still uses
+  `template_macro`, `primitive_scene_graph`, and bounded
+  `procedural_generator` paths.
 
 ### Phase 6: Review / Repair Loop v1
 
@@ -440,22 +455,20 @@ a reusable micro-template record:
 Do not implement persistence for this until the quality/review loop proves it
 is worth keeping.
 
-## 5. Next Goal To Define
-
-After Scene Graph Visual IR v1, the next bounded goal should be:
+## 5. Current Bounded Goal
 
 ```txt
-Implement Visual IR Generation v1 for the existing scene-graph path:
-use ShotLanguagePlan, segment visualBrief, real narration duration, and the
-bounded primitive/layout/motion vocabulary to generate schema-valid
-primitive_scene_graph SceneGraph data with one repair attempt, explicit
-diagnostics, and fallback to template_macro, while preserving VideoProject
-preview/export compatibility and avoiding generated TSX, media library work,
-timeline editing, persistence, and unrestricted code execution.
+Implement Asset Plan v1 as a planner-stage boundary:
+let StoryboardPlan request concrete future assets by stable id, kind, purpose,
+and fallback; expose those requests through staged diagnostics; forbid invented
+remote URLs or executable media fields; preserve VideoProject preview/export
+compatibility; and defer broad media library UI, asset upload/resolution,
+timeline editing, and actual media_asset_composite rendering.
 ```
 
-Do not start with render strategy routing across every strategy. First prove
-provider-generated `primitive_scene_graph` output is reliable.
+Do not start Phase 5 by building a full media library or compositing engine.
+First prove that asset requirements can be planned, validated, diagnosed, and
+kept out of template-private implementation params.
 
 ## 6. Non-goals Until Explicitly Reopened
 

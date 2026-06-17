@@ -104,9 +104,7 @@ function MorphTransition() {
         >
           Scene B
         </h2>
-        <p style={{ color: "#c084fc", fontSize: "1.1rem", marginTop: "0.5rem" }}>
-          Morphing in...
-        </p>
+        <p style={{ color: "#c084fc", fontSize: "1.1rem", marginTop: "0.5rem" }}>Morphing in...</p>
       </div>
     </div>
   );

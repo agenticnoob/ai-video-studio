@@ -1,7 +1,4 @@
-import { interpolate, spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
+import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
 function EndCard() {
   const frame = useCurrentFrame();
@@ -27,11 +24,7 @@ function EndCard() {
     durationInFrames: 30,
   });
 
-  const glowOpacity = interpolate(
-    Math.sin(frame * 0.08),
-    [-1, 1],
-    [0.3, 0.7]
-  );
+  const glowOpacity = interpolate(Math.sin(frame * 0.08), [-1, 1], [0.3, 0.7]);
 
   const buttonOpacity = spring({
     frame: Math.max(0, frame - 20),

@@ -17,23 +17,13 @@ function PulsingText() {
     >
       {text.split("").map((char, i) => {
         const delay = i * 6;
-        const pulse = interpolate(
-          ((frame - delay) % 30) / 30,
-          [0, 0.5, 1],
-          [1, 1.2, 1],
-          {
-            extrapolateRight: "clamp",
-          }
-        );
+        const pulse = interpolate(((frame - delay) % 30) / 30, [0, 0.5, 1], [1, 1.2, 1], {
+          extrapolateRight: "clamp",
+        });
 
-        const opacity = interpolate(
-          ((frame - delay) % 30) / 30,
-          [0, 0.5, 1],
-          [0.5, 1, 0.5],
-          {
-            extrapolateRight: "clamp",
-          }
-        );
+        const opacity = interpolate(((frame - delay) % 30) / 30, [0, 0.5, 1], [0.5, 1, 0.5], {
+          extrapolateRight: "clamp",
+        });
 
         return (
           <div

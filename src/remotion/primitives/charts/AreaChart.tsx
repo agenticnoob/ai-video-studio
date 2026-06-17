@@ -20,10 +20,8 @@ function AreaChart() {
   const chartHeight = 500;
   const padding = 70;
 
-  const xScale = (x: number) =>
-    (x / (data.length - 1)) * (chartWidth - padding * 2) + padding;
-  const yScale = (y: number) =>
-    chartHeight - padding - (y / 100) * (chartHeight - padding * 2);
+  const xScale = (x: number) => (x / (data.length - 1)) * (chartWidth - padding * 2) + padding;
+  const yScale = (y: number) => chartHeight - padding - (y / 100) * (chartHeight - padding * 2);
 
   // Build line path
   const linePath = data
@@ -36,12 +34,9 @@ function AreaChart() {
   } L ${xScale(data[0].x)} ${chartHeight - padding} Z`;
 
   // Clip rect animation - reveals left to right
-  const clipWidth = interpolate(
-    frame,
-    [0, 60],
-    [0, chartWidth - padding * 2],
-    { extrapolateRight: "clamp" }
-  );
+  const clipWidth = interpolate(frame, [0, 60], [0, chartWidth - padding * 2], {
+    extrapolateRight: "clamp",
+  });
 
   return (
     <div
@@ -81,12 +76,7 @@ function AreaChart() {
 
             {/* Clip path for reveal animation */}
             <clipPath id="revealClip">
-              <rect
-                x={padding}
-                y={0}
-                width={clipWidth}
-                height={chartHeight}
-              />
+              <rect x={padding} y={0} width={clipWidth} height={chartHeight} />
             </clipPath>
           </defs>
 
@@ -151,11 +141,7 @@ function AreaChart() {
           ))}
 
           {/* Area fill with clip */}
-          <path
-            d={areaPath}
-            fill="url(#areaGradient)"
-            clipPath="url(#revealClip)"
-          />
+          <path d={areaPath} fill="url(#areaGradient)" clipPath="url(#revealClip)" />
 
           {/* Line with clip */}
           <path
@@ -170,12 +156,10 @@ function AreaChart() {
 
           {/* Data points */}
           {data.map((point, i) => {
-            const pointProgress = interpolate(
-              frame,
-              [5 + i * 6, 10 + i * 6],
-              [0, 1],
-              { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
-            );
+            const pointProgress = interpolate(frame, [5 + i * 6, 10 + i * 6], [0, 1], {
+              extrapolateLeft: "clamp",
+              extrapolateRight: "clamp",
+            });
 
             return (
               <circle

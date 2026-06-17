@@ -16,6 +16,55 @@ export const renderStrategySchema = z.enum([
   "procedural_generator",
 ]);
 export const compiledRenderStrategySchema = z.enum(["template_macro", "primitive_scene_graph"]);
+export const assetKindSchema = z.enum([
+  "product_screenshot",
+  "screen_recording",
+  "generated_image",
+  "generated_video",
+  "icon",
+  "illustration",
+  "stock_clip",
+  "code_snippet",
+  "terminal_output",
+  "chart_data",
+]);
+
+export const assetRequirementSchema = z
+  .object({
+    id: z
+      .string()
+      .trim()
+      .min(2)
+      .max(80)
+      .regex(
+        /^[a-z][a-z0-9_-]*$/,
+        "Asset ids must be stable refs such as dashboard-screenshot, not URLs or paths.",
+      ),
+    kind: assetKindSchema,
+    purpose: z.string().trim().min(1).max(500),
+    fallback: z.string().trim().min(1).max(500),
+  })
+  .strict();
+
+export const assetPlanSchema = z
+  .object({
+    requiredAssets: z.array(assetRequirementSchema).max(12),
+  })
+  .strict()
+  .superRefine((assetPlan, ctx) => {
+    const ids = new Set<string>();
+    for (let index = 0; index < assetPlan.requiredAssets.length; index++) {
+      const asset = assetPlan.requiredAssets[index];
+      if (ids.has(asset.id)) {
+        ctx.addIssue({
+          code: "custom",
+          message: `Duplicate asset id "${asset.id}".`,
+          path: ["requiredAssets", index, "id"],
+        });
+      }
+      ids.add(asset.id);
+    }
+  });
 
 export const strategyDecisionSchema = z
   .object({
@@ -112,6 +161,7 @@ export const storyboardPlanSchema = z
     brief: z.string().trim().min(1).max(4000),
     language: z.string().trim().min(1).max(80).optional(),
     globalStyle: z.string().trim().min(1).max(1000).optional(),
+    assetPlan: assetPlanSchema.optional(),
     segments: z.array(storyboardSegmentPlanSchema).min(1).max(MAX_STORYBOARD_SEGMENTS),
   })
   .strict()
@@ -156,6 +206,9 @@ export const storyboardPlanSchema = z
 export type StoryboardNarrationPlan = z.infer<typeof storyboardNarrationPlanSchema>;
 export type RenderStrategy = z.infer<typeof renderStrategySchema>;
 export type CompiledRenderStrategy = z.infer<typeof compiledRenderStrategySchema>;
+export type AssetKind = z.infer<typeof assetKindSchema>;
+export type AssetRequirement = z.infer<typeof assetRequirementSchema>;
+export type AssetPlan = z.infer<typeof assetPlanSchema>;
 export type StrategyDecision = z.infer<typeof strategyDecisionSchema>;
 export type StoryboardSegmentPlan = z.infer<typeof storyboardSegmentPlanSchema>;
 export type StoryboardPlan = z.infer<typeof storyboardPlanSchema>;

@@ -14,7 +14,7 @@ function SpotlightReveal() {
     frame,
     [0, durationInFrames * 0.3, durationInFrames * 0.8],
     [0, 0.6, 0],
-    { extrapolateRight: "clamp" }
+    { extrapolateRight: "clamp" },
   );
 
   return (

@@ -1,7 +1,4 @@
-import { interpolate, spring,
-  useCurrentFrame,
-  useVideoConfig,
-} from "remotion";
+import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
 function CinematicTitleIntro() {
   const frame = useCurrentFrame();

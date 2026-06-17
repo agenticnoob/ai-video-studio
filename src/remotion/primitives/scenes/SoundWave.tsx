@@ -7,8 +7,7 @@ function SoundWave() {
   const BAR_COUNT = 40;
   const bars = Array.from({ length: BAR_COUNT }).map((_, i) => {
     const seed = i * 1000;
-    const height =
-      Math.abs(Math.sin(frame / 10 + i / 2)) * 100 + random(seed) * 50;
+    const height = Math.abs(Math.sin(frame / 10 + i / 2)) * 100 + random(seed) * 50;
 
     return {
       height,

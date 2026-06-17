@@ -37,7 +37,7 @@ function TextHighlight() {
             frame,
             [wordStart, wordStart + framesPerWord * 0.5],
             [0, 1],
-            { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+            { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
           );
 
           const isHighlighted = highlightProgress > 0;

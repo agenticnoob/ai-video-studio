@@ -9,14 +9,15 @@ function IrisTransition() {
 
   // First half: iris closes (75% → 0%)
   // Second half: iris opens (0% → 75%)
-  const radius = frame <= midPoint
-    ? interpolate(frame, [0, midPoint], [75, 0], {
-        extrapolateRight: "clamp",
-      })
-    : interpolate(frame, [midPoint, totalFrames], [0, 75], {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-      });
+  const radius =
+    frame <= midPoint
+      ? interpolate(frame, [0, midPoint], [75, 0], {
+          extrapolateRight: "clamp",
+        })
+      : interpolate(frame, [midPoint, totalFrames], [0, 75], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        });
 
   const showSceneA = frame <= midPoint;
 

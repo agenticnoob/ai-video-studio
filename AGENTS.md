@@ -149,7 +149,11 @@ The first staged-generation groundwork is also in place:
   payloads. Those payloads compile deterministically into actual
   `primitive_scene_graph`, with generator duration aligned to real narration
   duration so the project timeline does not advance before segment audio
-  finishes. Unrestricted generated TSX remains out of scope.
+  finishes. Phase 5 asset-plan groundwork has started: `StoryboardPlan` can
+  carry `assetPlan.requiredAssets[]` with stable ids, bounded kinds, purpose,
+  and fallback for future media composites, but this remains planner and
+  diagnostics data only. Unrestricted generated TSX and executable
+  `media_asset_composite` rendering remain out of scope.
 - Scene graph provider-output hardening is intentionally bounded: selected
   template parsing can unwrap one `implementation` / `result` / `data` field
   and parse JSON-string payloads, while the SceneGraph schema normalizes only
@@ -232,7 +236,9 @@ Keep the next iteration focused on:
    `POST /api/generate/staged` live smoke to harden mixed registered-template,
    direct `primitive_scene_graph`, and bounded provider-facing
    `procedural_generator` output before widening scope
-11. do not widen into persistence/history, generic media-layer work, or
+11. keep `assetPlan` as validated planner/diagnostics data only until asset
+   resolution and media-composite rendering have their own bounded slice
+12. do not widen into persistence/history, generic media-layer work, or
    multi-template-per-segment orchestration unless the task explicitly asks for it
 
 Current product modeling decision:

@@ -28,9 +28,9 @@ function BokehCircles() {
 
     // Color selection: soft blues, purples, teals
     const colorOptions = [
-      [59, 130, 246],  // blue
-      [139, 92, 246],  // purple
-      [20, 184, 166],  // teal
+      [59, 130, 246], // blue
+      [139, 92, 246], // purple
+      [20, 184, 166], // teal
     ];
     const rgb = colorOptions[i % 3];
 

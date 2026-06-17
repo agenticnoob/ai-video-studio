@@ -1,6 +1,10 @@
 import type { GenerateStagedProjectResult, GenerateStagedSegmentRevisionResult } from "./pipeline";
 import type { ProceduralGeneratorDiagnostics } from "../procedural-generator-schema";
-import type { CompiledRenderStrategy, StrategyDecision } from "../storyboard-plan-schema";
+import type {
+  AssetRequirement,
+  CompiledRenderStrategy,
+  StrategyDecision,
+} from "../storyboard-plan-schema";
 
 type PlannerDiagnostics = {
   attempts: number;
@@ -22,6 +26,10 @@ type CompilerDiagnostics = {
 };
 
 export type StagedGenerationDiagnostics = {
+  assetPlan?: {
+    requiredAssetCount: number;
+    requiredAssets: AssetRequirement[];
+  };
   captionSegmentCount: number;
   compiler: CompilerDiagnostics[];
   narrationLayerCount: number;
@@ -37,8 +45,15 @@ export const buildStagedProjectDiagnostics = (
   const narrationSegmentCount = result.segments.filter(
     (segment) => segment.segment.narration?.audio,
   ).length;
+  const requiredAssets = result.plan.assetPlan?.requiredAssets;
 
   return {
+    assetPlan: requiredAssets
+      ? {
+          requiredAssetCount: requiredAssets.length,
+          requiredAssets,
+        }
+      : undefined,
     planner:
       result.plannerAttempts === undefined || result.plannerRepaired === undefined
         ? undefined

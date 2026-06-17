@@ -29,8 +29,7 @@ const parseHexColor = (hex: string): RgbColor => {
   };
 };
 
-const lerp = (a: number, b: number, progress: number) =>
-  Math.round(a + (b - a) * progress);
+const lerp = (a: number, b: number, progress: number) => Math.round(a + (b - a) * progress);
 
 const interpolateColor = (colors: RgbColor[], phase: number) => {
   const scaled = phase * (colors.length - 2);
@@ -42,7 +41,7 @@ const interpolateColor = (colors: RgbColor[], phase: number) => {
   return `rgb(${lerp(current.r, next.r, progress)}, ${lerp(current.g, next.g, progress)}, ${lerp(
     current.b,
     next.b,
-    progress
+    progress,
   )})`;
 };
 
@@ -64,7 +63,7 @@ export const GradientShiftBackground: FC<GradientShiftBackgroundProps> = ({
       style={{
         background: `linear-gradient(${angle}deg, ${interpolateColor(
           rgbColors,
-          phase1
+          phase1,
         )}, ${interpolateColor(rgbColors, phase2)}, ${interpolateColor(rgbColors, phase3)})`,
         height: "100%",
         width: "100%",

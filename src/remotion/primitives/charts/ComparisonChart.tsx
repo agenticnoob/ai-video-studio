@@ -10,7 +10,7 @@ function ComparisonChart() {
     interpolate(frame, [10, 40], [0, 34], {
       extrapolateRight: "clamp",
       extrapolateLeft: "clamp",
-    })
+    }),
   );
 
   const beforeBarHeight = interpolate(frame, [10, 40], [0, (34 / 100) * maxBarHeight], {
@@ -23,7 +23,7 @@ function ComparisonChart() {
     interpolate(frame, [20, 50], [0, 89], {
       extrapolateRight: "clamp",
       extrapolateLeft: "clamp",
-    })
+    }),
   );
 
   const afterBarHeight = interpolate(frame, [20, 50], [0, (89 / 100) * maxBarHeight], {
