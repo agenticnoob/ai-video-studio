@@ -327,7 +327,9 @@ const assertAssetPlanSchemaFixture = (): void => {
     stagedDiagnostics.visualReview.reviewFrames[0]?.frame !== 0 ||
     stagedDiagnostics.visualReview.reviewFrames[1]?.reason !== "segment_midpoint"
   ) {
-    throw new Error("Asset plan visual review preflight should expose representative review frames.");
+    throw new Error(
+      "Asset plan visual review preflight should expose representative review frames.",
+    );
   }
 };
 

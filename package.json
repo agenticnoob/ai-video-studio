@@ -62,6 +62,7 @@
     "smoke:staged-live:render": "STAGED_LIVE_SMOKE_RENDER=true npm run smoke:staged-live",
     "smoke:staged-fixtures": "remotion compositions src/remotion/index.ts",
     "smoke:visual-review-stills": "node scripts/visual-review-stills-smoke.mjs",
+    "smoke:visual-review-ui": "node scripts/visual-review-ui-source-smoke.mjs",
     "style:check": "npm run lint && npm run typecheck && npm run format:check",
     "check": "npm run style:check && npm run build",
     "remotion": "remotion studio",

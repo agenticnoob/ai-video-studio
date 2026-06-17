@@ -76,8 +76,11 @@ from validated project data, such as narration duration overruns, caption cues
 that exceed a segment, long caption text, and unresolved planned assets from
 the current non-executable `assetPlan` phase. It also emits deterministic
 representative `reviewFrames[]` for each segment's start, midpoint, and end as
-the later still-extraction input boundary. Still image extraction,
-browser/canvas review, and automatic repair remain deferred.
+the still-extraction input boundary. `POST /api/visual-review/stills` renders
+those frames through `ProjectVideo` into PNG artifacts, and the Studio export
+workspace calls that route through a manual visual-review panel with backend
+progress, static findings, and still thumbnails. Browser/canvas review and
+automatic repair remain deferred.
 
 Current implementation snapshot:
 
@@ -124,6 +127,10 @@ Current implementation snapshot:
   `src/lib/staged-generation/visual-review.ts` define the current static
   visual-review diagnostics boundary for staged generation and selected-segment
   revision output.
+- `src/helpers/use-visual-review.ts`,
+  `src/components/project/VisualReviewPanel.tsx`, and
+  `POST /api/visual-review/stills` provide the current manual Studio review
+  path for rendering representative stills and inspecting static findings.
 - The active page generation flow uses `/api/generate/staged`.
 - The active selected-segment regeneration flow also uses
   `/api/generate/staged`: one target segment is replanned, regenerated through

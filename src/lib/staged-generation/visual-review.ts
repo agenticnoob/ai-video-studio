@@ -33,7 +33,8 @@ const reviewSegmentTiming = (segment: VideoSegment): VisualReviewFinding[] => {
       severity: "error",
       targetId: segment.id,
       message: `Segment narration audio lasts ${audioDuration} frames, longer than the visual segment duration ${segment.durationInFrames}.`,
-      suggestedRepair: "Regenerate or compile the segment with visual duration at least as long as narration audio.",
+      suggestedRepair:
+        "Regenerate or compile the segment with visual duration at least as long as narration audio.",
     });
   }
 

@@ -70,7 +70,9 @@ Current implementation status:
   duration, caption, and unresolved planned-asset issues, plus representative
   review frames for each segment's start, midpoint, and end. Explicit still
   image extraction can render those frames through
-  `POST /api/visual-review/stills` and return PNG artifact metadata.
+  `POST /api/visual-review/stills` and return PNG artifact metadata; the Studio
+  export workspace now exposes this as a manual visual-review action with
+  progress, findings, and generated still thumbnails.
   Browser/canvas visual review and automatic segment repair are not active yet
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration

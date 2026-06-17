@@ -6,10 +6,12 @@ import { PreviewPanel } from "../components/project/PreviewPanel";
 import { ProjectSummary } from "../components/project/ProjectSummary";
 import { SegmentEditor } from "../components/project/SegmentEditor";
 import { SegmentList } from "../components/project/SegmentList";
+import { VisualReviewPanel } from "../components/project/VisualReviewPanel";
 import { Card } from "../components/ui/Card";
 import { RenderControls } from "../components/ui/RenderControls";
 import { useProjectGeneration } from "../helpers/use-project-generation";
 import { useRendering } from "../helpers/use-rendering";
+import { useVisualReview } from "../helpers/use-visual-review";
 
 const Home: NextPage = () => {
   const generation = useProjectGeneration();
@@ -18,9 +20,15 @@ const Home: NextPage = () => {
     state: renderState,
     undo: resetRenderState,
   } = useRendering(generation.normalizedProject);
+  const {
+    reset: resetVisualReviewState,
+    reviewProject,
+    state: visualReviewState,
+  } = useVisualReview(generation.normalizedProject);
   const isRendering = renderState.status === "rendering";
+  const isReviewing = visualReviewState.status === "reviewing";
   const isMutatingProject =
-    generation.isGenerating || generation.isRegeneratingSegment || isRendering;
+    generation.isGenerating || generation.isRegeneratingSegment || isRendering || isReviewing;
 
   return (
     <main className="mx-auto max-w-screen-2xl px-4 py-8 text-foreground">
@@ -52,10 +60,21 @@ const Home: NextPage = () => {
               />
 
               <RenderControls
-                disabled={generation.isGenerating || generation.isRegeneratingSegment}
+                disabled={
+                  generation.isGenerating || generation.isRegeneratingSegment || isReviewing
+                }
                 onDismissResult={resetRenderState}
                 onRender={renderMedia}
                 state={renderState}
+              />
+
+              <VisualReviewPanel
+                disabled={
+                  generation.isGenerating || generation.isRegeneratingSegment || isRendering
+                }
+                onDismissResult={resetVisualReviewState}
+                onReview={reviewProject}
+                state={visualReviewState}
               />
             </div>
 

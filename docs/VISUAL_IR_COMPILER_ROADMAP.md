@@ -432,6 +432,9 @@ Current landing:
   frames through Remotion `renderStill` against the generic `ProjectVideo`
   composition and returns strict PNG still artifact metadata. This is not run
   during normal staged generation.
+- the Studio export workspace now includes a manual visual-review panel that
+  calls the still extraction route, shows backend progress, summarizes static
+  findings, and displays the generated representative PNG stills.
 - no browser/canvas review, automatic repair, or provider prompt repair loop
   is active yet.
 

@@ -138,7 +138,9 @@ Current executable strategy note:
   as the still-extraction input boundary. Explicit still image extraction is
   now available through `POST /api/visual-review/stills`, which renders PNG
   artifacts for those frames through `ProjectVideo` and returns strict still
-  metadata. Browser/canvas review and automatic segment repair remain deferred.
+  metadata; the Studio page exposes this as a manual visual-review action with
+  progress, findings, and generated still thumbnails. Browser/canvas review
+  and automatic segment repair remain deferred.
 
 ## 2. Authoritative Terminology
 

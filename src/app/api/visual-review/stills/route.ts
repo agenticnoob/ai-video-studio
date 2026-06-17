@@ -86,7 +86,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 429 });
     }
 
-    const message = error instanceof Error ? error.message : "Visual review still extraction failed.";
+    const message =
+      error instanceof Error ? error.message : "Visual review still extraction failed.";
 
     console.error("Visual review still extraction failed", error);
     finishTaskProgress({ error: message, id: progressId, status: "failure" });

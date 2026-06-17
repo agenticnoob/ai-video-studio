@@ -1,6 +1,31 @@
 # Iteration Status
 
-Last updated: Visual Review still extraction v1
+Last updated: Visual Review Studio entry v1
+
+## Latest continuation — Visual Review Studio entry v1
+
+- Continued Phase 6 by surfacing the existing explicit still extraction action
+  in the Studio page instead of widening into browser/canvas review or
+  automatic repair.
+- Added `useVisualReview()` as a client-side review request boundary for
+  `POST /api/visual-review/stills`, including `progressId`, abort-on-project
+  change, stale-response guards, and success/failure state.
+- Added `VisualReviewPanel` to the export workspace so the user can trigger
+  visual review, watch backend progress, inspect static findings, and open the
+  generated representative PNG stills.
+- Added `npm run smoke:visual-review-ui` as a deterministic source smoke for
+  the Studio visual-review wiring.
+- Browser/canvas visual analysis and automatic target-segment repair remain
+  deferred to later Phase 6 slices.
+
+Validation performed so far:
+- `node scripts/visual-review-ui-source-smoke.mjs`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:visual-review-ui'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `git diff --check`
 
 ## Latest continuation — Visual Review still extraction v1
 
