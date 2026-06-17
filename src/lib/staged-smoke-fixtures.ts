@@ -370,6 +370,13 @@ const assertVisualReviewStillExtractionSchemaFixture = (): void => {
     stillCount: 1,
     stills: [
       {
+        analysis: {
+          blankFrameScore: 0.12,
+          dominantColorRatio: 0.2,
+          lumaRange: 180,
+          pixelCount: 921600,
+          status: "analyzed",
+        },
         contentType: "image/png",
         downloadUrl:
           "/api/visual-review/stills/review-fixture/asset-plan-segment-segment-start-frame-000000",

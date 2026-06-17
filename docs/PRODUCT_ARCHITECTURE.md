@@ -79,8 +79,9 @@ representative `reviewFrames[]` for each segment's start, midpoint, and end as
 the still-extraction input boundary. `POST /api/visual-review/stills` renders
 those frames through `ProjectVideo` into PNG artifacts, and the Studio export
 workspace calls that route through a manual visual-review panel with backend
-progress, static findings, and still thumbnails. Browser/canvas review and
-automatic repair remain deferred.
+progress, static findings, still thumbnails, and bounded per-still pixel
+analysis for near-blank frame detection. Browser/canvas review and automatic
+repair remain deferred.
 
 Current implementation snapshot:
 

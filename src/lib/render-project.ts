@@ -18,6 +18,7 @@ import {
   createVisualReviewStillArtifact,
   type VisualReviewStillArtifact,
 } from "./visual-review-still-artifacts";
+import { analyzeVisualReviewStill } from "./visual-review-still-analysis";
 import type {
   VisualReviewFrame,
   VisualReviewStill,
@@ -264,8 +265,10 @@ export const renderVisualReviewStills = async ({
       serveUrl: bundledProject,
     });
     const outputStats = await stat(artifact.outputPath);
+    const analysis = await analyzeVisualReviewStill(artifact.outputPath);
 
     stills.push({
+      analysis,
       contentType: contentType === "image/png" ? contentType : "image/png",
       downloadUrl: artifact.downloadUrl,
       frame: artifact.reviewFrame.frame,

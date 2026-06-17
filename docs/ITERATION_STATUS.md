@@ -1,6 +1,28 @@
 # Iteration Status
 
-Last updated: Visual Review Studio entry v1
+Last updated: Visual Review still analysis v1
+
+## Latest continuation — Visual Review still analysis v1
+
+- Continued Phase 6 inside the explicit still-extraction review action by
+  adding server-side PNG still analysis after each `renderStill` call.
+- Added strict per-still `analysis` metadata with `blankFrameScore`,
+  `dominantColorRatio`, `lumaRange`, `pixelCount`, and analysis status.
+- Added bounded near-blank frame findings by merging still-analysis warnings
+  back into the returned `visualReview.findings`; this remains a manual review
+  result and does not trigger automatic segment repair.
+- Updated the Studio visual-review panel to show each still's analysis status
+  and blank-frame score next to the generated thumbnail.
+- Browser/canvas visual analysis and automatic target-segment repair remain
+  deferred.
+
+Validation performed so far:
+- `node scripts/visual-review-ui-source-smoke.mjs` (red first, then green)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:visual-review-ui'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `docker compose run --rm web bash -lc 'npm run start >/tmp/ai-video-studio-next.log 2>&1 & server_pid=$!; ready=0; for i in $(seq 1 45); do node -e "fetch(\"http://127.0.0.1:3000\").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" && ready=1 && break; sleep 1; done; if [ "$ready" != "1" ]; then cat /tmp/ai-video-studio-next.log; kill $server_pid >/dev/null 2>&1 || true; exit 1; fi; npm run smoke:visual-review-stills; status=$?; kill $server_pid >/dev/null 2>&1 || true; exit $status'`
 
 ## Latest continuation — Visual Review Studio entry v1
 

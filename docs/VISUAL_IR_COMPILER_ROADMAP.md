@@ -435,6 +435,9 @@ Current landing:
 - the Studio export workspace now includes a manual visual-review panel that
   calls the still extraction route, shows backend progress, summarizes static
   findings, and displays the generated representative PNG stills.
+- each rendered still now carries bounded server-side pixel analysis metadata
+  for near-blank frame detection, and near-blank frames are surfaced as
+  explicit review findings instead of triggering automatic repair.
 - no browser/canvas review, automatic repair, or provider prompt repair loop
   is active yet.
 

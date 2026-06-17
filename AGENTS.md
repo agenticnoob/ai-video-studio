@@ -159,8 +159,9 @@ The first staged-generation groundwork is also in place:
   through `POST /api/visual-review/stills`, rendering those frames through
   `ProjectVideo` into PNG artifacts and returning strict still metadata. The
   Studio export workspace exposes this as a manual visual-review action with
-  backend progress, static findings, and generated still thumbnails;
-  browser/canvas review and automatic segment repair are not active yet.
+  backend progress, static findings, generated still thumbnails, and bounded
+  per-still pixel analysis for near-blank frame detection; browser/canvas
+  review and automatic segment repair are not active yet.
   Unrestricted generated TSX and executable `media_asset_composite` rendering
   remain out of scope.
 - Scene graph provider-output hardening is intentionally bounded: selected

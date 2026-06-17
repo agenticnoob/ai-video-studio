@@ -80,6 +80,22 @@ const main = async () => {
   if (!firstStill?.downloadUrl || firstStill.contentType !== "image/png") {
     throw new Error("Visual review still smoke expected PNG still metadata with a download URL.");
   }
+  if (
+    !firstStill.analysis ||
+    typeof firstStill.analysis.blankFrameScore !== "number" ||
+    !["analyzed", "near_blank_frame", "unsupported"].includes(firstStill.analysis.status)
+  ) {
+    throw new Error("Visual review still smoke expected per-still analysis metadata.");
+  }
+  if (!stills.every((still) => typeof still.analysis?.dominantColorRatio === "number")) {
+    throw new Error("Visual review still smoke expected every still to include pixel analysis.");
+  }
+  if (body.visualReview.warningCount > 0) {
+    const messages = body.visualReview.findings.map((finding) => finding.message).join("\n");
+    if (!messages.includes("Representative still appears near blank")) {
+      throw new Error("Visual review still warnings should include still-analysis context.");
+    }
+  }
 
   const stillResponse = await fetch(`${appOrigin}${firstStill.downloadUrl}`);
   if (!stillResponse.ok) {

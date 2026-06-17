@@ -25,6 +25,12 @@ const reviewReasonLabelMap = {
   segment_start: "开头",
 } as const;
 
+const stillAnalysisStatusLabelMap = {
+  analyzed: "已分析",
+  near_blank_frame: "近空帧",
+  unsupported: "未分析",
+} as const;
+
 export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
   disabled,
   onDismissResult,
@@ -153,6 +159,12 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
                 <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
                   <span>{reviewReasonLabelMap[still.reason]}</span>
                   <span className="font-mono text-xs">frame {still.frame}</span>
+                </div>
+                <div className="mt-1 flex flex-wrap items-center justify-between gap-2 text-xs">
+                  <span>{stillAnalysisStatusLabelMap[still.analysis.status]}</span>
+                  <span className="font-mono">
+                    blank {Math.round(still.analysis.blankFrameScore * 100)}%
+                  </span>
                 </div>
               </a>
             ))}

@@ -7,7 +7,7 @@ import type {
   VisualReviewFrame,
 } from "../visual-review-schema";
 
-const summarizeFindings = ({
+export const summarizeVisualReviewFindings = ({
   findings,
   reviewFrames,
 }: {
@@ -107,5 +107,5 @@ export const buildStaticVisualReviewDiagnostics = ({
     });
   }
 
-  return summarizeFindings({ findings, reviewFrames });
+  return summarizeVisualReviewFindings({ findings, reviewFrames });
 };

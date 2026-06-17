@@ -139,8 +139,9 @@ Current executable strategy note:
   now available through `POST /api/visual-review/stills`, which renders PNG
   artifacts for those frames through `ProjectVideo` and returns strict still
   metadata; the Studio page exposes this as a manual visual-review action with
-  progress, findings, and generated still thumbnails. Browser/canvas review
-  and automatic segment repair remain deferred.
+  progress, findings, generated still thumbnails, and bounded per-still pixel
+  analysis for near-blank frame detection. Browser/canvas review and
+  automatic segment repair remain deferred.
 
 ## 2. Authoritative Terminology
 

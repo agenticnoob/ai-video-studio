@@ -62,8 +62,9 @@ Product direction:
   for each segment's start, midpoint, and end; explicit still image extraction
   can render those frames through `POST /api/visual-review/stills`, and the
   Studio export workspace now exposes that path as a manual review action with
-  progress, findings, and generated still thumbnails; browser/canvas review
-  and automatic target-segment repair remain future bounded slices
+  progress, findings, generated still thumbnails, and per-still near-blank
+  frame analysis; browser/canvas review and automatic target-segment repair
+  remain future bounded slices
 - final generation should be staged: storyboard planning first, per-segment
   TTS second, selected visual implementation compilation third, project
   assembly last

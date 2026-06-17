@@ -18,8 +18,19 @@ export const visualReviewFrameSchema = z
   })
   .strict();
 
+export const visualReviewStillAnalysisSchema = z
+  .object({
+    blankFrameScore: z.number().min(0).max(1),
+    dominantColorRatio: z.number().min(0).max(1),
+    lumaRange: z.number().min(0).max(255),
+    pixelCount: z.number().int().min(0),
+    status: z.enum(["analyzed", "near_blank_frame", "unsupported"]),
+  })
+  .strict();
+
 export const visualReviewStillSchema = visualReviewFrameSchema
   .extend({
+    analysis: visualReviewStillAnalysisSchema,
     contentType: z.literal("image/png"),
     downloadUrl: z.string().trim().min(1).max(500).startsWith("/"),
     outputPath: z.string().trim().min(1).max(1000),
@@ -59,6 +70,7 @@ export const visualReviewDiagnosticsSchema = z
 
 export type VisualReviewFinding = z.infer<typeof visualReviewFindingSchema>;
 export type VisualReviewFrame = z.infer<typeof visualReviewFrameSchema>;
+export type VisualReviewStillAnalysis = z.infer<typeof visualReviewStillAnalysisSchema>;
 export type VisualReviewStill = z.infer<typeof visualReviewStillSchema>;
 export type VisualReviewStillExtraction = z.infer<typeof visualReviewStillExtractionSchema>;
 export type VisualReviewDiagnostics = z.infer<typeof visualReviewDiagnosticsSchema>;
