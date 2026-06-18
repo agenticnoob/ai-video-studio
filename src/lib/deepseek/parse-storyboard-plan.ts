@@ -15,6 +15,9 @@ const nonEmptyString = (value: unknown): string | null => {
   return trimmed.length > 0 ? trimmed : null;
 };
 
+const finiteNumber = (value: unknown): number | null =>
+  typeof value === "number" && Number.isFinite(value) ? value : null;
+
 const formatIssues = (issues: z.ZodIssue[]): string =>
   issues
     .slice(0, 5)
@@ -58,9 +61,19 @@ const recoverMissingSegmentPlanningFields = (value: unknown): unknown | null => 
       return segment;
     }
 
+    const narration = toRecord(record.narration);
     const fallbackText =
-      nonEmptyString(record.purpose) ?? nonEmptyString(record.title) ?? planBrief;
+      nonEmptyString(record.purpose) ??
+      nonEmptyString(record.title) ??
+      nonEmptyString(narration?.text) ??
+      nonEmptyString(record.visualBrief) ??
+      planBrief;
     const nextSegment: Record<string, unknown> = { ...record };
+
+    if (record.purpose === undefined) {
+      nextSegment.purpose = fallbackText;
+      changed = true;
+    }
 
     if (record.narration === undefined) {
       nextSegment.narration = { text: fallbackText };
@@ -70,6 +83,45 @@ const recoverMissingSegmentPlanningFields = (value: unknown): unknown | null => 
     if (record.visualBrief === undefined) {
       nextSegment.visualBrief = `Visualize: ${fallbackText}`;
       changed = true;
+    }
+
+    const proceduralGenerator = toRecord(record.proceduralGenerator);
+    if (proceduralGenerator) {
+      const nextGenerator: Record<string, unknown> = { ...proceduralGenerator };
+      let generatorChanged = false;
+
+      if (proceduralGenerator.title === undefined) {
+        nextGenerator.title = nonEmptyString(record.title) ?? fallbackText;
+        generatorChanged = true;
+      }
+
+      if (Array.isArray(proceduralGenerator.beats)) {
+        let beatsChanged = false;
+        const beats = proceduralGenerator.beats.map((beat) => {
+          const beatRecord = toRecord(beat);
+          const time = finiteNumber(beatRecord?.time);
+          if (!beatRecord || beatRecord.atFrame !== undefined || time === null) {
+            return beat;
+          }
+
+          const { time: _time, ...rest } = beatRecord;
+          beatsChanged = true;
+          return {
+            ...rest,
+            atFrame: time,
+          };
+        });
+
+        if (beatsChanged) {
+          nextGenerator.beats = beats;
+          generatorChanged = true;
+        }
+      }
+
+      if (generatorChanged) {
+        nextSegment.proceduralGenerator = nextGenerator;
+        changed = true;
+      }
     }
 
     return nextSegment;

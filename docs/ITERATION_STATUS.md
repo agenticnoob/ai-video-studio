@@ -1,6 +1,39 @@
 # Iteration Status
 
-Last updated: Main DeepSeek/F5 provider migration merged into scene-graph roadmap
+Last updated: DeepSeek planner schema recovery and procedural routing fix
+
+## Latest continuation — DeepSeek planner schema recovery and procedural routing fix
+
+- Fixed a post-merge staged generation regression where DeepSeek JSON-mode
+  planner output could omit required `StoryboardSegmentPlan.purpose`, causing
+  `POST /api/generate/staged` to fail with schema validation before narration
+  or visual compilation.
+- Added bounded parser recovery for missing segment `purpose` using existing
+  segment title, narration text, visual brief, or plan brief, while still
+  running the full `StoryboardPlan` schema afterward.
+- Fixed another observed DeepSeek procedural-generator near miss: missing
+  `proceduralGenerator.title` now defaults from the segment title/purpose, and
+  numeric `beats[].time` aliases are normalized to `beats[].atFrame`. Other
+  generator fields, refs, ranges, ids, templates, and strategy constraints
+  remain schema-validated.
+- Tightened the planner prompt so every segment explicitly includes required
+  planning fields and deterministic workflow/node-graph/agent-loop/system-flow
+  segments route to `scene-graph` + `procedural_generator` instead of the more
+  brittle direct `primitive_scene_graph` compiler path.
+- Live staged smoke now naturally selects a `scene-graph` `node-graph-flow`
+  procedural generator for the normal workflow brief, while the direct
+  SceneGraph, line-path, terminal-session, and F5 narration paths still pass.
+
+Validation performed:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:storyboard-parser'` (red first for missing `purpose`, red first for `beats[].time`, then green)
+- `docker compose exec -T web bash -lc 'NEXT_ORIGIN=http://127.0.0.1:3000 npm run smoke:staged-live'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:provider-boundary'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx prettier --check scripts/storyboard-plan-parser-smoke.mjs src/lib/deepseek/parse-storyboard-plan.ts src/lib/deepseek/prompts.ts'`
+- `git diff --check`
 
 ## Latest continuation — Main DeepSeek/F5 provider migration merge
 

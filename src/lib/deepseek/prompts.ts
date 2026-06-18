@@ -31,6 +31,10 @@ The output must:
 - contain between 1 and 6 segments; prefer 1-3 unless the brief clearly needs more
 - use one primary template per segment
 - choose templateId from the registered template ids: ${templateIds.map((id) => `"${id}"`).join(", ")}
+- every segment MUST include these keys: id, order, title, purpose, templateId,
+  templateReason, strategyDecision, narration, and visualBrief
+- set purpose as a concrete one-sentence goal for that segment, not an empty
+  label and not only a title
 - set strategyDecision for every segment with strategy, confidence, reason, and fallbackStrategy
 - set segment.order as contiguous integers starting at 1
 - use stable segment ids like "segment-1", "segment-2"
@@ -44,9 +48,27 @@ ${buildPlannerTemplateManifestPrompt()}
 
 # Render strategy decision v1
 - Current supported strategies are "template_macro", "primitive_scene_graph", and bounded "procedural_generator".
-- Use "primitive_scene_graph" only when templateId is "scene-graph".
-- Use "procedural_generator" only when templateId is "scene-graph" and the segment is best represented as a deterministic workflow, node graph, agent loop, system pipeline, dependency flow, journey, timeline, progression, terminal command session, build/test/deploy trace, or command output walkthrough.
+- Use "primitive_scene_graph" only when templateId is "scene-graph" and the
+  segment needs custom layered Visual IR that is NOT one of the supported
+  procedural generator shapes.
+- For deterministic workflow, node graph, dependency flow, agent loop, system
+  pipeline, journey, timeline, progression, terminal command session,
+  build/test/deploy trace, or command output walkthrough segments, you MUST use
+  templateId "scene-graph" with strategyDecision.strategy
+  "procedural_generator" and include proceduralGenerator. Do not use
+  "primitive_scene_graph" for those cases.
 - Use "template_macro" for scripted, spotlight, stats-dashboard, and any other fixed registered macro template.
+- Prefer "scene-graph" for product workflows, UI walkthroughs, system pipelines,
+  agent loops, generation flows, command sessions, process visuals, cinematic
+  openers/closings, node/path/code/terminal visuals, or when the brief asks for
+  visual variety beyond cards and scripted text.
+- Prefer "stats-dashboard" when the segment needs KPI, comparison, trend,
+  category share, report, analytics, growth, or multi-chart/dashboard visuals.
+- Use "spotlight" mainly for short hooks, recap cards, single key messages,
+  metrics, and calls to action. Do not use spotlight for every segment of a
+  multi-step product or workflow demo.
+- Use "scripted" mainly for text-heavy narrative/explainer segments that need
+  multiple internal text scenes but not a graph, path, terminal, or dashboard.
 - Set fallbackStrategy to "template_macro" for scene-graph segments so the compiler can fall back to a stable macro if Visual IR validation fails.
 - Set fallbackStrategy to "template_macro" for template_macro segments.
 - Keep confidence between 0 and 1, and explain the strategy choice in reason.
