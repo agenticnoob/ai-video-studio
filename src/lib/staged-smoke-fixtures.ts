@@ -241,59 +241,6 @@ const assertProceduralGeneratorEmptyOptionalTextNormalization = (): void => {
 
 assertProceduralGeneratorEmptyOptionalTextNormalization();
 
-const assertStoryboardPlanMissingRequiredFieldRecovery = (): void => {
-  const plan = parseStoryboardPlanToolCallArguments(
-    JSON.stringify({
-      title: "Missing Planner Fields Recovery Smoke",
-      brief: "Recover provider output when a later segment omits narration and visualBrief.",
-      language: "en",
-      segments: [
-        {
-          id: "segment-1",
-          order: 1,
-          title: "Opening",
-          purpose: "Introduce the product workflow.",
-          templateId: SPOTLIGHT_TEMPLATE_ID,
-          templateReason: "Spotlight can quickly establish the value proposition.",
-          narration: {
-            text: "AI Video Studio turns a brief into an editable video project.",
-          },
-          visualBrief: "A focused product-opening lockup.",
-          strategyDecision: templateMacroStrategyDecision,
-        },
-        {
-          id: "segment-2",
-          order: 2,
-          title: "Segment Editing",
-          purpose: "Show that each generated segment can be selected, edited, and regenerated.",
-          templateId: SPOTLIGHT_TEMPLATE_ID,
-          templateReason: "Spotlight can emphasize the segment-level editing workflow.",
-          strategyDecision: templateMacroStrategyDecision,
-        },
-      ],
-    }),
-  );
-  const recoveredSegment = plan.segments[1];
-
-  if (!recoveredSegment) {
-    throw new Error("Expected recovered second segment.");
-  }
-  if (
-    recoveredSegment.narration.text !==
-    "Show that each generated segment can be selected, edited, and regenerated."
-  ) {
-    throw new Error("Expected missing narration to recover from segment purpose.");
-  }
-  if (
-    recoveredSegment.visualBrief !==
-    "Visualize: Show that each generated segment can be selected, edited, and regenerated."
-  ) {
-    throw new Error("Expected missing visualBrief to recover from segment purpose.");
-  }
-};
-
-assertStoryboardPlanMissingRequiredFieldRecovery();
-
 const assertAssetPlanSchemaFixture = (): void => {
   const planWithAssets = storyboardPlanSchema.parse({
     title: "Asset Plan Boundary Smoke",

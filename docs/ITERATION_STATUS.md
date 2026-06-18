@@ -1,6 +1,24 @@
 # Iteration Status
 
-Last updated: Storyboard planner missing-field recovery fix
+Last updated: Storyboard parser smoke isolation fix
+
+## Latest continuation — Storyboard parser smoke isolation fix
+
+- Fixed a regression introduced by the missing-field recovery test: the
+  deliberately invalid `Missing Planner Fields Recovery Smoke` payload lived in
+  `src/lib/staged-smoke-fixtures.ts`, which is also bundled by the Remotion
+  staged fixture / composite-preview path.
+- Moved that parser recovery assertion into a dedicated
+  `scripts/storyboard-plan-parser-smoke.mjs` and added
+  `npm run smoke:storyboard-parser`.
+- Added a guard in the dedicated smoke to ensure this raw invalid planner
+  payload stays out of Remotion-loaded staged fixtures.
+- `src/lib/staged-smoke-fixtures.ts` is again limited to runtime-safe fixture
+  data for Remotion composition loading.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:storyboard-parser'` (red first, then green)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
 
 ## Latest continuation — Storyboard planner missing-field recovery fix
 
@@ -16,11 +34,13 @@ Last updated: Storyboard planner missing-field recovery fix
   minimal `narration.text` and `visualBrief` from that text, then still runs the
   full `StoryboardPlan` schema. Other malformed strategy/template/order fields
   remain strict validation failures.
-- Added a staged smoke fixture reproducing the exact missing
-  `segments.1.narration` / `segments.1.visualBrief` shape.
+- Added a dedicated storyboard parser smoke reproducing the exact missing
+  `segments.1.narration` / `segments.1.visualBrief` shape without loading that
+  deliberately invalid payload in Remotion runtime fixtures.
 
 Validation performed so far:
 - `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'` (red first, then green)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:storyboard-parser'`
 - `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
 - `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
 

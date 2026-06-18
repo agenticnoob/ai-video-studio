@@ -58,6 +58,7 @@
     "format:check": "prettier . --check",
     "remotion:ensure-browser": "node scripts/ensure-remotion-browser.mjs",
     "smoke:f5-staged": "node scripts/f5-tts-staged-smoke.mjs",
+    "smoke:storyboard-parser": "rm -rf /tmp/storyboard-parser-smoke-build && npx tsc --allowJs --target es2022 --module commonjs --moduleResolution node --skipLibCheck --esModuleInterop --noEmit false --outDir /tmp/storyboard-parser-smoke-build scripts/storyboard-plan-parser-smoke.mjs src/lib/minimax/parse-storyboard-plan.ts && NODE_PATH=/workspace/node_modules:node_modules node /tmp/storyboard-parser-smoke-build/scripts/storyboard-plan-parser-smoke.mjs",
     "smoke:staged-live": "node scripts/staged-live-smoke.mjs",
     "smoke:staged-live:render": "STAGED_LIVE_SMOKE_RENDER=true npm run smoke:staged-live",
     "smoke:staged-fixtures": "remotion compositions src/remotion/index.ts",
