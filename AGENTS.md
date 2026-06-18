@@ -167,8 +167,9 @@ The first staged-generation groundwork is also in place:
   findings. Segment-addressable findings can be explicitly applied to the
   selected-segment revision input as a structured repair prompt or used to
   manually trigger one target-segment regeneration through the existing staged
-  segment regeneration path; browser/canvas review and automatic segment repair
-  are not active yet.
+  segment regeneration path. That manual repair action now reports explicit
+  running, success, and failure diagnostics for the target segment; browser/canvas
+  review and automatic segment repair are not active yet.
   Unrestricted generated TSX and executable `media_asset_composite` rendering
   remain out of scope.
 - Scene graph provider-output hardening is intentionally bounded: selected

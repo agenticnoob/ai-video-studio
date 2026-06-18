@@ -447,7 +447,9 @@ Current landing:
   segment revision input as a structured repair prompt, using severity, frame,
   review reason, source still id, message, and suggested repair context. The
   Studio panel can also use that prompt to manually trigger one target-segment
-  regeneration through the existing selected-segment staged path.
+  regeneration through the existing selected-segment staged path, with explicit
+  running, success, and failure diagnostics tied to the target segment and
+  backend error message.
 - no browser/canvas review, automatic repair, or provider prompt repair loop
   is active yet.
 
@@ -502,10 +504,11 @@ is worth keeping.
 Implement Review / Repair Loop v1 incrementally:
 keep deterministic `VisualReviewFinding` diagnostics, representative
 review-frame planning, explicit still image extraction, and bounded
-still-analysis findings stable, then add browser/canvas review and
-target-segment repair in later slices. The next slices should preserve
-VideoProject preview/export compatibility, avoid browser automation as the
-default validation path, and keep repair behavior explicit rather than
+still-analysis findings stable. Manual target-segment repair now has explicit
+Studio diagnostics for running, success, and failure; the next slices can add
+browser/canvas review and richer repair attempts later. The next slices should
+preserve VideoProject preview/export compatibility, avoid browser automation as
+the default validation path, and keep repair behavior explicit rather than
 silently rewriting segments.
 ```
 

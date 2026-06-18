@@ -80,7 +80,8 @@ Current implementation status:
   its source PNG. Segment-addressable findings can also be explicitly applied
   to the existing selected-segment revision input as a structured repair
   prompt or manually trigger one target-segment regeneration through the
-  existing staged segment regeneration path.
+  existing staged segment regeneration path, with visible running, success,
+  and failure diagnostics for that repair attempt.
   Browser/canvas visual review and automatic segment repair are not active yet
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration
@@ -424,7 +425,9 @@ Use visual-review repair actions from the Studio page:
 - `套用修复指令` selects the target segment, fills the segment editor's
   `自然语言修改指令`, scrolls to that editor, and focuses the textarea.
 - `立即修复分镜` uses the same repair prompt and immediately runs one
-  selected-segment regeneration for that target segment.
+  selected-segment regeneration for that target segment. The panel shows
+  `修复中`, `分镜修复已完成`, or `分镜修复失败` with the target segment id and
+  backend error message.
 
 Render representative scene graph stills:
 ```bash

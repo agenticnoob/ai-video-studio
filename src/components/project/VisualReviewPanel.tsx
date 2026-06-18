@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useMemo, type FC } from "react";
+import { useMemo, useState, type FC } from "react";
 
 import type { VisualReviewState } from "../../helpers/use-visual-review";
 import type { VisualReviewFinding } from "../../lib/visual-review-schema";
@@ -11,10 +11,28 @@ type VisualReviewPanelProps = {
   disabled: boolean;
   onApplyRepairPrompt: (segmentId: string, prompt: string) => void;
   onDismissResult: () => void;
-  onRegenerateSegmentFromFinding: (segmentId: string, prompt: string) => void;
+  onRegenerateSegmentFromFinding: (segmentId: string, prompt: string) => Promise<void>;
   onReview: () => void;
   state: VisualReviewState;
 };
+
+type RepairResult =
+  | {
+      status: "idle";
+    }
+  | {
+      segmentId: string;
+      status: "running";
+    }
+  | {
+      segmentId: string;
+      status: "success";
+    }
+  | {
+      error: string;
+      segmentId: string;
+      status: "failure";
+    };
 
 const findingSeverityLabelMap = {
   error: "错误",
@@ -63,6 +81,7 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
   state,
 }) => {
   const isReviewing = state.status === "reviewing";
+  const [repairResult, setRepairResult] = useState<RepairResult>({ status: "idle" });
   const taskProgress = useTaskProgress(
     state.status === "idle" ? undefined : state.progressId,
     isReviewing,
@@ -99,6 +118,27 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
     }
 
     return undefined;
+  };
+
+  const regenerateSegmentFromFinding = async (finding: VisualReviewFinding) => {
+    const segmentId = getFindingSegmentId(finding);
+
+    if (!segmentId) {
+      return;
+    }
+
+    setRepairResult({ segmentId, status: "running" });
+
+    try {
+      await onRegenerateSegmentFromFinding(segmentId, buildRepairPrompt(finding));
+      setRepairResult({ segmentId, status: "success" });
+    } catch (error) {
+      setRepairResult({
+        error: error instanceof Error ? error.message : "分镜修复失败。",
+        segmentId,
+        status: "failure",
+      });
+    }
   };
 
   return (
@@ -152,6 +192,22 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
 
       {state.status === "failure" ? (
         <div className="mt-4 text-sm font-medium text-foreground">{state.error}</div>
+      ) : null}
+
+      {repairResult.status !== "idle" ? (
+        <div className="mt-4 rounded-geist border border-panel-border-color bg-background/40 p-3 text-sm leading-6 text-foreground">
+          <div className="font-semibold">
+            {repairResult.status === "running"
+              ? "修复中"
+              : repairResult.status === "success"
+                ? "分镜修复已完成"
+                : "分镜修复失败"}
+          </div>
+          <div className="mt-1 font-mono text-xs">segment {repairResult.segmentId}</div>
+          {repairResult.status === "failure" ? (
+            <div className="mt-1">{repairResult.error}</div>
+          ) : null}
+        </div>
       ) : null}
 
       {state.status === "success" ? (
@@ -221,13 +277,8 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
                         </button>
                         <button
                           className="inline-flex rounded-geist border border-foreground bg-foreground px-2 py-1 text-xs font-semibold text-background disabled:cursor-not-allowed disabled:opacity-60"
-                          disabled={disabled}
-                          onClick={() => {
-                            const segmentId = getFindingSegmentId(finding);
-                            if (segmentId) {
-                              onRegenerateSegmentFromFinding(segmentId, buildRepairPrompt(finding));
-                            }
-                          }}
+                          disabled={disabled || repairResult.status === "running"}
+                          onClick={() => void regenerateSegmentFromFinding(finding)}
                           type="button"
                         >
                           立即修复分镜

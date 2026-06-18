@@ -1,6 +1,27 @@
 # Iteration Status
 
-Last updated: Procedural generator optional text normalization fix
+Last updated: Visual Review target repair diagnostics v1
+
+## Latest continuation — Visual Review target repair diagnostics v1
+
+- Closed the current Phase 6 manual target-repair loop by giving
+  `立即修复分镜` explicit repair diagnostics in the Studio visual-review panel.
+- The action now awaits the selected-segment regeneration result, shows a
+  `修复中` state while the staged segment request is running, reports
+  `分镜修复已完成` on success, and reports `分镜修复失败` with the failing segment id
+  and backend error message when the staged request fails.
+- `regenerateSelectedSegment()` now returns a structured
+  `GenerationActionResult` so callers can distinguish success from handled
+  validation/API failures without relying on React state timing.
+- The implementation remains bounded: visual-review findings can trigger only
+  one explicit user-initiated target-segment regeneration through the existing
+  staged segment path; browser/canvas review, repeated automatic repair, and
+  silent segment rewriting remain deferred.
+
+Validation performed so far:
+- `node scripts/visual-review-ui-source-smoke.mjs` (red first, then green)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `git diff --check`
 
 ## Latest continuation — Procedural generator optional text normalization fix
 

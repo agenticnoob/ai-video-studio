@@ -12,6 +12,15 @@ type GenerateResponse = {
   error?: string;
 };
 
+export type GenerationActionResult =
+  | {
+      ok: true;
+    }
+  | {
+      error: string;
+      ok: false;
+    };
+
 export type GenerationOperation =
   | {
       status: "idle";
@@ -57,7 +66,7 @@ export type UseGenerationActionsResult = {
   regenerateSelectedSegment: (overrides?: {
     revisionPrompt?: string;
     segmentId?: string;
-  }) => Promise<void>;
+  }) => Promise<GenerationActionResult>;
 };
 
 export const useGenerationActions = ({
@@ -125,18 +134,20 @@ export const useGenerationActions = ({
   const regenerateSelectedSegment = async (overrides?: {
     revisionPrompt?: string;
     segmentId?: string;
-  }) => {
+  }): Promise<GenerationActionResult> => {
     const targetSegmentId = overrides?.segmentId ?? selectedSegmentId;
     const targetRevisionPrompt = overrides?.revisionPrompt ?? revisionPrompt;
 
     if (!targetSegmentId) {
-      setError("请选择需要重生成的分段。");
-      return;
+      const nextError = "请选择需要重生成的分段。";
+      setError(nextError);
+      return { ok: false, error: nextError };
     }
 
     if (!targetRevisionPrompt.trim()) {
-      setError("请输入分段修改指令。");
-      return;
+      const nextError = "请输入分段修改指令。";
+      setError(nextError);
+      return { ok: false, error: nextError };
     }
 
     const startedAt = Date.now();
@@ -180,8 +191,10 @@ export const useGenerationActions = ({
         startedAt,
         status: "success",
       });
+      return { ok: true };
     } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : "分段重生成失败。");
+      const nextError = caughtError instanceof Error ? caughtError.message : "分段重生成失败。";
+      setError(nextError);
       setGenerationOperation({
         finishedAt: Date.now(),
         kind: "segment",
@@ -189,6 +202,7 @@ export const useGenerationActions = ({
         startedAt,
         status: "failure",
       });
+      return { ok: false, error: nextError };
     } finally {
       setIsRegeneratingSegment(false);
     }

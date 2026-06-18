@@ -86,8 +86,10 @@ carry `stillId` and `reviewReason` attribution so the UI can point back to the
 triggering representative still and open its source PNG. Segment-addressable
 findings can also be applied to the selected-segment revision input as a
 structured repair prompt or used to manually trigger one target-segment
-regeneration through the existing staged segment regeneration path.
-Browser/canvas review and automatic repair loops remain deferred.
+regeneration through the existing staged segment regeneration path. That
+manual repair trigger reports running, success, and failure diagnostics tied
+to the target segment and backend error message. Browser/canvas review and
+automatic repair loops remain deferred.
 
 Current implementation snapshot:
 
@@ -141,7 +143,7 @@ Current implementation snapshot:
   path for rendering representative stills, inspecting static findings, opening
   attributed source stills, and explicitly sending segment-addressable findings
   into the selected-segment revision prompt or one user-triggered
-  selected-segment regeneration.
+  selected-segment regeneration with visible repair-attempt diagnostics.
 - The active page generation flow uses `/api/generate/staged`.
 - The active selected-segment regeneration flow also uses
   `/api/generate/staged`: one target segment is replanned, regenerated through

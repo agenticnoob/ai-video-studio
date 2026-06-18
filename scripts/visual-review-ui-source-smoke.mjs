@@ -16,6 +16,7 @@ const main = async () => {
     hookSource,
     panelSource,
     segmentEditorSource,
+    generationActionsSource,
     schemaSource,
     stillAnalysisSource,
     renderProjectSource,
@@ -26,6 +27,7 @@ const main = async () => {
     readSource("src/helpers/use-visual-review.ts"),
     readSource("src/components/project/VisualReviewPanel.tsx"),
     readSource("src/components/project/SegmentEditor.tsx"),
+    readSource("src/helpers/project-generation/use-generation-actions.ts"),
     readSource("src/lib/visual-review-schema.ts"),
     readSource("src/lib/visual-review-still-analysis.ts"),
     readSource("src/lib/render-project.ts"),
@@ -57,8 +59,22 @@ const main = async () => {
   assertIncludes(panelSource, "suggestedRepair", "Visual review panel");
   assertIncludes(panelSource, "onRegenerateSegmentFromFinding", "Visual review panel");
   assertIncludes(panelSource, "立即修复分镜", "Visual review panel");
+  assertIncludes(panelSource, "Promise<void>", "Visual review repair action");
+  assertIncludes(panelSource, "repairResult", "Visual review repair action");
+  assertIncludes(panelSource, "修复中", "Visual review repair action");
+  assertIncludes(panelSource, "分镜修复已完成", "Visual review repair action");
+  assertIncludes(panelSource, "分镜修复失败", "Visual review repair action");
   assertIncludes(pageSource, "regenerateSelectedSegmentFromVisualReview", "Studio page");
-  assertIncludes(pageSource, "await generation.regenerateSelectedSegment", "Studio page");
+  assertIncludes(
+    pageSource,
+    "const repairResult = await generation.regenerateSelectedSegment",
+    "Studio page",
+  );
+  assertIncludes(pageSource, "if (!repairResult.ok)", "Studio page");
+  assertIncludes(pageSource, "throw new Error(repairResult.error)", "Studio page");
+  assertIncludes(generationActionsSource, "GenerationActionResult", "Generation actions");
+  assertIncludes(generationActionsSource, "return { ok: false, error:", "Generation actions");
+  assertIncludes(generationActionsSource, "return { ok: true }", "Generation actions");
   assertIncludes(pageSource, "focusSegmentRevisionPrompt", "Studio page");
   assertIncludes(pageSource, "segmentEditorSectionRef", "Studio page");
   assertIncludes(pageSource, "requestAnimationFrame", "Studio page");

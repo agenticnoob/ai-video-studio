@@ -148,7 +148,9 @@ Current executable strategy note:
   can be mapped to a segment can be explicitly applied to the selected-segment
   revision input as structured repair prompts or used to manually trigger one
   target-segment regeneration through the existing staged segment regeneration
-  path.
+  path. That manual repair action reports explicit running, success, and
+  failure diagnostics for the target segment instead of silently swallowing
+  staged regeneration errors.
   Browser/canvas review and automatic segment repair remain deferred.
 
 ## 2. Authoritative Terminology

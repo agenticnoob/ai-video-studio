@@ -48,10 +48,14 @@ const Home: NextPage = () => {
   };
   const regenerateSelectedSegmentFromVisualReview = async (segmentId: string, prompt: string) => {
     applyVisualReviewRepairPrompt(segmentId, prompt);
-    await generation.regenerateSelectedSegment({
+    const repairResult = await generation.regenerateSelectedSegment({
       revisionPrompt: prompt,
       segmentId,
     });
+
+    if (!repairResult.ok) {
+      throw new Error(repairResult.error);
+    }
   };
 
   return (
