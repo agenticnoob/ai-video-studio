@@ -1,6 +1,22 @@
 # Iteration Status
 
-Last updated: Visual Review still finding attribution v1
+Last updated: Visual Review finding source-link v1
+
+## Latest continuation — Visual Review finding source-link v1
+
+- Continued Phase 6 inside the existing manual still-extraction review action
+  by making attributed pixel-analysis findings directly open their source PNG
+  still from the Studio panel.
+- Added a `stillId -> downloadUrl` lookup in `VisualReviewPanel` so findings
+  with source-still attribution can render an `打开截图` link beside the
+  existing representative-frame reason and still id.
+- Kept static duration, caption, and planned-asset findings unchanged; only
+  findings with a known source still render a direct still link.
+- Browser/canvas visual analysis and automatic target-segment repair remain
+  deferred.
+
+Validation performed so far:
+- `node scripts/visual-review-ui-source-smoke.mjs` (red first, then green)
 
 ## Latest continuation — Visual Review still finding attribution v1
 

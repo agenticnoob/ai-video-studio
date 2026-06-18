@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { FC } from "react";
+import { useMemo, type FC } from "react";
 
 import type { VisualReviewState } from "../../helpers/use-visual-review";
 import { useTaskProgress } from "../../helpers/use-task-progress";
@@ -46,6 +46,13 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
     state.status === "idle" ? undefined : state.progressId,
     isReviewing,
   );
+  const sourceStillUrlById = useMemo(() => {
+    if (state.status !== "success") {
+      return new Map<string, string>();
+    }
+
+    return new Map(state.extraction.stills.map((still) => [still.stillId, still.downloadUrl]));
+  }, [state]);
 
   return (
     <Card as="section" tone="panel">
@@ -119,25 +126,43 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
 
           {state.visualReview.findings.length ? (
             <div className="space-y-2">
-              {state.visualReview.findings.slice(0, 4).map((finding, index) => (
-                <div
-                  className="rounded-geist border border-panel-border-color bg-background/40 p-3 text-sm leading-6"
-                  key={`${finding.targetId ?? "project"}-${finding.frame ?? "any"}-${index}`}
-                >
-                  <div className="font-semibold">
-                    {findingSeverityLabelMap[finding.severity]}
-                    {finding.reviewReason ? ` · ${reviewReasonLabelMap[finding.reviewReason]}` : ""}
-                    {finding.frame !== undefined ? ` · frame ${finding.frame}` : ""}
+              {state.visualReview.findings.slice(0, 4).map((finding, index) => {
+                const sourceStillUrl = finding.stillId
+                  ? sourceStillUrlById.get(finding.stillId)
+                  : undefined;
+
+                return (
+                  <div
+                    className="rounded-geist border border-panel-border-color bg-background/40 p-3 text-sm leading-6"
+                    key={`${finding.targetId ?? "project"}-${finding.frame ?? "any"}-${index}`}
+                  >
+                    <div className="font-semibold">
+                      {findingSeverityLabelMap[finding.severity]}
+                      {finding.reviewReason
+                        ? ` · ${reviewReasonLabelMap[finding.reviewReason]}`
+                        : ""}
+                      {finding.frame !== undefined ? ` · frame ${finding.frame}` : ""}
+                    </div>
+                    <div className="mt-1">{finding.message}</div>
+                    {finding.stillId ? (
+                      <div className="mt-1 font-mono text-xs">still {finding.stillId}</div>
+                    ) : null}
+                    {sourceStillUrl ? (
+                      <a
+                        className="mt-2 inline-flex text-xs font-semibold underline-offset-4 hover:underline"
+                        href={sourceStillUrl}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        打开截图
+                      </a>
+                    ) : null}
+                    {finding.suggestedRepair ? (
+                      <div className="mt-1 text-xs">{finding.suggestedRepair}</div>
+                    ) : null}
                   </div>
-                  <div className="mt-1">{finding.message}</div>
-                  {finding.stillId ? (
-                    <div className="mt-1 font-mono text-xs">still {finding.stillId}</div>
-                  ) : null}
-                  {finding.suggestedRepair ? (
-                    <div className="mt-1 text-xs">{finding.suggestedRepair}</div>
-                  ) : null}
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="rounded-geist border border-panel-border-color bg-background/40 p-3 text-sm">

@@ -76,7 +76,8 @@ Current implementation status:
   analysis for near-blank, low-contrast, unsafe-margin, fine-detail density,
   and letterbox/pillarbox empty-border frame detection. Pixel-analysis findings
   carry source still attribution (`stillId` and `reviewReason`) so the manual
-  review result can point back to the triggering representative still.
+  review result can point back to the triggering representative still and open
+  its source PNG.
   Browser/canvas visual review and automatic segment repair are not active yet
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration

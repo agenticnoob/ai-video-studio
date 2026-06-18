@@ -66,9 +66,9 @@ Product direction:
   plus low-contrast, unsafe-margin, fine-detail density, and
   letterbox/pillarbox empty-border frame analysis. Still-analysis findings
   carry source still attribution (`stillId` and `reviewReason`) so the manual
-  review result can point back to the triggering representative still;
-  browser/canvas review and automatic target-segment repair remain future
-  bounded slices
+  review result can point back to the triggering representative still and open
+  its source PNG; browser/canvas review and automatic target-segment repair
+  remain future bounded slices
 - final generation should be staged: storyboard planning first, per-segment
   TTS second, selected visual implementation compilation third, project
   assembly last

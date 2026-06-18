@@ -45,6 +45,9 @@ const main = async () => {
   assertIncludes(panelSource, "still.analysis.borderBandRatio", "Visual review panel");
   assertIncludes(panelSource, "reviewReasonLabelMap[finding.reviewReason]", "Visual review panel");
   assertIncludes(panelSource, "finding.stillId", "Visual review panel");
+  assertIncludes(panelSource, "sourceStillUrlById", "Visual review panel");
+  assertIncludes(panelSource, "sourceStillUrl", "Visual review panel");
+  assertIncludes(panelSource, "打开截图", "Visual review panel");
   assertIncludes(panelSource, "near_blank_frame", "Visual review panel");
   assertIncludes(panelSource, "low_contrast_frame", "Visual review panel");
   assertIncludes(panelSource, "unsafe_margin_frame", "Visual review panel");

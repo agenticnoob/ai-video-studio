@@ -144,7 +144,7 @@ Current executable strategy note:
   density plus letterbox/pillarbox empty-border frame detection. Pixel-analysis
   findings carry source still attribution through `stillId` and
   `reviewReason` so manual review can locate the triggering representative
-  still.
+  still and open its source PNG directly from the Studio panel.
   Browser/canvas review and automatic segment repair remain deferred.
 
 ## 2. Authoritative Terminology

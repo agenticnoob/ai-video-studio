@@ -83,8 +83,8 @@ progress, static findings, still thumbnails, and bounded per-still pixel
 analysis for near-blank, low-contrast, unsafe-margin, fine-detail density, and
 letterbox/pillarbox empty-border frame detection. Pixel-analysis findings
 carry `stillId` and `reviewReason` attribution so the UI can point back to the
-triggering representative still. Browser/canvas review and automatic repair
-remain deferred.
+triggering representative still and open its source PNG. Browser/canvas review
+and automatic repair remain deferred.
 
 Current implementation snapshot:
 

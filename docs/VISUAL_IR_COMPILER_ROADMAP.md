@@ -441,7 +441,8 @@ Current landing:
   for near-blank, low-contrast, unsafe-margin, fine-detail density, and
   letterbox/pillarbox empty-border frame detection, and those still-analysis
   warnings are surfaced as explicit review findings with source still id and
-  representative-frame reason instead of triggering automatic repair.
+  representative-frame reason. The Studio panel can open the source PNG still
+  for attributed findings instead of triggering automatic repair.
 - no browser/canvas review, automatic repair, or provider prompt repair loop
   is active yet.
 
