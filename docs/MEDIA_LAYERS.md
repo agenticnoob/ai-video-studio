@@ -53,7 +53,7 @@ small and avoid becoming a general-purpose timeline editor:
 - current generated narration audio uses `sourceType: "route"` for
   `/api/tts/assets/...`; future existing media can use `public` or `remote`
 - editing is a compact structured form, not drag/drop timeline editing
-- MiniMax preserves or omits media; it does not invent asset URLs
+- the LLM provider preserves or omits media; it does not invent asset URLs
 - no uploads, generated assets, waveform UI, keyframes, ducking, or beat sync
 
 The hard part is not the Remotion `<Sequence>` wrapper. The hard parts are
@@ -481,7 +481,7 @@ Implement in this order:
 9. Add one or two sample project/segment layers for smoke testing when generic
    media work resumes.
 10. Add a compact media panel after rendering works.
-11. Update MiniMax schema/prompt only to preserve existing media or omit it.
+11. Update provider schema/prompt only to preserve existing media or omit it.
 
 This means preview/export support lands before editing polish. That is the
 safest order because the UI can stay simple once the render contract is real.
@@ -508,7 +508,7 @@ preview/export parity outside template `implementation`.
 
 ## Generation Contract
 
-For the first media slice, keep MiniMax from inventing arbitrary asset URLs.
+For the first media slice, keep the LLM provider from inventing arbitrary asset URLs.
 
 Recommended sequence:
 
@@ -522,9 +522,8 @@ Recommended sequence:
 When media becomes provider-visible, update:
 
 - `src/lib/project-schema.ts`
-- `src/lib/minimax/tool-schema.ts`
-- `src/lib/minimax/prompts.ts`
-- `docs/providers/minimax.md`
+- `src/lib/deepseek/prompts.ts`
+- `docs/providers/deepseek.md`
 
 Provider-visible media fields should stay top-level project or segment media
 fields, not template ids.

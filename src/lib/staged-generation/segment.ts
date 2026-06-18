@@ -4,7 +4,7 @@ import type { StoryboardPlan, StoryboardSegmentPlan } from "../storyboard-plan-s
 import { generateSegmentNarrationAsset } from "../tts";
 import type { TtsProviderId } from "../tts/config";
 import type { VoiceCloneRequest } from "../tts/voice-references";
-import { minimaxCompileTemplateImplementation } from "../minimax";
+import { deepseekCompileTemplateImplementation } from "../deepseek";
 import { getTemplateDefinition } from "../template-registry";
 import type { StagedGenerationProgressReporter } from "./pipeline";
 
@@ -44,7 +44,7 @@ export const compilePlannedSegment = async ({
   plan,
   segment,
 }: CompilePlannedSegmentRequest): Promise<CompilePlannedSegmentResult> => {
-  const compiled = await minimaxCompileTemplateImplementation({
+  const compiled = await deepseekCompileTemplateImplementation({
     plan,
     segment,
     narration,

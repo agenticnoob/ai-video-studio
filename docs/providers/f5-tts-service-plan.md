@@ -6,7 +6,7 @@ GPU-backed F5 mode validation added.
 This plan starts after the provider adapter and segment-owned captions slice:
 
 - `src/lib/tts/f5.ts` owns the Next.js-side F5 adapter.
-- `src/lib/tts/index.ts` can select `f5-tts` or `minimax`.
+- `src/lib/tts/index.ts` routes all active narration synthesis to `f5-tts`.
 - `VideoSegment.narration.audio` owns generated audio metadata.
 - `VideoSegment.narration.captions` owns segment-local caption cues.
 - Preview/export already flatten segment-owned narration audio and captions.
@@ -18,7 +18,7 @@ Docker overlay, and smoke script before a real F5 checkpoint is installed.
 writing, duration probing, caption normalization, and byte-range asset serving
 through `POST /api/tts`.
 `npm run smoke:f5-staged` proves a deterministic staged project can assemble
-segment-owned F5 narration assets without MiniMax planner/compiler calls.
+segment-owned F5 narration assets without live LLM planner/compiler calls.
 `F5_TTS_SERVICE_MODE=f5` switches the service from generated smoke audio to
 the local F5 checkpoint under `models/f5-tts/`.
 With the local checkpoint, vocab, and Vocos vocoder present, the same smoke
@@ -178,7 +178,6 @@ F5_TTS_ENDPOINT=http://f5-tts:7865/synthesize
 F5_TTS_VOICE_ID=default
 F5_TTS_FORMAT=wav
 F5_TTS_REFERENCE_AUDIO=/voices/f5-tts/default.wav
-F5_TTS_FALLBACK_TO_MINIMAX=true
 F5_TTS_SERVICE_MODE=f5
 F5_TTS_MODEL_PATH=/models/f5-tts/model_1250000.safetensors
 F5_TTS_VOCAB_PATH=/models/f5-tts/vocab.txt
@@ -261,12 +260,12 @@ Validated local state:
    `TTS_PROVIDER=f5-tts` and calls `POST /api/tts`.
    Status: implemented by `scripts/f5-tts-next-smoke.sh`.
 7. Add a deterministic provider-backed staged smoke path that sets
-   `TTS_PROVIDER=f5-tts` without MiniMax planner/compiler calls.
+   `TTS_PROVIDER=f5-tts` without live LLM planner/compiler calls.
    Status: implemented by `npm run smoke:f5-staged`.
 8. Add a live provider-backed staged route smoke for `POST /api/generate/staged`
-   when MiniMax planner/compiler configuration is available, and confirm:
+   when DeepSeek planner/compiler configuration is available, and confirm:
    Status: implemented by `npm run smoke:staged-live`; the command skips with
-   exit 0 when `MINIMAX_API_KEY` or `F5_TTS_BASE_URL` is missing.
+   exit 0 when `DEEPSEEK_API_KEY` or `F5_TTS_BASE_URL` is missing.
    - generated audio lands under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts`
    - generated normalized caption JSON lands beside the audio as
      `<audio-name>.captions.json`
@@ -301,10 +300,10 @@ git diff --check
 ```
 
 Provider-backed live smoke against `POST /api/generate/staged` is implemented
-as `npm run smoke:staged-live`. It still depends on MiniMax planner/compiler
+as `npm run smoke:staged-live`. It still depends on DeepSeek planner/compiler
 configuration and `F5_TTS_BASE_URL`; when either is missing, it prints a clear
 skip reason and exits successfully. The deterministic staged smoke remains the
-bounded no-MiniMax validation path for real F5 narration, captions, asset
+bounded no-live-LLM validation path for real F5 narration, captions, asset
 serving, and export.
 
 ## Non-Goals

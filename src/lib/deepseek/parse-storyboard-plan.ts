@@ -39,7 +39,7 @@ export const parseStoryboardPlanToolCallArguments = (argumentsString: string): S
   } catch (err) {
     const detail = err instanceof Error ? err.message : String(err);
     throw new StoryboardPlanParseError(
-      `MiniMax storyboard tool_call arguments were not valid JSON: ${detail}; raw=${head}`,
+      `DeepSeek storyboard JSON output was not valid JSON: ${detail}; raw=${head}`,
       argumentsString,
     );
   }

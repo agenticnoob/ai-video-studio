@@ -15,6 +15,15 @@ services:
       NPM_CONFIG_REGISTRY: "https://registry.npmmirror.com"
       CHOKIDAR_USEPOLLING: "1"
       WATCHPACK_POLLING: "true"
+      DEEPSEEK_API_KEY: "${DEEPSEEK_API_KEY:-}"
+      DEEPSEEK_MODEL: "${DEEPSEEK_MODEL:-deepseek-chat}"
+      DEEPSEEK_BASE_URL: "${DEEPSEEK_BASE_URL:-}"
+      TTS_PROVIDER: "${TTS_PROVIDER:-f5-tts}"
+      F5_TTS_BASE_URL: "${F5_TTS_BASE_URL:-}"
+      F5_TTS_ENDPOINT: "${F5_TTS_ENDPOINT:-}"
+      F5_TTS_VOICE_ID: "${F5_TTS_VOICE_ID:-default}"
+      F5_TTS_FORMAT: "${F5_TTS_FORMAT:-wav}"
+      F5_TTS_REFERENCE_AUDIO: "${F5_TTS_REFERENCE_AUDIO:-}"
     volumes:
       - .:/workspace
       - ai-video-studio-node-modules:/workspace/node_modules
@@ -43,6 +52,15 @@ services:
       NPM_CONFIG_REGISTRY: "https://registry.npmmirror.com"
       CHOKIDAR_USEPOLLING: "1"
       WATCHPACK_POLLING: "true"
+      DEEPSEEK_API_KEY: "${DEEPSEEK_API_KEY:-}"
+      DEEPSEEK_MODEL: "${DEEPSEEK_MODEL:-deepseek-chat}"
+      DEEPSEEK_BASE_URL: "${DEEPSEEK_BASE_URL:-}"
+      TTS_PROVIDER: "${TTS_PROVIDER:-f5-tts}"
+      F5_TTS_BASE_URL: "${F5_TTS_BASE_URL:-}"
+      F5_TTS_ENDPOINT: "${F5_TTS_ENDPOINT:-}"
+      F5_TTS_VOICE_ID: "${F5_TTS_VOICE_ID:-default}"
+      F5_TTS_FORMAT: "${F5_TTS_FORMAT:-wav}"
+      F5_TTS_REFERENCE_AUDIO: "${F5_TTS_REFERENCE_AUDIO:-}"
     volumes:
       - .:/workspace
       - ai-video-studio-node-modules:/workspace/node_modules
@@ -68,6 +86,15 @@ services:
       NPM_CONFIG_CACHE: /tmp/npm-cache
       NPM_CONFIG_REGISTRY: "https://registry.npmmirror.com"
       AI_VIDEO_STUDIO_ARTIFACT_ROOT: "${AI_VIDEO_STUDIO_ARTIFACT_ROOT:-/workspace/out}"
+      DEEPSEEK_API_KEY: "${DEEPSEEK_API_KEY:-}"
+      DEEPSEEK_MODEL: "${DEEPSEEK_MODEL:-deepseek-chat}"
+      DEEPSEEK_BASE_URL: "${DEEPSEEK_BASE_URL:-}"
+      TTS_PROVIDER: "${TTS_PROVIDER:-f5-tts}"
+      F5_TTS_BASE_URL: "${F5_TTS_BASE_URL:-}"
+      F5_TTS_ENDPOINT: "${F5_TTS_ENDPOINT:-}"
+      F5_TTS_VOICE_ID: "${F5_TTS_VOICE_ID:-default}"
+      F5_TTS_FORMAT: "${F5_TTS_FORMAT:-wav}"
+      F5_TTS_REFERENCE_AUDIO: "${F5_TTS_REFERENCE_AUDIO:-}"
     volumes:
       - .:/workspace
       - ai-video-studio-node-modules:/workspace/node_modules

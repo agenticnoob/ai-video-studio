@@ -6,7 +6,7 @@ GPU-backed F5 runtime validated.
 This document defines the F5-TTS provider boundary for `ai-video-studio`.
 F5-TTS is integrated as a provider inside this project, not treated as a
 separate product. The Next.js-side adapter, request contract, configuration,
-artifact handling, caption normalization, and fallback behavior belong to this
+artifact handling, and caption normalization belong to this
 repository.
 
 The adapter is in place. The optional local runtime service has a
@@ -28,10 +28,9 @@ StoryboardSegmentPlan.narration.text
   -> assembled VideoProject
 ```
 
-MiniMax TTS remains the working provider/fallback when the local F5-TTS
-runtime is not configured or not running. The staged pipeline calls the
-project-owned narration provider interface instead of hard-coding provider
-details in assembly code.
+F5-TTS is the only active narration provider. If the local F5-TTS runtime is
+not configured or not running, narration generation fails explicitly instead
+of falling back to MiniMax.
 
 ## Provider Boundary
 
@@ -80,8 +79,7 @@ segment regeneration, and export.
 - Keep provider config in project-owned environment variables:
   - `TTS_PROVIDER=f5-tts` or `AI_VIDEO_STUDIO_TTS_PROVIDER=f5-tts` selects F5
     explicitly.
-  - If no provider is set, `F5_TTS_BASE_URL` selects F5 automatically;
-    otherwise the current MiniMax TTS path remains the default.
+  - If no provider is set, F5 is used automatically.
   - `F5_TTS_BASE_URL` points at the local/container F5 runtime.
   - `F5_TTS_ENDPOINT` optionally overrides the default
     `${F5_TTS_BASE_URL}/synthesize` endpoint. It may be absolute or relative.
@@ -93,7 +91,6 @@ segment regeneration, and export.
   - `AI_VIDEO_STUDIO_ARTIFACT_ROOT` is the shared artifact root used by Next,
     Remotion, and F5. Voice references live under its `voice-references/`
     subdirectory. The Docker workflow defaults this root to `/workspace/out`.
-  - `F5_TTS_FALLBACK_TO_MINIMAX=false` disables MiniMax fallback when F5 fails.
 - Write generated audio to local project artifacts, consistent with the current
   `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts` path.
 - Write the final normalized caption payload beside the generated audio under
@@ -148,9 +145,9 @@ Page-level voice cloning uses this runtime contract:
 4. When cloning is disabled or omitted, the existing default F5
    reference-audio behavior remains unchanged.
 
-Voice clone requests do not silently fall back to MiniMax, because MiniMax
-would generate a non-cloned voice while the UI indicates cloning is enabled.
-Normal non-clone F5 requests can still use `F5_TTS_FALLBACK_TO_MINIMAX`.
+Voice clone and normal narration requests do not silently fall back to MiniMax.
+If F5 cannot synthesize audio, the request fails so the UI can surface the real
+provider problem.
 
 ## Non-Goals For The First Slice
 
@@ -187,7 +184,7 @@ Current runtime note:
   app to verify the Next adapter, local audio artifact creation, duration
   probing, caption normalization, and `/api/tts/assets/...` byte-range serving.
 - `npm run smoke:f5-staged` builds a deterministic two-segment staged project
-  from F5 narration assets without calling MiniMax planner/compiler code.
+  from F5 narration assets without calling live LLM planner/compiler code.
 - `F5_TTS_SERVICE_MODE=f5` switches the service to the local checkpoint path.
   The service reports `modelLoaded: false` until the first real `/synthesize`
   request loads the model.

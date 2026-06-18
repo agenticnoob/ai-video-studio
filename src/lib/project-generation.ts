@@ -1,7 +1,7 @@
 /**
  * Test-only mock project generation. No longer wired into the active staged
  * generation path; the real generation path is implemented in
- * `src/lib/minimax/` plus `src/lib/staged-generation/`. The mock is kept as a
+ * `src/lib/deepseek/` plus `src/lib/staged-generation/`. The mock is kept as a
  * deterministic offline tool for unit tests and local dev dry-runs.
  */
 

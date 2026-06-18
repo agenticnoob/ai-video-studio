@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { ConcurrencyBusyError, runWithConcurrencyLimit } from "../../../../lib/concurrency-limits";
-import { MinimaxConfigError } from "../../../../lib/minimax/provider";
+import { DeepSeekConfigError } from "../../../../lib/deepseek/provider";
 import {
   buildStagedProjectDiagnostics,
   buildStagedSegmentRevisionDiagnostics,
@@ -125,7 +125,7 @@ export async function POST(request: Request) {
     if (error instanceof StoryboardSegmentNotFoundError) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
-    if (error instanceof MinimaxConfigError || error instanceof TtsConfigError) {
+    if (error instanceof DeepSeekConfigError || error instanceof TtsConfigError) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
     if (error instanceof TtsProviderError) {

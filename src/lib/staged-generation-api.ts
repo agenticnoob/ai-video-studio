@@ -1,12 +1,12 @@
 import { z } from "zod";
 
-import { TemplateImplementationParseError } from "./minimax/parse-template-implementation";
-import { StoryboardPlanParseError } from "./minimax/parse-storyboard-plan";
+import { TemplateImplementationParseError } from "./deepseek/parse-template-implementation";
+import { StoryboardPlanParseError } from "./deepseek/parse-storyboard-plan";
 import { videoProjectSchema } from "./project-schema";
 import { storyboardPlanSchema } from "./storyboard-plan-schema";
 import { voiceCloneRequestSchema } from "./tts/voice-references";
 
-const ttsProviderSchema = z.enum(["f5-tts", "minimax"]);
+const ttsProviderSchema = z.enum(["f5-tts"]);
 const progressIdSchema = z.string().trim().min(1).max(160).optional();
 
 const stagedBriefRequestSchema = z.object({
@@ -43,7 +43,7 @@ const stagedSegmentRequestSchema = z.object({
 });
 
 const upstreamErrorPattern =
-  /MiniMax request failed|MiniMax returned a non-JSON response|MiniMax response was not valid JSON|truncated by max_tokens|had no tool_calls|unexpected function|tool_call arguments were empty|tool_call arguments were not valid JSON|Generated storyboard plan failed schema validation|MiniMax template implementation arguments were not valid JSON|Generated ".*" implementation failed schema validation|implementation duration .* is shorter than required narration duration/;
+  /DeepSeek request failed|DeepSeek response had no JSON output|Generated storyboard plan failed schema validation|DeepSeek storyboard JSON output was not valid JSON|DeepSeek template implementation JSON output was not valid JSON|Generated ".*" implementation failed schema validation|implementation duration .* is shorter than required narration duration/;
 
 export const stagedGenerateRequestSchema = z.discriminatedUnion("mode", [
   stagedBriefRequestSchema,
