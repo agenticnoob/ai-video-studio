@@ -164,8 +164,10 @@ The first staged-generation groundwork is also in place:
   fine-detail density plus letterbox/pillarbox empty-border frame detection.
   Pixel-analysis findings carry source still attribution through `stillId` and
   `reviewReason`, and the Studio panel can open the source PNG still for those
-  findings; browser/canvas review and automatic segment repair are not active
-  yet.
+  findings. Segment-addressable findings can be explicitly applied to the
+  selected-segment revision input as a structured repair prompt, but the user
+  still manually triggers regeneration; browser/canvas review and automatic
+  segment repair are not active yet.
   Unrestricted generated TSX and executable `media_asset_composite` rendering
   remain out of scope.
 - Scene graph provider-output hardening is intentionally bounded: selected

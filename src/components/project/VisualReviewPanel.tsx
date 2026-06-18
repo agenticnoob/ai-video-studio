@@ -2,12 +2,14 @@ import Image from "next/image";
 import { useMemo, type FC } from "react";
 
 import type { VisualReviewState } from "../../helpers/use-visual-review";
+import type { VisualReviewFinding } from "../../lib/visual-review-schema";
 import { useTaskProgress } from "../../helpers/use-task-progress";
 import { ActivityProgress } from "../ui/ActivityProgress";
 import { Card } from "../ui/Card";
 
 type VisualReviewPanelProps = {
   disabled: boolean;
+  onApplyRepairPrompt: (segmentId: string, prompt: string) => void;
   onDismissResult: () => void;
   onReview: () => void;
   state: VisualReviewState;
@@ -35,8 +37,25 @@ const stillAnalysisStatusLabelMap = {
   unsupported: "未分析",
 } as const;
 
+const buildRepairPrompt = (finding: VisualReviewFinding): string => {
+  const parts = [
+    "Visual review finding:",
+    `severity: ${finding.severity}`,
+    finding.frame !== undefined ? `frame: ${finding.frame}` : undefined,
+    finding.reviewReason ? `review reason: ${finding.reviewReason}` : undefined,
+    finding.stillId ? `source still: ${finding.stillId}` : undefined,
+    `message: ${finding.message}`,
+    finding.suggestedRepair ? `suggested repair: ${finding.suggestedRepair}` : undefined,
+    "",
+    "请只重生成这个分镜，修复上述视觉复核问题；保持分镜原本意图、旁白和整体项目风格一致，不要改动其他分镜。",
+  ];
+
+  return parts.filter((part): part is string => part !== undefined).join("\n");
+};
+
 export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
   disabled,
+  onApplyRepairPrompt,
   onDismissResult,
   onReview,
   state,
@@ -53,6 +72,32 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
 
     return new Map(state.extraction.stills.map((still) => [still.stillId, still.downloadUrl]));
   }, [state]);
+  const segmentIdByStillId = useMemo(() => {
+    if (state.status !== "success") {
+      return new Map<string, string>();
+    }
+
+    return new Map(state.extraction.stills.map((still) => [still.stillId, still.segmentId]));
+  }, [state]);
+  const reviewSegmentIds = useMemo(() => {
+    if (state.status !== "success") {
+      return new Set<string>();
+    }
+
+    return new Set(state.extraction.stills.map((still) => still.segmentId));
+  }, [state]);
+
+  const getFindingSegmentId = (finding: VisualReviewFinding): string | undefined => {
+    if (finding.stillId) {
+      return segmentIdByStillId.get(finding.stillId);
+    }
+
+    if (finding.targetId && reviewSegmentIds.has(finding.targetId)) {
+      return finding.targetId;
+    }
+
+    return undefined;
+  };
 
   return (
     <Card as="section" tone="panel">
@@ -156,6 +201,21 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
                       >
                         打开截图
                       </a>
+                    ) : null}
+                    {getFindingSegmentId(finding) ? (
+                      <button
+                        className="ml-3 mt-2 inline-flex rounded-geist border border-panel-border-color px-2 py-1 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+                        disabled={disabled}
+                        onClick={() => {
+                          const segmentId = getFindingSegmentId(finding);
+                          if (segmentId) {
+                            onApplyRepairPrompt(segmentId, buildRepairPrompt(finding));
+                          }
+                        }}
+                        type="button"
+                      >
+                        套用修复指令
+                      </button>
                     ) : null}
                     {finding.suggestedRepair ? (
                       <div className="mt-1 text-xs">{finding.suggestedRepair}</div>

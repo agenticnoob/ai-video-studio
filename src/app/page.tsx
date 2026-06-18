@@ -29,6 +29,10 @@ const Home: NextPage = () => {
   const isReviewing = visualReviewState.status === "reviewing";
   const isMutatingProject =
     generation.isGenerating || generation.isRegeneratingSegment || isRendering || isReviewing;
+  const applyVisualReviewRepairPrompt = (segmentId: string, prompt: string) => {
+    generation.selectSegment(segmentId);
+    generation.setRevisionPrompt(prompt);
+  };
 
   return (
     <main className="mx-auto max-w-screen-2xl px-4 py-8 text-foreground">
@@ -72,6 +76,7 @@ const Home: NextPage = () => {
                 disabled={
                   generation.isGenerating || generation.isRegeneratingSegment || isRendering
                 }
+                onApplyRepairPrompt={applyVisualReviewRepairPrompt}
                 onDismissResult={resetVisualReviewState}
                 onReview={reviewProject}
                 state={visualReviewState}

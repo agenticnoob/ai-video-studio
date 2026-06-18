@@ -443,6 +443,10 @@ Current landing:
   warnings are surfaced as explicit review findings with source still id and
   representative-frame reason. The Studio panel can open the source PNG still
   for attributed findings instead of triggering automatic repair.
+- segment-addressable findings can be explicitly applied to the selected
+  segment revision input as a structured repair prompt, using severity, frame,
+  review reason, source still id, message, and suggested repair context. The
+  user still chooses whether to run selected-segment regeneration.
 - no browser/canvas review, automatic repair, or provider prompt repair loop
   is active yet.
 

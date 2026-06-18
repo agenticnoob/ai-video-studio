@@ -48,6 +48,14 @@ const main = async () => {
   assertIncludes(panelSource, "sourceStillUrlById", "Visual review panel");
   assertIncludes(panelSource, "sourceStillUrl", "Visual review panel");
   assertIncludes(panelSource, "打开截图", "Visual review panel");
+  assertIncludes(panelSource, "onApplyRepairPrompt", "Visual review panel");
+  assertIncludes(panelSource, "buildRepairPrompt", "Visual review panel");
+  assertIncludes(panelSource, "套用修复指令", "Visual review panel");
+  assertIncludes(panelSource, "Visual review finding", "Visual review panel");
+  assertIncludes(panelSource, "suggestedRepair", "Visual review panel");
+  assertIncludes(pageSource, "applyVisualReviewRepairPrompt", "Studio page");
+  assertIncludes(pageSource, "setRevisionPrompt", "Studio page");
+  assertIncludes(pageSource, "selectSegment", "Studio page");
   assertIncludes(panelSource, "near_blank_frame", "Visual review panel");
   assertIncludes(panelSource, "low_contrast_frame", "Visual review panel");
   assertIncludes(panelSource, "unsafe_margin_frame", "Visual review panel");

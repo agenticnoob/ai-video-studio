@@ -1,6 +1,28 @@
 # Iteration Status
 
-Last updated: Visual Review finding source-link v1
+Last updated: Visual Review explicit repair prompt v1
+
+## Latest continuation — Visual Review explicit repair prompt v1
+
+- Continued Phase 6 inside the manual Studio visual-review panel by turning
+  segment-addressable findings into an explicit selected-segment repair input.
+- Added `套用修复指令` for findings that can be mapped to a real segment:
+  still-analysis findings map through `stillId -> segmentId`, while existing
+  segment-duration findings can map through `targetId`.
+- The action selects the target segment and fills the existing segment
+  revision prompt with structured visual-review context: severity, frame,
+  review reason, source still id, message, suggested repair, and an explicit
+  instruction to regenerate only that segment.
+- Caption-cue and planned-asset findings are unchanged and do not render a
+  segment repair action unless they can be safely mapped to a segment.
+- This is a repair request boundary only: the user must still trigger selected
+  segment regeneration manually; browser/canvas visual analysis and automatic
+  target-segment repair remain deferred.
+
+Validation performed so far:
+- `node scripts/visual-review-ui-source-smoke.mjs` (red first, then green)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:visual-review-ui'`
 
 ## Latest continuation — Visual Review finding source-link v1
 

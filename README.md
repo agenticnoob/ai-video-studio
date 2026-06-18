@@ -77,7 +77,9 @@ Current implementation status:
   and letterbox/pillarbox empty-border frame detection. Pixel-analysis findings
   carry source still attribution (`stillId` and `reviewReason`) so the manual
   review result can point back to the triggering representative still and open
-  its source PNG.
+  its source PNG. Segment-addressable findings can also be explicitly applied
+  to the existing selected-segment revision input as a structured repair
+  prompt; the user still chooses whether to run segment regeneration.
   Browser/canvas visual review and automatic segment repair are not active yet
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration
