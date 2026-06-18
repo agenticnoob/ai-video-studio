@@ -232,6 +232,9 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
                         >
                           立即修复分镜
                         </button>
+                        <span className="w-full text-xs text-foreground">
+                          套用后会跳到分镜编辑器。
+                        </span>
                       </div>
                     ) : null}
                     {finding.suggestedRepair ? (

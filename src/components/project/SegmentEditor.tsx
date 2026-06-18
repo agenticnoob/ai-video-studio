@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import { useEffect, useRef, type FC } from "react";
 
 import type { VideoSegment } from "../../lib/project-schema";
 import { getTemplateLabel } from "../../lib/template-registry";
@@ -6,6 +6,7 @@ import { getTemplateEditor } from "../../templates/component-registry";
 import { Card } from "../ui/Card";
 
 type SegmentEditorProps = {
+  focusRevisionPromptSignal: number;
   isRegenerating: boolean;
   segment: VideoSegment | null;
   revisionPrompt: string;
@@ -39,6 +40,7 @@ const themeLabelMap = {
 } as const;
 
 export const SegmentEditor: FC<SegmentEditorProps> = ({
+  focusRevisionPromptSignal,
   isRegenerating,
   segment,
   revisionPrompt,
@@ -46,6 +48,14 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
   onRevisionPromptChange,
   onSegmentChange,
 }) => {
+  const revisionPromptTextAreaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useEffect(() => {
+    if (focusRevisionPromptSignal > 0) {
+      revisionPromptTextAreaRef.current?.focus();
+    }
+  }, [focusRevisionPromptSignal]);
+
   if (!segment) {
     return (
       <Card as="section" tone="panel">
@@ -100,6 +110,7 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
         <label className={fieldClassName}>
           自然语言修改指令
           <textarea
+            ref={revisionPromptTextAreaRef}
             className={`${inputClassName} min-h-16 resize-y`}
             placeholder="描述这个分段下一次重生成时应如何调整。"
             value={revisionPrompt}

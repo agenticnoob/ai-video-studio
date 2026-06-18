@@ -15,6 +15,7 @@ const main = async () => {
     pageSource,
     hookSource,
     panelSource,
+    segmentEditorSource,
     schemaSource,
     stillAnalysisSource,
     renderProjectSource,
@@ -24,6 +25,7 @@ const main = async () => {
     readSource("src/app/page.tsx"),
     readSource("src/helpers/use-visual-review.ts"),
     readSource("src/components/project/VisualReviewPanel.tsx"),
+    readSource("src/components/project/SegmentEditor.tsx"),
     readSource("src/lib/visual-review-schema.ts"),
     readSource("src/lib/visual-review-still-analysis.ts"),
     readSource("src/lib/render-project.ts"),
@@ -57,6 +59,13 @@ const main = async () => {
   assertIncludes(panelSource, "立即修复分镜", "Visual review panel");
   assertIncludes(pageSource, "regenerateSelectedSegmentFromVisualReview", "Studio page");
   assertIncludes(pageSource, "await generation.regenerateSelectedSegment", "Studio page");
+  assertIncludes(pageSource, "focusSegmentRevisionPrompt", "Studio page");
+  assertIncludes(pageSource, "segmentEditorSectionRef", "Studio page");
+  assertIncludes(pageSource, "requestAnimationFrame", "Studio page");
+  assertIncludes(panelSource, "套用后会跳到分镜编辑器", "Visual review panel");
+  assertIncludes(segmentEditorSource, "revisionPromptTextAreaRef", "Segment editor");
+  assertIncludes(segmentEditorSource, "focusRevisionPromptSignal", "Segment editor");
+  assertIncludes(segmentEditorSource, "自然语言修改指令", "Segment editor");
   assertIncludes(pageSource, "applyVisualReviewRepairPrompt", "Studio page");
   assertIncludes(pageSource, "setRevisionPrompt", "Studio page");
   assertIncludes(pageSource, "selectSegment", "Studio page");

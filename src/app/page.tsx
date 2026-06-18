@@ -1,6 +1,7 @@
 "use client";
 
 import type { NextPage } from "next";
+import { useRef, useState } from "react";
 import { GenerationPanel } from "../components/project/GenerationPanel";
 import { PreviewPanel } from "../components/project/PreviewPanel";
 import { ProjectSummary } from "../components/project/ProjectSummary";
@@ -15,6 +16,8 @@ import { useVisualReview } from "../helpers/use-visual-review";
 
 const Home: NextPage = () => {
   const generation = useProjectGeneration();
+  const segmentEditorSectionRef = useRef<HTMLElement | null>(null);
+  const [focusRevisionPromptSignal, setFocusRevisionPromptSignal] = useState(0);
   const {
     renderMedia,
     state: renderState,
@@ -29,9 +32,19 @@ const Home: NextPage = () => {
   const isReviewing = visualReviewState.status === "reviewing";
   const isMutatingProject =
     generation.isGenerating || generation.isRegeneratingSegment || isRendering || isReviewing;
+  const focusSegmentRevisionPrompt = () => {
+    requestAnimationFrame(() => {
+      segmentEditorSectionRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+      setFocusRevisionPromptSignal((signal) => signal + 1);
+    });
+  };
   const applyVisualReviewRepairPrompt = (segmentId: string, prompt: string) => {
     generation.selectSegment(segmentId);
     generation.setRevisionPrompt(prompt);
+    focusSegmentRevisionPrompt();
   };
   const regenerateSelectedSegmentFromVisualReview = async (segmentId: string, prompt: string) => {
     applyVisualReviewRepairPrompt(segmentId, prompt);
@@ -102,36 +115,39 @@ const Home: NextPage = () => {
           </div>
         </Card>
 
-        <Card
-          as="section"
-          className={isRendering ? "pointer-events-none opacity-70" : undefined}
-          tone="workspace"
-        >
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <div className="text-xs uppercase tracking-[0.22em]">Segments</div>
-              <h2 className="mt-2 text-lg font-semibold">分镜编辑器</h2>
+        <section ref={segmentEditorSectionRef}>
+          <Card
+            as="section"
+            className={isRendering ? "pointer-events-none opacity-70" : undefined}
+            tone="workspace"
+          >
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="text-xs uppercase tracking-[0.22em]">Segments</div>
+                <h2 className="mt-2 text-lg font-semibold">分镜编辑器</h2>
+              </div>
+              <div className="bg-foreground px-3 py-1 text-xs uppercase text-background">子级</div>
             </div>
-            <div className="bg-foreground px-3 py-1 text-xs uppercase text-background">子级</div>
-          </div>
 
-          <div className="space-y-6">
-            <SegmentList
-              project={generation.normalizedProject}
-              selectedSegmentId={generation.selectedSegmentId}
-              onSelectSegment={generation.selectSegment}
-            />
+            <div className="space-y-6">
+              <SegmentList
+                project={generation.normalizedProject}
+                selectedSegmentId={generation.selectedSegmentId}
+                onSelectSegment={generation.selectSegment}
+              />
 
-            <SegmentEditor
-              isRegenerating={generation.isRegeneratingSegment}
-              revisionPrompt={generation.revisionPrompt}
-              segment={generation.selectedSegment}
-              onRegenerateSegment={generation.regenerateSelectedSegment}
-              onRevisionPromptChange={generation.setRevisionPrompt}
-              onSegmentChange={generation.updateSegment}
-            />
-          </div>
-        </Card>
+              <SegmentEditor
+                focusRevisionPromptSignal={focusRevisionPromptSignal}
+                isRegenerating={generation.isRegeneratingSegment}
+                revisionPrompt={generation.revisionPrompt}
+                segment={generation.selectedSegment}
+                onRegenerateSegment={generation.regenerateSelectedSegment}
+                onRevisionPromptChange={generation.setRevisionPrompt}
+                onSegmentChange={generation.updateSegment}
+              />
+            </div>
+          </Card>
+        </section>
       </div>
     </main>
   );

@@ -418,6 +418,14 @@ cd /data/projects/labs/ai-video-studio
 docker compose run --rm web bash -lc 'npm run build && npm run start >/tmp/ai-video-studio-next.log 2>&1 & server_pid=$!; ready=0; for i in $(seq 1 45); do node -e "fetch(\"http://127.0.0.1:3000\").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" && ready=1 && break; sleep 1; done; if [ "$ready" != "1" ]; then cat /tmp/ai-video-studio-next.log; kill $server_pid >/dev/null 2>&1 || true; exit 1; fi; npm run smoke:visual-review-stills; status=$?; kill $server_pid >/dev/null 2>&1 || true; exit $status'
 ```
 
+Use visual-review repair actions from the Studio page:
+- Click `复核画面` to generate representative stills and findings.
+- For a segment-addressable finding, `打开截图` opens the source still.
+- `套用修复指令` selects the target segment, fills the segment editor's
+  `自然语言修改指令`, scrolls to that editor, and focuses the textarea.
+- `立即修复分镜` uses the same repair prompt and immediately runs one
+  selected-segment regeneration for that target segment.
+
 Render representative scene graph stills:
 ```bash
 cd /data/projects/labs/ai-video-studio

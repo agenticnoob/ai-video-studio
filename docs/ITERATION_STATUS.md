@@ -1,6 +1,26 @@
 # Iteration Status
 
-Last updated: Visual Review explicit target repair trigger v1
+Last updated: Visual Review repair action focus feedback fix
+
+## Latest continuation — Visual Review repair action focus feedback fix
+
+- Fixed a usability issue where `套用修复指令` could look like it did nothing:
+  the action only filled the selected segment's revision prompt, which sits
+  lower on the page, without scrolling or focusing the editor.
+- Added a focus/scroll signal from the Studio page into `SegmentEditor`; after
+  applying a visual-review repair prompt, the page now scrolls to the segment
+  editor and focuses the `自然语言修改指令` textarea.
+- Added inline helper copy beside segment-addressable visual-review actions:
+  `套用后会跳到分镜编辑器。`
+- Kept the behavior bounded: `套用修复指令` still only prepares the repair
+  prompt, while `立即修复分镜` remains the explicit user-triggered regeneration
+  action.
+
+Validation performed so far:
+- `node scripts/visual-review-ui-source-smoke.mjs` (red first, then green)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:visual-review-ui'`
+- `git diff --check`
 
 ## Latest continuation — Visual Review explicit target repair trigger v1
 
