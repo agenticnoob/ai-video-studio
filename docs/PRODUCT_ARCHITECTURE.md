@@ -63,7 +63,7 @@ procedural-generator groundwork now includes deterministic compile-to-SceneGraph
 `src/lib/procedural-generator-compiler.ts` compiles generator payloads into
 normal `scene-graph` `VideoSegment` results with staged diagnostics for
 planned generator output, compiled render strategy, and bounded macro
-fallback. The MiniMax storyboard planner/tool schema can now emit bounded
+fallback. The DeepSeek storyboard planner prompt can now emit bounded
 `node-graph-flow`, `line-path-flow`, and `terminal-session` payloads on
 `scene-graph` segments, and live staged smoke has validated provider-selected
 `procedural_generator` compiling to actual `primitive_scene_graph`. The
@@ -108,14 +108,16 @@ Current implementation snapshot:
   code.
 - `src/lib/storyboard-plan-schema.ts` accepts optional
   `proceduralGenerator` payloads only for `scene-graph` segments whose
-  `strategyDecision.strategy` is `procedural_generator`; the MiniMax planner
-  tool schema exposes only the bounded `node-graph-flow`, `line-path-flow`,
-  and `terminal-session` payload shapes.
+  `strategyDecision.strategy` is `procedural_generator`; the DeepSeek planner
+  prompt exposes only the bounded `node-graph-flow`, `line-path-flow`, and
+  `terminal-session` payload shapes.
 - `src/templates/registry.ts` derives the planner template manifest from
   server-safe registered template definitions.
-- `src/lib/minimax/prompts.ts`, `src/lib/minimax/tool-schema.ts`,
-  `src/lib/minimax/parse-storyboard-plan.ts`, and `src/lib/minimax/index.ts`
-  provide an internal MiniMax planner facade.
+- `src/lib/deepseek/prompts.ts`, `src/lib/deepseek/provider.ts`,
+  `src/lib/deepseek/parse-storyboard-plan.ts`,
+  `src/lib/deepseek/parse-template-implementation.ts`, and
+  `src/lib/deepseek/index.ts` provide the active DeepSeek JSON-mode
+  planner/compiler facade.
 - `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`,
   and `/api/tts/assets/...` provide the first internal TTS asset boundary for
   planned segment narration, including local artifact writing and ffprobe
@@ -134,7 +136,7 @@ Current implementation snapshot:
   process-local task progress through `progressId` and
   `/api/progress/[progressId]`. This is a lightweight in-memory status surface
   for the active browser request, not a persistent job model.
-- `src/lib/staged-generation/*`, the MiniMax template compiler helpers, and
+- `src/lib/staged-generation/*`, the DeepSeek template compiler helpers, and
   `POST /api/generate/staged` provide the staged assembly path from brief or
   plan input to `VideoProject`.
 - `src/lib/visual-review-schema.ts` and
@@ -243,11 +245,12 @@ Template context should be split by generation stage:
   `primitive_scene_graph`, and provider-facing `procedural_generator` only for
   `scene-graph` + `node-graph-flow`, `line-path-flow`, or
   `terminal-session`.
-- Procedural generator context: provider-facing planner/tool schemas expose
-  bounded `node-graph-flow`, `line-path-flow`, and `terminal-session` payloads
-  on `scene-graph` segments. These payloads are structured data only and
-  compile deterministically into actual `primitive_scene_graph`, with
-  `template_macro` fallback on generator compile failure.
+- Procedural generator context: the DeepSeek planner prompt plus the
+  `StoryboardPlan` schema expose bounded `node-graph-flow`, `line-path-flow`,
+  and `terminal-session` payloads on `scene-graph` segments. These payloads
+  are structured data only and compile deterministically into actual
+  `primitive_scene_graph`, with `template_macro` fallback on generator compile
+  failure.
 - Narration provider context: segment narration text, language, voice or
   speaker profile, and deterministic artifact identity; it should return audio
   metadata and aligned captions when available.

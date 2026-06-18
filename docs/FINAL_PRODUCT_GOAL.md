@@ -314,7 +314,7 @@ type SegmentNarrationAsset = {
     durationInFrames: number;
     durationInSeconds: number;
     voiceId?: string;
-    provider?: "f5-tts" | "minimax" | string;
+    provider?: "f5-tts" | string;
     format?: "mp3" | "wav" | "aac" | "m4a";
   };
   captions?: SegmentCaptions;
@@ -645,17 +645,20 @@ audio duration, and visual timing.
 
 ## 6. Relationship To Current Implementation
 
-The current implementation is a useful v1 shortcut:
+The current implementation is the staged v1 pipeline:
 
 ```txt
 brief
-  -> MiniMax project generation
-  -> schema-valid VideoProject
+  -> DeepSeek storyboard planning
+  -> F5-TTS segment narration synthesis
+  -> audio + aligned captions
+  -> render strategy decision
+  -> DeepSeek template macro or bounded Visual IR compilation
+  -> assembled schema-valid VideoProject
   -> preview/edit/export
 ```
 
-This path can stay while it is sufficient. The Visual IR compiler target
-evolves it into:
+The Visual IR compiler target continues to evolve this staged path into:
 
 ```txt
 brief
@@ -706,9 +709,9 @@ Current compatibility notes:
 - Caption/subtitle metadata should also stay separated from template
   implementation data so subtitle editing, timing, styling, preview, and export
   can evolve independently from any one template schema.
-- The F5-TTS provider should be implemented as part of this project. It can
-  call a local service/process/container, but the repo owns the provider
-  contract, config, artifact writing, caption normalization, and fallback path.
+- The F5-TTS provider is implemented as part of this project. It can call a
+  local service/process/container, but the repo owns the provider contract,
+  config, artifact writing, caption normalization, and fallback path.
 
 ## 7. Roadmap
 
@@ -722,7 +725,7 @@ Status: implemented.
 Implemented capability:
 
 - prompt input
-- MiniMax-backed staged generation
+- DeepSeek-backed staged generation
 - schema-validated `VideoProject`
 - registered `scripted` and `spotlight` templates
 - full-video preview
@@ -768,7 +771,7 @@ Implemented:
 - `StoryboardSegmentPlan` schema
 - planner template manifest derived from registered templates
 - planner prompt that receives compact template metadata
-- internal MiniMax function that can produce and validate a plan
+- internal DeepSeek function that can produce and validate a plan
 - one bounded planner repair attempt for invalid JSON or schema-invalid
   `StoryboardPlan` output
 - selected-segment planner repair that still requires exactly one planned
@@ -792,7 +795,7 @@ Goal:
 Implemented:
 
 - `SegmentNarrationAsset` validation
-- MiniMax-backed internal `POST /api/tts` for one planned segment
+- F5-TTS-only internal `POST /api/tts` for one planned segment
 - local artifact writing under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts`
 - `/api/tts/assets/...` serving for Remotion-consumable audio URLs
 - ffprobe duration measurement and frame normalization
@@ -837,7 +840,7 @@ Goal:
 
 Implemented:
 
-- selected-template compiler prompt and tool schema
+- selected-template compiler prompt and selected-template schema context
 - selected-template schema-only context for compiler calls
 - compile function that accepts plan + narration asset + duration
 - strict Zod validation against the selected template schema

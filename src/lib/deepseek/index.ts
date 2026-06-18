@@ -1,8 +1,8 @@
 import {
-  callMinimaxChat,
-  type MinimaxSegmentPlanRevisionRequest,
-  type MinimaxStoryboardPlanRequest,
-  type MinimaxTemplateCompileRequest,
+  callDeepSeekChat,
+  type DeepSeekSegmentPlanRevisionRequest,
+  type DeepSeekStoryboardPlanRequest,
+  type DeepSeekTemplateCompileRequest,
 } from "./provider";
 import {
   buildSegmentPlanRevisionPrompt,
@@ -20,7 +20,7 @@ import {
 } from "./parse-template-implementation";
 import { getTemplateDefinition } from "../template-registry";
 
-export type MinimaxGenerateStoryboardPlanResult = {
+export type DeepSeekGenerateStoryboardPlanResult = {
   attempts: number;
   plan: StoryboardPlan;
   repaired: boolean;
@@ -28,19 +28,19 @@ export type MinimaxGenerateStoryboardPlanResult = {
 
 const MAX_STORYBOARD_PLAN_REPAIR_ATTEMPTS = 1;
 
-export const minimaxGenerateStoryboardPlan = async (
-  request: MinimaxStoryboardPlanRequest,
-): Promise<MinimaxGenerateStoryboardPlanResult> => {
+export const deepseekGenerateStoryboardPlan = async (
+  request: DeepSeekStoryboardPlanRequest,
+): Promise<DeepSeekGenerateStoryboardPlanResult> => {
   let validationError: string | undefined;
   let previousInvalidOutput: string | undefined;
 
   for (let attempt = 0; attempt <= MAX_STORYBOARD_PLAN_REPAIR_ATTEMPTS; attempt++) {
-    const { messages, tools, toolChoice } = buildStoryboardPlanPrompt({
+    const { messages } = buildStoryboardPlanPrompt({
       ...request,
       previousInvalidOutput,
       validationError,
     });
-    const argumentsString = await callMinimaxChat(messages, { tools, toolChoice });
+    const argumentsString = await callDeepSeekChat(messages);
 
     try {
       return {
@@ -63,7 +63,7 @@ export const minimaxGenerateStoryboardPlan = async (
   throw new Error("Storyboard planning exhausted repair attempts.");
 };
 
-export type MinimaxGenerateRevisedSegmentPlanResult = {
+export type DeepSeekGenerateRevisedSegmentPlanResult = {
   attempts: number;
   plan: StoryboardPlan;
   repaired: boolean;
@@ -83,19 +83,19 @@ const parseOneSegmentStoryboardPlan = (
   return plan;
 };
 
-export const minimaxGenerateRevisedSegmentPlan = async (
-  request: MinimaxSegmentPlanRevisionRequest,
-): Promise<MinimaxGenerateRevisedSegmentPlanResult> => {
+export const deepseekGenerateRevisedSegmentPlan = async (
+  request: DeepSeekSegmentPlanRevisionRequest,
+): Promise<DeepSeekGenerateRevisedSegmentPlanResult> => {
   let validationError: string | undefined;
   let previousInvalidOutput: string | undefined;
 
   for (let attempt = 0; attempt <= MAX_STORYBOARD_PLAN_REPAIR_ATTEMPTS; attempt++) {
-    const { messages, tools, toolChoice } = buildSegmentPlanRevisionPrompt({
+    const { messages } = buildSegmentPlanRevisionPrompt({
       ...request,
       previousInvalidOutput,
       validationError,
     });
-    const argumentsString = await callMinimaxChat(messages, { tools, toolChoice });
+    const argumentsString = await callDeepSeekChat(messages);
 
     try {
       const plan = parseOneSegmentStoryboardPlan(argumentsString, request.segmentId);
@@ -130,7 +130,7 @@ export const minimaxGenerateRevisedSegmentPlan = async (
   throw new Error("Storyboard segment planning exhausted repair attempts.");
 };
 
-export type MinimaxCompileTemplateImplementationResult = {
+export type DeepSeekCompileTemplateImplementationResult = {
   attempts: number;
   durationInFrames: number;
   implementation: unknown;
@@ -141,8 +141,8 @@ const MAX_TEMPLATE_COMPILER_REPAIR_ATTEMPTS = 1;
 
 const parseCompiledImplementation = (
   argumentsString: string,
-  request: MinimaxTemplateCompileRequest,
-): MinimaxCompileTemplateImplementationResult => {
+  request: DeepSeekTemplateCompileRequest,
+): DeepSeekCompileTemplateImplementationResult => {
   const implementation = parseTemplateImplementationToolCallArguments(
     argumentsString,
     request.segment.templateId,
@@ -166,19 +166,19 @@ const parseCompiledImplementation = (
   };
 };
 
-export const minimaxCompileTemplateImplementation = async (
-  request: MinimaxTemplateCompileRequest,
-): Promise<MinimaxCompileTemplateImplementationResult> => {
+export const deepseekCompileTemplateImplementation = async (
+  request: DeepSeekTemplateCompileRequest,
+): Promise<DeepSeekCompileTemplateImplementationResult> => {
   let validationError: string | undefined;
   let previousInvalidOutput: string | undefined;
 
   for (let attempt = 0; attempt <= MAX_TEMPLATE_COMPILER_REPAIR_ATTEMPTS; attempt++) {
-    const { messages, tools, toolChoice } = buildTemplateCompilerPrompt({
+    const { messages } = buildTemplateCompilerPrompt({
       ...request,
       validationError,
       previousInvalidOutput,
     });
-    const argumentsString = await callMinimaxChat(messages, { tools, toolChoice });
+    const argumentsString = await callDeepSeekChat(messages);
 
     try {
       const result = parseCompiledImplementation(argumentsString, request);

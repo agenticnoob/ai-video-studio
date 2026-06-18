@@ -73,14 +73,16 @@ The first staged-generation groundwork is also in place:
   `StoryboardSegmentPlan` contracts.
 - `src/templates/registry.ts` derives a compact planner template manifest from
   registered template definitions.
-- `src/lib/minimax/prompts.ts`, `src/lib/minimax/tool-schema.ts`,
-  `src/lib/minimax/parse-storyboard-plan.ts`, and `src/lib/minimax/index.ts`
-  expose an internal MiniMax storyboard-planner facade.
+- `src/lib/deepseek/prompts.ts`, `src/lib/deepseek/provider.ts`,
+  `src/lib/deepseek/parse-storyboard-plan.ts`,
+  `src/lib/deepseek/parse-template-implementation.ts`, and
+  `src/lib/deepseek/index.ts` expose the active DeepSeek JSON-mode
+  planner/compiler facade.
 - `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`, and
   `/api/tts/assets/...` provide the first internal TTS asset boundary for one
   planned segment's narration, including local audio artifacts and measured
   duration.
-- `src/lib/staged-generation/*` and the MiniMax compiler helpers provide the
+- `src/lib/staged-generation/*` and the DeepSeek compiler helpers provide the
   staged assembly path:
   StoryboardPlan -> per-segment TTS -> visual implementation compile ->
   assembled `VideoProject`. Generated narration audio is now owned by
@@ -210,7 +212,7 @@ inside a segment:
   definition, structured capabilities, editor fields, runtime adapter, and
   bundle export.
 - `src/templates/registry.ts` registers server-safe template metadata for
-  schema validation and MiniMax prompt/tool generation.
+  schema validation and DeepSeek prompt/manifest generation.
 - `src/templates/component-registry.tsx` registers runtime adapters for page
   editing and Remotion preview rendering.
 - `src/lib/template-registry.ts` remains a compatibility re-export.
@@ -226,10 +228,10 @@ inside a segment:
 
 ## Current highest-priority next milestone
 
-The MiniMax-backed v1 generation path is usable for the current stage, and the
-validated storyboard-plan contract / compact planner manifest / internal
-planner facade are already present. The next product milestone should continue
-moving toward the Visual IR compiler roadmap in
+The DeepSeek-backed v1 generation path is usable for the current stage, and
+the validated storyboard-plan contract / compact planner manifest / internal
+planner/compiler facade are already present. The next product milestone should
+continue moving toward the Visual IR compiler roadmap in
 `docs/VISUAL_IR_COMPILER_ROADMAP.md`, while preserving the stable generation
 pipeline boundaries in `docs/FINAL_PRODUCT_GOAL.md`:
 
@@ -309,12 +311,13 @@ Current product modeling decision:
 - `src/lib/staged-project-assembly.ts`
 - `docs/providers/f5-tts.md`
 - `docs/providers/f5-tts-service-plan.md`
+- `docs/providers/deepseek.md`
 - `src/templates/*`
 - `src/templates/registered-definitions.ts`
 - `src/templates/registered-bundles.ts`
 - `src/templates/registry.ts`
 - `src/templates/component-registry.tsx`
-- `src/lib/minimax/*`
+- `src/lib/deepseek/*`
 - `src/lib/project-generation.ts`
 - `src/remotion/ProjectVideo/ProjectVideo.tsx`
 - `src/remotion/ScriptedVideo/*`
@@ -390,7 +393,7 @@ host-local setup.
 - Move future generation work toward `StoryboardPlan` -> in-project narration
   synthesis -> audio + aligned captions -> visual implementation compile ->
   assembled `VideoProject`.
-- Treat F5-TTS as the preferred next narration provider boundary in this repo,
+- Treat F5-TTS as the active narration provider boundary in this repo,
   not as a separate external product. Runtime may be local process/container;
   this repo owns adapter, config, artifacts, caption normalization, and
   fallback behavior.

@@ -252,7 +252,7 @@ Current landing:
 
 Status: started with schema groundwork, deterministic compile-to-SceneGraph
 support, staged diagnostics wiring, guarded staged execution, and
-provider-facing planner/tool schema support for `node-graph-flow`,
+provider-facing planner prompt/schema support for `node-graph-flow`,
 `line-path-flow`, and `terminal-session`.
 
 Add deterministic modules for recurring complex visuals that are too specific
@@ -291,7 +291,7 @@ Current groundwork:
 - staged diagnostics can represent planned `procedural_generator` output, the
   actual compiled `primitive_scene_graph` path, and a bounded `template_macro`
   fallback for generator compilation failure.
-- The provider-facing storyboard planner/tool schema can now emit
+- The provider-facing storyboard planner prompt/schema can now emit
   `procedural_generator` only for `scene-graph` segments with bounded
   `node-graph-flow`, `line-path-flow`, or `terminal-session` payloads.
 - Execution remains deterministic: generated payloads compile through the
@@ -367,7 +367,7 @@ Current landing:
 
 - `StoryboardPlan` can carry a top-level `assetPlan.requiredAssets[]` with
   stable asset ids, bounded asset kinds, purpose, and fallback copy.
-- The provider-facing storyboard planner/tool schema can request assets by id
+- The provider-facing storyboard planner prompt/schema can request assets by id
   and kind, but does not expose URL, `src`, file path, or arbitrary remote
   media fields.
 - staged diagnostics expose planned asset requirements so future asset

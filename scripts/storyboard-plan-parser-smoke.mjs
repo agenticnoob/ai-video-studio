@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-import { parseStoryboardPlanToolCallArguments } from "../src/lib/minimax/parse-storyboard-plan.js";
+import { parseStoryboardPlanToolCallArguments } from "../src/lib/deepseek/parse-storyboard-plan.js";
 
 const plan = parseStoryboardPlanToolCallArguments(
   JSON.stringify({

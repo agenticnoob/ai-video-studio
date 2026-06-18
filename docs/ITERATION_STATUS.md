@@ -1,6 +1,32 @@
 # Iteration Status
 
-Last updated: Storyboard parser smoke isolation fix
+Last updated: Main DeepSeek/F5 provider migration merged into scene-graph roadmap
+
+## Latest continuation — Main DeepSeek/F5 provider migration merge
+
+- Merged `main`'s DeepSeek + F5-only provider migration into
+  `codex/scene-graph-roadmap`.
+- Preserved the scene-graph branch's Visual IR, procedural-generator,
+  asset-plan, visual-review, deterministic-repair, and storyboard parser
+  recovery work while replacing the active MiniMax LLM/TTS boundary.
+- The active LLM provider is now `src/lib/deepseek/*` through AI SDK JSON
+  mode: storyboard planning, selected-segment replanning, and selected-template
+  compilation return direct JSON validated by the existing schemas.
+- The active narration/TTS provider remains F5-TTS only; MiniMax TTS fallback
+  paths, env variables, provider code, and runtime smoke scripts stay removed.
+- Updated the scene-graph branch's dedicated storyboard parser smoke to import
+  the DeepSeek parser path while keeping its missing-field recovery assertion
+  out of Remotion-loaded staged fixtures.
+
+Validation performed in this merge:
+- `git diff --check`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:provider-boundary'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:storyboard-parser'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:visual-repair'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
 
 ## Latest continuation — Storyboard parser smoke isolation fix
 

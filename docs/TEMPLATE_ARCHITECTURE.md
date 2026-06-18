@@ -49,7 +49,7 @@ src/templates/<template-id>/
     `mediaExpectations`, and `examples`)
   - implementation schema
   - segment schema
-  - MiniMax JSON Schema fragment
+  - provider JSON Schema fragment
   - duration helper
   - generation / revision / preservation prompt snippets
   - revision payload builder
@@ -142,13 +142,16 @@ own implementation schema.
 
 ## Provider Role
 
-The current v1 generation path may send enough registered template context for
-MiniMax to emit a full `VideoProject` in one call. That path is useful as a
-working shortcut, but it is not the final scaling model.
+The active generation path no longer asks one provider call to emit a full
+`VideoProject`. It uses a staged provider workflow instead: DeepSeek plans a
+validated `StoryboardPlan`, F5-TTS generates segment-owned narration
+audio/captions, and DeepSeek compiles each selected template implementation
+against that template's schema.
 
 Current planner groundwork exists: `src/lib/storyboard-plan-schema.ts` defines
 the plan contract, `src/templates/registry.ts` derives the compact planner
-manifest, and `src/lib/minimax/*` exposes an internal MiniMax planner facade.
+manifest, and `src/lib/deepseek/*` exposes the active DeepSeek planner/compiler
+facade.
 The first internal TTS asset boundary also exists through
 `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`, and
 `/api/tts/assets/...`. The selected-template compiler and staged assembly path
@@ -212,7 +215,7 @@ as the current `scripted` implementation.
   Remotion components, or template `runtime.tsx` files.
 - `src/templates/registered-definitions.ts` is the server-safe registration
   source. `registry.ts` derives template ids, lookup maps, Zod segment schema
-  variants, MiniMax JSON schema fragments, and the planner template manifest
+  variants, provider JSON schema fragments, and the planner template manifest
   from this list.
 - `src/templates/registered-bundles.ts` is the runtime registration source. It
   imports template bundle indexes and is only consumed by runtime code.
@@ -256,7 +259,7 @@ docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm
   segment-level implementation with its own schema and product use cases.
 - Keep `src/components/` for page UI. Put template-reusable Remotion visual
   primitives in `src/remotion/` runtime folders.
-- Do not import runtime template files from API, MiniMax, or schema modules.
+- Do not import runtime template files from API, provider, or schema modules.
 - Do not import `src/templates/<template>/index.ts` from server-safe modules;
   template bundle indexes include runtime adapters.
 - Put template-specific fields, editor controls, renderer wiring, prompt

@@ -1,9 +1,8 @@
 import { segmentNarrationFromAsset, type SegmentNarrationAsset } from "./narration-asset-schema";
 import { normalizeSegmentCaptions } from "./captions";
 import { buildFallbackSpotlightContent } from "./fallback-spotlight-content";
-import { buildSegmentPlanRevisionPrompt, buildStoryboardPlanPrompt } from "./minimax/prompts";
-import { parseStoryboardPlanToolCallArguments } from "./minimax/parse-storyboard-plan";
-import { EMIT_STORYBOARD_PLAN_TOOL } from "./minimax/tool-schema";
+import { buildSegmentPlanRevisionPrompt, buildStoryboardPlanPrompt } from "./deepseek/prompts";
+import { parseStoryboardPlanToolCallArguments } from "./deepseek/parse-storyboard-plan";
 import {
   buildProceduralGeneratorDiagnostics,
   compileLinePathFlowToSceneGraph,
@@ -87,73 +86,61 @@ const proceduralGeneratorStrategyDecision = {
   fallbackStrategy: "template_macro",
 } as const;
 
-const getStoryboardPlanToolSegmentSchema = (): Record<string, unknown> => {
-  const parameters = EMIT_STORYBOARD_PLAN_TOOL.function.parameters as {
-    properties?: {
-      segments?: {
-        items?: Record<string, unknown>;
-      };
-    };
-  };
-  const segmentSchema = parameters.properties?.segments?.items;
-  if (!segmentSchema) {
-    throw new Error("Storyboard plan tool schema should expose segment items.");
-  }
-  return segmentSchema;
-};
-
-const getStoryboardPlanToolParameters = (): Record<string, unknown> => {
-  return EMIT_STORYBOARD_PLAN_TOOL.function.parameters;
-};
-
 const assertProviderProceduralGeneratorSurface = (): void => {
-  const segmentSchema = getStoryboardPlanToolSegmentSchema();
-  const properties = segmentSchema.properties as Record<string, unknown> | undefined;
-  const proceduralGeneratorSchema = properties?.proceduralGenerator as
-    | Record<string, unknown>
-    | undefined;
-  const strategyDecision = properties?.strategyDecision as
-    | { properties?: { strategy?: { enum?: string[] } } }
-    | undefined;
-  const strategyEnum = strategyDecision?.properties?.strategy?.enum ?? [];
-  const proceduralGeneratorJson = JSON.stringify(proceduralGeneratorSchema);
   const prompt = buildStoryboardPlanPrompt({
     brief: "Show an agent workflow and a customer journey as bounded procedural flows.",
   });
   const systemPrompt = prompt.messages[0]?.content ?? "";
 
-  if (!strategyEnum.includes("procedural_generator")) {
-    throw new Error("Storyboard plan tool schema should expose procedural_generator.");
-  }
-  if (!proceduralGeneratorSchema) {
-    throw new Error("Storyboard plan tool schema should expose proceduralGenerator payloads.");
+  nodeGraphFlowGeneratorSchema.parse({
+    generatorId: "node-graph-flow",
+    renderStrategy: "procedural_generator",
+    durationInFrames: 150,
+    title: "Workflow",
+    nodes: [
+      { id: "brief", label: "Brief", lane: "input" },
+      { id: "plan", label: "Plan", lane: "plan" },
+    ],
+    edges: [{ from: "brief", to: "plan" }],
+    beats: [{ atFrame: 30, action: "activate", nodeId: "plan" }],
+  });
+  linePathFlowGeneratorSchema.parse({
+    generatorId: "line-path-flow",
+    renderStrategy: "procedural_generator",
+    durationInFrames: 150,
+    title: "Journey",
+    points: [
+      { id: "start", label: "Start", x: 0.1, y: 0.5 },
+      { id: "finish", label: "Finish", x: 0.9, y: 0.5 },
+    ],
+    beats: [{ atFrame: 60, action: "advance", pointId: "finish" }],
+  });
+  terminalSessionGeneratorSchema.parse({
+    generatorId: "terminal-session",
+    renderStrategy: "procedural_generator",
+    durationInFrames: 150,
+    title: "Smoke",
+    lines: [
+      { id: "install", text: "npm install", status: "success" },
+      { id: "test", text: "npm test", status: "running" },
+    ],
+    beats: [{ atFrame: 30, action: "run", lineId: "test" }],
+  });
+
+  if (!systemPrompt.includes("procedural_generator")) {
+    throw new Error("Storyboard plan prompt should expose procedural_generator.");
   }
   if (!systemPrompt.includes("node-graph-flow")) {
     throw new Error("Storyboard plan prompt should describe node-graph-flow generator usage.");
   }
-  if (!proceduralGeneratorJson.includes("line-path-flow")) {
-    throw new Error("Storyboard plan tool schema should expose line-path-flow generator usage.");
-  }
-  if (!proceduralGeneratorJson.includes("points")) {
-    throw new Error("Storyboard plan tool schema should expose line-path-flow points.");
-  }
-  if (!proceduralGeneratorJson.includes("pointId")) {
-    throw new Error("Storyboard plan tool schema should expose line-path-flow beat pointId.");
-  }
   if (!systemPrompt.includes("line-path-flow")) {
     throw new Error("Storyboard plan prompt should describe line-path-flow generator usage.");
   }
-  if (!proceduralGeneratorJson.includes("terminal-session")) {
-    throw new Error("Storyboard plan tool schema should expose terminal-session generator usage.");
-  }
-  if (!proceduralGeneratorJson.includes("lines")) {
-    throw new Error("Storyboard plan tool schema should expose terminal-session lines.");
-  }
-  if (!proceduralGeneratorJson.includes("lineId")) {
-    throw new Error("Storyboard plan tool schema should expose terminal-session beat lineId.");
-  }
   if (!systemPrompt.includes("terminal-session")) {
     throw new Error("Storyboard plan prompt should describe terminal-session generator usage.");
+  }
+  if (!systemPrompt.includes("Return the complete StoryboardPlan object directly as JSON")) {
+    throw new Error("Storyboard plan prompt should describe the DeepSeek JSON-mode contract.");
   }
 };
 
@@ -421,26 +408,48 @@ const assertAssetPlanSchemaFixture = (): void => {
 assertAssetPlanSchemaFixture();
 
 const assertProviderAssetPlanSurface = (): void => {
-  const parameters = getStoryboardPlanToolParameters();
-  const properties = parameters.properties as Record<string, unknown> | undefined;
-  const assetPlanSchema = properties?.assetPlan as Record<string, unknown> | undefined;
-  const assetPlanJson = JSON.stringify(assetPlanSchema);
   const prompt = buildStoryboardPlanPrompt({
     brief: "Create a product walkthrough using dashboard screenshots later.",
   });
   const systemPrompt = prompt.messages[0]?.content ?? "";
 
-  if (!assetPlanSchema) {
-    throw new Error("Storyboard plan tool schema should expose assetPlan.");
-  }
-  if (!assetPlanJson.includes("requiredAssets")) {
-    throw new Error("Storyboard plan tool schema should expose requiredAssets.");
-  }
-  if (assetPlanJson.includes("url") || assetPlanJson.includes("src")) {
-    throw new Error("Asset plan tool schema must not expose URL or src fields.");
+  storyboardPlanSchema.parse({
+    title: "Asset Plan Provider Surface Smoke",
+    brief: "Create a product walkthrough using dashboard screenshots later.",
+    assetPlan: {
+      requiredAssets: [
+        {
+          id: "dashboard-screenshot",
+          kind: "product_screenshot",
+          purpose: "Show the dashboard when the plan reaches product proof.",
+          fallback: "Use a browser-window placeholder.",
+        },
+      ],
+    },
+    segments: [
+      {
+        id: "asset-plan-provider-surface",
+        order: 1,
+        title: "Asset plan",
+        purpose: "Verify assetPlan remains part of the planner contract.",
+        templateId: SCENE_GRAPH_TEMPLATE_ID,
+        templateReason: "SceneGraph can render a placeholder until assets resolve.",
+        strategyDecision: primitiveSceneGraphStrategyDecision,
+        narration: {
+          text: "The planner can name required assets without inventing URLs.",
+        },
+        visualBrief: "Browser-window placeholder for a future dashboard screenshot.",
+      },
+    ],
+  });
+  if (storyboardPlanSchema.safeParse({ assetPlan: { requiredAssets: [] }, segments: [] }).success) {
+    throw new Error("Asset plan provider surface should still require a valid StoryboardPlan.");
   }
   if (!systemPrompt.includes("assetPlan")) {
     throw new Error("Storyboard plan prompt should describe assetPlan usage.");
+  }
+  if (!systemPrompt.includes("requiredAssets")) {
+    throw new Error("Storyboard plan prompt should describe requiredAssets.");
   }
   if (!systemPrompt.includes("Do not invent asset URLs")) {
     throw new Error("Storyboard plan prompt should forbid invented asset URLs.");

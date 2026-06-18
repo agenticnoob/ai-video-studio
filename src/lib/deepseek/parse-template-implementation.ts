@@ -69,7 +69,7 @@ export const parseTemplateImplementationToolCallArguments = (
   } catch (error) {
     const detail = error instanceof Error ? error.message : String(error);
     throw new TemplateImplementationParseError(
-      `MiniMax template implementation arguments were not valid JSON: ${detail}; raw=${head}`,
+      `DeepSeek template implementation JSON output was not valid JSON: ${detail}; raw=${head}`,
       argumentsString,
     );
   }

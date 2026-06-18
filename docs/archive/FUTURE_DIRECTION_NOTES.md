@@ -83,7 +83,7 @@ When implementation resumes, the preferred strategy is:
   product; keep config, adapter, artifacts, caption normalization, and fallback
   behavior in this repo even if the runtime is a local process or container
 - keep the F5 runtime as an opt-in service boundary; use deterministic smoke
-  for no-MiniMax validation and add full staged-route live smoke before
+  for no-live-LLM validation and add full staged-route live smoke before
   widening scope
 - express richer segment visuals through a controlled Visual IR layer first:
   render strategy, primitives, layout presets, motion grammar, and deterministic
@@ -167,7 +167,7 @@ Current likely sequence:
   adapter
 - normalize provider-returned alignment into segment-local caption/subtitle
   cues
-- keep MiniMax TTS as a working provider/fallback while the F5-TTS path lands
+- keep narration provider failures explicit while the F5-TTS path is hardened
 - render caption cues consistently in preview and export
 - status: implemented for the Next-side adapter, shared caption path, optional
   local runtime service, GPU real-mode synthesis, deterministic staged smoke,

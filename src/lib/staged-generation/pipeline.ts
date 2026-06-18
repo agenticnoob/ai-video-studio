@@ -3,7 +3,7 @@ import { storyboardPlanSchema, type StoryboardPlan } from "../storyboard-plan-sc
 import { StoryboardSegmentNotFoundError, generateSegmentNarrationAsset } from "../tts";
 import type { TtsProviderId } from "../tts/config";
 import type { VoiceCloneRequest } from "../tts/voice-references";
-import { minimaxGenerateRevisedSegmentPlan, minimaxGenerateStoryboardPlan } from "../minimax";
+import { deepseekGenerateRevisedSegmentPlan, deepseekGenerateStoryboardPlan } from "../deepseek";
 import {
   assembleStagedProject,
   orderPlanSegments,
@@ -119,9 +119,9 @@ export const generateStagedSegmentRevision = async ({
   }
 
   onProgress?.("planner", "running", "Planning revised segment.");
-  let plannerResult: Awaited<ReturnType<typeof minimaxGenerateRevisedSegmentPlan>>;
+  let plannerResult: Awaited<ReturnType<typeof deepseekGenerateRevisedSegmentPlan>>;
   try {
-    plannerResult = await minimaxGenerateRevisedSegmentPlan({
+    plannerResult = await deepseekGenerateRevisedSegmentPlan({
       project,
       revisionPrompt,
       segmentId,
@@ -226,9 +226,9 @@ export const generateStagedProjectFromBrief = async ({
   voiceId,
 }: GenerateStagedProjectFromBriefRequest): Promise<GenerateStagedProjectResult> => {
   onProgress?.("planner", "running", "Generating storyboard plan from brief.");
-  let plannerResult: Awaited<ReturnType<typeof minimaxGenerateStoryboardPlan>>;
+  let plannerResult: Awaited<ReturnType<typeof deepseekGenerateStoryboardPlan>>;
   try {
-    plannerResult = await minimaxGenerateStoryboardPlan({
+    plannerResult = await deepseekGenerateStoryboardPlan({
       brief,
     });
     onProgress?.("planner", "success", "Storyboard plan generated.");

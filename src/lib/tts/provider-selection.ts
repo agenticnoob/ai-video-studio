@@ -11,7 +11,6 @@ export type ResolveTtsProviderRequest = {
 };
 
 export type ResolvedTtsProvider = {
-  fallbackToMinimax: boolean;
   provider: TtsProviderId;
   voiceCloneReference?: ResolvedVoiceCloneReference;
 };
@@ -24,14 +23,12 @@ export const resolveTtsProvider = async ({
 
   if (voiceCloneReference) {
     return {
-      fallbackToMinimax: false,
       provider: "f5-tts",
       voiceCloneReference,
     };
   }
 
   return {
-    fallbackToMinimax: true,
     provider: provider ?? readTtsProviderId(),
   };
 };

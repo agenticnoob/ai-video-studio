@@ -10,16 +10,16 @@ import { buildFallbackSpotlightContent } from "../fallback-spotlight-content";
 import { generateSegmentNarrationAsset } from "../tts";
 import type { TtsProviderId } from "../tts/config";
 import type { VoiceCloneRequest } from "../tts/voice-references";
-import { minimaxCompileTemplateImplementation } from "../minimax";
+import { deepseekCompileTemplateImplementation } from "../deepseek";
 import { compileProceduralGeneratorSegment } from "../procedural-generator-compiler";
+import type { ProceduralGeneratorDiagnostics } from "../procedural-generator-schema";
 import {
   SCENE_GRAPH_TEMPLATE_ID,
   SPOTLIGHT_TEMPLATE_ID,
   getTemplateDefinition,
   type TemplateId,
 } from "../template-registry";
-import { TemplateImplementationParseError } from "../minimax/parse-template-implementation";
-import type { ProceduralGeneratorDiagnostics } from "../procedural-generator-schema";
+import { TemplateImplementationParseError } from "../deepseek/parse-template-implementation";
 import type { StagedGenerationProgressReporter } from "./pipeline";
 
 export type CompilePlannedSegmentRequest = {
@@ -177,7 +177,7 @@ export const compilePlannedSegment = async ({
     });
   }
 
-  const compiled = await minimaxCompileTemplateImplementation({
+  const compiled = await deepseekCompileTemplateImplementation({
     plan,
     segment,
     narration,
