@@ -150,7 +150,10 @@ Current executable strategy note:
   target-segment regeneration through the existing staged segment regeneration
   path. That manual repair action reports explicit running, success, and
   failure diagnostics for the target segment instead of silently swallowing
-  staged regeneration errors.
+  staged regeneration errors. For supported `scene-graph` still-analysis
+  findings, it first applies deterministic parameter repair to the existing
+  SceneGraph; unsupported findings fall back to the staged selected-segment
+  regeneration path.
   Browser/canvas review and automatic segment repair remain deferred.
 
 ## 2. Authoritative Terminology

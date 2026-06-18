@@ -88,8 +88,13 @@ findings can also be applied to the selected-segment revision input as a
 structured repair prompt or used to manually trigger one target-segment
 regeneration through the existing staged segment regeneration path. That
 manual repair trigger reports running, success, and failure diagnostics tied
-to the target segment and backend error message. Browser/canvas review and
-automatic repair loops remain deferred.
+to the target segment and backend error message. Supported `scene-graph`
+still-analysis findings now pass through a deterministic parameter-repair
+helper before provider regeneration: the helper can boost theme contrast,
+switch to safe/full-bleed layouts, reduce dense visual content, or add primary
+anchor layers. Unsupported findings fall back to the explicit selected-segment
+staged regeneration path. Browser/canvas review and automatic repair loops
+remain deferred.
 
 Current implementation snapshot:
 
@@ -137,13 +142,16 @@ Current implementation snapshot:
   visual-review diagnostics boundary for staged generation and selected-segment
   revision output, including optional source-still attribution fields for
   warnings derived from rendered still analysis.
+- `src/lib/deterministic-visual-repair.ts` defines the first bounded
+  parameter-repair operators for `scene-graph` segments, keyed from
+  still-analysis statuses.
 - `src/helpers/use-visual-review.ts`,
   `src/components/project/VisualReviewPanel.tsx`, and
   `POST /api/visual-review/stills` provide the current manual Studio review
   path for rendering representative stills, inspecting static findings, opening
   attributed source stills, and explicitly sending segment-addressable findings
   into the selected-segment revision prompt or one user-triggered
-  selected-segment regeneration with visible repair-attempt diagnostics.
+  selected-segment repair attempt with visible diagnostics.
 - The active page generation flow uses `/api/generate/staged`.
 - The active selected-segment regeneration flow also uses
   `/api/generate/staged`: one target segment is replanned, regenerated through

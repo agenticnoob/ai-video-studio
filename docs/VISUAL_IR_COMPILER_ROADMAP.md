@@ -450,8 +450,15 @@ Current landing:
   regeneration through the existing selected-segment staged path, with explicit
   running, success, and failure diagnostics tied to the target segment and
   backend error message.
-- no browser/canvas review, automatic repair, or provider prompt repair loop
-  is active yet.
+- `scene-graph` findings with supported still-analysis statuses now try
+  deterministic SceneGraph parameter repair before provider regeneration:
+  low contrast boosts theme contrast, unsafe margins switch to caption-safe
+  layout, letterbox/pillarbox switches to full-bleed hero composition, fine
+  detail density trims dense node/code/terminal content, and near-blank frames
+  add primary title/frame layers.
+- unsupported findings still fall back to the explicit selected-segment staged
+  regeneration path. No browser/canvas review, automatic repair loop, or
+  provider prompt repair loop is active yet.
 
 ### Phase 7: Generated Component Escape Hatch
 
@@ -505,11 +512,12 @@ Implement Review / Repair Loop v1 incrementally:
 keep deterministic `VisualReviewFinding` diagnostics, representative
 review-frame planning, explicit still image extraction, and bounded
 still-analysis findings stable. Manual target-segment repair now has explicit
-Studio diagnostics for running, success, and failure; the next slices can add
-browser/canvas review and richer repair attempts later. The next slices should
-preserve VideoProject preview/export compatibility, avoid browser automation as
-the default validation path, and keep repair behavior explicit rather than
-silently rewriting segments.
+Studio diagnostics and the first deterministic `scene-graph` parameter repair
+operators; unsupported findings fall back to one selected-segment regeneration.
+The next slices can add browser/canvas review and richer repair attempts later.
+The next slices should preserve VideoProject preview/export compatibility,
+avoid browser automation as the default validation path, and keep repair
+behavior explicit rather than silently rewriting segments.
 ```
 
 Do not widen Phase 6 into a full visual QA system. First keep proving that

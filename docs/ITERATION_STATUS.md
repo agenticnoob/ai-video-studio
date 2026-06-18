@@ -1,6 +1,31 @@
 # Iteration Status
 
-Last updated: Visual Review target repair diagnostics v1
+Last updated: Deterministic Visual Repair v1
+
+## Latest continuation — Deterministic Visual Repair v1
+
+- Added the first parameter-level deterministic repair path for Phase 6 so
+  `立即修复分镜` can change a `scene-graph` segment directly instead of only
+  asking the provider to regenerate a similar-looking segment.
+- Added `src/lib/deterministic-visual-repair.ts` with bounded repair operators
+  for current still-analysis statuses:
+  - `low_contrast_frame` -> boost the SceneGraph theme contrast
+  - `unsafe_margin_frame` -> switch to caption-safe layout and subtle camera
+  - `letterbox_frame` -> switch to full-bleed hero composition
+  - `fine_detail_frame` -> reduce node/code/terminal density
+  - `near_blank_frame` -> add primary title and frame layers
+- The Studio visual-review action now tries deterministic repair first when a
+  finding has source-still analysis status. If that repair is unsupported
+  (for example non-`scene-graph` templates), it falls back to the previous
+  selected-segment staged regeneration path.
+- The repair panel distinguishes `确定性修复已应用` from `已回退到分镜重生成`, so
+  the user can tell whether the segment was directly patched or provider
+  regenerated.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:visual-repair'` (red first, then green)
+- `node scripts/visual-review-ui-source-smoke.mjs` (red first, then green)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
 
 ## Latest continuation — Visual Review target repair diagnostics v1
 

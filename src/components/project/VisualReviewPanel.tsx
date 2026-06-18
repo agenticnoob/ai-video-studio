@@ -2,16 +2,32 @@ import Image from "next/image";
 import { useMemo, useState, type FC } from "react";
 
 import type { VisualReviewState } from "../../helpers/use-visual-review";
-import type { VisualReviewFinding } from "../../lib/visual-review-schema";
+import type {
+  VisualReviewFinding,
+  VisualReviewStillAnalysis,
+} from "../../lib/visual-review-schema";
 import { useTaskProgress } from "../../helpers/use-task-progress";
 import { ActivityProgress } from "../ui/ActivityProgress";
 import { Card } from "../ui/Card";
+
+type VisualReviewRepairOutcome =
+  | {
+      appliedRepairs: string[];
+      mode: "deterministic";
+    }
+  | {
+      mode: "regenerated";
+    };
 
 type VisualReviewPanelProps = {
   disabled: boolean;
   onApplyRepairPrompt: (segmentId: string, prompt: string) => void;
   onDismissResult: () => void;
-  onRegenerateSegmentFromFinding: (segmentId: string, prompt: string) => Promise<void>;
+  onRegenerateSegmentFromFinding: (
+    segmentId: string,
+    prompt: string,
+    analysisStatus?: VisualReviewStillAnalysis["status"],
+  ) => Promise<VisualReviewRepairOutcome>;
   onReview: () => void;
   state: VisualReviewState;
 };
@@ -25,6 +41,8 @@ type RepairResult =
       status: "running";
     }
   | {
+      appliedRepairs: string[];
+      mode: "deterministic" | "regenerated";
       segmentId: string;
       status: "success";
     }
@@ -100,6 +118,15 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
 
     return new Map(state.extraction.stills.map((still) => [still.stillId, still.segmentId]));
   }, [state]);
+  const analysisStatusByStillId = useMemo<Map<string, VisualReviewStillAnalysis["status"]>>(() => {
+    if (state.status !== "success") {
+      return new Map<string, VisualReviewStillAnalysis["status"]>();
+    }
+
+    return new Map<string, VisualReviewStillAnalysis["status"]>(
+      state.extraction.stills.map((still) => [still.stillId, still.analysis.status]),
+    );
+  }, [state]);
   const reviewSegmentIds = useMemo(() => {
     if (state.status !== "success") {
       return new Set<string>();
@@ -130,8 +157,17 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
     setRepairResult({ segmentId, status: "running" });
 
     try {
-      await onRegenerateSegmentFromFinding(segmentId, buildRepairPrompt(finding));
-      setRepairResult({ segmentId, status: "success" });
+      const outcome = await onRegenerateSegmentFromFinding(
+        segmentId,
+        buildRepairPrompt(finding),
+        finding.stillId ? analysisStatusByStillId.get(finding.stillId) : undefined,
+      );
+      setRepairResult({
+        appliedRepairs: outcome.mode === "deterministic" ? outcome.appliedRepairs : [],
+        mode: outcome.mode,
+        segmentId,
+        status: "success",
+      });
     } catch (error) {
       setRepairResult({
         error: error instanceof Error ? error.message : "分镜修复失败。",
@@ -200,10 +236,21 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
             {repairResult.status === "running"
               ? "修复中"
               : repairResult.status === "success"
-                ? "分镜修复已完成"
+                ? repairResult.mode === "deterministic"
+                  ? "确定性修复已应用"
+                  : "分镜修复已完成"
                 : "分镜修复失败"}
           </div>
           <div className="mt-1 font-mono text-xs">segment {repairResult.segmentId}</div>
+          {repairResult.status === "success" && repairResult.mode === "deterministic" ? (
+            <div className="mt-1">
+              已直接调整 SceneGraph 参数：
+              {repairResult.appliedRepairs.join("、")}
+            </div>
+          ) : null}
+          {repairResult.status === "success" && repairResult.mode === "regenerated" ? (
+            <div className="mt-1">已回退到分镜重生成。</div>
+          ) : null}
           {repairResult.status === "failure" ? (
             <div className="mt-1">{repairResult.error}</div>
           ) : null}

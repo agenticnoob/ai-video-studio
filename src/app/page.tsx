@@ -13,6 +13,8 @@ import { RenderControls } from "../components/ui/RenderControls";
 import { useProjectGeneration } from "../helpers/use-project-generation";
 import { useRendering } from "../helpers/use-rendering";
 import { useVisualReview } from "../helpers/use-visual-review";
+import { applyDeterministicVisualRepair } from "../lib/deterministic-visual-repair";
+import type { VisualReviewStillAnalysis } from "../lib/visual-review-schema";
 
 const Home: NextPage = () => {
   const generation = useProjectGeneration();
@@ -46,8 +48,32 @@ const Home: NextPage = () => {
     generation.setRevisionPrompt(prompt);
     focusSegmentRevisionPrompt();
   };
-  const regenerateSelectedSegmentFromVisualReview = async (segmentId: string, prompt: string) => {
+  const regenerateSelectedSegmentFromVisualReview = async (
+    segmentId: string,
+    prompt: string,
+    analysisStatus?: VisualReviewStillAnalysis["status"],
+  ) => {
     applyVisualReviewRepairPrompt(segmentId, prompt);
+    const targetSegment = generation.normalizedProject.segments.find(
+      (segment) => segment.id === segmentId,
+    );
+
+    if (targetSegment && analysisStatus) {
+      const deterministicRepair = applyDeterministicVisualRepair(
+        targetSegment,
+        { message: prompt, targetId: segmentId },
+        analysisStatus,
+      );
+
+      if (deterministicRepair.status === "repaired") {
+        generation.updateSegment(deterministicRepair.segment);
+        return {
+          appliedRepairs: deterministicRepair.appliedRepairs.map((repair) => repair.description),
+          mode: "deterministic" as const,
+        };
+      }
+    }
+
     const repairResult = await generation.regenerateSelectedSegment({
       revisionPrompt: prompt,
       segmentId,
@@ -56,6 +82,8 @@ const Home: NextPage = () => {
     if (!repairResult.ok) {
       throw new Error(repairResult.error);
     }
+
+    return { mode: "regenerated" as const };
   };
 
   return (

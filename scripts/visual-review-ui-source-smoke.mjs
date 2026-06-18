@@ -18,6 +18,7 @@ const main = async () => {
     segmentEditorSource,
     generationActionsSource,
     schemaSource,
+    visualRepairSource,
     stillAnalysisSource,
     renderProjectSource,
     routeSource,
@@ -29,6 +30,7 @@ const main = async () => {
     readSource("src/components/project/SegmentEditor.tsx"),
     readSource("src/helpers/project-generation/use-generation-actions.ts"),
     readSource("src/lib/visual-review-schema.ts"),
+    readSource("src/lib/deterministic-visual-repair.ts"),
     readSource("src/lib/visual-review-still-analysis.ts"),
     readSource("src/lib/render-project.ts"),
     readSource("src/app/api/visual-review/stills/route.ts"),
@@ -59,7 +61,7 @@ const main = async () => {
   assertIncludes(panelSource, "suggestedRepair", "Visual review panel");
   assertIncludes(panelSource, "onRegenerateSegmentFromFinding", "Visual review panel");
   assertIncludes(panelSource, "立即修复分镜", "Visual review panel");
-  assertIncludes(panelSource, "Promise<void>", "Visual review repair action");
+  assertIncludes(panelSource, "VisualReviewRepairOutcome", "Visual review repair action");
   assertIncludes(panelSource, "repairResult", "Visual review repair action");
   assertIncludes(panelSource, "修复中", "Visual review repair action");
   assertIncludes(panelSource, "分镜修复已完成", "Visual review repair action");
@@ -72,9 +74,17 @@ const main = async () => {
   );
   assertIncludes(pageSource, "if (!repairResult.ok)", "Studio page");
   assertIncludes(pageSource, "throw new Error(repairResult.error)", "Studio page");
+  assertIncludes(pageSource, "applyDeterministicVisualRepair", "Studio page");
+  assertIncludes(pageSource, "generation.updateSegment", "Studio page");
+  assertIncludes(panelSource, "确定性修复已应用", "Visual review repair action");
+  assertIncludes(panelSource, "已回退到分镜重生成", "Visual review repair action");
   assertIncludes(generationActionsSource, "GenerationActionResult", "Generation actions");
   assertIncludes(generationActionsSource, "return { ok: false, error:", "Generation actions");
   assertIncludes(generationActionsSource, "return { ok: true }", "Generation actions");
+  assertIncludes(visualRepairSource, "getDeterministicVisualRepairPlan", "Visual repair");
+  assertIncludes(visualRepairSource, "boost_contrast", "Visual repair");
+  assertIncludes(visualRepairSource, "apply_safe_layout", "Visual repair");
+  assertIncludes(visualRepairSource, "reduce_detail_density", "Visual repair");
   assertIncludes(pageSource, "focusSegmentRevisionPrompt", "Studio page");
   assertIncludes(pageSource, "segmentEditorSectionRef", "Studio page");
   assertIncludes(pageSource, "requestAnimationFrame", "Studio page");
@@ -133,6 +143,7 @@ const main = async () => {
   assertIncludes(routeSource, "stillId: still.stillId", "Visual review still route");
   assertIncludes(packageSource, "smoke:visual-review-stills", "package scripts");
   assertIncludes(packageSource, "smoke:visual-review-ui", "package scripts");
+  assertIncludes(packageSource, "smoke:visual-repair", "package scripts");
 
   console.log("Visual review UI source smoke passed.");
 };
