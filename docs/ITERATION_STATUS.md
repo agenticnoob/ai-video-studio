@@ -1,6 +1,26 @@
 # Iteration Status
 
-Last updated: Visual Review letterbox still analysis v1
+Last updated: Visual Review still finding attribution v1
+
+## Latest continuation — Visual Review still finding attribution v1
+
+- Continued Phase 6 inside the existing manual still-extraction review action
+  by attaching source-still attribution to pixel-analysis findings.
+- Extended strict `VisualReviewFinding` metadata with optional `stillId` and
+  `reviewReason` so findings from near-blank, low-contrast, unsafe-margin,
+  fine-detail, and letterbox/pillarbox analysis can point back to the exact
+  representative still that triggered them.
+- Updated `POST /api/visual-review/stills` to pass each still's stable id and
+  start/midpoint/end reason into merged still-analysis warnings while leaving
+  static duration, caption, and planned-asset findings unchanged.
+- Updated the Studio visual-review panel to show the source still id and
+  representative-frame reason on attributed findings.
+- Browser/canvas visual analysis and automatic target-segment repair remain
+  deferred.
+
+Validation performed so far:
+- `node scripts/visual-review-ui-source-smoke.mjs` (red first, then green)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'` (red first, then green)
 
 ## Latest continuation — Visual Review letterbox still analysis v1
 

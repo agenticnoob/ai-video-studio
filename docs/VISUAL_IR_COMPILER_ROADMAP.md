@@ -401,6 +401,8 @@ Output:
 type VisualReviewFinding = {
   severity: "info" | "warning" | "error";
   frame?: number;
+  reviewReason?: "segment_start" | "segment_midpoint" | "segment_end";
+  stillId?: string;
   targetId?: string;
   message: string;
   suggestedRepair?: string;
@@ -438,8 +440,8 @@ Current landing:
 - each rendered still now carries bounded server-side pixel analysis metadata
   for near-blank, low-contrast, unsafe-margin, fine-detail density, and
   letterbox/pillarbox empty-border frame detection, and those still-analysis
-  warnings are surfaced as explicit review findings instead of triggering
-  automatic repair.
+  warnings are surfaced as explicit review findings with source still id and
+  representative-frame reason instead of triggering automatic repair.
 - no browser/canvas review, automatic repair, or provider prompt repair loop
   is active yet.
 

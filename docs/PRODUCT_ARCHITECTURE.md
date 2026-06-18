@@ -81,8 +81,10 @@ those frames through `ProjectVideo` into PNG artifacts, and the Studio export
 workspace calls that route through a manual visual-review panel with backend
 progress, static findings, still thumbnails, and bounded per-still pixel
 analysis for near-blank, low-contrast, unsafe-margin, fine-detail density, and
-letterbox/pillarbox empty-border frame detection. Browser/canvas review and
-automatic repair remain deferred.
+letterbox/pillarbox empty-border frame detection. Pixel-analysis findings
+carry `stillId` and `reviewReason` attribution so the UI can point back to the
+triggering representative still. Browser/canvas review and automatic repair
+remain deferred.
 
 Current implementation snapshot:
 
@@ -128,7 +130,8 @@ Current implementation snapshot:
 - `src/lib/visual-review-schema.ts` and
   `src/lib/staged-generation/visual-review.ts` define the current static
   visual-review diagnostics boundary for staged generation and selected-segment
-  revision output.
+  revision output, including optional source-still attribution fields for
+  warnings derived from rendered still analysis.
 - `src/helpers/use-visual-review.ts`,
   `src/components/project/VisualReviewPanel.tsx`, and
   `POST /api/visual-review/stills` provide the current manual Studio review

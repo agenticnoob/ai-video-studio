@@ -126,9 +126,13 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
                 >
                   <div className="font-semibold">
                     {findingSeverityLabelMap[finding.severity]}
+                    {finding.reviewReason ? ` · ${reviewReasonLabelMap[finding.reviewReason]}` : ""}
                     {finding.frame !== undefined ? ` · frame ${finding.frame}` : ""}
                   </div>
                   <div className="mt-1">{finding.message}</div>
+                  {finding.stillId ? (
+                    <div className="mt-1 font-mono text-xs">still {finding.stillId}</div>
+                  ) : null}
                   {finding.suggestedRepair ? (
                     <div className="mt-1 text-xs">{finding.suggestedRepair}</div>
                   ) : null}

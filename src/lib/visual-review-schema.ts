@@ -4,6 +4,8 @@ export const visualReviewFindingSchema = z
   .object({
     severity: z.enum(["info", "warning", "error"]),
     frame: z.number().int().min(0).optional(),
+    reviewReason: z.enum(["segment_start", "segment_midpoint", "segment_end"]).optional(),
+    stillId: z.string().trim().min(1).max(200).optional(),
     targetId: z.string().trim().min(1).max(160).optional(),
     message: z.string().trim().min(1).max(500),
     suggestedRepair: z.string().trim().min(1).max(500).optional(),

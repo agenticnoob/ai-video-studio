@@ -161,8 +161,10 @@ The first staged-generation groundwork is also in place:
   Studio export workspace exposes this as a manual visual-review action with
   backend progress, static findings, generated still thumbnails, and bounded
   per-still pixel analysis for near-blank, low-contrast, unsafe-margin, and
-  fine-detail density plus letterbox/pillarbox empty-border frame detection;
-  browser/canvas review and automatic segment repair are not active yet.
+  fine-detail density plus letterbox/pillarbox empty-border frame detection.
+  Pixel-analysis findings carry source still attribution through `stillId` and
+  `reviewReason`; browser/canvas review and automatic segment repair are not
+  active yet.
   Unrestricted generated TSX and executable `media_asset_composite` rendering
   remain out of scope.
 - Scene graph provider-output hardening is intentionally bounded: selected

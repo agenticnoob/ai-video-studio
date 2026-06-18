@@ -43,6 +43,8 @@ const main = async () => {
   assertIncludes(panelSource, "still.analysis.edgeContentRatio", "Visual review panel");
   assertIncludes(panelSource, "still.analysis.fineDetailRatio", "Visual review panel");
   assertIncludes(panelSource, "still.analysis.borderBandRatio", "Visual review panel");
+  assertIncludes(panelSource, "reviewReasonLabelMap[finding.reviewReason]", "Visual review panel");
+  assertIncludes(panelSource, "finding.stillId", "Visual review panel");
   assertIncludes(panelSource, "near_blank_frame", "Visual review panel");
   assertIncludes(panelSource, "low_contrast_frame", "Visual review panel");
   assertIncludes(panelSource, "unsafe_margin_frame", "Visual review panel");
@@ -55,6 +57,8 @@ const main = async () => {
   assertIncludes(schemaSource, "edgeContentRatio", "Visual review schema");
   assertIncludes(schemaSource, "fineDetailRatio", "Visual review schema");
   assertIncludes(schemaSource, "borderBandRatio", "Visual review schema");
+  assertIncludes(schemaSource, "reviewReason", "Visual review schema");
+  assertIncludes(schemaSource, "stillId", "Visual review schema");
   assertIncludes(stillAnalysisSource, "LOW_CONTRAST_LUMA_RANGE", "Visual review still analysis");
   assertIncludes(stillAnalysisSource, "UNSAFE_MARGIN_EDGE_RATIO", "Visual review still analysis");
   assertIncludes(stillAnalysisSource, "FINE_DETAIL_RATIO", "Visual review still analysis");
@@ -85,6 +89,8 @@ const main = async () => {
   );
   assertIncludes(renderProjectSource, "analyzeVisualReviewStill", "Visual review still renderer");
   assertIncludes(routeSource, "mergeStillAnalysisFindings", "Visual review still route");
+  assertIncludes(routeSource, "reason: still.reason", "Visual review still route");
+  assertIncludes(routeSource, "stillId: still.stillId", "Visual review still route");
   assertIncludes(packageSource, "smoke:visual-review-stills", "package scripts");
   assertIncludes(packageSource, "smoke:visual-review-ui", "package scripts");
 

@@ -112,6 +112,8 @@ const mergeStillAnalysisFindings = (
     buildVisualReviewStillAnalysisFindings({
       analysis: still.analysis,
       frame: still.frame,
+      reason: still.reason,
       segmentId: still.segmentId,
+      stillId: still.stillId,
     }),
   );

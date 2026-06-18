@@ -103,7 +103,16 @@ const main = async () => {
     throw new Error("Visual review still smoke expected every still to include pixel analysis.");
   }
   if (body.visualReview.warningCount > 0) {
-    const messages = body.visualReview.findings.map((finding) => finding.message).join("\n");
+    const stillAnalysisFindings = body.visualReview.findings.filter((finding) =>
+      [
+        "Representative still appears near blank",
+        "Representative still appears low contrast",
+        "Representative still has content too close to the frame edge",
+        "Representative still may contain overly fine detail",
+        "Representative still appears letterboxed or pillarboxed",
+      ].some((message) => finding.message.includes(message)),
+    );
+    const messages = stillAnalysisFindings.map((finding) => finding.message).join("\n");
     if (
       !messages.includes("Representative still appears near blank") &&
       !messages.includes("Representative still appears low contrast") &&
@@ -112,6 +121,16 @@ const main = async () => {
       !messages.includes("Representative still appears letterboxed or pillarboxed")
     ) {
       throw new Error("Visual review still warnings should include still-analysis context.");
+    }
+    if (
+      !stillAnalysisFindings.every(
+        (finding) =>
+          typeof finding.stillId === "string" &&
+          finding.stillId.length > 0 &&
+          ["segment_start", "segment_midpoint", "segment_end"].includes(finding.reviewReason),
+      )
+    ) {
+      throw new Error("Visual review still warnings should point back to the source still.");
     }
   }
 

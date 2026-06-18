@@ -38,7 +38,10 @@ import {
   STATS_DASHBOARD_TEMPLATE_ID,
 } from "./template-registry";
 import { createVisualReviewStillArtifact } from "./visual-review-still-artifacts";
-import { visualReviewStillExtractionSchema } from "./visual-review-schema";
+import {
+  visualReviewFindingSchema,
+  visualReviewStillExtractionSchema,
+} from "./visual-review-schema";
 
 const createNarrationAsset = ({
   durationInFrames,
@@ -463,6 +466,28 @@ const assertVisualReviewStillExtractionSchemaFixture = (): void => {
 };
 
 assertVisualReviewStillExtractionSchemaFixture();
+
+const assertVisualReviewStillFindingAttributionSchemaFixture = (): void => {
+  const finding = visualReviewFindingSchema.parse({
+    frame: 45,
+    message: "Representative still appears low contrast: contrast score 0.09, luma range 24.",
+    reviewReason: "segment_midpoint",
+    severity: "warning",
+    stillId: "asset-plan-segment-segment-midpoint-frame-000045",
+    suggestedRepair:
+      "Inspect this frame and regenerate the target segment if foreground content is hard to read.",
+    targetId: "asset-plan-segment",
+  });
+
+  if (
+    finding.stillId !== "asset-plan-segment-segment-midpoint-frame-000045" ||
+    finding.reviewReason !== "segment_midpoint"
+  ) {
+    throw new Error("Visual review still findings should preserve source still attribution.");
+  }
+};
+
+assertVisualReviewStillFindingAttributionSchemaFixture();
 
 const assertVisualReviewStillArtifactFixture = (): void => {
   const artifact = createVisualReviewStillArtifact({
