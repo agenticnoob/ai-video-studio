@@ -1,25 +1,15 @@
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import { ConcurrencyBusyError } from "../../../lib/concurrency-limits";
-import { storyboardPlanSchema } from "../../../lib/storyboard-plan-schema";
 import {
   generateSegmentNarrationAsset,
   StoryboardSegmentNotFoundError,
   TtsConfigError,
   TtsProviderError,
 } from "../../../lib/tts";
-import { voiceCloneRequestSchema } from "../../../lib/tts/voice-references";
+import { ttsRequestSchema } from "../../../lib/tts/request-schema";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-const ttsRequestSchema = z.object({
-  plan: storyboardPlanSchema,
-  provider: z.enum(["f5-tts", "minimax"]).optional(),
-  segmentId: z.string().trim().min(1, "Segment id is required"),
-  voiceId: z.string().trim().min(1).max(160).optional(),
-  voiceClone: voiceCloneRequestSchema.optional(),
-});
 
 export async function POST(request: Request) {
   let body: unknown;

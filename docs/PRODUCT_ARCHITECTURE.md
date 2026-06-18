@@ -38,7 +38,7 @@ The active page flow uses the staged planner -> TTS -> compiler -> assembly
 pipeline. Segment-owned
 narration audio/captions, the Next-side F5 adapter, and the optional local
 F5-TTS runtime service are in place. The current hardening target is a full
-provider-backed `POST /api/generate/staged` live smoke that combines MiniMax
+provider-backed `POST /api/generate/staged` live smoke that combines DeepSeek
 planner/compiler calls with real F5 narration.
 
 Current implementation snapshot:
@@ -47,16 +47,16 @@ Current implementation snapshot:
   `StoryboardPlan` boundary.
 - `src/templates/registry.ts` derives the planner template manifest from
   server-safe registered template definitions.
-- `src/lib/minimax/prompts.ts`, `src/lib/minimax/tool-schema.ts`,
-  `src/lib/minimax/parse-storyboard-plan.ts`, and `src/lib/minimax/index.ts`
-  provide an internal MiniMax planner facade.
+- `src/lib/deepseek/prompts.ts`, `src/lib/deepseek/tool-schema.ts`,
+  `src/lib/deepseek/parse-storyboard-plan.ts`, and `src/lib/deepseek/index.ts`
+  provide the active DeepSeek planner/compiler facade.
 - `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`,
   and `/api/tts/assets/...` provide the first internal TTS asset boundary for
   planned segment narration, including local artifact writing and ffprobe
   duration measurement.
 - The in-project F5-TTS provider boundary lives under `src/lib/tts/`. The repo
-  owns its request/response contract, config, artifact handling, caption
-  normalization, and fallback behavior. The optional `services/f5-tts/`
+  owns its request/response contract, config, artifact handling, and caption
+  normalization. The optional `services/f5-tts/`
   runtime supports contract-smoke mode and real `F5_TTS_SERVICE_MODE=f5`
   synthesis; the GPU overlay has been validated with the local checkpoint,
   vocab, and Vocos vocoder under `models/f5-tts/`.
@@ -68,7 +68,7 @@ Current implementation snapshot:
   process-local task progress through `progressId` and
   `/api/progress/[progressId]`. This is a lightweight in-memory status surface
   for the active browser request, not a persistent job model.
-- `src/lib/staged-generation/*`, the MiniMax template compiler helpers, and
+- `src/lib/staged-generation/*`, the DeepSeek template compiler helpers, and
   `POST /api/generate/staged` provide the staged assembly path from brief or
   plan input to `VideoProject`.
 - The active page generation flow uses `/api/generate/staged`.

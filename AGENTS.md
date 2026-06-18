@@ -60,14 +60,15 @@ The first staged-generation groundwork is also in place:
   `StoryboardSegmentPlan` contracts.
 - `src/templates/registry.ts` derives a compact planner template manifest from
   registered template definitions.
-- `src/lib/minimax/prompts.ts`, `src/lib/minimax/tool-schema.ts`,
-  `src/lib/minimax/parse-storyboard-plan.ts`, and `src/lib/minimax/index.ts`
-  expose an internal MiniMax storyboard-planner facade.
+- `src/lib/deepseek/*` exposes the active DeepSeek storyboard-planner and
+  selected-template compiler facade. It uses AI SDK JSON mode rather than a
+  forced tool-calling transport, then validates output through the existing
+  Zod planner/template contracts.
 - `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`, and
   `/api/tts/assets/...` provide the first internal TTS asset boundary for one
   planned segment's narration, including local audio artifacts and measured
   duration.
-- `src/lib/staged-generation/*` and the MiniMax selected-template compiler
+- `src/lib/staged-generation/*` and the DeepSeek selected-template compiler
   helpers provide the staged assembly path:
   StoryboardPlan -> per-segment TTS -> selected-template compile -> assembled
   `VideoProject`. Generated narration audio is now owned by
@@ -146,7 +147,8 @@ inside a segment:
   definition, structured capabilities, editor fields, runtime adapter, and
   bundle export.
 - `src/templates/registry.ts` registers server-safe template metadata for
-  schema validation and MiniMax prompt/tool generation.
+  schema validation, DeepSeek planner/compiler prompts, and the planner
+  template manifest.
 - `src/templates/component-registry.tsx` registers runtime adapters for page
   editing and Remotion preview rendering.
 - `src/lib/template-registry.ts` remains a compatibility re-export.
@@ -159,10 +161,10 @@ inside a segment:
 
 ## Current highest-priority next milestone
 
-The MiniMax-backed v1 generation path is usable for the current stage, and the
-validated storyboard-plan contract / compact planner manifest / internal
-planner facade are already present. The next product milestone should continue
-moving toward the authoritative final generation pipeline in
+The DeepSeek-backed staged generation path is usable for the current stage, and
+the validated storyboard-plan contract / compact planner manifest / internal
+planner/compiler facade are already present. The next product milestone should
+continue moving toward the authoritative final generation pipeline in
 `docs/FINAL_PRODUCT_GOAL.md`:
 
 ```txt
@@ -239,7 +241,7 @@ Current product modeling decision:
 - `src/templates/registered-bundles.ts`
 - `src/templates/registry.ts`
 - `src/templates/component-registry.tsx`
-- `src/lib/minimax/*`
+- `src/lib/deepseek/*`
 - `src/lib/project-generation.ts`
 - `src/remotion/ProjectVideo/ProjectVideo.tsx`
 - `src/remotion/ScriptedVideo/*`

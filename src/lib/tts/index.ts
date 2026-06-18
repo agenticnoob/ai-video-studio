@@ -46,7 +46,6 @@ export const generateSegmentNarrationAsset = async (
     voiceClone: request.voiceClone,
   });
   const result = await synthesizeSegmentNarration({
-    fallbackToMinimax: providerSelection.fallbackToMinimax,
     language: plan.language,
     provider: providerSelection.provider,
     referenceAudioPath: providerSelection.voiceCloneReference?.referenceAudioPath,

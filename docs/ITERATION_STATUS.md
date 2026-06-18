@@ -1,6 +1,42 @@
 # Iteration Status
 
-Last updated: Stats dashboard template implementation
+Last updated: DeepSeek + F5-only provider migration
+
+## Latest continuation — DeepSeek + F5-only provider migration
+
+- Created the work branch `codex/deepseek-f5-provider` from `main`; this work
+  is not merged from the prior scene-graph branch.
+- Replaced the active MiniMax LLM boundary with an AI SDK DeepSeek provider
+  facade under `src/lib/deepseek/*`.
+- The staged generation pipeline now calls DeepSeek for storyboard planning,
+  selected-segment replanning, and per-segment template implementation
+  compilation.
+- Removed the active MiniMax TTS fallback path. `TTS_PROVIDER` is now F5-only:
+  empty/default and `f5-tts` both resolve to F5-TTS, while `minimax` is rejected.
+- Added `src/lib/tts/request-schema.ts` so route request validation can be
+  shared by the TTS route and provider-boundary smoke tests.
+- Deleted active MiniMax provider modules, the MiniMax TTS adapter, and the old
+  MiniMax contract validation script.
+- Updated config and provider docs around `DEEPSEEK_API_KEY`,
+  `DEEPSEEK_MODEL`, `DEEPSEEK_BASE_URL`, and F5-only narration.
+- Added `npm run smoke:provider-boundary` to assert that staged generation and
+  TTS request schemas reject `minimax`, provider selection defaults to F5-TTS,
+  and no legacy MiniMax fallback flag remains.
+
+Validation performed:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:provider-boundary'`
+- `docker compose run --rm web bash -lc 'rm -rf .next/types && [ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc 'DEEPSEEK_API_KEY= F5_TTS_BASE_URL= npm run smoke:staged-live'`
+- `docker compose run --rm web bash -lc 'npx prettier --check --ignore-unknown <changed files>'`
+- `git diff --check`
+
+Verification note:
+- Full `npm run check` still fails on existing repository-wide Prettier drift
+  outside this provider migration. The changed files were checked separately
+  with targeted Prettier, and lint/typecheck/build passed.
 
 ## Latest continuation — Stats dashboard template implementation
 

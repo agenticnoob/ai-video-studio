@@ -8,7 +8,7 @@ const SHOULD_RENDER = ["1", "true", "yes", "on"].includes(
   (process.env.STAGED_LIVE_SMOKE_RENDER || "").toLowerCase(),
 );
 
-const requiredEnv = ["MINIMAX_API_KEY", "F5_TTS_BASE_URL"];
+const requiredEnv = ["DEEPSEEK_API_KEY", "F5_TTS_BASE_URL"];
 
 const fail = (message) => {
   throw new Error(message);
@@ -20,9 +20,7 @@ const skipIfMissingConfig = () => {
     return false;
   }
 
-  console.log(
-    `Skipping live staged smoke because required env is missing: ${missing.join(", ")}.`,
-  );
+  console.log(`Skipping live staged smoke because required env is missing: ${missing.join(", ")}.`);
   return true;
 };
 

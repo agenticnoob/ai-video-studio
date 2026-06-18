@@ -30,8 +30,8 @@ Current implementation status:
 - the active generation path is the staged planner -> narration synthesis ->
   audio + aligned captions -> template compiler pipeline documented in
   `docs/FINAL_PRODUCT_GOAL.md`
-- the first storyboard-planning contract is in place as a server-safe schema,
-  compact registered-template manifest, and internal MiniMax planner facade
+- the storyboard-planning contract is in place as a server-safe schema,
+  compact registered-template manifest, and DeepSeek planner/compiler facade
 - the first TTS asset boundary is in place for planned segments:
   `SegmentNarrationAsset`, internal `POST /api/tts`, local TTS audio artifacts
   under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts`, sidecar
@@ -162,7 +162,7 @@ Current top-level boundaries:
      runtime adapters, and bundle exports
 7. `/src/templates/registry.ts`
    - derived server-safe template metadata registry used by schema validation
-     MiniMax prompt/tool generation, and the planner template manifest
+     DeepSeek prompt/tool generation, and the planner template manifest
 8. `/src/templates/registered-definitions.ts`
    - server-safe template definition registration source
 9. `/src/templates/registered-bundles.ts`
@@ -191,10 +191,9 @@ Start from:
 Current code checkpoint:
 - active page generation uses `POST /api/generate/staged`
 - staged-generation groundwork: `StoryboardPlan` schema, planner manifest, and
-  internal MiniMax planner facade are implemented
+  internal DeepSeek planner/compiler facade are implemented
 - TTS groundwork: internal `POST /api/tts` can generate and serve a
-  `SegmentNarrationAsset` for one planned segment when MiniMax TTS is
-  configured
+  `SegmentNarrationAsset` for one planned segment when F5-TTS is configured
 - selected-template compiler groundwork: internal compiler functions and
   `POST /api/generate/staged` can assemble a staged project
 - staged selected-segment regeneration is wired for the active page path
@@ -233,10 +232,10 @@ Best next bounded slice:
 - continue from `VideoSegment.narration` as the target home for generated
   narration text, audio metadata, and segment-local caption cues
 - behavior-preserving structure cleanup now has dedicated module boundaries for
-  staged generation, TTS/F5 provider selection and fallback, frontend
+  staged generation, F5 provider selection, frontend
   generation state, Remotion timeline flattening, and smoke entrypoints
 - use `npm run smoke:staged-live` for the provider-backed
-  `POST /api/generate/staged` live smoke that combines MiniMax
+  `POST /api/generate/staged` live smoke that combines DeepSeek
   planner/compiler with real F5 narration; it skips when required credentials
   are missing
 - avoid persistence/history, generic media-layer compositing, and
@@ -350,7 +349,7 @@ docker compose -f docker-compose.yml -f docker-compose.f5.yml up -d web
 npm run smoke:f5-staged
 ```
 
-This smoke avoids MiniMax planner/compiler calls. It uses a fixed two-segment
+This smoke avoids live LLM planner/compiler calls. It uses a fixed two-segment
 storyboard plan, generates each segment's narration through `POST /api/tts`,
 assembles a schema-compatible `VideoProject`, and checks byte-range serving for
 each generated narration asset. To also export the assembled project through
@@ -360,7 +359,7 @@ each generated narration asset. To also export the assembled project through
 F5_TTS_STAGED_SMOKE_RENDER=true npm run smoke:f5-staged
 ```
 
-Validate the live staged route with MiniMax planner/compiler plus F5
+Validate the live staged route with DeepSeek planner/compiler plus F5
 narration:
 
 ```bash
@@ -370,7 +369,7 @@ npm run smoke:staged-live
 This command calls `POST /api/generate/staged`, checks segment-owned narration
 audio and captions, validates diagnostics, and verifies byte-range serving for
 generated `/api/tts/assets/...` audio. It exits successfully with a skip
-message when `MINIMAX_API_KEY` or `F5_TTS_BASE_URL` is missing. To also export
+message when `DEEPSEEK_API_KEY` or `F5_TTS_BASE_URL` is missing. To also export
 the generated project through `POST /api/render`, run:
 
 ```bash
@@ -548,9 +547,14 @@ job system before treating these limits as global.
 - the app is no longer the upstream starter UI; the current studio path already supports brief -> project generation -> full preview -> selected-segment editing -> selected-segment regeneration -> local export.
 - Docker render images now include Noto CJK fonts for Chinese-first content.
 
-## MiniMax integration
+## DeepSeek Integration
 
-The staged generation path is backed by [MiniMax](https://api.minimaxi.com/v1) (minimaxi.com) planner/compiler calls plus the in-repo TTS/assembly pipeline. The assembled `VideoProject` contract is unchanged — provider output must still validate against the selected planner/template schemas and final project schema.
+The staged generation path is backed by DeepSeek through the Vercel AI SDK
+provider. DeepSeek handles storyboard planning, selected-segment replanning,
+and selected-template implementation compilation. F5-TTS is the only active
+narration/TTS provider. The assembled `VideoProject` contract is unchanged:
+provider output must still validate against the selected planner/template
+schemas and final project schema.
 
 ### Environment variables
 
@@ -558,22 +562,9 @@ Add to `.env` (see `.env.example`):
 
 | Variable | Required | Default | Purpose |
 |---|---|---|---|
-| `MINIMAX_API_KEY` | yes | — | Bearer token for `https://api.minimaxi.com/v1/text/chatcompletion_v2`. |
-| `MINIMAX_MODEL` | no | `MiniMax-M2.7-highspeed` | The `model` field sent on every request. Must be read from `process.env`, never hard-coded. |
-| `MINIMAX_BASE_URL` | no | `https://api.minimaxi.com/v1` | Override only for testing against a self-hosted gateway. |
-
-MiniMax TTS uses the same `MINIMAX_API_KEY`. Optional TTS-specific variables:
-
-| Variable | Required | Default | Purpose |
-|---|---|---|---|
-| `MINIMAX_GROUP_ID` | account-dependent | — | Added as `GroupId` query param for MiniMax speech deployments that require it. |
-| `MINIMAX_TTS_ENDPOINT` | no | `${MINIMAX_BASE_URL}/t2a_v2` | Full TTS endpoint override. Use this if your speech endpoint differs from the chat base URL. |
-| `MINIMAX_TTS_MODEL` | no | `speech-2.8-turbo` | Speech model used by `POST /api/tts`. |
-| `MINIMAX_TTS_VOICE_ID` | no | `male-qn-qingse` | Default voice for planned segment narration. |
-| `MINIMAX_TTS_EMOTION` | no | — | Optional MiniMax voice emotion for speech-2.8 models. |
-| `MINIMAX_TTS_SAMPLE_RATE` | no | `32000` | Requested audio sample rate. |
-| `MINIMAX_TTS_BITRATE` | no | `128000` | Requested audio bitrate. |
-| `MINIMAX_TTS_CHANNEL` | no | `1` | Requested channel count, `1` or `2`. |
+| `DEEPSEEK_API_KEY` | yes | — | API key for `@ai-sdk/deepseek`. |
+| `DEEPSEEK_MODEL` | no | `deepseek-chat` | Model used by planner/compiler calls. |
+| `DEEPSEEK_BASE_URL` | no | provider default | Optional gateway/base URL override. |
 
 Local render/export also supports:
 
@@ -583,17 +574,18 @@ Local render/export also supports:
 
 ### What happens if the key is missing
 
-The provider throws `MinimaxConfigError("MINIMAX_API_KEY is not configured. Set it in .env to enable real generation.")` on the first staged generation call, and `POST /api/generate/staged` returns a `500` with the same message in the `error` field. The UI surfaces it as the generation error state — there is no silent mock fallback to the local mock anymore.
+The provider throws `DeepSeekConfigError("DEEPSEEK_API_KEY is not configured. Set it in .env to enable real generation.")` on the first staged generation call, and `POST /api/generate/staged` returns a `500` with the same message in the `error` field. The UI surfaces it as the generation error state. There is no silent mock or MiniMax fallback.
 
 ### Failure → HTTP status mapping
 
 | Failure | HTTP |
 |---|---|
-| `MINIMAX_API_KEY` missing or empty | 500 |
+| `DEEPSEEK_API_KEY` missing or empty | 500 |
 | Network error / upstream non-2xx (4xx, 5xx) | 502 |
-| Upstream returns non-JSON | 502 |
-| Tool call missing, wrong function, empty arguments, or `finish_reason=length` | 502 |
-| Response is JSON but fails planner/template/project validation | 500 |
+| JSON output missing or invalid | 502 |
+| Response fails planner/template validation | 502 |
+| F5-TTS config missing or invalid | 500 |
+| F5-TTS runtime/network/audio failure | 502 |
 | Invalid request body / unknown mode | 400 |
 
 ### Docker-first verification
@@ -607,14 +599,14 @@ Then smoke test the missing-key path from another terminal (returns 500):
 
 ```bash
 cd /data/projects/labs/ai-video-studio
-# ensure .env does NOT export MINIMAX_API_KEY
+# ensure .env does NOT export DEEPSEEK_API_KEY
 curl -s -X POST http://127.0.0.1:3000/api/generate/staged \
   -H 'content-type: application/json' \
   -d '{"mode":"brief","brief":"hello world"}'
-# -> {"error":"MINIMAX_API_KEY is not configured. Set it in .env to enable real generation."} (status 500)
+# -> {"error":"DEEPSEEK_API_KEY is not configured. Set it in .env to enable real generation."} (status 500)
 ```
 
 Run static validation inside Docker on this workstation; host `node_modules`
 is not the default validation target.
 
-Current MiniMax implementation notes live in [`docs/providers/minimax.md`](docs/providers/minimax.md).
+Current DeepSeek implementation notes live in [`docs/providers/deepseek.md`](docs/providers/deepseek.md).

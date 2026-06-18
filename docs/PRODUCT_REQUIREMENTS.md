@@ -415,8 +415,9 @@ Current implementation note:
   `src/lib/storyboard-plan-schema.ts`
 - `src/templates/registry.ts` derives a compact planner template manifest from
   registered template definitions
-- `src/lib/minimax/*` contains an internal MiniMax storyboard-planner prompt,
-  tool schema, parser, and `minimaxGenerateStoryboardPlan()` facade
+- `src/lib/deepseek/*` contains the active DeepSeek storyboard-planner prompt,
+  JSON-mode provider adapter, parser, and `deepseekGenerateStoryboardPlan()`
+  facade
 - `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`,
   and `/api/tts/assets/...` provide the internal TTS asset boundary for one
   planned segment, with local audio artifacts, measured duration, provider
@@ -429,7 +430,7 @@ Current implementation note:
   are flattened for preview/export
 - the next provider implementation slice is the optional local F5-TTS runtime
   service in `docs/providers/f5-tts-service-plan.md`
-- `src/lib/staged-generation/*`, the MiniMax selected-template compiler
+- `src/lib/staged-generation/*`, the DeepSeek selected-template compiler
   helpers, and `POST /api/generate/staged` provide the staged assembly path
 - the page defaults to `POST /api/generate/staged` for top-level generation
 - page-level generation state has been moved under

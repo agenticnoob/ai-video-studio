@@ -129,7 +129,7 @@ What not to adopt:
   Remotion's own brand and script.
 - Do not replace the current segment-first project model with a one-off
   hand-authored video tree.
-- Do not expose scene implementation details directly to MiniMax before a
+- Do not expose scene implementation details directly to the LLM provider before a
   registered template schema exists.
 - Do not widen the current product into a full timeline editor just because
   the trailer uses rich hand-authored sequencing.
