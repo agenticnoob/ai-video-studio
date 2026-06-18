@@ -1,6 +1,28 @@
 # Iteration Status
 
-Last updated: Deterministic Visual Repair v1
+Last updated: Storyboard planner missing-field recovery fix
+
+## Latest continuation — Storyboard planner missing-field recovery fix
+
+- Fixed a provider-facing staged generation failure where MiniMax could emit a
+  later `StoryboardPlan.segments[]` item without required `narration` and
+  `visualBrief` fields.
+- Root cause: `parseStoryboardPlanToolCallArguments()` validated the provider
+  payload strictly, but only asked the model for one bounded repair attempt; if
+  the repair still omitted those fields, generation stopped before TTS or
+  visual compilation.
+- Added a bounded parser recovery for only this missing-field case: when a
+  segment has user-facing `purpose` or `title`, the parser can synthesize
+  minimal `narration.text` and `visualBrief` from that text, then still runs the
+  full `StoryboardPlan` schema. Other malformed strategy/template/order fields
+  remain strict validation failures.
+- Added a staged smoke fixture reproducing the exact missing
+  `segments.1.narration` / `segments.1.visualBrief` shape.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'` (red first, then green)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
 
 ## Latest continuation — Deterministic Visual Repair v1
 

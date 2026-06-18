@@ -2,6 +2,19 @@ import type { z } from "zod";
 
 import { storyboardPlanSchema, type StoryboardPlan } from "../storyboard-plan-schema";
 
+const toRecord = (value: unknown): Record<string, unknown> | null =>
+  value !== null && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null;
+
+const nonEmptyString = (value: unknown): string | null => {
+  if (typeof value !== "string") {
+    return null;
+  }
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+};
+
 const formatIssues = (issues: z.ZodIssue[]): string =>
   issues
     .slice(0, 5)
@@ -19,15 +32,74 @@ export class StoryboardPlanParseError extends Error {
 }
 
 const looksLikeWrappedPlan = (value: unknown): unknown | null => {
-  if (value === null || typeof value !== "object" || Array.isArray(value)) {
+  const record = toRecord(value);
+  if (!record) {
     return null;
   }
-  const record = value as Record<string, unknown>;
   const plan = record["plan"] ?? record["storyboardPlan"];
-  if (plan === null || typeof plan !== "object" || Array.isArray(plan)) {
+  if (!toRecord(plan)) {
     return null;
   }
   return plan;
+};
+
+const recoverMissingSegmentPlanningFields = (value: unknown): unknown | null => {
+  const plan = toRecord(value);
+  const rawSegments = Array.isArray(plan?.segments) ? plan.segments : null;
+  if (!plan || !rawSegments) {
+    return null;
+  }
+
+  let changed = false;
+  const planBrief = nonEmptyString(plan.brief) ?? "Describe the segment clearly.";
+  const segments = rawSegments.map((segment) => {
+    const record = toRecord(segment);
+    if (!record) {
+      return segment;
+    }
+
+    const fallbackText =
+      nonEmptyString(record.purpose) ?? nonEmptyString(record.title) ?? planBrief;
+    const nextSegment: Record<string, unknown> = { ...record };
+
+    if (record.narration === undefined) {
+      nextSegment.narration = { text: fallbackText };
+      changed = true;
+    }
+
+    if (record.visualBrief === undefined) {
+      nextSegment.visualBrief = `Visualize: ${fallbackText}`;
+      changed = true;
+    }
+
+    return nextSegment;
+  });
+
+  if (!changed) {
+    return null;
+  }
+
+  return {
+    ...plan,
+    segments,
+  };
+};
+
+const parseStoryboardPlanCandidate = (value: unknown): StoryboardPlan | null => {
+  const result = storyboardPlanSchema.safeParse(value);
+  if (result.success) {
+    return result.data;
+  }
+
+  const recovered = recoverMissingSegmentPlanningFields(value);
+  if (recovered !== null) {
+    const retry = storyboardPlanSchema.safeParse(recovered);
+    if (retry.success) {
+      return retry.data;
+    }
+  }
+
+  return null;
 };
 
 export const parseStoryboardPlanToolCallArguments = (argumentsString: string): StoryboardPlan => {
@@ -49,11 +121,19 @@ export const parseStoryboardPlanToolCallArguments = (argumentsString: string): S
     return result.data;
   }
 
-  const wrapped = looksLikeWrappedPlan(parsed);
-  if (wrapped !== null) {
-    const retry = storyboardPlanSchema.safeParse(wrapped);
+  const recovered = recoverMissingSegmentPlanningFields(parsed);
+  if (recovered !== null) {
+    const retry = storyboardPlanSchema.safeParse(recovered);
     if (retry.success) {
       return retry.data;
+    }
+  }
+
+  const wrapped = looksLikeWrappedPlan(parsed);
+  if (wrapped !== null) {
+    const retry = parseStoryboardPlanCandidate(wrapped);
+    if (retry !== null) {
+      return retry;
     }
   }
 
