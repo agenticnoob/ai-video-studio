@@ -159,6 +159,88 @@ const assertProviderProceduralGeneratorSurface = (): void => {
 
 assertProviderProceduralGeneratorSurface();
 
+const assertProceduralGeneratorEmptyOptionalTextNormalization = (): void => {
+  const plan = parseStoryboardPlanToolCallArguments(
+    JSON.stringify({
+      title: "Procedural Generator Empty Optional Text Smoke",
+      brief: "Normalize provider empty strings on optional procedural generator text fields.",
+      language: "en",
+      segments: [
+        {
+          id: "segment-empty-edge-label",
+          order: 1,
+          title: "Node Graph Flow",
+          purpose: "Show a compact workflow graph.",
+          templateId: SCENE_GRAPH_TEMPLATE_ID,
+          templateReason: "The scene-graph template can render bounded node graph flows.",
+          narration: {
+            text: "A brief moves through planning, generation, review, and export.",
+          },
+          visualBrief: "Render a node graph workflow with unlabeled connecting edges.",
+          strategyDecision: proceduralGeneratorStrategyDecision,
+          proceduralGenerator: {
+            generatorId: "node-graph-flow",
+            renderStrategy: "procedural_generator",
+            durationInFrames: 150,
+            title: "Workflow graph",
+            summary: "",
+            nodes: [
+              {
+                id: "brief",
+                label: "Brief",
+                detail: "",
+                lane: "input",
+              },
+              {
+                id: "plan",
+                label: "Plan",
+                lane: "plan",
+              },
+              {
+                id: "export",
+                label: "Export",
+                lane: "output",
+              },
+            ],
+            edges: [
+              {
+                from: "brief",
+                to: "plan",
+                label: "",
+              },
+              {
+                from: "plan",
+                to: "export",
+                label: "ship",
+              },
+            ],
+          },
+        },
+      ],
+    }),
+  );
+  const [segment] = plan.segments;
+  const generator = segment?.proceduralGenerator;
+
+  if (generator?.generatorId !== "node-graph-flow") {
+    throw new Error("Expected node-graph-flow procedural generator after normalization.");
+  }
+  if (generator.summary !== undefined) {
+    throw new Error("Expected empty optional generator summary to normalize to undefined.");
+  }
+  if (generator.nodes[0]?.detail !== undefined) {
+    throw new Error("Expected empty optional node detail to normalize to undefined.");
+  }
+  if (generator.edges[0]?.label !== undefined) {
+    throw new Error("Expected empty optional edge label to normalize to undefined.");
+  }
+  if (generator.edges[1]?.label !== "ship") {
+    throw new Error("Expected non-empty edge label to be preserved.");
+  }
+};
+
+assertProceduralGeneratorEmptyOptionalTextNormalization();
+
 const assertAssetPlanSchemaFixture = (): void => {
   const planWithAssets = storyboardPlanSchema.parse({
     title: "Asset Plan Boundary Smoke",

@@ -10,6 +10,14 @@ export const TERMINAL_SESSION_GENERATOR_ID = "terminal-session" as const;
 const idSchema = z.string().trim().min(1).max(80);
 const shortTextSchema = z.string().trim().min(1).max(120);
 const mediumTextSchema = z.string().trim().min(1).max(240);
+const emptyStringToUndefined = (value: unknown): unknown =>
+  typeof value === "string" && value.trim().length === 0 ? undefined : value;
+const optionalShortTextSchema = z.preprocess(emptyStringToUndefined, shortTextSchema.optional());
+const optionalMediumTextSchema = z.preprocess(emptyStringToUndefined, mediumTextSchema.optional());
+const optionalFallbackReasonSchema = z.preprocess(
+  emptyStringToUndefined,
+  z.string().trim().min(1).max(400).optional(),
+);
 
 export const proceduralGeneratorIdSchema = z.enum([
   NODE_GRAPH_FLOW_GENERATOR_ID,
@@ -28,7 +36,7 @@ const proceduralGeneratorBaseSchema = z
     durationInFrames: z.number().int().min(45).max(1200),
     captionSafeZone: z.boolean().default(true),
     fallbackStrategy: proceduralGeneratorFallbackStrategySchema.default("primitive_scene_graph"),
-    fallbackReason: z.string().trim().min(1).max(400).optional(),
+    fallbackReason: optionalFallbackReasonSchema,
   })
   .strict();
 
@@ -36,7 +44,7 @@ const nodeGraphFlowNodeSchema = z
   .object({
     id: idSchema,
     label: shortTextSchema,
-    detail: shortTextSchema.optional(),
+    detail: optionalShortTextSchema,
     lane: z.enum(["input", "plan", "build", "verify", "output"]).default("build"),
     status: z.enum(["idle", "active", "success", "error"]).default("idle"),
   })
@@ -46,7 +54,7 @@ const nodeGraphFlowEdgeSchema = z
   .object({
     from: idSchema,
     to: idSchema,
-    label: shortTextSchema.optional(),
+    label: optionalShortTextSchema,
     status: z.enum(["idle", "active", "success", "error"]).default("idle"),
   })
   .strict();
@@ -96,7 +104,7 @@ export const nodeGraphFlowGeneratorSchema = proceduralGeneratorBaseSchema
   .extend({
     generatorId: z.literal(NODE_GRAPH_FLOW_GENERATOR_ID),
     title: shortTextSchema,
-    summary: mediumTextSchema.optional(),
+    summary: optionalMediumTextSchema,
     theme: themeSchema.default({
       background: "#08111f",
       panel: "rgba(248,250,252,0.10)",
@@ -157,7 +165,7 @@ export const linePathFlowGeneratorSchema = proceduralGeneratorBaseSchema
   .extend({
     generatorId: z.literal(LINE_PATH_FLOW_GENERATOR_ID),
     title: shortTextSchema,
-    summary: mediumTextSchema.optional(),
+    summary: optionalMediumTextSchema,
     theme: themeSchema.default({
       background: "#08111f",
       panel: "rgba(248,250,252,0.10)",
@@ -208,7 +216,7 @@ export const terminalSessionGeneratorSchema = proceduralGeneratorBaseSchema
   .extend({
     generatorId: z.literal(TERMINAL_SESSION_GENERATOR_ID),
     title: shortTextSchema,
-    summary: mediumTextSchema.optional(),
+    summary: optionalMediumTextSchema,
     theme: themeSchema.default({
       background: "#08111f",
       panel: "rgba(248,250,252,0.10)",

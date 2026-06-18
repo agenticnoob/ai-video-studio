@@ -1,6 +1,26 @@
 # Iteration Status
 
-Last updated: Visual Review repair action focus feedback fix
+Last updated: Procedural generator optional text normalization fix
+
+## Latest continuation — Procedural generator optional text normalization fix
+
+- Fixed selected-segment regeneration failures when the provider returns empty
+  strings for optional `proceduralGenerator` text fields, such as
+  `edges[].label`, `nodes[].detail`, `summary`, or `fallbackReason`.
+- Root cause: those fields were conceptually optional, but the schema used
+  `z.string().trim().min(1).optional()`, so an explicit `""` from MiniMax was
+  validated as an invalid too-short string instead of being treated as absent.
+- Added a regression fixture through `parseStoryboardPlanToolCallArguments()`
+  to cover the real provider boundary before schema normalization.
+- Kept required fields strict: required labels, titles, ids, and generator
+  reference integrity still reject empty or invalid values.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'` (red first, then green)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run check'`
+- `git diff --check`
 
 ## Latest continuation — Visual Review repair action focus feedback fix
 
