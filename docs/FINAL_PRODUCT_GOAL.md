@@ -146,8 +146,9 @@ Current executable strategy note:
   `reviewReason` so manual review can locate the triggering representative
   still and open its source PNG directly from the Studio panel. Findings that
   can be mapped to a segment can be explicitly applied to the selected-segment
-  revision input as structured repair prompts; regeneration remains a manual
-  user action.
+  revision input as structured repair prompts or used to manually trigger one
+  target-segment regeneration through the existing staged segment regeneration
+  path.
   Browser/canvas review and automatic segment repair remain deferred.
 
 ## 2. Authoritative Terminology

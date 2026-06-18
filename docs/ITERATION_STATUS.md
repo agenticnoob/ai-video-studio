@@ -1,6 +1,30 @@
 # Iteration Status
 
-Last updated: Visual Review explicit repair prompt v1
+Last updated: Visual Review explicit target repair trigger v1
+
+## Latest continuation — Visual Review explicit target repair trigger v1
+
+- Continued Phase 6 from repair-prompt handoff to an explicit user-triggered
+  target-segment repair action.
+- Added `立即修复分镜` beside segment-addressable visual-review findings. The
+  button reuses the same structured visual-review repair prompt, selects the
+  target segment, and calls the existing selected-segment regeneration path
+  with explicit `segmentId` and `revisionPrompt` overrides.
+- Extended `regenerateSelectedSegment()` so normal editor usage remains
+  unchanged, while visual-review repair actions can pass the target segment and
+  prompt directly without relying on React state timing.
+- The implementation still uses `POST /api/generate/staged` mode `segment`,
+  so non-target segments remain preserved by the existing staged regeneration
+  boundary.
+- This is a manual trigger, not a browser/canvas reviewer or automatic
+  repair loop. Browser/canvas visual analysis and repeated automatic
+  target-segment repair remain deferred.
+
+Validation performed so far:
+- `node scripts/visual-review-ui-source-smoke.mjs` (red first, then green)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:visual-review-ui'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
 
 ## Latest continuation — Visual Review explicit repair prompt v1
 

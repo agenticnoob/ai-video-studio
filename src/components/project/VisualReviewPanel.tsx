@@ -11,6 +11,7 @@ type VisualReviewPanelProps = {
   disabled: boolean;
   onApplyRepairPrompt: (segmentId: string, prompt: string) => void;
   onDismissResult: () => void;
+  onRegenerateSegmentFromFinding: (segmentId: string, prompt: string) => void;
   onReview: () => void;
   state: VisualReviewState;
 };
@@ -57,6 +58,7 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
   disabled,
   onApplyRepairPrompt,
   onDismissResult,
+  onRegenerateSegmentFromFinding,
   onReview,
   state,
 }) => {
@@ -203,19 +205,34 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
                       </a>
                     ) : null}
                     {getFindingSegmentId(finding) ? (
-                      <button
-                        className="ml-3 mt-2 inline-flex rounded-geist border border-panel-border-color px-2 py-1 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-60"
-                        disabled={disabled}
-                        onClick={() => {
-                          const segmentId = getFindingSegmentId(finding);
-                          if (segmentId) {
-                            onApplyRepairPrompt(segmentId, buildRepairPrompt(finding));
-                          }
-                        }}
-                        type="button"
-                      >
-                        套用修复指令
-                      </button>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        <button
+                          className="inline-flex rounded-geist border border-panel-border-color px-2 py-1 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+                          disabled={disabled}
+                          onClick={() => {
+                            const segmentId = getFindingSegmentId(finding);
+                            if (segmentId) {
+                              onApplyRepairPrompt(segmentId, buildRepairPrompt(finding));
+                            }
+                          }}
+                          type="button"
+                        >
+                          套用修复指令
+                        </button>
+                        <button
+                          className="inline-flex rounded-geist border border-foreground bg-foreground px-2 py-1 text-xs font-semibold text-background disabled:cursor-not-allowed disabled:opacity-60"
+                          disabled={disabled}
+                          onClick={() => {
+                            const segmentId = getFindingSegmentId(finding);
+                            if (segmentId) {
+                              onRegenerateSegmentFromFinding(segmentId, buildRepairPrompt(finding));
+                            }
+                          }}
+                          type="button"
+                        >
+                          立即修复分镜
+                        </button>
+                      </div>
                     ) : null}
                     {finding.suggestedRepair ? (
                       <div className="mt-1 text-xs">{finding.suggestedRepair}</div>

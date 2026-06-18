@@ -33,6 +33,13 @@ const Home: NextPage = () => {
     generation.selectSegment(segmentId);
     generation.setRevisionPrompt(prompt);
   };
+  const regenerateSelectedSegmentFromVisualReview = async (segmentId: string, prompt: string) => {
+    applyVisualReviewRepairPrompt(segmentId, prompt);
+    await generation.regenerateSelectedSegment({
+      revisionPrompt: prompt,
+      segmentId,
+    });
+  };
 
   return (
     <main className="mx-auto max-w-screen-2xl px-4 py-8 text-foreground">
@@ -78,6 +85,7 @@ const Home: NextPage = () => {
                 }
                 onApplyRepairPrompt={applyVisualReviewRepairPrompt}
                 onDismissResult={resetVisualReviewState}
+                onRegenerateSegmentFromFinding={regenerateSelectedSegmentFromVisualReview}
                 onReview={reviewProject}
                 state={visualReviewState}
               />

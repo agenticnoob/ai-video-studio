@@ -79,7 +79,8 @@ Current implementation status:
   review result can point back to the triggering representative still and open
   its source PNG. Segment-addressable findings can also be explicitly applied
   to the existing selected-segment revision input as a structured repair
-  prompt; the user still chooses whether to run segment regeneration.
+  prompt or manually trigger one target-segment regeneration through the
+  existing staged segment regeneration path.
   Browser/canvas visual review and automatic segment repair are not active yet
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration

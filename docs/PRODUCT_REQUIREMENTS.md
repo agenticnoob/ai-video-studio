@@ -68,9 +68,10 @@ Product direction:
   carry source still attribution (`stillId` and `reviewReason`) so the manual
   review result can point back to the triggering representative still and open
   its source PNG. Segment-addressable findings can be explicitly copied into
-  the selected-segment revision flow as structured repair prompts, while
-  regeneration remains user-triggered; browser/canvas review and automatic
-  target-segment repair remain future bounded slices
+  the selected-segment revision flow as structured repair prompts or used for
+  one user-triggered target-segment regeneration through the existing staged
+  segment regeneration path; browser/canvas review and automatic target-segment
+  repair remain future bounded slices
 - final generation should be staged: storyboard planning first, per-segment
   TTS second, selected visual implementation compilation third, project
   assembly last

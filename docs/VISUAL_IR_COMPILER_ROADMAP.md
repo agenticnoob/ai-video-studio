@@ -446,7 +446,8 @@ Current landing:
 - segment-addressable findings can be explicitly applied to the selected
   segment revision input as a structured repair prompt, using severity, frame,
   review reason, source still id, message, and suggested repair context. The
-  user still chooses whether to run selected-segment regeneration.
+  Studio panel can also use that prompt to manually trigger one target-segment
+  regeneration through the existing selected-segment staged path.
 - no browser/canvas review, automatic repair, or provider prompt repair loop
   is active yet.
 

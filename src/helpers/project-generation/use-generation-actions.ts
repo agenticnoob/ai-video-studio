@@ -54,7 +54,10 @@ export type UseGenerationActionsResult = {
   generationOperation: GenerationOperation;
   isGenerating: boolean;
   isRegeneratingSegment: boolean;
-  regenerateSelectedSegment: () => Promise<void>;
+  regenerateSelectedSegment: (overrides?: {
+    revisionPrompt?: string;
+    segmentId?: string;
+  }) => Promise<void>;
 };
 
 export const useGenerationActions = ({
@@ -119,13 +122,19 @@ export const useGenerationActions = ({
     }
   };
 
-  const regenerateSelectedSegment = async () => {
-    if (!selectedSegmentId) {
+  const regenerateSelectedSegment = async (overrides?: {
+    revisionPrompt?: string;
+    segmentId?: string;
+  }) => {
+    const targetSegmentId = overrides?.segmentId ?? selectedSegmentId;
+    const targetRevisionPrompt = overrides?.revisionPrompt ?? revisionPrompt;
+
+    if (!targetSegmentId) {
       setError("请选择需要重生成的分段。");
       return;
     }
 
-    if (!revisionPrompt.trim()) {
+    if (!targetRevisionPrompt.trim()) {
       setError("请输入分段修改指令。");
       return;
     }
@@ -145,8 +154,8 @@ export const useGenerationActions = ({
           mode: "segment",
           project: normalizedProject,
           progressId,
-          segmentId: selectedSegmentId,
-          revisionPrompt,
+          segmentId: targetSegmentId,
+          revisionPrompt: targetRevisionPrompt,
           ...(voiceClonePayload ? { voiceClone: voiceClonePayload } : {}),
         }),
       });
@@ -159,8 +168,8 @@ export const useGenerationActions = ({
       const nextProject = normalizeProject(data.project);
       setProject(nextProject);
       setSelectedSegmentId(
-        nextProject.segments.some((segment) => segment.id === selectedSegmentId)
-          ? selectedSegmentId
+        nextProject.segments.some((segment) => segment.id === targetSegmentId)
+          ? targetSegmentId
           : getInitialSelectedSegmentId(nextProject),
       );
       setRevisionPrompt("");

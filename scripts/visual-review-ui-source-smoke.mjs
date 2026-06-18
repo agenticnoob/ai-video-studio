@@ -53,6 +53,10 @@ const main = async () => {
   assertIncludes(panelSource, "套用修复指令", "Visual review panel");
   assertIncludes(panelSource, "Visual review finding", "Visual review panel");
   assertIncludes(panelSource, "suggestedRepair", "Visual review panel");
+  assertIncludes(panelSource, "onRegenerateSegmentFromFinding", "Visual review panel");
+  assertIncludes(panelSource, "立即修复分镜", "Visual review panel");
+  assertIncludes(pageSource, "regenerateSelectedSegmentFromVisualReview", "Studio page");
+  assertIncludes(pageSource, "await generation.regenerateSelectedSegment", "Studio page");
   assertIncludes(pageSource, "applyVisualReviewRepairPrompt", "Studio page");
   assertIncludes(pageSource, "setRevisionPrompt", "Studio page");
   assertIncludes(pageSource, "selectSegment", "Studio page");
