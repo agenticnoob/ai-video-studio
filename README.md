@@ -37,8 +37,10 @@ Current implementation status:
 - DeepSeek planner output is strict-first JSON: provider output is still
   validated by the `StoryboardPlan` Zod contract, with only bounded
   provider-boundary normalization for observed near-misses such as missing
-  segment `purpose`, missing `proceduralGenerator.title`, and numeric
-  `beats[].time` aliases
+  segment `purpose`, missing segment planning rationale fields,
+  VideoProject-shaped `projectId` / segment `language` / `durationSeconds`
+  extras, missing `proceduralGenerator.title`, and numeric `beats[].time`
+  aliases
 - the first TTS asset boundary is in place for planned segments:
   `SegmentNarrationAsset`, internal `POST /api/tts`, local TTS audio artifacts
   under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts`, sidecar
@@ -285,8 +287,10 @@ Current code checkpoint:
 - staged-generation groundwork: `StoryboardPlan` schema, planner manifest, and
   internal DeepSeek planner/compiler facade are implemented, including validated
   per-segment strategy decisions and bounded JSON-mode parser normalization for
-  missing `purpose`, missing procedural-generator title, and numeric
-  `beats[].time` aliases
+  missing `purpose`, missing segment planning rationale fields,
+  VideoProject-shaped `projectId` / segment `language` / `durationSeconds`
+  extras, missing procedural-generator title, and numeric `beats[].time`
+  aliases
 - TTS groundwork: internal `POST /api/tts` can generate and serve a
   `SegmentNarrationAsset` for one planned segment when F5-TTS is
   configured

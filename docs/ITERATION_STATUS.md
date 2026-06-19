@@ -1,8 +1,27 @@
 # Iteration Status
 
-Last updated: Visual Review repair attribution and summary hardening
+Last updated: DeepSeek storyboard parser video-shaped payload recovery
 
-## Latest continuation — Visual Review repair attribution and summary hardening
+## Latest continuation — DeepSeek storyboard parser video-shaped payload recovery
+
+- Fixed another observed staged-generation planner failure where DeepSeek
+  returned a near-StoryboardPlan object with VideoProject-shaped extras:
+  top-level `projectId`, segment-level `language` / `durationSeconds`, missing
+  segment `templateReason`, and incomplete `strategyDecision` rationale fields.
+- Kept the recovery at the provider parser boundary only. The parser now drops
+  `projectId`, drops segment `language`, maps numeric `durationSeconds` to
+  `expectedDurationSeconds`, and fills conservative defaults for missing
+  `templateReason`, `strategyDecision.confidence`, and
+  `strategyDecision.reason`, then still runs the full strict
+  `StoryboardPlan` schema.
+- Existing strict failures remain unchanged for unsupported templates,
+  invalid strategies, bad procedural refs, unknown generator ids, arbitrary
+  generator fields, and free-form provider output.
+
+Validation performed:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:storyboard-parser'` (red first for the reported schema validation shape, then green)
+
+## Previous continuation — Visual Review repair attribution and summary hardening
 
 - Hardened the current Phase 6 manual repair loop so every deterministic
   repair result carries explicit source attribution: target segment id,

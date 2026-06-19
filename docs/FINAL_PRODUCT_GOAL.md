@@ -724,6 +724,8 @@ Current compatibility notes:
 - DeepSeek JSON-mode planner output remains strict-first. The storyboard parser
   performs only bounded provider-boundary normalization for observed near
   misses such as missing segment `purpose`, missing
+  segment planning rationale fields, VideoProject-shaped `projectId` /
+  segment `language` / `durationSeconds` extras, missing
   `proceduralGenerator.title`, and numeric `beats[].time` aliases before final
   Zod validation. Unknown template ids, unsupported strategies, bad refs,
   arbitrary generator ids, and free-form provider output must still fail

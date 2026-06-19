@@ -310,10 +310,12 @@ Current groundwork:
   `media_asset_composite`, `generated_component`, generated TSX, or arbitrary
   code execution are accepted.
 - Provider-boundary parser recovery is intentionally narrow: known JSON-mode
-  near-misses such as missing `proceduralGenerator.title` and numeric
-  `beats[].time` aliases are normalized before schema validation, while
-  unknown ids, unsupported strategies, bad refs, arbitrary fields, and
-  provider-authored code remain hard failures.
+  near-misses such as missing segment planning rationale fields,
+  VideoProject-shaped `projectId` / segment `language` / `durationSeconds`
+  extras, missing `proceduralGenerator.title`, and numeric `beats[].time`
+  aliases are normalized before schema validation, while unknown ids,
+  unsupported strategies, bad refs, arbitrary fields, and provider-authored
+  code remain hard failures.
 - provider-backed live smoke now includes a normal brief that naturally
   selects `node-graph-flow`, plus forced plan-mode smokes for
   `node-graph-flow`, `line-path-flow`, and `terminal-session`; all compile

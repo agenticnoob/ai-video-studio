@@ -126,8 +126,10 @@ Current implementation snapshot:
   `src/lib/deepseek/index.ts` provide the active DeepSeek JSON-mode
   planner/compiler facade. Planner parsing is strict-first with bounded
   normalization only for observed JSON-mode near-misses: missing segment
-  `purpose`, missing `proceduralGenerator.title`, and numeric `beats[].time`
-  aliases are normalized before the full `StoryboardPlan` schema check.
+  `purpose`, missing segment planning rationale fields, VideoProject-shaped
+  `projectId` / segment `language` / `durationSeconds` extras, missing
+  `proceduralGenerator.title`, and numeric `beats[].time` aliases are
+  normalized before the full `StoryboardPlan` schema check.
 - `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`,
   and `/api/tts/assets/...` provide the first internal TTS asset boundary for
   planned segment narration, including local artifact writing and ffprobe

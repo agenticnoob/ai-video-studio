@@ -87,6 +87,48 @@ const missingPurposePlan = parseStoryboardPlanToolCallArguments(
 
 assert.equal(missingPurposePlan.segments[0]?.purpose, "输入 brief");
 
+const videoProjectShapedPlan = parseStoryboardPlanToolCallArguments(
+  JSON.stringify({
+    projectId: "ai-video-studio-demo",
+    title: "AI Video Studio 产品演示",
+    brief:
+      "为 AI Video Studio 生成一条简洁的产品演示视频：展示用户如何输入创意 brief、获得分段项目、逐段微调，并预览完整成片。",
+    language: "zh-CN",
+    segments: [
+      {
+        id: "segment-2",
+        order: 1,
+        title: "逐段微调",
+        language: "zh-CN",
+        durationSeconds: 6,
+        templateId: "spotlight",
+        strategyDecision: {
+          fallbackStrategy: "template_macro",
+          strategy: "template_macro",
+        },
+        narration: {
+          text: "选择任意分镜，输入修改指令，系统只重生成这一段。",
+        },
+        visualBrief: "展示分段项目中的单个分镜被选中并微调。",
+      },
+    ],
+  }),
+);
+
+const recoveredVideoProjectSegment = videoProjectShapedPlan.segments[0];
+assert.equal(videoProjectShapedPlan.title, "AI Video Studio 产品演示");
+assert.equal(recoveredVideoProjectSegment?.purpose, "逐段微调");
+assert.equal(
+  recoveredVideoProjectSegment?.templateReason,
+  'Template "spotlight" matches this segment\'s planned visual structure.',
+);
+assert.equal(recoveredVideoProjectSegment?.strategyDecision.confidence, 0.75);
+assert.equal(
+  recoveredVideoProjectSegment?.strategyDecision.reason,
+  "Use template_macro for this segment, with template_macro as the fallback.",
+);
+assert.equal(recoveredVideoProjectSegment?.expectedDurationSeconds, 6);
+
 const proceduralGeneratorAliasPlan = parseStoryboardPlanToolCallArguments(
   JSON.stringify({
     title: "Procedural Generator Alias Recovery Smoke",

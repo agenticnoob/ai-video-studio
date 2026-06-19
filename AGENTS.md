@@ -81,6 +81,8 @@ The first staged-generation groundwork is also in place:
 - The DeepSeek storyboard parser remains strict-first: it runs final Zod
   validation after only bounded provider-boundary normalization for observed
   JSON-mode near-misses such as missing segment `purpose`, missing
+  segment planning rationale fields, VideoProject-shaped `projectId` /
+  segment `language` / `durationSeconds` extras, missing
   `proceduralGenerator.title`, and numeric `beats[].time` aliases.
 - `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`, and
   `/api/tts/assets/...` provide the first internal TTS asset boundary for one
@@ -193,8 +195,10 @@ The first staged-generation groundwork is also in place:
   and parse JSON-string payloads, while the SceneGraph schema normalizes only
   known primitive aliases/defaults before final validation. This is not a
   generic free-form repair system. Storyboard planner parsing follows the same
-  principle: missing `purpose`, missing procedural-generator title, and numeric
-  `beats[].time` aliases are recovered only before the full schema check;
+  principle: missing `purpose`, missing segment planning rationale fields,
+  VideoProject-shaped `projectId` / segment `language` / `durationSeconds`
+  extras, missing procedural-generator title, and numeric `beats[].time`
+  aliases are recovered only before the full schema check;
   unknown ids, unsupported strategies, bad refs, and arbitrary generator fields
   remain validation failures.
   `docs/VISUAL_IR_COMPILER_ROADMAP.md` is the authoritative multi-phase

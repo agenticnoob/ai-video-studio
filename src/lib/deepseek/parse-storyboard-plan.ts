@@ -18,6 +18,9 @@ const nonEmptyString = (value: unknown): string | null => {
 const finiteNumber = (value: unknown): number | null =>
   typeof value === "number" && Number.isFinite(value) ? value : null;
 
+const hasOwn = (record: Record<string, unknown>, key: string): boolean =>
+  Object.prototype.hasOwnProperty.call(record, key);
+
 const formatIssues = (issues: z.ZodIssue[]): string =>
   issues
     .slice(0, 5)
@@ -54,6 +57,12 @@ const recoverMissingSegmentPlanningFields = (value: unknown): unknown | null => 
   }
 
   let changed = false;
+  const nextPlan: Record<string, unknown> = { ...plan };
+  if (hasOwn(nextPlan, "projectId")) {
+    delete nextPlan.projectId;
+    changed = true;
+  }
+
   const planBrief = nonEmptyString(plan.brief) ?? "Describe the segment clearly.";
   const segments = rawSegments.map((segment) => {
     const record = toRecord(segment);
@@ -70,9 +79,53 @@ const recoverMissingSegmentPlanningFields = (value: unknown): unknown | null => 
       planBrief;
     const nextSegment: Record<string, unknown> = { ...record };
 
+    if (hasOwn(nextSegment, "language")) {
+      delete nextSegment.language;
+      changed = true;
+    }
+
+    if (hasOwn(nextSegment, "durationSeconds")) {
+      const durationSeconds = finiteNumber(nextSegment.durationSeconds);
+      if (nextSegment.expectedDurationSeconds === undefined && durationSeconds !== null) {
+        nextSegment.expectedDurationSeconds = durationSeconds;
+      }
+      delete nextSegment.durationSeconds;
+      changed = true;
+    }
+
     if (record.purpose === undefined) {
       nextSegment.purpose = fallbackText;
       changed = true;
+    }
+
+    if (record.templateReason === undefined) {
+      const templateId = nonEmptyString(record.templateId) ?? "selected template";
+      nextSegment.templateReason = `Template "${templateId}" matches this segment's planned visual structure.`;
+      changed = true;
+    }
+
+    const strategyDecision = toRecord(record.strategyDecision);
+    if (strategyDecision) {
+      const nextStrategyDecision: Record<string, unknown> = { ...strategyDecision };
+      let strategyDecisionChanged = false;
+
+      if (strategyDecision.confidence === undefined) {
+        nextStrategyDecision.confidence = 0.75;
+        strategyDecisionChanged = true;
+      }
+
+      if (strategyDecision.reason === undefined) {
+        const strategy = nonEmptyString(strategyDecision.strategy) ?? "template_macro";
+        const fallbackStrategy =
+          nonEmptyString(strategyDecision.fallbackStrategy) ?? "template_macro";
+        nextStrategyDecision.reason = `Use ${strategy} for this segment, with ${fallbackStrategy} as the fallback.`;
+        strategyDecisionChanged = true;
+      }
+
+      if (strategyDecisionChanged) {
+        nextSegment.strategyDecision = nextStrategyDecision;
+        changed = true;
+      }
     }
 
     if (record.narration === undefined) {
@@ -132,7 +185,7 @@ const recoverMissingSegmentPlanningFields = (value: unknown): unknown | null => 
   }
 
   return {
-    ...plan,
+    ...nextPlan,
     segments,
   };
 };
