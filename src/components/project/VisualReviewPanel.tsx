@@ -10,13 +10,34 @@ import { useTaskProgress } from "../../helpers/use-task-progress";
 import { ActivityProgress } from "../ui/ActivityProgress";
 import { Card } from "../ui/Card";
 
+export type VisualReviewRepairSource = {
+  frame?: number;
+  reviewReason?: VisualReviewFinding["reviewReason"];
+  segmentId: string;
+  status?: VisualReviewStillAnalysis["status"];
+  stillId?: string;
+};
+
+type VisualReviewAppliedRepair = {
+  afterSummary: string;
+  beforeSummary: string;
+  description: string;
+  source: VisualReviewRepairSource;
+  type: string;
+};
+
 type VisualReviewRepairOutcome =
   | {
-      appliedRepairs: string[];
+      appliedRepairs: VisualReviewAppliedRepair[];
       mode: "deterministic";
+      repairMode: "deterministic";
+      repairSource: VisualReviewRepairSource;
     }
   | {
+      fallbackReason?: string;
       mode: "regenerated";
+      repairMode: "regenerated";
+      repairSource: VisualReviewRepairSource;
     };
 
 type VisualReviewPanelProps = {
@@ -26,7 +47,7 @@ type VisualReviewPanelProps = {
   onRegenerateSegmentFromFinding: (
     segmentId: string,
     prompt: string,
-    analysisStatus?: VisualReviewStillAnalysis["status"],
+    repairSource: VisualReviewRepairSource,
   ) => Promise<VisualReviewRepairOutcome>;
   onReview: () => void;
   state: VisualReviewState;
@@ -37,17 +58,22 @@ type RepairResult =
       status: "idle";
     }
   | {
+      repairSource: VisualReviewRepairSource;
       segmentId: string;
       status: "running";
     }
   | {
-      appliedRepairs: string[];
+      appliedRepairs: VisualReviewAppliedRepair[];
+      fallbackReason?: string;
       mode: "deterministic" | "regenerated";
+      repairMode: "deterministic" | "regenerated";
+      repairSource: VisualReviewRepairSource;
       segmentId: string;
       status: "success";
     }
   | {
       error: string;
+      repairSource?: VisualReviewRepairSource;
       segmentId: string;
       status: "failure";
     };
@@ -146,6 +172,16 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
 
     return undefined;
   };
+  const getFindingRepairSource = (
+    finding: VisualReviewFinding,
+    segmentId: string,
+  ): VisualReviewRepairSource => ({
+    ...(finding.frame !== undefined ? { frame: finding.frame } : {}),
+    ...(finding.reviewReason ? { reviewReason: finding.reviewReason } : {}),
+    segmentId,
+    ...(finding.stillId ? { stillId: finding.stillId } : {}),
+    ...(finding.stillId ? { status: analysisStatusByStillId.get(finding.stillId) } : {}),
+  });
 
   const regenerateSegmentFromFinding = async (finding: VisualReviewFinding) => {
     const segmentId = getFindingSegmentId(finding);
@@ -153,24 +189,29 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
     if (!segmentId) {
       return;
     }
+    const repairSource = getFindingRepairSource(finding, segmentId);
 
-    setRepairResult({ segmentId, status: "running" });
+    setRepairResult({ repairSource, segmentId, status: "running" });
 
     try {
       const outcome = await onRegenerateSegmentFromFinding(
         segmentId,
         buildRepairPrompt(finding),
-        finding.stillId ? analysisStatusByStillId.get(finding.stillId) : undefined,
+        repairSource,
       );
       setRepairResult({
         appliedRepairs: outcome.mode === "deterministic" ? outcome.appliedRepairs : [],
+        fallbackReason: outcome.mode === "regenerated" ? outcome.fallbackReason : undefined,
         mode: outcome.mode,
+        repairMode: outcome.repairMode,
+        repairSource: outcome.repairSource,
         segmentId,
         status: "success",
       });
     } catch (error) {
       setRepairResult({
         error: error instanceof Error ? error.message : "分镜修复失败。",
+        repairSource,
         segmentId,
         status: "failure",
       });
@@ -242,14 +283,38 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
                 : "分镜修复失败"}
           </div>
           <div className="mt-1 font-mono text-xs">segment {repairResult.segmentId}</div>
+          {repairResult.status === "success" ? (
+            <div className="mt-1 font-mono text-xs">repairMode {repairResult.repairMode}</div>
+          ) : null}
+          {repairResult.repairSource?.stillId ? (
+            <div className="mt-1 font-mono text-xs">source still {repairResult.repairSource.stillId}</div>
+          ) : null}
+          {repairResult.repairSource?.reviewReason ? (
+            <div className="mt-1 font-mono text-xs">
+              review reason {repairResult.repairSource.reviewReason}
+            </div>
+          ) : null}
           {repairResult.status === "success" && repairResult.mode === "deterministic" ? (
             <div className="mt-1">
               已直接调整 SceneGraph 参数：
-              {repairResult.appliedRepairs.join("、")}
+              <div className="mt-1 space-y-1">
+                {repairResult.appliedRepairs.map((repair) => (
+                  <div key={`${repair.type}-${repair.source.status ?? "manual"}`}>
+                    <div>{repair.description}</div>
+                    <div className="font-mono text-xs">beforeSummary {repair.beforeSummary}</div>
+                    <div className="font-mono text-xs">afterSummary {repair.afterSummary}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           ) : null}
           {repairResult.status === "success" && repairResult.mode === "regenerated" ? (
-            <div className="mt-1">已回退到分镜重生成。</div>
+            <div className="mt-1">
+              已回退到分镜重生成。
+              {repairResult.fallbackReason ? (
+                <div className="font-mono text-xs">{repairResult.fallbackReason}</div>
+              ) : null}
+            </div>
           ) : null}
           {repairResult.status === "failure" ? (
             <div className="mt-1">{repairResult.error}</div>

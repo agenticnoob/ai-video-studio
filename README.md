@@ -93,8 +93,10 @@ Current implementation status:
   and failure diagnostics for that repair attempt. For `scene-graph` segments,
   the repair action first tries bounded deterministic SceneGraph parameter
   repair for low contrast, unsafe margins, empty borders, fine detail density,
-  and near-blank frames; unsupported findings still fall back to the staged
-  selected-segment regeneration path.
+  and near-blank frames. Deterministic repair results now show the repair mode,
+  source segment/still/review-frame attribution, and before/after summaries of
+  the bounded SceneGraph parameter change; unsupported findings still fall
+  back to one staged selected-segment regeneration path.
   Browser/canvas visual review and automatic segment repair are not active yet
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration
@@ -444,10 +446,11 @@ Use visual-review repair actions from the Studio page:
 - `立即修复分镜` uses the same repair prompt and immediately runs one
   repair attempt for that target segment. For supported `scene-graph` findings,
   the panel applies deterministic parameter repair and shows
-  `确定性修复已应用`; unsupported findings fall back to selected-segment
-  regeneration and show `已回退到分镜重生成`. The panel still shows `修复中`,
-  `分镜修复已完成`, or `分镜修复失败` with the target segment id and backend error
-  message when regeneration is used.
+  `确定性修复已应用` with repair mode, source still / review-frame attribution,
+  and before/after SceneGraph summaries; unsupported findings fall back to one
+  selected-segment regeneration and show `已回退到分镜重生成` with the fallback
+  reason. The panel still shows `修复中`, `分镜修复已完成`, or `分镜修复失败` with
+  the target segment id and backend error message when regeneration is used.
 
 Validate deterministic visual repair behavior:
 ```bash

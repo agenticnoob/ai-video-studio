@@ -150,13 +150,15 @@ Current executable strategy note:
   still and open its source PNG directly from the Studio panel. Findings that
   can be mapped to a segment can be explicitly applied to the selected-segment
   revision input as structured repair prompts or used to manually trigger one
-  target-segment regeneration through the existing staged segment regeneration
-  path. That manual repair action reports explicit running, success, and
-  failure diagnostics for the target segment instead of silently swallowing
-  staged regeneration errors. For supported `scene-graph` still-analysis
-  findings, it first applies deterministic parameter repair to the existing
-  SceneGraph; unsupported findings fall back to the staged selected-segment
-  regeneration path.
+  target-segment repair through the existing staged segment regeneration path.
+  That manual repair action reports explicit running, success, and failure
+  diagnostics for the target segment instead of silently swallowing staged
+  regeneration errors. For supported `scene-graph` still-analysis findings, it
+  first applies deterministic parameter repair to the existing SceneGraph and
+  returns repair mode, source segment/still/review-frame attribution, and
+  before/after summaries for the bounded SceneGraph parameter change;
+  unsupported findings fall back to one staged selected-segment regeneration
+  path.
   Browser/canvas review and automatic segment repair remain deferred.
 
 ## 2. Authoritative Terminology
@@ -562,9 +564,10 @@ Initial render strategy vocabulary:
 
 The current bounded roadmap stage is Review / Repair Loop v1 groundwork:
 surface deterministic `VisualReviewFinding` diagnostics, representative
-`reviewFrames[]` planning, and explicit still image extraction first, then add
-bounded browser/canvas review and target-segment repair in later slices. Later
-phases should still follow the order defined by
+`reviewFrames[]` planning, explicit still image extraction, per-still pixel
+analysis, and one user-triggered target-segment repair path with deterministic
+SceneGraph summaries. Browser/canvas review and automatic repair loops remain
+later slices. Later phases should still follow the order defined by
 `docs/VISUAL_IR_COMPILER_ROADMAP.md`.
 
 ### 4.1 Planner Template Manifest

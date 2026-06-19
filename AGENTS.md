@@ -176,14 +176,16 @@ The first staged-generation groundwork is also in place:
   `reviewReason`, and the Studio panel can open the source PNG still for those
   findings. Segment-addressable findings can be explicitly applied to the
   selected-segment revision input as a structured repair prompt or used to
-  manually trigger one target-segment regeneration through the existing staged
+  manually trigger one target-segment repair through the existing staged
   segment regeneration path. That manual repair action now reports explicit
   running, success, and failure diagnostics for the target segment. For
   `scene-graph` segments, it first attempts bounded deterministic SceneGraph
   parameter repair for low contrast, unsafe margins, empty borders, fine detail
-  density, and near-blank frames; unsupported findings fall back to the staged
-  selected-segment regeneration path. Browser/canvas review and automatic
-  segment repair are not active yet.
+  density, and near-blank frames. Deterministic repair results include repair
+  mode, source segment/still/review-frame attribution, and before/after
+  summaries for the bounded SceneGraph parameter change; unsupported findings
+  fall back to one staged selected-segment regeneration path. Browser/canvas
+  review and automatic segment repair are not active yet.
   Unrestricted generated TSX and executable `media_asset_composite` rendering
   remain out of scope.
 - Scene graph provider-output hardening is intentionally bounded: selected

@@ -1,7 +1,7 @@
 import { SCENE_GRAPH_TEMPLATE_ID } from "../templates/ids";
 import { sceneGraphSpecSchema, type SceneGraphSpec } from "../templates/scene-graph/schema";
 import type { VideoSegment } from "./project-schema";
-import type { VisualReviewStillAnalysis } from "./visual-review-schema";
+import type { VisualReviewFinding, VisualReviewStillAnalysis } from "./visual-review-schema";
 
 type VisualRepairStatus = VisualReviewStillAnalysis["status"];
 
@@ -19,8 +19,19 @@ type DeterministicVisualRepairPlan = {
 };
 
 type AppliedDeterministicVisualRepair = {
+  afterSummary: string;
+  beforeSummary: string;
   description: string;
+  source: DeterministicVisualRepairSource;
   type: DeterministicVisualRepairType;
+};
+
+type DeterministicVisualRepairSource = {
+  frame?: number;
+  reviewReason?: VisualReviewFinding["reviewReason"];
+  segmentId: string;
+  status: VisualRepairStatus;
+  stillId?: string;
 };
 
 type SceneGraphBackgroundLayer = Extract<SceneGraphSpec["layers"][number], { type: "background" }>;
@@ -30,10 +41,12 @@ export type DeterministicVisualRepairResult =
   | {
       appliedRepairs: AppliedDeterministicVisualRepair[];
       segment: VideoSegment;
+      source: DeterministicVisualRepairSource;
       status: "repaired";
     }
   | {
       reason: string;
+      source: DeterministicVisualRepairSource;
       status: "unsupported";
     };
 
@@ -229,16 +242,72 @@ const applyRepairPlan = (
   }
 };
 
+const getRepairSource = (
+  segment: VideoSegment,
+  finding: unknown,
+  status: VisualRepairStatus,
+): DeterministicVisualRepairSource => {
+  const candidate = finding as Partial<VisualReviewFinding> | undefined;
+  return {
+    ...(typeof candidate?.frame === "number" ? { frame: candidate.frame } : {}),
+    ...(candidate?.reviewReason ? { reviewReason: candidate.reviewReason } : {}),
+    segmentId:
+      typeof candidate?.targetId === "string" && candidate.targetId.trim()
+        ? candidate.targetId.trim()
+        : segment.id,
+    status,
+    ...(typeof candidate?.stillId === "string" && candidate.stillId.trim()
+      ? { stillId: candidate.stillId.trim() }
+      : {}),
+  };
+};
+
+const countLayerType = (spec: SceneGraphSpec, layerType: SceneGraphSpec["layers"][number]["type"]) =>
+  spec.layers.filter((layer) => layer.type === layerType).length;
+
+const getRepairSummary = (
+  spec: SceneGraphSpec,
+  repairType: DeterministicVisualRepairType,
+): string => {
+  if (repairType === "boost_contrast") {
+    return `theme background ${spec.theme.background}, text ${spec.theme.text}, primary ${spec.theme.primary}`;
+  }
+  if (repairType === "apply_safe_layout") {
+    return `layout ${spec.layout}, captionSafeZone ${spec.captionSafeZone ? "on" : "off"}, camera ${spec.camera.intensity}`;
+  }
+  if (repairType === "remove_empty_border") {
+    return `composition ${spec.composition}, layout ${spec.layout}, camera ${spec.camera.movement}`;
+  }
+  if (repairType === "reduce_detail_density") {
+    const nodeCount = spec.layers
+      .filter((layer): layer is SceneGraphNodeLayer => layer.type === "node-graph")
+      .reduce((total, layer) => total + layer.nodes.length, 0);
+    const detailLineCount = spec.layers.reduce((total, layer) => {
+      if (layer.type === "code-panel" || layer.type === "terminal-panel") {
+        return total + layer.lines.length;
+      }
+      return total;
+    }, 0);
+    return `${nodeCount} graph nodes, ${detailLineCount} detail lines`;
+  }
+  return `${countLayerType(spec, "kinetic-title")} title layers, ${countLayerType(
+    spec,
+    "shape",
+  )} shape layers`;
+};
+
 export const applyDeterministicVisualRepair = (
   segment: VideoSegment,
-  _finding: unknown,
+  finding: unknown,
   status: VisualRepairStatus,
 ): DeterministicVisualRepairResult => {
   const plan = getDeterministicVisualRepairPlan(status);
+  const source = getRepairSource(segment, finding, status);
 
   if (!plan) {
     return {
       reason: `No deterministic repair is available for visual-review status "${status}".`,
+      source,
       status: "unsupported",
     };
   }
@@ -246,16 +315,19 @@ export const applyDeterministicVisualRepair = (
   if (segment.templateId !== SCENE_GRAPH_TEMPLATE_ID) {
     return {
       reason: "Deterministic visual repair v1 only supports scene-graph segments.",
+      source,
       status: "unsupported",
     };
   }
 
-  const repairedSpec = applyRepairPlan(segment.implementation as SceneGraphSpec, segment, plan);
+  const originalSpec = segment.implementation as SceneGraphSpec;
+  const repairedSpec = applyRepairPlan(originalSpec, segment, plan);
   const parsedSpec = sceneGraphSpecSchema.safeParse(repairedSpec);
 
   if (!parsedSpec.success) {
     return {
       reason: "Deterministic visual repair produced an invalid SceneGraph.",
+      source,
       status: "unsupported",
     };
   }
@@ -263,7 +335,10 @@ export const applyDeterministicVisualRepair = (
   return {
     appliedRepairs: [
       {
+        afterSummary: getRepairSummary(parsedSpec.data, plan.repairType),
+        beforeSummary: getRepairSummary(originalSpec, plan.repairType),
         description: plan.description,
+        source,
         type: plan.repairType,
       },
     ],
@@ -271,6 +346,7 @@ export const applyDeterministicVisualRepair = (
       ...segment,
       implementation: parsedSpec.data,
     } as VideoSegment,
+    source,
     status: "repaired",
   };
 };

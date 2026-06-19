@@ -467,6 +467,10 @@ Current landing:
   layout, letterbox/pillarbox switches to full-bleed hero composition, fine
   detail density trims dense node/code/terminal content, and near-blank frames
   add primary title/frame layers.
+- deterministic repair results carry explicit source attribution and
+  before/after summaries: target segment id, still-analysis status, source
+  still id, review-frame reason, frame, repair mode, and a concise summary of
+  the SceneGraph fields changed by the bounded operator.
 - unsupported findings still fall back to the explicit selected-segment staged
   regeneration path. No browser/canvas review, automatic repair loop, or
   provider prompt repair loop is active yet.
@@ -524,7 +528,8 @@ keep deterministic `VisualReviewFinding` diagnostics, representative
 review-frame planning, explicit still image extraction, and bounded
 still-analysis findings stable. Manual target-segment repair now has explicit
 Studio diagnostics and the first deterministic `scene-graph` parameter repair
-operators; unsupported findings fall back to one selected-segment regeneration.
+operators with source attribution and before/after summaries; unsupported
+findings fall back to one selected-segment regeneration.
 The next slices can add browser/canvas review and richer repair attempts later.
 The next slices should preserve VideoProject preview/export compatibility,
 avoid browser automation as the default validation path, and keep repair

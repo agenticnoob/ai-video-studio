@@ -69,12 +69,13 @@ Product direction:
   review result can point back to the triggering representative still and open
   its source PNG. Segment-addressable findings can be explicitly copied into
   the selected-segment revision flow as structured repair prompts or used for
-  one user-triggered target-segment regeneration through the existing staged
-  segment regeneration path, with visible running/success/failure diagnostics
-  for that repair attempt. Supported `scene-graph` still-analysis findings
-  first use bounded deterministic parameter repair before falling back to
-  selected-segment regeneration; browser/canvas review and automatic
-  target-segment repair remain future bounded slices
+  one user-triggered target-segment repair through the existing staged segment
+  regeneration path, with visible running/success/failure diagnostics for that
+  repair attempt. Supported `scene-graph` still-analysis findings first use
+  bounded deterministic parameter repair and expose repair mode, source
+  segment/still/review-frame attribution, and before/after summaries; unsupported
+  findings fall back to one selected-segment regeneration. Browser/canvas review
+  and automatic target-segment repair remain future bounded slices
 - final generation should be staged: storyboard planning first, per-segment
   TTS second, selected visual implementation compilation third, project
   assembly last

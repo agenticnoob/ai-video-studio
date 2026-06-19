@@ -7,14 +7,16 @@ import { PreviewPanel } from "../components/project/PreviewPanel";
 import { ProjectSummary } from "../components/project/ProjectSummary";
 import { SegmentEditor } from "../components/project/SegmentEditor";
 import { SegmentList } from "../components/project/SegmentList";
-import { VisualReviewPanel } from "../components/project/VisualReviewPanel";
+import {
+  VisualReviewPanel,
+  type VisualReviewRepairSource,
+} from "../components/project/VisualReviewPanel";
 import { Card } from "../components/ui/Card";
 import { RenderControls } from "../components/ui/RenderControls";
 import { useProjectGeneration } from "../helpers/use-project-generation";
 import { useRendering } from "../helpers/use-rendering";
 import { useVisualReview } from "../helpers/use-visual-review";
 import { applyDeterministicVisualRepair } from "../lib/deterministic-visual-repair";
-import type { VisualReviewStillAnalysis } from "../lib/visual-review-schema";
 
 const Home: NextPage = () => {
   const generation = useProjectGeneration();
@@ -51,25 +53,33 @@ const Home: NextPage = () => {
   const regenerateSelectedSegmentFromVisualReview = async (
     segmentId: string,
     prompt: string,
-    analysisStatus?: VisualReviewStillAnalysis["status"],
+    repairSource: VisualReviewRepairSource,
   ) => {
     applyVisualReviewRepairPrompt(segmentId, prompt);
     const targetSegment = generation.normalizedProject.segments.find(
       (segment) => segment.id === segmentId,
     );
 
-    if (targetSegment && analysisStatus) {
+    if (targetSegment && repairSource.status) {
       const deterministicRepair = applyDeterministicVisualRepair(
         targetSegment,
-        { message: prompt, targetId: segmentId },
-        analysisStatus,
+        {
+          frame: repairSource.frame,
+          message: prompt,
+          reviewReason: repairSource.reviewReason,
+          stillId: repairSource.stillId,
+          targetId: segmentId,
+        },
+        repairSource.status,
       );
 
       if (deterministicRepair.status === "repaired") {
         generation.updateSegment(deterministicRepair.segment);
         return {
-          appliedRepairs: deterministicRepair.appliedRepairs.map((repair) => repair.description),
+          appliedRepairs: deterministicRepair.appliedRepairs,
           mode: "deterministic" as const,
+          repairMode: "deterministic" as const,
+          repairSource: deterministicRepair.source,
         };
       }
     }
@@ -83,7 +93,14 @@ const Home: NextPage = () => {
       throw new Error(repairResult.error);
     }
 
-    return { mode: "regenerated" as const };
+    return {
+      fallbackReason: repairSource.status
+        ? `Deterministic repair was unavailable for ${repairSource.status}.`
+        : "No still-analysis repair status was available.",
+      mode: "regenerated" as const,
+      repairMode: "regenerated" as const,
+      repairSource,
+    };
   };
 
   return (

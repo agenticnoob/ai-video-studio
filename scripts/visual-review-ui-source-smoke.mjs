@@ -77,6 +77,12 @@ const main = async () => {
   assertIncludes(pageSource, "applyDeterministicVisualRepair", "Studio page");
   assertIncludes(pageSource, "generation.updateSegment", "Studio page");
   assertIncludes(panelSource, "确定性修复已应用", "Visual review repair action");
+  assertIncludes(panelSource, "repairMode", "Visual review repair attribution");
+  assertIncludes(panelSource, "repairSource", "Visual review repair attribution");
+  assertIncludes(panelSource, "beforeSummary", "Visual review repair summary");
+  assertIncludes(panelSource, "afterSummary", "Visual review repair summary");
+  assertIncludes(panelSource, "source still", "Visual review repair attribution");
+  assertIncludes(panelSource, "review reason", "Visual review repair attribution");
   assertIncludes(panelSource, "已回退到分镜重生成", "Visual review repair action");
   assertIncludes(generationActionsSource, "GenerationActionResult", "Generation actions");
   assertIncludes(generationActionsSource, "return { ok: false, error:", "Generation actions");

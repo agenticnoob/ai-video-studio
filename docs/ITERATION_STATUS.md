@@ -1,6 +1,29 @@
 # Iteration Status
 
-Last updated: DeepSeek planner schema recovery and procedural routing fix
+Last updated: Visual Review repair attribution and summary hardening
+
+## Latest continuation — Visual Review repair attribution and summary hardening
+
+- Hardened the current Phase 6 manual repair loop so every deterministic
+  repair result carries explicit source attribution: target segment id,
+  still-analysis status, source still id, review-frame reason, and frame when
+  available.
+- Added before/after repair summaries for deterministic SceneGraph operators,
+  so Studio can show what changed instead of only saying that a repair was
+  applied.
+- Updated the Studio visual-review repair result panel to show the repair mode,
+  source still/review reason, deterministic before/after summaries, and the
+  fallback reason when unsupported findings use the existing one-shot
+  selected-segment regeneration path.
+- Kept the boundary unchanged: repair is still explicit and user-triggered,
+  unsupported findings still fall back to one staged selected-segment
+  regeneration, and browser/canvas review plus automatic repair loops remain
+  deferred.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:visual-repair'` (red first for missing repair attribution/summaries, then green)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:visual-review-ui'` (red first for missing UI source/summary markers, then green)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
 
 ## Latest continuation — DeepSeek planner schema recovery and procedural routing fix
 

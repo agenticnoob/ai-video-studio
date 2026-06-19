@@ -92,6 +92,17 @@ const assertRepair = (status, expectedRepairType) => {
     result.appliedRepairs.some((repair) => repair.type === expectedRepairType),
     `expected repair ${expectedRepairType}`,
   );
+  assert.ok(
+    result.appliedRepairs.every(
+      (repair) =>
+        repair.beforeSummary &&
+        repair.afterSummary &&
+        repair.source.status === status &&
+        repair.source.segmentId === "seg-scene" &&
+        repair.source.stillId === "still-1",
+    ),
+    "expected repair attribution plus before/after summaries",
+  );
 
   return result.segment.implementation;
 };
@@ -166,6 +177,8 @@ const unsupportedResult = applyDeterministicVisualRepair(
   "low_contrast_frame",
 );
 assert.equal(unsupportedResult.status, "unsupported");
+assert.equal(unsupportedResult.source.status, "low_contrast_frame");
+assert.equal(unsupportedResult.source.segmentId, "spotlight-seg");
 
 const plan = getDeterministicVisualRepairPlan("low_contrast_frame");
 assert.equal(plan?.repairType, "boost_contrast");
