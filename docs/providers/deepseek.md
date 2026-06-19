@@ -17,7 +17,8 @@ In scope:
   and template compiler prompts.
 - `src/lib/deepseek/parse-storyboard-plan.ts` and
   `src/lib/deepseek/parse-template-implementation.ts` validate provider output
-  with the existing Zod contracts.
+  with the existing Zod contracts after only bounded provider-boundary
+  normalization.
 - `POST /api/generate/staged` remains the active generation endpoint.
 
 Out of scope:
@@ -39,6 +40,28 @@ Narration uses the F5-TTS variables documented in
 [`docs/providers/f5-tts.md`](f5-tts.md). `TTS_PROVIDER` is now F5-only:
 leave it empty or set it to `f5-tts`.
 
+## JSON Mode Boundary
+
+DeepSeek uses AI SDK JSON mode / `response_format`, not a provider function
+tool schema. That keeps the provider integration simpler, but the repo must
+own the exact validation boundary.
+
+The parser is strict-first:
+
+- final acceptance always requires the `StoryboardPlan` or selected template
+  Zod schema to pass.
+- missing `segments[].purpose` can be recovered from existing segment title,
+  narration text, visual brief, or the plan brief.
+- missing `proceduralGenerator.title` can default from the segment title or
+  purpose.
+- numeric `proceduralGenerator.data.beats[].time` aliases are normalized to
+  `beats[].atFrame`.
+
+This is not a generic repair system. Unknown template ids, unsupported
+strategies, bad refs, arbitrary generator ids, invalid ranges, unexpected
+schema shapes, generated TSX, and provider-authored code remain validation
+failures.
+
 ## Generation Flow
 
 1. `generateStagedProjectFromBrief()` calls `deepseekGenerateStoryboardPlan()`.
@@ -55,6 +78,13 @@ target segment, F5-TTS regenerates its narration, DeepSeek recompiles its
 visual implementation, and non-target segments are preserved by the staged
 replacement helper.
 
+The planner prompt routes deterministic workflow, node graph, agent loop,
+system-flow, journey, timeline, terminal, build/test, and deploy trace briefs
+toward `scene-graph` + bounded `procedural_generator` payloads. Current
+provider-facing generators are `node-graph-flow`, `line-path-flow`, and
+`terminal-session`; all compile deterministically into actual
+`primitive_scene_graph` output before project assembly.
+
 ## Error Mapping
 
 | Failure | HTTP |
@@ -68,3 +98,15 @@ replacement helper.
 | F5-TTS runtime/network/audio failure | 502 |
 
 The route does not fall back to mock generation or MiniMax.
+
+## Validation
+
+- `npm run smoke:storyboard-parser` covers the bounded JSON-mode recovery
+  cases.
+- `npm run smoke:provider-boundary` covers provider-boundary parsing without
+  live network calls.
+- `npm run smoke:staged-live` calls the live staged route with DeepSeek plus
+  F5-only narration. It verifies the normal workflow brief naturally selects a
+  `scene-graph` `node-graph-flow` procedural generator, then exercises direct
+  SceneGraph, forced node graph, line path, terminal session, narration,
+  diagnostics, and byte-range audio serving.

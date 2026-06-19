@@ -47,7 +47,8 @@ state, and selected-segment regeneration preserves the existing segment if
 repeated scene-graph validation fails. Full-project generation falls back from
 repeated scene-graph compiler failure to a deterministic `spotlight` macro
 segment when there is no existing segment to preserve. `scripts/staged-live-smoke.mjs`
-now covers the normal provider-backed brief path, a forced
+now covers the normal provider-backed brief path that should naturally select
+`scene-graph` + `node-graph-flow` procedural generation, a forced
 `primitive_scene_graph` plan smoke, a forced `procedural_generator`
 `node-graph-flow` plan smoke, a forced `line-path-flow` plan smoke, and a
 forced `terminal-session` plan smoke with real F5 narration.
@@ -65,8 +66,12 @@ normal `scene-graph` `VideoSegment` results with staged diagnostics for
 planned generator output, compiled render strategy, and bounded macro
 fallback. The DeepSeek storyboard planner prompt can now emit bounded
 `node-graph-flow`, `line-path-flow`, and `terminal-session` payloads on
-`scene-graph` segments, and live staged smoke has validated provider-selected
-`procedural_generator` compiling to actual `primitive_scene_graph`. The
+`scene-graph` segments; deterministic workflow, node graph, agent loop,
+system-flow, journey, timeline, terminal, build/test, and deploy trace briefs
+are explicitly routed toward that bounded procedural path instead of
+card-only macros or brittle direct Visual IR. Live staged smoke has validated
+provider-selected `procedural_generator` compiling to actual
+`primitive_scene_graph`. The
 procedural compiler aligns generator payload duration to real narration
 duration before segment assembly, so the project timeline does not advance to
 the next segment before generated audio finishes.
@@ -117,7 +122,10 @@ Current implementation snapshot:
   `src/lib/deepseek/parse-storyboard-plan.ts`,
   `src/lib/deepseek/parse-template-implementation.ts`, and
   `src/lib/deepseek/index.ts` provide the active DeepSeek JSON-mode
-  planner/compiler facade.
+  planner/compiler facade. Planner parsing is strict-first with bounded
+  normalization only for observed JSON-mode near-misses: missing segment
+  `purpose`, missing `proceduralGenerator.title`, and numeric `beats[].time`
+  aliases are normalized before the full `StoryboardPlan` schema check.
 - `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`,
   and `/api/tts/assets/...` provide the first internal TTS asset boundary for
   planned segment narration, including local artifact writing and ffprobe
@@ -250,7 +258,9 @@ Template context should be split by generation stage:
   and `terminal-session` payloads on `scene-graph` segments. These payloads
   are structured data only and compile deterministically into actual
   `primitive_scene_graph`, with `template_macro` fallback on generator compile
-  failure.
+  failure. Parser recovery stays limited to known structural near-misses and
+  does not accept unknown generator ids, unsupported strategies, broken refs,
+  arbitrary fields, or provider-authored code.
 - Narration provider context: segment narration text, language, voice or
   speaker profile, and deterministic artifact identity; it should return audio
   metadata and aligned captions when available.

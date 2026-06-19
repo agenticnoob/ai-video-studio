@@ -238,15 +238,17 @@ Current landing:
   `confidence`, `reason`, and `fallbackStrategy` data for every planned
   segment.
 - The current executable strategy schema is intentionally limited to
-  `template_macro` and `primitive_scene_graph`.
-- `scene-graph` must choose `primitive_scene_graph` with an explicit
-  `template_macro` fallback; registered macro templates must choose
-  `template_macro`.
+  `template_macro`, `primitive_scene_graph`, and bounded
+  `procedural_generator` for `scene-graph` + `node-graph-flow`,
+  `line-path-flow`, or `terminal-session`.
+- `scene-graph` may choose direct `primitive_scene_graph` or one of the
+  bounded procedural generators, always with an explicit fallback; registered
+  macro templates must choose `template_macro`.
 - staged compiler diagnostics expose both the planner `strategyDecision` and
   the actual post-fallback `renderStrategy`.
-- future strategies such as `procedural_generator`,
-  `media_asset_composite`, and `generated_component` remain roadmap vocabulary
-  until their compiler paths are implemented.
+- future strategies such as `media_asset_composite` and
+  `generated_component` remain roadmap vocabulary until their compiler paths
+  are implemented.
 
 ### Phase 4: Procedural Generator v1
 
@@ -294,6 +296,10 @@ Current groundwork:
 - The provider-facing storyboard planner prompt/schema can now emit
   `procedural_generator` only for `scene-graph` segments with bounded
   `node-graph-flow`, `line-path-flow`, or `terminal-session` payloads.
+- The planner prompt explicitly routes deterministic workflow, node graph,
+  agent-loop, system-flow, journey, timeline, terminal, build/test, and deploy
+  trace briefs toward `scene-graph` + `procedural_generator` instead of
+  falling back to card-only macro templates.
 - Execution remains deterministic: generated payloads compile through the
   existing procedural compiler into actual `primitive_scene_graph` output, with
   `template_macro` fallback on compile failure.
@@ -303,6 +309,11 @@ Current groundwork:
 - Provider-backed planning is not open-ended; no other generator ids,
   `media_asset_composite`, `generated_component`, generated TSX, or arbitrary
   code execution are accepted.
+- Provider-boundary parser recovery is intentionally narrow: known JSON-mode
+  near-misses such as missing `proceduralGenerator.title` and numeric
+  `beats[].time` aliases are normalized before schema validation, while
+  unknown ids, unsupported strategies, bad refs, arbitrary fields, and
+  provider-authored code remain hard failures.
 - provider-backed live smoke now includes a normal brief that naturally
   selects `node-graph-flow`, plus forced plan-mode smokes for
   `node-graph-flow`, `line-path-flow`, and `terminal-session`; all compile

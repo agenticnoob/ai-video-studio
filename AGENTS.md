@@ -78,6 +78,10 @@ The first staged-generation groundwork is also in place:
   `src/lib/deepseek/parse-template-implementation.ts`, and
   `src/lib/deepseek/index.ts` expose the active DeepSeek JSON-mode
   planner/compiler facade.
+- The DeepSeek storyboard parser remains strict-first: it runs final Zod
+  validation after only bounded provider-boundary normalization for observed
+  JSON-mode near-misses such as missing segment `purpose`, missing
+  `proceduralGenerator.title`, and numeric `beats[].time` aliases.
 - `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`, and
   `/api/tts/assets/...` provide the first internal TTS asset boundary for one
   planned segment's narration, including local audio artifacts and measured
@@ -145,10 +149,14 @@ The first staged-generation groundwork is also in place:
   presets, motion presets, and internal primitives for full-bleed title, node
   graph, line path, code panel, terminal panel, browser-window placeholder,
   cursor, and lockup treatments. Provider-backed `primitive_scene_graph`
-  generation/repair is implemented, and the provider-facing planner/tool
-  schema can now select bounded `procedural_generator` only for
+  generation/repair is implemented, and the provider-facing planner
+  prompt/schema can now select bounded `procedural_generator` only for
   `scene-graph` + `node-graph-flow`, `line-path-flow`, or `terminal-session`
-  payloads. Those payloads compile deterministically into actual
+  payloads. The DeepSeek planner prompt routes deterministic workflow,
+  node-graph, agent-loop, system-flow, journey, timeline, terminal, build/test,
+  and deploy-trace briefs toward these bounded procedural generators rather
+  than card-only macro templates or brittle direct Visual IR. Those payloads
+  compile deterministically into actual
   `primitive_scene_graph`, with generator duration aligned to real narration
   duration so the project timeline does not advance before segment audio
   finishes. Phase 5 asset-plan groundwork has started: `StoryboardPlan` can
@@ -182,7 +190,11 @@ The first staged-generation groundwork is also in place:
   template parsing can unwrap one `implementation` / `result` / `data` field
   and parse JSON-string payloads, while the SceneGraph schema normalizes only
   known primitive aliases/defaults before final validation. This is not a
-  generic free-form repair system.
+  generic free-form repair system. Storyboard planner parsing follows the same
+  principle: missing `purpose`, missing procedural-generator title, and numeric
+  `beats[].time` aliases are recovered only before the full schema check;
+  unknown ids, unsupported strategies, bad refs, and arbitrary generator fields
+  remain validation failures.
   `docs/VISUAL_IR_COMPILER_ROADMAP.md` is the authoritative multi-phase
   roadmap.
 - The optional `f5-tts` Docker service is implemented with contract-smoke mode
@@ -259,7 +271,8 @@ Keep the next iteration focused on:
 10. use deterministic smoke fixtures and a full provider-backed
    `POST /api/generate/staged` live smoke to harden mixed registered-template,
    direct `primitive_scene_graph`, and bounded provider-facing
-   `procedural_generator` output before widening scope
+   `procedural_generator` output before widening scope; the normal live brief
+   should keep naturally selecting `scene-graph` + `node-graph-flow`
 11. keep `assetPlan` as validated planner/diagnostics data only until asset
    resolution and media-composite rendering have their own bounded slice
 12. do not widen into persistence/history, generic media-layer work, or

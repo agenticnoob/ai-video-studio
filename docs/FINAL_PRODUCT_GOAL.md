@@ -120,12 +120,15 @@ Current executable strategy note:
   deterministic modules such as `node-graph-flow`, `line-path-flow`, and
   `terminal-session`; these paths compile deterministically to SceneGraph,
   expose staged diagnostics metadata, and support guarded execution for
-  bounded generator payloads. The provider-facing storyboard planner/tool
-  schema can currently select `procedural_generator` only for `scene-graph`
+  bounded generator payloads. The provider-facing storyboard planner
+  prompt/schema can currently select `procedural_generator` only for `scene-graph`
   segments with bounded `node-graph-flow`, `line-path-flow`, or
   `terminal-session` payloads. The actual compiled render path remains
   `primitive_scene_graph`, with generator duration aligned to real narration
-  duration and `template_macro` fallback on generator compilation failure.
+  duration and `template_macro` fallback on generator compilation failure. The
+  active DeepSeek planner prompt routes deterministic workflow, node graph,
+  agent loop, system-flow, journey, timeline, terminal, build/test, and deploy
+  trace briefs toward this bounded procedural path.
 - Phase 5 has landed as a planner-stage `assetPlan` boundary: storyboard
   plans may request concrete future assets by stable id, kind, purpose, and
   fallback. This is diagnostic planning data only; it does not make
@@ -269,6 +272,9 @@ Planner responsibilities:
   compilation; this phase supports `template_macro`, `primitive_scene_graph`,
   and bounded `procedural_generator` only for `scene-graph` +
   `node-graph-flow`, `line-path-flow`, or `terminal-session`
+- route deterministic workflow / system / terminal / agent-loop briefs to
+  `scene-graph` + `procedural_generator` when the requested visual structure
+  is better represented by a bounded generator than by card macro templates
 - write a narration draft for each segment
 - describe the visual content each segment should roughly show
 - preserve global continuity across all segments
@@ -712,6 +718,13 @@ Current compatibility notes:
 - The F5-TTS provider is implemented as part of this project. It can call a
   local service/process/container, but the repo owns the provider contract,
   config, artifact writing, caption normalization, and fallback path.
+- DeepSeek JSON-mode planner output remains strict-first. The storyboard parser
+  performs only bounded provider-boundary normalization for observed near
+  misses such as missing segment `purpose`, missing
+  `proceduralGenerator.title`, and numeric `beats[].time` aliases before final
+  Zod validation. Unknown template ids, unsupported strategies, bad refs,
+  arbitrary generator ids, and free-form provider output must still fail
+  validation instead of being silently repaired.
 
 ## 7. Roadmap
 
@@ -736,11 +749,11 @@ Implemented capability:
 Known limitation:
 
 - the active staged page path now uses planner -> TTS -> compiler -> assembly,
-  with bounded planner repair and deterministic mixed-template smoke fixtures;
-  segment-owned narration audio/captions and the Next-side F5 adapter are in
-  place; the optional F5 runtime service has passed GPU real-mode direct,
-  Next-adapter, deterministic staged, and staged-export smoke coverage;
-  provider-backed full staged-route live smoke coverage still needs hardening
+  with bounded planner repair, strict-first DeepSeek JSON-mode parsing, and
+  deterministic mixed-template smoke fixtures; segment-owned narration
+  audio/captions and the Next-side F5 adapter are in place; the optional F5
+  runtime service has passed GPU real-mode direct, Next-adapter, deterministic
+  staged, staged-export, and provider-backed staged-route live smoke coverage
 
 ### Milestone 1: Authoritative Goal And Contracts
 

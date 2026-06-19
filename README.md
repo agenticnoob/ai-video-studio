@@ -34,6 +34,11 @@ Current implementation status:
 - the first storyboard-planning contract is in place as a server-safe schema,
   compact registered-template manifest, validated render strategy decisions,
   and DeepSeek JSON-mode planner/compiler facade
+- DeepSeek planner output is strict-first JSON: provider output is still
+  validated by the `StoryboardPlan` Zod contract, with only bounded
+  provider-boundary normalization for observed near-misses such as missing
+  segment `purpose`, missing `proceduralGenerator.title`, and numeric
+  `beats[].time` aliases
 - the first TTS asset boundary is in place for planned segments:
   `SegmentNarrationAsset`, internal `POST /api/tts`, local TTS audio artifacts
   under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts`, sidecar
@@ -59,7 +64,11 @@ Current implementation status:
   Provider planning can select bounded `node-graph-flow`, `line-path-flow`,
   and `terminal-session` payloads for `scene-graph` segments. All actual
   rendering still compiles through `primitive_scene_graph`, and generator
-  segment duration is aligned to real narration duration before assembly
+  segment duration is aligned to real narration duration before assembly. The
+  planner prompt now routes deterministic workflow, node graph, agent loop,
+  system-flow, journey, timeline, terminal, build/test, and deploy trace briefs
+  toward `scene-graph` + `procedural_generator` instead of card-only macro
+  templates or brittle direct Visual IR
 - asset-plan groundwork has started for Phase 5: `StoryboardPlan` can carry
   top-level `assetPlan.requiredAssets[]` entries with stable ids, bounded
   kinds, purpose, and fallback. This is planner/diagnostics data only; it does
@@ -273,7 +282,9 @@ Current code checkpoint:
 - active page generation uses `POST /api/generate/staged`
 - staged-generation groundwork: `StoryboardPlan` schema, planner manifest, and
   internal DeepSeek planner/compiler facade are implemented, including validated
-  per-segment strategy decisions
+  per-segment strategy decisions and bounded JSON-mode parser normalization for
+  missing `purpose`, missing procedural-generator title, and numeric
+  `beats[].time` aliases
 - TTS groundwork: internal `POST /api/tts` can generate and serve a
   `SegmentNarrationAsset` for one planned segment when F5-TTS is
   configured
@@ -297,7 +308,9 @@ Current code checkpoint:
   editor; the segment editor uses a horizontal drag-scroll segment strip plus
   compact selected-segment forms
 - basic bounded planner repair is in place for invalid `StoryboardPlan`
-  output
+  output; this is intentionally narrow and does not repair unknown template
+  ids, invalid strategies, broken references, arbitrary generator ids, or
+  free-form provider output
 - deterministic staged smoke fixtures cover a mixed `scripted` + `spotlight`
   project with segment-owned narration audio/captions and selected-segment
   narration/caption replacement;
@@ -328,8 +341,8 @@ Best next bounded slice:
   staged generation, TTS/F5 provider selection and fallback, frontend
   generation state, Remotion timeline flattening, and smoke entrypoints
 - harden bounded repair/normalization for provider-generated `node-graph-flow`,
-  `line-path-flow`, or `terminal-session` payloads if live output exposes
-  repeated near-misses
+  `line-path-flow`, or `terminal-session` payloads only when live output
+  exposes repeated, well-scoped near-misses
 - keep `POST /api/generate/staged` live smoke covering DeepSeek planner/compiler
   plus F5-only narration for normal brief, direct `primitive_scene_graph`, and
   bounded `procedural_generator` paths; it skips when required credentials are
@@ -497,10 +510,12 @@ npm run smoke:staged-live
 ```
 
 This command calls `POST /api/generate/staged`, checks segment-owned narration
-audio and captions, validates diagnostics, and verifies byte-range serving for
-generated `/api/tts/assets/...` audio. It exits successfully with a skip
-message when `DEEPSEEK_API_KEY` or `F5_TTS_BASE_URL` is missing. To also export
-the generated project through `POST /api/render`, run:
+audio and captions, validates diagnostics, verifies that the normal workflow
+brief naturally selects a `scene-graph` `node-graph-flow`
+`procedural_generator`, and checks byte-range serving for generated
+`/api/tts/assets/...` audio. It exits successfully with a skip message when
+`DEEPSEEK_API_KEY` or `F5_TTS_BASE_URL` is missing. To also export the
+generated project through `POST /api/render`, run:
 
 ```bash
 npm run smoke:staged-live:render
@@ -685,6 +700,12 @@ and selected-template implementation compilation. F5-TTS is the only active
 narration/TTS provider. The assembled `VideoProject` contract is unchanged:
 provider output must still validate against the selected planner/template
 schemas and final project schema.
+
+DeepSeek JSON mode is simpler than the old tool-calling boundary, but it is
+also less structurally constrained by provider-side function parameters. The
+repo keeps that boundary strict: parser recovery is limited to known safe
+normalizations, and schema validation still decides whether a plan or
+implementation is accepted.
 
 ### Environment variables
 
