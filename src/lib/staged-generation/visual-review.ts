@@ -9,21 +9,50 @@ import type {
 } from "../visual-review-schema";
 import { buildVisualReviewStillAnalysisFindings } from "../visual-review-still-findings";
 
+type VisualReviewSummaryOptions = {
+  findings: VisualReviewFinding[];
+  reviewFrames: VisualReviewFrame[];
+  reviewScope?: VisualReviewDiagnostics["reviewScope"];
+  reviewStage?: VisualReviewDiagnostics["reviewStage"];
+};
+
+const getVisualReviewNextAction = ({
+  findings,
+  reviewStage,
+}: {
+  findings: VisualReviewFinding[];
+  reviewStage: VisualReviewDiagnostics["reviewStage"];
+}): VisualReviewDiagnostics["nextAction"] => {
+  if (findings.length > 0) {
+    return "manual_repair";
+  }
+
+  if (reviewStage === "static_preflight") {
+    return "manual_review";
+  }
+
+  return "none";
+};
+
 export const summarizeVisualReviewFindings = ({
   findings,
   reviewFrames,
-}: {
-  findings: VisualReviewFinding[];
-  reviewFrames: VisualReviewFrame[];
-}): VisualReviewDiagnostics => ({
-  status: "static_preflight",
-  errorCount: findings.filter((finding) => finding.severity === "error").length,
-  findingCount: findings.length,
-  findings,
-  reviewFrameCount: reviewFrames.length,
-  reviewFrames,
-  warningCount: findings.filter((finding) => finding.severity === "warning").length,
-});
+  reviewScope = "project",
+  reviewStage = "static_preflight",
+}: VisualReviewSummaryOptions): VisualReviewDiagnostics => {
+  return {
+    status: "static_preflight",
+    errorCount: findings.filter((finding) => finding.severity === "error").length,
+    findingCount: findings.length,
+    findings,
+    nextAction: getVisualReviewNextAction({ findings, reviewStage }),
+    reviewFrameCount: reviewFrames.length,
+    reviewFrames,
+    reviewScope,
+    reviewStage,
+    warningCount: findings.filter((finding) => finding.severity === "warning").length,
+  };
+};
 
 export const mergeVisualReviewStillAnalysisDiagnostics = ({
   diagnostics,
@@ -45,6 +74,8 @@ export const mergeVisualReviewStillAnalysisDiagnostics = ({
   return summarizeVisualReviewFindings({
     findings: [...diagnostics.findings, ...stillAnalysisFindings],
     reviewFrames: diagnostics.reviewFrames,
+    reviewScope: diagnostics.reviewScope,
+    reviewStage: "still_analysis",
   });
 };
 

@@ -412,6 +412,15 @@ Checks:
 Output:
 
 ```ts
+type VisualReviewDiagnostics = {
+  status: "static_preflight"; // compatibility field for existing consumers
+  reviewStage: "static_preflight" | "still_analysis";
+  reviewScope: "project" | "segment";
+  nextAction: "none" | "manual_review" | "manual_repair";
+  findings: VisualReviewFinding[];
+  reviewFrames: VisualReviewFrame[];
+};
+
 type VisualReviewFinding = {
   severity: "info" | "warning" | "error";
   frame?: number;
@@ -436,6 +445,11 @@ Current landing:
   contracts.
 - staged diagnostics now include `visualReview.status: "static_preflight"`
   for full staged generation and selected-segment regeneration.
+- `VisualReviewDiagnostics` also carries compatible phase metadata:
+  `reviewStage` distinguishes static preflight from merged still analysis,
+  `reviewScope` records project-vs-segment scope, and `nextAction` tells the
+  Studio whether the result needs no action, can generate screenshot review,
+  or can manually repair a target segment.
 - the static preflight flags deterministic issues available before still
   extraction: narration audio longer than visual segment duration, caption cues
   that extend past the segment, long caption text, and unresolved planned
@@ -450,7 +464,8 @@ Current landing:
   during normal staged generation.
 - the Studio export workspace now includes a manual visual-review panel that
   calls the still extraction route, shows backend progress, summarizes static
-  findings, and displays the generated representative PNG stills.
+  findings, displays review stage / next-action metadata, and displays the
+  generated representative PNG stills.
 - each rendered still now carries bounded server-side pixel analysis metadata
   for near-blank, low-contrast, unsafe-margin, fine-detail density, and
   letterbox/pillarbox empty-border frame detection, and those still-analysis
@@ -532,7 +547,10 @@ review-frame planning, explicit still image extraction, and bounded
 still-analysis findings stable. Manual target-segment repair now has explicit
 Studio diagnostics and the first deterministic `scene-graph` parameter repair
 operators with source attribution and before/after summaries; unsupported
-findings fall back to one selected-segment regeneration.
+findings fall back to one selected-segment regeneration. The diagnostics
+contract now also exposes `reviewStage`, `reviewScope`, and `nextAction` so
+static preflight, screenshot analysis, and manual repair readiness are
+distinguishable without changing the existing compatibility status field.
 The next slices can add browser/canvas review and richer repair attempts later.
 The next slices should preserve VideoProject preview/export compatibility,
 avoid browser automation as the default validation path, and keep repair

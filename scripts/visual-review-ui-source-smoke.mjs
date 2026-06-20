@@ -100,6 +100,10 @@ const main = async () => {
   assertIncludes(panelSource, "repairSource", "Visual review repair attribution");
   assertIncludes(panelSource, "beforeSummary", "Visual review repair summary");
   assertIncludes(panelSource, "afterSummary", "Visual review repair summary");
+  assertIncludes(panelSource, "reviewStageLabelMap", "Visual review diagnostic metadata");
+  assertIncludes(panelSource, "nextActionLabelMap", "Visual review diagnostic metadata");
+  assertIncludes(panelSource, "state.visualReview.reviewStage", "Visual review diagnostic metadata");
+  assertIncludes(panelSource, "state.visualReview.nextAction", "Visual review diagnostic metadata");
   assertIncludes(panelSource, "source still", "Visual review repair attribution");
   assertIncludes(panelSource, "review reason", "Visual review repair attribution");
   assertIncludes(panelSource, "已回退到分镜重生成", "Visual review repair action");

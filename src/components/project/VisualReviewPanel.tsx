@@ -100,6 +100,17 @@ const stillAnalysisStatusLabelMap = {
   unsupported: "未分析",
 } as const;
 
+const reviewStageLabelMap = {
+  static_preflight: "静态预检",
+  still_analysis: "截图分析",
+} as const;
+
+const nextActionLabelMap = {
+  manual_repair: "可手动修复",
+  manual_review: "可生成截图复核",
+  none: "无需处理",
+} as const;
+
 const buildRepairPrompt = (finding: VisualReviewFinding): string => {
   const parts = [
     "Visual review finding:",
@@ -338,6 +349,17 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
             <div className="rounded-geist border border-panel-border-color bg-background/40 p-3">
               <div className="text-xs uppercase tracking-[0.16em]">错误</div>
               <div className="mt-2 text-xl font-semibold">{state.visualReview.errorCount}</div>
+            </div>
+          </div>
+
+          <div className="rounded-geist border border-panel-border-color bg-background/40 p-3 text-sm leading-6">
+            <div className="flex flex-wrap gap-x-4 gap-y-1">
+              <span>
+                复核阶段：{reviewStageLabelMap[state.visualReview.reviewStage]}
+              </span>
+              <span>
+                下一步：{nextActionLabelMap[state.visualReview.nextAction]}
+              </span>
             </div>
           </div>
 

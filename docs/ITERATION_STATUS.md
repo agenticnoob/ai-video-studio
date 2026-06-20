@@ -1,8 +1,38 @@
 # Iteration Status
 
-Last updated: DeepSeek storyboard draft planner boundary
+Last updated: Phase 6 review diagnostics metadata
 
-## Latest continuation — DeepSeek storyboard draft planner boundary
+## Latest continuation — Phase 6 review diagnostics metadata
+
+- Wrote the complete Phase 6 Review / Repair Loop v1 implementation plan to
+  `docs/superpowers/plans/2026-06-21-phase-6-review-repair-loop.md`.
+  The plan keeps Phase 6 bounded to explicit user-triggered review and repair:
+  static diagnostics, representative stills, still-analysis findings,
+  deterministic `scene-graph` repair, one selected-segment regeneration
+  fallback, and clear verification gates. Browser/canvas review, automatic
+  repair loops, provider prompt repair loops, persistence/history, media
+  composites, and generated components remain deferred.
+- Added compatible `VisualReviewDiagnostics` metadata:
+  `reviewStage`, `reviewScope`, and `nextAction`. The existing
+  `status: "static_preflight"` field stays in place for current consumers,
+  while `reviewStage` now distinguishes static preflight from merged still
+  analysis.
+- `buildStaticVisualReviewDiagnostics()` and
+  `mergeVisualReviewStillAnalysisDiagnostics()` now populate review stage,
+  review scope, and next-action metadata deterministically. Static preflight
+  with findings points to `manual_repair`; static preflight with no findings
+  points to `manual_review`; completed still analysis with no findings points
+  to `none`.
+- The Studio visual-review panel now surfaces the review stage and next action
+  beside the finding/warning/error counts, so the manual review loop explains
+  whether the current result is preflight-only, screenshot-analyzed, needs a
+  manual target repair, can generate screenshot review, or needs no action.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:visual-review-diagnostics'` (red first for missing metadata, then green after schema/helper implementation)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:visual-review-ui'` (red first for missing panel metadata, then green)
+
+## Previous continuation — DeepSeek storyboard draft planner boundary
 
 - Stopped widening the direct DeepSeek-to-`StoryboardPlan` parser as the main
   reliability strategy. The planner provider path now prefers a smaller

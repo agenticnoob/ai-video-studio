@@ -2,11 +2,12 @@
 
 import assert from "node:assert/strict";
 
-import { mergeVisualReviewStillAnalysisDiagnostics } from "../src/lib/staged-generation/visual-review.js";
+import {
+  mergeVisualReviewStillAnalysisDiagnostics,
+  summarizeVisualReviewFindings,
+} from "../src/lib/staged-generation/visual-review.js";
 
-const baseDiagnostics = {
-  errorCount: 1,
-  findingCount: 1,
+const baseDiagnostics = summarizeVisualReviewFindings({
   findings: [
     {
       message:
@@ -17,7 +18,6 @@ const baseDiagnostics = {
       targetId: "seg-scene",
     },
   ],
-  reviewFrameCount: 2,
   reviewFrames: [
     {
       frame: 0,
@@ -30,9 +30,7 @@ const baseDiagnostics = {
       segmentId: "seg-scene",
     },
   ],
-  status: "static_preflight",
-  warningCount: 0,
-};
+});
 
 const extraction = {
   status: "rendered",
@@ -88,7 +86,14 @@ const merged = mergeVisualReviewStillAnalysisDiagnostics({
   extraction,
 });
 
+assert.equal(baseDiagnostics.reviewStage, "static_preflight");
+assert.equal(baseDiagnostics.reviewScope, "project");
+assert.equal(baseDiagnostics.nextAction, "manual_repair");
+
 assert.equal(merged.status, "static_preflight");
+assert.equal(merged.reviewStage, "still_analysis");
+assert.equal(merged.reviewScope, "project");
+assert.equal(merged.nextAction, "manual_repair");
 assert.equal(merged.findingCount, 2);
 assert.equal(merged.errorCount, 1);
 assert.equal(merged.warningCount, 1);
