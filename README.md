@@ -81,7 +81,7 @@ Current implementation status:
   kinds, purpose, and fallback. This is planner/diagnostics data only; it does
   not introduce remote URL fields, upload UI, or executable
   `media_asset_composite` rendering yet
-- review/repair groundwork has started for Phase 6: staged diagnostics include
+- Phase 6 v1 is scoped as a hard-failure review/repair gate: staged diagnostics include
   a static `visualReview` preflight with structured findings for deterministic
   duration, caption, and unresolved planned-asset issues, plus representative
   review frames for each segment's start, midpoint, and end. Explicit still
@@ -104,7 +104,10 @@ Current implementation status:
   source segment/still/review-frame attribution, and before/after summaries of
   the bounded SceneGraph parameter change; unsupported findings still fall
   back to one staged selected-segment regeneration path.
-  Browser/canvas visual review and automatic segment repair are not active yet
+  This is intentionally not broad visual QA: browser/canvas review, automatic
+  repair loops, aesthetic scoring, and attempts to compensate for weak template
+  content remain deferred until Visual IR and procedural-generator output is
+  richer.
 - the page uses `POST /api/generate/staged` for project generation and
   selected-segment regeneration
 - staged selected-segment regeneration reruns the target segment's planning,

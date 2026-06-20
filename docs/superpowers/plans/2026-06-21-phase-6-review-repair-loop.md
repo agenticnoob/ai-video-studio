@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Complete Phase 6 as an explicit, bounded review/repair loop that produces inspectable findings, still evidence, target-segment repair actions, and clear diagnostics without silently rewriting the video.
+**Goal:** Close Phase 6 v1 as an explicit visual diagnostics gate that catches hard rendering failures and offers manual repair help, without pretending to solve broad visual quality while template/Visual IR expression is still limited.
 
-**Architecture:** Keep `VideoProject` as the only preview/export boundary and keep `VisualReviewDiagnostics` as the review contract. Phase 6 remains an explicit user-triggered workflow: static preflight diagnostics plan representative frames, manual still extraction merges pixel findings, deterministic `scene-graph` repairs run only for supported findings, and unsupported findings fall back to one selected-segment regeneration.
+**Architecture:** Keep `VideoProject` as the only preview/export boundary and keep `VisualReviewDiagnostics` as the review contract. Phase 6 v1 remains an explicit user-triggered gate: static preflight diagnostics plan representative frames, manual still extraction merges bounded hard-failure pixel findings, deterministic `scene-graph` repairs run only for supported hard failures, and unsupported findings fall back to one selected-segment regeneration.
 
 **Tech Stack:** Next.js route handlers, Zod contracts, Remotion still rendering, existing Docker-first npm smoke scripts, React Studio panel, deterministic TypeScript helpers.
 
@@ -12,14 +12,15 @@
 
 ## Scope Boundary
 
-Phase 6 is not a full visual QA platform. The complete Phase 6 plan is:
+Phase 6 is not a full visual QA platform, and it should not be the main path for improving template richness. The complete Phase 6 v1 plan is:
 
 1. **Review contract clarity:** `VisualReviewDiagnostics` must distinguish static preflight, still analysis, and repair-needed stages while preserving compatibility with existing `status: "static_preflight"` consumers.
-2. **Still-evidence loop:** `/api/visual-review/stills` remains the explicit route for representative PNG rendering, and merged diagnostics must expose that stills were analyzed.
-3. **Manual repair loop:** Studio keeps two separate actions: apply a structured repair prompt, or immediately run one explicit target-segment repair.
+2. **Hard-failure still evidence:** `/api/visual-review/stills` remains the explicit route for representative PNG rendering, and merged diagnostics must expose that stills were analyzed for near-blank, low-contrast, unsafe-margin, excessive fine detail, and empty-border failure classes.
+3. **Manual repair assistance:** Studio keeps two separate actions: apply a structured repair prompt, or immediately run one explicit target-segment repair. This is assistance for hard failures, not a promise to make weak template content visually strong.
 4. **Deterministic repair first:** Supported `scene-graph` still-analysis findings use deterministic parameter repair before provider regeneration.
 5. **Clear failure/next-action diagnostics:** Each review result should tell the user whether no action is needed, a manual target repair is available, or the issue must fall back to regeneration.
-6. **Deferred after Phase 6 v1:** Browser/canvas review, automatic repair loops, provider prompt repair loops, persistence/history, media composites, and generated components remain out of this plan unless explicitly reopened.
+6. **Phase 6 v1 completion gate:** Treat the current hard-failure diagnostics, still extraction, source-attributed findings, explicit manual repair action, and metadata-backed next action as the bounded v1 completion surface.
+7. **Deferred outside Phase 6 v1:** Browser/canvas review, automatic repair loops, provider prompt repair loops, persistence/history, media composites, generated components, and broad aesthetic scoring remain out of this plan unless explicitly reopened.
 
 ## File Structure
 
@@ -188,18 +189,28 @@ git diff --check
 
 Expected: all commands exit 0.
 
-## Later Phase 6 Tasks
+## Deferred Work
 
-These are part of the complete Phase 6 plan but are not implemented in Task 1:
+These are not part of the current Phase 6 v1 completion target. Reopen only after Visual IR / procedural generator output is richer enough for visual review to produce actionable product value:
 
-- **Task 2: Browser/canvas review spike:** Add one explicit, non-default browser/canvas capture path behind a manual action, compare it with the existing Remotion still route, and keep it out of normal staged generation.
-- **Task 3: Repair attempt ledger:** Persist repair attempt metadata only inside the current in-memory project/session response path, with no database or history system.
-- **Task 4: Re-review after repair:** Add a manual “review repaired segment again” action that renders representative stills only for the repaired target segment.
-- **Task 5: Provider fallback diagnostics:** When unsupported findings use selected-segment regeneration, surface fallback reason, provider error, and target segment id in a typed result.
-- **Task 6: Phase 6 completion gate:** Define the exact smoke suite that must pass before marking Phase 6 v1 complete, including visual-review diagnostics, UI source smoke, still extraction smoke, deterministic repair smoke, typecheck, lint, and build.
+- **Browser/canvas review spike:** Defer until real canvas-level differences are actionable. Current Remotion still extraction is enough for hard-failure gating.
+- **Automatic repair loops:** Defer. Current repair stays explicit and user-triggered.
+- **Aesthetic scoring:** Defer. Current templates and bounded SceneGraph output are too constrained for broad visual-quality scoring to be useful.
+- **Repair attempt ledger:** Defer durable ledgers. Current panel diagnostics and source attribution are sufficient for v1.
+- **Post-repair target-only re-review:** Defer unless manual repair becomes a frequent workflow.
+- **Provider prompt repair loops:** Defer. Keep provider generation focused on improving Visual IR/procedural output before asking review to fix it.
+
+## Next Product Priority
+
+After Phase 6 v1, shift implementation effort back to visual expression:
+
+- richer `scene-graph` composition/layout presets
+- more procedural generator families for common technical-video grammar
+- better default visual density and rhythm in generated `primitive_scene_graph`
+- asset-plan/media-composite work only when concrete assets become the bottleneck
 
 ## Self-Review
 
-- Spec coverage: Task 1 covers diagnostic clarity and current manual loop visibility. Later tasks cover browser/canvas review, attempt ledger, post-repair review, fallback diagnostics, and final completion gates.
+- Spec coverage: Task 1 covers diagnostic clarity and current manual loop visibility. Deferred work is explicitly outside Phase 6 v1 until visual expression improves.
 - Placeholder scan: no placeholders or open-ended “add tests” steps remain.
 - Type consistency: `reviewStage`, `reviewScope`, and `nextAction` are introduced in schema, helper output, smoke tests, and UI source checks with matching string literals.

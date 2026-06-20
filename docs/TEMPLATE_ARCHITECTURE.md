@@ -164,11 +164,14 @@ caption cues from the same segment narration request. F5-TTS should not become
 a template concern: the repo-owned provider adapter normalizes audio/caption
 artifacts before the selected-template compiler runs. The next service slice is
 the optional local runtime in `docs/providers/f5-tts-service-plan.md`.
-The current Phase 6 `visualReview` static preflight is also not a template
+The current Phase 6 `visualReview` hard-failure gate is also not a template
 concern: it runs on assembled staged diagnostics using shared project,
 caption, narration, and planned-asset data. Template implementations may
 expose caption-safe layout hooks, but review findings remain outside
-template-specific `implementation`.
+template-specific `implementation`. This gate should not be used as a broad
+template-quality scorer; richer visuals should come from stronger
+`scene-graph` primitives, composition presets, procedural generators, and
+future asset-backed paths.
 
 The final provider workflow has two roles.
 

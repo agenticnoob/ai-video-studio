@@ -134,7 +134,7 @@ Current executable strategy note:
   fallback. This is diagnostic planning data only; it does not make
   `media_asset_composite` executable, does not allow invented remote URLs, and
   does not introduce broad media-library UI.
-- Phase 6 has started with static visual-review preflight diagnostics:
+- Phase 6 v1 is scoped as a hard-failure visual-review gate:
   staged diagnostics include structured `VisualReviewFinding` data for
   deterministic duration, caption, and unresolved planned-asset issues, plus
   deterministic `reviewFrames[]` for each segment's start, midpoint, and end
@@ -159,7 +159,12 @@ Current executable strategy note:
   before/after summaries for the bounded SceneGraph parameter change;
   unsupported findings fall back to one staged selected-segment regeneration
   path.
-  Browser/canvas review and automatic segment repair remain deferred.
+  This is not intended to solve broad visual polish while current templates
+  and SceneGraph output are still visually constrained. Browser/canvas review,
+  automatic repair, broad aesthetic scoring, durable repair ledgers, and
+  provider prompt repair loops remain deferred until Visual IR and
+  procedural-generator output is richer enough for those checks to be
+  actionable.
 
 ## 2. Authoritative Terminology
 
@@ -588,12 +593,14 @@ Initial render strategy vocabulary:
 - `generated_component`: future restricted escape hatch only; not the default
   product path.
 
-The current bounded roadmap stage is Review / Repair Loop v1 groundwork:
+The current bounded roadmap stage is a hard-failure Review / Repair Gate v1:
 surface deterministic `VisualReviewFinding` diagnostics, representative
 `reviewFrames[]` planning, explicit still image extraction, per-still pixel
 analysis, and one user-triggered target-segment repair path with deterministic
-SceneGraph summaries. Browser/canvas review and automatic repair loops remain
-later slices. Later phases should still follow the order defined by
+SceneGraph summaries. Browser/canvas review, automatic repair loops, and broad
+visual-quality scoring are no longer near-term Phase 6 slices; next product
+work should return to Visual IR / procedural-generator expression. Later
+phases should still follow the order defined by
 `docs/VISUAL_IR_COMPILER_ROADMAP.md`.
 
 ### 4.1 Planner Template Manifest

@@ -77,11 +77,11 @@ provider-selected procedural visuals compiling to actual
 `primitive_scene_graph`. The procedural compiler aligns generator payload
 duration to real narration duration before segment assembly, so the project
 timeline does not advance to the next segment before generated audio finishes.
-The current Phase 6 groundwork adds a shared staged `visualReview` static
-preflight diagnostics boundary. It flags deterministic issues already visible
-from validated project data, such as narration duration overruns, caption cues
-that exceed a segment, long caption text, and unresolved planned assets from
-the current non-executable `assetPlan` phase. It also emits deterministic
+The current Phase 6 v1 boundary is a shared hard-failure `visualReview`
+diagnostics gate. It flags deterministic issues already visible from validated
+project data, such as narration duration overruns, caption cues that exceed a
+segment, long caption text, and unresolved planned assets from the current
+non-executable `assetPlan` phase. It also emits deterministic
 representative `reviewFrames[]` for each segment's start, midpoint, and end as
 the still-extraction input boundary. `POST /api/visual-review/stills` renders
 those frames through `ProjectVideo` into PNG artifacts, and the Studio export
@@ -102,8 +102,10 @@ safe/full-bleed layouts, reduce dense visual content, or add primary anchor
 layers, then return repair mode, source segment/still/review-frame attribution,
 and before/after summaries for the bounded SceneGraph parameter change.
 Unsupported findings fall back to one explicit selected-segment staged
-regeneration path. Browser/canvas review and automatic repair loops remain
-deferred.
+regeneration path. Browser/canvas review, automatic repair loops, broad
+aesthetic scoring, and attempts to make weak template content visually rich
+remain deferred; next architecture work should improve Visual IR and
+procedural-generator expression upstream.
 
 Current implementation snapshot:
 

@@ -164,8 +164,9 @@ The first staged-generation groundwork is also in place:
   finishes. Phase 5 asset-plan groundwork has started: `StoryboardPlan` can
   carry `assetPlan.requiredAssets[]` with stable ids, bounded kinds, purpose,
   and fallback for future media composites, but this remains planner and
-  diagnostics data only. Phase 6 review/repair groundwork has started as a
-  static `visualReview` preflight in staged diagnostics for deterministic
+  diagnostics data only. Phase 6 v1 is now scoped as a hard-failure
+  review/repair gate, starting from static `visualReview` preflight in staged
+  diagnostics for deterministic
   duration, caption, unresolved planned-asset issues, and representative
   review-frame planning. Explicit still image extraction is now available
   through `POST /api/visual-review/stills`, rendering those frames through
@@ -186,8 +187,11 @@ The first staged-generation groundwork is also in place:
   density, and near-blank frames. Deterministic repair results include repair
   mode, source segment/still/review-frame attribution, and before/after
   summaries for the bounded SceneGraph parameter change; unsupported findings
-  fall back to one staged selected-segment regeneration path. Browser/canvas
-  review and automatic segment repair are not active yet.
+  fall back to one staged selected-segment regeneration path. This is
+  intentionally not broad visual QA: browser/canvas review, automatic repair
+  loops, aesthetic scoring, and attempts to compensate for weak template
+  content remain deferred until Visual IR and procedural-generator output is
+  richer.
   Unrestricted generated TSX and executable `media_asset_composite` rendering
   remain out of scope.
 - Scene graph provider-output hardening is intentionally bounded: selected

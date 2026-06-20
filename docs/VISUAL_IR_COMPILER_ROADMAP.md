@@ -390,22 +390,24 @@ Current landing:
   `template_macro`, `primitive_scene_graph`, and bounded
   `procedural_generator` paths.
 
-### Phase 6: Review / Repair Loop v1
+### Phase 6: Hard-Failure Review / Repair Gate v1
 
-Status: started as static preflight diagnostics, representative frame planning,
-and explicit still-image extraction.
+Status: bounded v1 landed as a hard-failure diagnostics gate.
 
-Add quality closure after rendering or still extraction.
+Add hard-failure closure after rendering or still extraction. This phase is
+not intended to judge broad visual polish while the current template and
+SceneGraph expression range is still limited; visual richness should be solved
+upstream in Visual IR primitives, layouts, and procedural generators.
 
 Checks:
 
 - blank frames
-- text overflow
+- severe text/caption overflow
 - subtitle/caption collision
 - unsafe margins
 - low contrast
-- layer overlap
-- unreadable line length
+- severe layer overlap
+- unreadable fine-detail density
 - broken asset references
 - duration/timing mismatch
 
@@ -435,8 +437,11 @@ type VisualReviewFinding = {
 Acceptance:
 
 - representative stills are generated for review
-- findings can trigger bounded repair for the target segment only
-- repeated failure returns a clear diagnostic instead of silent bad output
+- hard-failure findings can trigger bounded repair for the target segment only
+- unsupported or repeated failure returns a clear diagnostic instead of silent
+  bad output
+- broad aesthetic scoring, template-richness scoring, and automatic visual
+  improvement loops are not part of v1
 
 Current landing:
 
@@ -490,8 +495,12 @@ Current landing:
   still id, review-frame reason, frame, repair mode, and a concise summary of
   the SceneGraph fields changed by the bounded operator.
 - unsupported findings still fall back to the explicit selected-segment staged
-  regeneration path. No browser/canvas review, automatic repair loop, or
-  provider prompt repair loop is active yet.
+  regeneration path.
+- Phase 6 v1 is intentionally complete as a diagnostics gate for hard failures:
+  it should catch broken/empty/unreadable frames and assist explicit repair,
+  not compensate for weak template content or limited visual vocabulary. No
+  browser/canvas review, automatic repair loop, provider prompt repair loop,
+  or broad aesthetic review is active.
 
 ### Phase 7: Generated Component Escape Hatch
 
@@ -541,26 +550,25 @@ is worth keeping.
 ## 5. Current Bounded Goal
 
 ```txt
-Implement Review / Repair Loop v1 incrementally:
+Close Phase 6 v1 as a hard-failure diagnostics gate:
 keep deterministic `VisualReviewFinding` diagnostics, representative
-review-frame planning, explicit still image extraction, and bounded
-still-analysis findings stable. Manual target-segment repair now has explicit
-Studio diagnostics and the first deterministic `scene-graph` parameter repair
-operators with source attribution and before/after summaries; unsupported
-findings fall back to one selected-segment regeneration. The diagnostics
-contract now also exposes `reviewStage`, `reviewScope`, and `nextAction` so
-static preflight, screenshot analysis, and manual repair readiness are
-distinguishable without changing the existing compatibility status field.
-The next slices can add browser/canvas review and richer repair attempts later.
-The next slices should preserve VideoProject preview/export compatibility,
-avoid browser automation as the default validation path, and keep repair
-behavior explicit rather than silently rewriting segments.
+review-frame planning, explicit still image extraction, bounded still-analysis
+findings, and explicit target-segment repair stable. Diagnostics expose
+`reviewStage`, `reviewScope`, and `nextAction` so static preflight, screenshot
+analysis, and manual repair readiness are distinguishable without changing the
+existing compatibility status field.
+
+Do not spend the next milestone widening review into broad visual QA,
+browser/canvas analysis, automatic repair loops, or aesthetic scoring. Current
+templates and SceneGraph output are still too constrained for that to be
+productively actionable. The next product work should return to Visual IR and
+procedural-generator expression: richer composition presets, stronger
+technical-video primitives, better visual density/rhythm, and eventually
+asset-backed media composites when concrete assets become the bottleneck.
 ```
 
-Do not widen Phase 6 into a full visual QA system. First keep proving that
-review findings, frame planning, and still artifacts can be represented,
-surfaced through diagnostics, and kept separate from provider generation and
-silent repair behavior.
+Do not widen Phase 6 into a full visual QA system. Treat it as a gate that
+catches hard rendering failures and keeps manual repair explicit.
 
 ## 6. Non-goals Until Explicitly Reopened
 

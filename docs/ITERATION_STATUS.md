@@ -1,8 +1,29 @@
 # Iteration Status
 
-Last updated: Phase 6 review diagnostics metadata
+Last updated: Phase 6 scope narrowed to hard-failure gate
 
-## Latest continuation — Phase 6 review diagnostics metadata
+## Latest continuation — Phase 6 scope narrowed to hard-failure gate
+
+- Re-scoped Phase 6 v1 away from a broad visual QA / automatic repair loop.
+  Current template and bounded SceneGraph output are still too constrained for
+  screenshot review to make weak visual content meaningfully better; repeated
+  review would mostly rediscover that the current visual vocabulary needs to
+  improve upstream.
+- Phase 6 v1 is now documented as a hard-failure diagnostics gate: catch
+  near-blank frames, low contrast, unsafe margins, excessive fine detail,
+  empty borders, duration/caption timing issues, unresolved planned assets,
+  and still extraction failures; keep repair explicit and user-triggered.
+- Browser/canvas review, automatic repair loops, provider prompt repair loops,
+  broad aesthetic scoring, durable repair ledgers, and post-repair target-only
+  re-review are deferred until Visual IR / procedural generator output is rich
+  enough for those checks to be actionable.
+- The next product priority should shift back to visual expression:
+  richer `scene-graph` composition/layout presets, stronger technical-video
+  primitives, better default density/rhythm, additional bounded procedural
+  generator families, and later asset-backed media composites when concrete
+  assets become the bottleneck.
+
+## Previous continuation — Phase 6 review diagnostics metadata
 
 - Wrote the complete Phase 6 Review / Repair Loop v1 implementation plan to
   `docs/superpowers/plans/2026-06-21-phase-6-review-repair-loop.md`.
