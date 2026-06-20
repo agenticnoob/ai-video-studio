@@ -127,19 +127,22 @@ const assertProviderProceduralGeneratorSurface = (): void => {
     beats: [{ atFrame: 30, action: "run", lineId: "test" }],
   });
 
-  if (!systemPrompt.includes("procedural_generator")) {
-    throw new Error("Storyboard plan prompt should expose procedural_generator.");
+  if (!systemPrompt.includes("StoryboardPlanDraft")) {
+    throw new Error("Storyboard plan prompt should expose the draft planning boundary.");
   }
-  if (!systemPrompt.includes("node-graph-flow")) {
-    throw new Error("Storyboard plan prompt should describe node-graph-flow generator usage.");
+  if (!systemPrompt.includes("visualKind")) {
+    throw new Error("Storyboard plan prompt should describe draft visualKind routing.");
   }
-  if (!systemPrompt.includes("line-path-flow")) {
-    throw new Error("Storyboard plan prompt should describe line-path-flow generator usage.");
+  if (!systemPrompt.includes("workflow")) {
+    throw new Error("Storyboard plan prompt should describe workflow draft usage.");
   }
-  if (!systemPrompt.includes("terminal-session")) {
-    throw new Error("Storyboard plan prompt should describe terminal-session generator usage.");
+  if (!systemPrompt.includes("line_path")) {
+    throw new Error("Storyboard plan prompt should describe line_path draft usage.");
   }
-  if (!systemPrompt.includes("Return the complete StoryboardPlan object directly as JSON")) {
+  if (!systemPrompt.includes("terminal")) {
+    throw new Error("Storyboard plan prompt should describe terminal draft usage.");
+  }
+  if (!systemPrompt.includes("Return the complete StoryboardPlanDraft object directly as JSON")) {
     throw new Error("Storyboard plan prompt should describe the DeepSeek JSON-mode contract.");
   }
 };
@@ -431,7 +434,7 @@ const assertProviderAssetPlanSurface = (): void => {
         id: "asset-plan-provider-surface",
         order: 1,
         title: "Asset plan",
-        purpose: "Verify assetPlan remains part of the planner contract.",
+        purpose: "Verify assetPlan remains part of the internal StoryboardPlan contract.",
         templateId: SCENE_GRAPH_TEMPLATE_ID,
         templateReason: "SceneGraph can render a placeholder until assets resolve.",
         strategyDecision: primitiveSceneGraphStrategyDecision,
@@ -445,14 +448,11 @@ const assertProviderAssetPlanSurface = (): void => {
   if (storyboardPlanSchema.safeParse({ assetPlan: { requiredAssets: [] }, segments: [] }).success) {
     throw new Error("Asset plan provider surface should still require a valid StoryboardPlan.");
   }
-  if (!systemPrompt.includes("assetPlan")) {
-    throw new Error("Storyboard plan prompt should describe assetPlan usage.");
+  if (!systemPrompt.includes("Do not output assetPlan in StoryboardPlanDraft")) {
+    throw new Error("Storyboard plan draft prompt should keep assetPlan out of provider output.");
   }
-  if (!systemPrompt.includes("requiredAssets")) {
-    throw new Error("Storyboard plan prompt should describe requiredAssets.");
-  }
-  if (!systemPrompt.includes("Do not invent asset URLs")) {
-    throw new Error("Storyboard plan prompt should forbid invented asset URLs.");
+  if (!systemPrompt.includes("Future asset requests remain")) {
+    throw new Error("Storyboard plan draft prompt should preserve assetPlan as future scope.");
   }
 };
 
@@ -627,14 +627,17 @@ const assertSegmentRevisionProceduralGeneratorSurface = (): void => {
   });
   const systemPrompt = prompt.messages[0]?.content ?? "";
 
-  if (!systemPrompt.includes("node-graph-flow")) {
-    throw new Error("Segment revision prompt should describe node-graph-flow generator usage.");
+  if (!systemPrompt.includes("StoryboardPlanDraft")) {
+    throw new Error("Segment revision prompt should expose the draft planning boundary.");
   }
-  if (!systemPrompt.includes("line-path-flow")) {
-    throw new Error("Segment revision prompt should describe line-path-flow generator usage.");
+  if (!systemPrompt.includes("workflow")) {
+    throw new Error("Segment revision prompt should describe workflow draft usage.");
   }
-  if (!systemPrompt.includes("terminal-session")) {
-    throw new Error("Segment revision prompt should describe terminal-session generator usage.");
+  if (!systemPrompt.includes("line_path")) {
+    throw new Error("Segment revision prompt should describe line_path draft usage.");
+  }
+  if (!systemPrompt.includes("terminal")) {
+    throw new Error("Segment revision prompt should describe terminal draft usage.");
   }
 };
 

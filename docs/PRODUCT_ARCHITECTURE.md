@@ -12,12 +12,13 @@ those targets map onto the codebase.
 ## Core Loop
 
 1. The user gives a topic, brief, story, or video requirement.
-2. The planner receives the user prompt plus a compact manifest of registered
-   templates: descriptions, capabilities, use cases, constraints, and
-   recommended duration ranges.
-3. The planner returns a validated storyboard plan: ordered segments, selected
-   `templateId` values, render strategy decisions, narration text, segment
-   purpose, and visual briefs.
+2. The provider-facing planner receives the user prompt and returns a small
+   `StoryboardPlanDraft`: segment purpose, narration text, visual brief,
+   simple visual kind, and optional steps or terminal commands.
+3. A deterministic planner compiler turns that draft into the validated
+   internal `StoryboardPlan`: ordered segments, selected `templateId` values,
+   render strategy decisions, bounded procedural generator payloads, narration
+   text, segment purpose, and visual briefs.
 4. For each planned segment, the system runs narration synthesis from the
    narration text. The preferred local provider is the in-project F5-TTS
    adapter backed by an optional runtime service.
@@ -64,17 +65,18 @@ procedural-generator groundwork now includes deterministic compile-to-SceneGraph
 `src/lib/procedural-generator-compiler.ts` compiles generator payloads into
 normal `scene-graph` `VideoSegment` results with staged diagnostics for
 planned generator output, compiled render strategy, and bounded macro
-fallback. The DeepSeek storyboard planner prompt can now emit bounded
-`node-graph-flow`, `line-path-flow`, and `terminal-session` payloads on
-`scene-graph` segments; deterministic workflow, node graph, agent loop,
-system-flow, journey, timeline, terminal, build/test, and deploy trace briefs
-are explicitly routed toward that bounded procedural path instead of
-card-only macros or brittle direct Visual IR. Live staged smoke has validated
-provider-selected `procedural_generator` compiling to actual
-`primitive_scene_graph`. The
-procedural compiler aligns generator payload duration to real narration
-duration before segment assembly, so the project timeline does not advance to
-the next segment before generated audio finishes.
+fallback. The DeepSeek storyboard planner prompt now emits provider-facing
+`StoryboardPlanDraft` data instead of final procedural generator objects.
+Deterministic workflow, node graph, agent loop, system-flow, journey, timeline,
+terminal, build/test, and deploy trace briefs route through draft
+`visualKind` values (`workflow`, `line_path`, or `terminal`), then
+`src/lib/storyboard-plan-draft-compiler.ts` creates bounded
+`node-graph-flow`, `line-path-flow`, and `terminal-session` payloads for
+`scene-graph` segments. Live staged smoke has validated
+provider-selected procedural visuals compiling to actual
+`primitive_scene_graph`. The procedural compiler aligns generator payload
+duration to real narration duration before segment assembly, so the project
+timeline does not advance to the next segment before generated audio finishes.
 The current Phase 6 groundwork adds a shared staged `visualReview` static
 preflight diagnostics boundary. It flags deterministic issues already visible
 from validated project data, such as narration duration overruns, caption cues
@@ -107,6 +109,10 @@ Current implementation snapshot:
 
 - `src/lib/storyboard-plan-schema.ts` defines the first validated
   `StoryboardPlan` boundary, including per-segment strategy decisions.
+- `src/lib/storyboard-plan-draft-schema.ts` defines the smaller DeepSeek-facing
+  `StoryboardPlanDraft` boundary, and
+  `src/lib/storyboard-plan-draft-compiler.ts` deterministically compiles those
+  drafts into strict `StoryboardPlan` objects.
 - `src/lib/procedural-generator-schema.ts` defines bounded procedural
   generator contracts and compile diagnostics for future generator modules.
 - `src/lib/procedural-generator-compiler.ts` compiles `node-graph-flow`,
@@ -115,21 +121,19 @@ Current implementation snapshot:
   code.
 - `src/lib/storyboard-plan-schema.ts` accepts optional
   `proceduralGenerator` payloads only for `scene-graph` segments whose
-  `strategyDecision.strategy` is `procedural_generator`; the DeepSeek planner
-  prompt exposes only the bounded `node-graph-flow`, `line-path-flow`, and
-  `terminal-session` payload shapes.
+  `strategyDecision.strategy` is `procedural_generator`; DeepSeek no longer
+  has to author those final payloads directly on the normal planner path.
 - `src/templates/registry.ts` derives the planner template manifest from
   server-safe registered template definitions.
 - `src/lib/deepseek/prompts.ts`, `src/lib/deepseek/provider.ts`,
   `src/lib/deepseek/parse-storyboard-plan.ts`,
+  `src/lib/deepseek/parse-storyboard-plan-draft.ts`,
   `src/lib/deepseek/parse-template-implementation.ts`, and
   `src/lib/deepseek/index.ts` provide the active DeepSeek JSON-mode
-  planner/compiler facade. Planner parsing is strict-first with bounded
-  normalization only for observed JSON-mode near-misses: missing segment
-  `purpose`, missing segment planning rationale fields, VideoProject-shaped
-  `projectId` / segment `language` / `durationSeconds` extras, missing
-  `proceduralGenerator.title`, and numeric `beats[].time` aliases are
-  normalized before the full `StoryboardPlan` schema check.
+  planner/compiler facade. Planner parsing now tries the Draft boundary first
+  and falls back to the older direct `StoryboardPlan` parser for compatibility.
+  The older parser remains strict-first with bounded normalization only for
+  observed JSON-mode near-misses.
 - `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`,
   and `/api/tts/assets/...` provide the first internal TTS asset boundary for
   planned segment narration, including local artifact writing and ffprobe
@@ -255,18 +259,16 @@ Template context should be split by generation stage:
 
 - Planner context: compact metadata for all registered templates.
 - Strategy decision context: currently validated inside each planned segment as
-  `strategyDecision`, bounded to executable `template_macro`, direct
-  `primitive_scene_graph`, and provider-facing `procedural_generator` only for
-  `scene-graph` + `node-graph-flow`, `line-path-flow`, or
-  `terminal-session`.
-- Procedural generator context: the DeepSeek planner prompt plus the
-  `StoryboardPlan` schema expose bounded `node-graph-flow`, `line-path-flow`,
-  and `terminal-session` payloads on `scene-graph` segments. These payloads
-  are structured data only and compile deterministically into actual
-  `primitive_scene_graph`, with `template_macro` fallback on generator compile
-  failure. Parser recovery stays limited to known structural near-misses and
-  does not accept unknown generator ids, unsupported strategies, broken refs,
-  arbitrary fields, or provider-authored code.
+  `strategyDecision`, but generated by the draft compiler rather than authored
+  directly by DeepSeek on the normal planner path.
+- Procedural generator context: the DeepSeek planner prompt exposes only draft
+  visual kinds and optional steps/commands. The draft compiler creates bounded
+  `node-graph-flow`, `line-path-flow`, and `terminal-session` payloads on
+  `scene-graph` segments. These payloads are structured data only and compile
+  deterministically into actual `primitive_scene_graph`, with `template_macro`
+  fallback on generator compile failure. Parser recovery stays limited to known
+  structural near-misses and does not accept unknown generator ids, unsupported
+  strategies, broken refs, arbitrary fields, or provider-authored code.
 - Narration provider context: segment narration text, language, voice or
   speaker profile, and deterministic artifact identity; it should return audio
   metadata and aligned captions when available.

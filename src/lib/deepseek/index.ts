@@ -14,6 +14,7 @@ import {
   parseStoryboardPlanToolCallArguments,
   StoryboardPlanParseError,
 } from "./parse-storyboard-plan";
+import { parseStoryboardPlanDraftToolCallArguments } from "./parse-storyboard-plan-draft";
 import {
   parseTemplateImplementationToolCallArguments,
   TemplateImplementationParseError,
@@ -27,6 +28,18 @@ export type DeepSeekGenerateStoryboardPlanResult = {
 };
 
 const MAX_STORYBOARD_PLAN_REPAIR_ATTEMPTS = 1;
+
+const parseStoryboardPlanFromProviderOutput = (argumentsString: string): StoryboardPlan => {
+  try {
+    return parseStoryboardPlanDraftToolCallArguments(argumentsString);
+  } catch (draftError) {
+    if (!(draftError instanceof StoryboardPlanParseError)) {
+      throw draftError;
+    }
+  }
+
+  return parseStoryboardPlanToolCallArguments(argumentsString);
+};
 
 export const deepseekGenerateStoryboardPlan = async (
   request: DeepSeekStoryboardPlanRequest,
@@ -45,7 +58,7 @@ export const deepseekGenerateStoryboardPlan = async (
     try {
       return {
         attempts: attempt + 1,
-        plan: parseStoryboardPlanToolCallArguments(argumentsString),
+        plan: parseStoryboardPlanFromProviderOutput(argumentsString),
         repaired: attempt > 0,
       };
     } catch (error) {
@@ -73,7 +86,7 @@ const parseOneSegmentStoryboardPlan = (
   argumentsString: string,
   segmentId: string,
 ): StoryboardPlan => {
-  const plan = parseStoryboardPlanToolCallArguments(argumentsString);
+  const plan = parseStoryboardPlanFromProviderOutput(argumentsString);
   if (plan.segments.length !== 1) {
     throw new StoryboardPlanParseError(
       `Generated revised storyboard plan must contain exactly one segment for "${segmentId}", but received ${plan.segments.length}.`,

@@ -55,7 +55,7 @@ const Home: NextPage = () => {
     prompt: string,
     repairSource: VisualReviewRepairSource,
   ) => {
-    applyVisualReviewRepairPrompt(segmentId, prompt);
+    generation.selectSegment(segmentId);
     const targetSegment = generation.normalizedProject.segments.find(
       (segment) => segment.id === segmentId,
     );

@@ -293,13 +293,15 @@ Current groundwork:
 - staged diagnostics can represent planned `procedural_generator` output, the
   actual compiled `primitive_scene_graph` path, and a bounded `template_macro`
   fallback for generator compilation failure.
-- The provider-facing storyboard planner prompt/schema can now emit
-  `procedural_generator` only for `scene-graph` segments with bounded
-  `node-graph-flow`, `line-path-flow`, or `terminal-session` payloads.
+- The provider-facing storyboard planner prompt/schema now emits a smaller
+  `StoryboardPlanDraft` instead of final procedural payloads. Draft visual
+  kinds `workflow`, `line_path`, and `terminal` compile deterministically into
+  `scene-graph` segments with bounded `node-graph-flow`, `line-path-flow`, or
+  `terminal-session` payloads.
 - The planner prompt explicitly routes deterministic workflow, node graph,
   agent-loop, system-flow, journey, timeline, terminal, build/test, and deploy
-  trace briefs toward `scene-graph` + `procedural_generator` instead of
-  falling back to card-only macro templates.
+  trace briefs toward those draft procedural visual kinds instead of falling
+  back to card-only macro templates.
 - Execution remains deterministic: generated payloads compile through the
   existing procedural compiler into actual `primitive_scene_graph` output, with
   `template_macro` fallback on compile failure.
@@ -309,13 +311,12 @@ Current groundwork:
 - Provider-backed planning is not open-ended; no other generator ids,
   `media_asset_composite`, `generated_component`, generated TSX, or arbitrary
   code execution are accepted.
-- Provider-boundary parser recovery is intentionally narrow: known JSON-mode
-  near-misses such as missing segment planning rationale fields,
-  VideoProject-shaped `projectId` / segment `language` / `durationSeconds`
-  extras, missing `proceduralGenerator.title`, and numeric `beats[].time`
-  aliases are normalized before schema validation, while unknown ids,
-  unsupported strategies, bad refs, arbitrary fields, and provider-authored
-  code remain hard failures.
+- Provider-boundary parser recovery is intentionally narrow. The normal path
+  validates Draft output first and compiles strict internal plan fields in
+  code; the older direct StoryboardPlan parser remains only as a compatibility
+  fallback for known JSON-mode near-misses, while unknown ids, unsupported
+  strategies, bad refs, arbitrary fields, and provider-authored code remain
+  hard failures.
 - provider-backed live smoke now includes a normal brief that naturally
   selects `node-graph-flow`, plus forced plan-mode smokes for
   `node-graph-flow`, `line-path-flow`, and `terminal-session`; all compile

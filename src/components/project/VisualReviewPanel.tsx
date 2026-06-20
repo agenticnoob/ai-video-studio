@@ -287,7 +287,9 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
             <div className="mt-1 font-mono text-xs">repairMode {repairResult.repairMode}</div>
           ) : null}
           {repairResult.repairSource?.stillId ? (
-            <div className="mt-1 font-mono text-xs">source still {repairResult.repairSource.stillId}</div>
+            <div className="mt-1 font-mono text-xs">
+              source still {repairResult.repairSource.stillId}
+            </div>
           ) : null}
           {repairResult.repairSource?.reviewReason ? (
             <div className="mt-1 font-mono text-xs">
@@ -396,7 +398,7 @@ export const VisualReviewPanel: FC<VisualReviewPanelProps> = ({
                           立即修复分镜
                         </button>
                         <span className="w-full text-xs text-foreground">
-                          套用后会跳到分镜编辑器。
+                          套用修复指令只填入分镜编辑器；立即修复分镜会立即执行修复并在这里显示结果。
                         </span>
                       </div>
                     ) : null}

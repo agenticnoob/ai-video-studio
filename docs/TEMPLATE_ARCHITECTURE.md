@@ -144,14 +144,16 @@ own implementation schema.
 
 The active generation path no longer asks one provider call to emit a full
 `VideoProject`. It uses a staged provider workflow instead: DeepSeek plans a
-validated `StoryboardPlan`, F5-TTS generates segment-owned narration
-audio/captions, and DeepSeek compiles each selected template implementation
-against that template's schema.
+small `StoryboardPlanDraft`, repo-owned deterministic code compiles that draft
+into a validated internal `StoryboardPlan`, F5-TTS generates segment-owned
+narration audio/captions, and DeepSeek compiles each selected template
+implementation against that template's schema.
 
-Current planner groundwork exists: `src/lib/storyboard-plan-schema.ts` defines
-the plan contract, `src/templates/registry.ts` derives the compact planner
-manifest, and `src/lib/deepseek/*` exposes the active DeepSeek planner/compiler
-facade.
+Current planner groundwork exists: `src/lib/storyboard-plan-draft-schema.ts`
+defines the provider-facing draft contract,
+`src/lib/storyboard-plan-draft-compiler.ts` compiles drafts into the internal
+`StoryboardPlan` contract in `src/lib/storyboard-plan-schema.ts`, and
+`src/lib/deepseek/*` exposes the active DeepSeek planner/compiler facade.
 The first internal TTS asset boundary also exists through
 `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`, and
 `/api/tts/assets/...`. The selected-template compiler and staged assembly path

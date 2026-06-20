@@ -448,13 +448,18 @@ Near-term product architecture should evolve from the current single-template mo
 - future project-level / segment-level media layers for existing media
 
 Current implementation note:
+- the normal DeepSeek planner path now produces a smaller
+  `StoryboardPlanDraft`, and deterministic repo code compiles that draft into
+  the internal `StoryboardPlan`
 - the `StoryboardPlan` / `StoryboardSegmentPlan` contract exists in
   `src/lib/storyboard-plan-schema.ts`
-- `src/templates/registry.ts` derives a compact planner template manifest from
-  registered template definitions
+- `src/lib/storyboard-plan-draft-schema.ts` and
+  `src/lib/storyboard-plan-draft-compiler.ts` keep provider-facing creative
+  planning separate from ids, template choice, render strategy decisions,
+  procedural generator refs, and beat timing
 - `src/lib/deepseek/*` contains the active DeepSeek storyboard-planner prompt,
-  JSON-mode provider adapter, parser, and `deepseekGenerateStoryboardPlan()`
-  facade
+  JSON-mode provider adapter, Draft parser, compatibility `StoryboardPlan`
+  parser, and `deepseekGenerateStoryboardPlan()` facade
 - `src/lib/narration-asset-schema.ts`, `src/lib/tts/*`, `POST /api/tts`,
   and `/api/tts/assets/...` provide the internal TTS asset boundary for one
   planned segment, with local audio artifacts, measured duration, provider

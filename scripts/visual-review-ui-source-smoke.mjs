@@ -10,6 +10,21 @@ const assertIncludes = (source, needle, label) => {
   }
 };
 
+const assertNotIncludes = (source, needle, label) => {
+  if (source.includes(needle)) {
+    throw new Error(`${label} expected not to include ${needle}`);
+  }
+};
+
+const extractFunctionBody = (source, functionName) => {
+  const start = source.indexOf(`const ${functionName}`);
+  if (start < 0) {
+    throw new Error(`Expected to find function ${functionName}`);
+  }
+  const end = source.indexOf("\n  return (", start + 1);
+  return source.slice(start, end < 0 ? undefined : end);
+};
+
 const main = async () => {
   const [
     pageSource,
@@ -18,6 +33,8 @@ const main = async () => {
     segmentEditorSource,
     generationActionsSource,
     schemaSource,
+    visualReviewSource,
+    stillFindingsSource,
     visualRepairSource,
     stillAnalysisSource,
     renderProjectSource,
@@ -30,6 +47,8 @@ const main = async () => {
     readSource("src/components/project/SegmentEditor.tsx"),
     readSource("src/helpers/project-generation/use-generation-actions.ts"),
     readSource("src/lib/visual-review-schema.ts"),
+    readSource("src/lib/staged-generation/visual-review.ts"),
+    readSource("src/lib/visual-review-still-findings.ts"),
     readSource("src/lib/deterministic-visual-repair.ts"),
     readSource("src/lib/visual-review-still-analysis.ts"),
     readSource("src/lib/render-project.ts"),
@@ -94,7 +113,13 @@ const main = async () => {
   assertIncludes(pageSource, "focusSegmentRevisionPrompt", "Studio page");
   assertIncludes(pageSource, "segmentEditorSectionRef", "Studio page");
   assertIncludes(pageSource, "requestAnimationFrame", "Studio page");
-  assertIncludes(panelSource, "套用后会跳到分镜编辑器", "Visual review panel");
+  assertIncludes(panelSource, "套用修复指令只填入分镜编辑器", "Visual review panel");
+  assertIncludes(panelSource, "立即修复分镜会立即执行修复并在这里显示结果", "Visual review panel");
+  assertNotIncludes(
+    extractFunctionBody(pageSource, "regenerateSelectedSegmentFromVisualReview"),
+    "applyVisualReviewRepairPrompt",
+    "Immediate visual review repair",
+  );
   assertIncludes(segmentEditorSource, "revisionPromptTextAreaRef", "Segment editor");
   assertIncludes(segmentEditorSource, "focusRevisionPromptSignal", "Segment editor");
   assertIncludes(segmentEditorSource, "自然语言修改指令", "Segment editor");
@@ -124,29 +149,38 @@ const main = async () => {
   assertIncludes(stillAnalysisSource, "fine_detail_frame", "Visual review still analysis");
   assertIncludes(stillAnalysisSource, "letterbox_frame", "Visual review still analysis");
   assertIncludes(
-    stillAnalysisSource,
+    stillFindingsSource,
     "Representative still appears low contrast",
-    "Visual review still analysis",
+    "Visual review still findings",
   );
   assertIncludes(
-    stillAnalysisSource,
+    stillFindingsSource,
     "Representative still has content too close to the frame edge",
-    "Visual review still analysis",
+    "Visual review still findings",
   );
   assertIncludes(
-    stillAnalysisSource,
+    stillFindingsSource,
     "Representative still may contain overly fine detail",
-    "Visual review still analysis",
+    "Visual review still findings",
   );
   assertIncludes(
-    stillAnalysisSource,
+    stillFindingsSource,
     "Representative still appears letterboxed or pillarboxed",
-    "Visual review still analysis",
+    "Visual review still findings",
   );
   assertIncludes(renderProjectSource, "analyzeVisualReviewStill", "Visual review still renderer");
-  assertIncludes(routeSource, "mergeStillAnalysisFindings", "Visual review still route");
-  assertIncludes(routeSource, "reason: still.reason", "Visual review still route");
-  assertIncludes(routeSource, "stillId: still.stillId", "Visual review still route");
+  assertIncludes(
+    routeSource,
+    "mergeVisualReviewStillAnalysisDiagnostics",
+    "Visual review still route",
+  );
+  assertIncludes(
+    visualReviewSource,
+    "buildVisualReviewStillAnalysisFindings",
+    "Visual review diagnostics",
+  );
+  assertIncludes(visualReviewSource, "reason: still.reason", "Visual review diagnostics");
+  assertIncludes(visualReviewSource, "stillId: still.stillId", "Visual review diagnostics");
   assertIncludes(packageSource, "smoke:visual-review-stills", "package scripts");
   assertIncludes(packageSource, "smoke:visual-review-ui", "package scripts");
   assertIncludes(packageSource, "smoke:visual-repair", "package scripts");

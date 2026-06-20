@@ -230,7 +230,32 @@ Planner input:
 - template descriptions, use cases, capabilities, constraints, and recommended
   duration ranges
 
-Planner output:
+Provider-facing planner output is intentionally smaller than the internal
+project contract. DeepSeek normally returns a `StoryboardPlanDraft`:
+
+```ts
+type StoryboardPlanDraft = {
+  title: string;
+  brief: string;
+  language?: string;
+  globalStyle?: string;
+  segments: Array<{
+    title?: string;
+    purpose: string;
+    narrationText: string;
+    narrationTone?: string;
+    visualBrief: string;
+    visualKind: "template_macro" | "workflow" | "line_path" | "terminal";
+    steps?: string[];
+    commands?: string[];
+    pacingHint?: string;
+    expectedDurationSeconds?: number;
+  }>;
+};
+```
+
+Repo-owned deterministic code compiles that draft into the internal
+`StoryboardPlan`:
 
 ```ts
 type StoryboardPlan = {
@@ -269,14 +294,12 @@ Planner responsibilities:
 
 - decide how many segments the video needs
 - decide each segment's communication purpose
-- choose the best `templateId` from the template manifest
-- choose and explain the current render strategy for each segment before
-  compilation; this phase supports `template_macro`, `primitive_scene_graph`,
-  and bounded `procedural_generator` only for `scene-graph` +
-  `node-graph-flow`, `line-path-flow`, or `terminal-session`
+- choose a simple draft visual kind; deterministic code chooses the internal
+  `templateId`, render strategy, procedural generator family, refs, and beats
 - route deterministic workflow / system / terminal / agent-loop briefs to
-  `scene-graph` + `procedural_generator` when the requested visual structure
-  is better represented by a bounded generator than by card macro templates
+  `workflow`, `line_path`, or `terminal` draft visual kinds when the requested
+  visual structure is better represented by a bounded generator than by card
+  macro templates
 - write a narration draft for each segment
 - describe the visual content each segment should roughly show
 - preserve global continuity across all segments
@@ -284,7 +307,8 @@ Planner responsibilities:
 Planner non-responsibilities:
 
 - do not generate final `implementation`
-- do not invent template ids
+- do not invent template ids, procedural generator ids, refs, beats, or
+  `atFrame` timing
 - do not write Remotion source code
 - do not receive runtime renderer internals
 - do not create arbitrary media URLs
@@ -295,6 +319,8 @@ Why this stage exists:
 - It avoids sending every template's full schema as the template library grows.
 - It creates a stable intermediate artifact that can be edited, audited, and
   partially regenerated.
+- It keeps stochastic provider output away from strict internal fields that can
+  be generated deterministically.
 
 ### 3.2 Stage B: Segment Narration Synthesis And Alignment
 
@@ -658,7 +684,8 @@ The current implementation is the staged v1 pipeline:
 
 ```txt
 brief
-  -> DeepSeek storyboard planning
+  -> DeepSeek storyboard draft planning
+  -> deterministic StoryboardPlan compilation
   -> F5-TTS segment narration synthesis
   -> audio + aligned captions
   -> render strategy decision
@@ -671,6 +698,7 @@ The Visual IR compiler target continues to evolve this staged path into:
 
 ```txt
 brief
+  -> StoryboardPlanDraft
   -> StoryboardPlan
   -> per-segment narration synthesis
   -> audio + aligned captions
@@ -721,15 +749,12 @@ Current compatibility notes:
 - The F5-TTS provider is implemented as part of this project. It can call a
   local service/process/container, but the repo owns the provider contract,
   config, artifact writing, caption normalization, and fallback path.
-- DeepSeek JSON-mode planner output remains strict-first. The storyboard parser
-  performs only bounded provider-boundary normalization for observed near
-  misses such as missing segment `purpose`, missing
-  segment planning rationale fields, VideoProject-shaped `projectId` /
-  segment `language` / `durationSeconds` extras, missing
-  `proceduralGenerator.title`, and numeric `beats[].time` aliases before final
-  Zod validation. Unknown template ids, unsupported strategies, bad refs,
-  arbitrary generator ids, and free-form provider output must still fail
-  validation instead of being silently repaired.
+- DeepSeek JSON-mode planner output remains strict-first. The normal planner
+  path validates a smaller `StoryboardPlanDraft` first and compiles the strict
+  internal `StoryboardPlan` with deterministic code. The older direct
+  `StoryboardPlan` parser remains as a compatibility fallback and performs
+  only bounded provider-boundary normalization for observed near misses before
+  final Zod validation.
 
 ## 7. Roadmap
 
@@ -785,13 +810,16 @@ Goal:
 
 Implemented:
 
-- `StoryboardPlan` schema
+- `StoryboardPlanDraft` schema
+- deterministic `StoryboardPlanDraft` -> `StoryboardPlan` compiler
+- internal `StoryboardPlan` schema
 - `StoryboardSegmentPlan` schema
-- planner template manifest derived from registered templates
-- planner prompt that receives compact template metadata
-- internal DeepSeek function that can produce and validate a plan
-- one bounded planner repair attempt for invalid JSON or schema-invalid
-  `StoryboardPlan` output
+- planner prompt that asks DeepSeek for semantic draft fields rather than
+  final ids, strategy decisions, procedural refs, and beats
+- internal DeepSeek function that can produce and validate a draft, then
+  compile it into a plan
+- one bounded planner repair attempt for invalid JSON or schema-invalid draft
+  output, with the direct `StoryboardPlan` parser retained only as fallback
 - selected-segment planner repair that still requires exactly one planned
   segment before target id/order reassignment
 

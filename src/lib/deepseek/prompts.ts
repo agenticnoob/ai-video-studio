@@ -5,113 +5,68 @@ import type {
   DeepSeekTemplateCompileRequest,
 } from "./provider";
 import type { VideoProject } from "../project-schema";
-import {
-  buildPlannerTemplateManifestPrompt,
-  getTemplateDefinition,
-  templateIds,
-} from "../template-registry";
+import { getTemplateDefinition } from "../template-registry";
 
 /**
  * Payload for the provider. The transport uses JSON mode, then the parser
- * validates the returned object against the planner/template Zod contracts.
+ * validates the returned object against small provider-facing draft contracts
+ * before deterministic project contracts are compiled.
  */
 export type DeepSeekPrompt = {
   messages: DeepSeekChatMessage[];
 };
 
-const STORYBOARD_PLAN_SYSTEM_PROMPT = `You create a structured "StoryboardPlan" for a segment-first video studio.
+const STORYBOARD_PLAN_SYSTEM_PROMPT = `You create a structured "StoryboardPlanDraft" for a segment-first video studio.
 
-This is the planning stage only. The output decides segment intent, narration,
-visual direction, and one primary registered template per segment. It must not
-generate final template implementation fields.
+This is the planning stage only. The output captures segment intent,
+narration, visual direction, and a simple visual kind. Deterministic code will
+compile this draft into the final StoryboardPlan, including ids, order,
+templateId, strategyDecision, proceduralGenerator, refs, and beats.
 
 The output must:
 - be a single JSON object (no markdown fence, no commentary)
-- validate against the StoryboardPlan schema
+- validate against the StoryboardPlanDraft schema
 - contain between 1 and 6 segments; prefer 1-3 unless the brief clearly needs more
-- use one primary template per segment
-- choose templateId from the registered template ids: ${templateIds.map((id) => `"${id}"`).join(", ")}
-- every segment MUST include these keys: id, order, title, purpose, templateId,
-  templateReason, strategyDecision, narration, and visualBrief
+- every segment MUST include these keys: purpose, narrationText, visualBrief, and visualKind
+- title is recommended for every segment, but the compiler can fill a fallback title
 - set purpose as a concrete one-sentence goal for that segment, not an empty
   label and not only a title
-- set strategyDecision for every segment with strategy, confidence, reason, and fallbackStrategy
-- set segment.order as contiguous integers starting at 1
-- use stable segment ids like "segment-1", "segment-2"
-- write narration.text as the spoken script for that segment
-- explain templateReason using the selected template's fit for the segment purpose
+- write narrationText as the spoken script for that segment
 - describe visualBrief without inventing media URLs or Remotion source code
+- choose visualKind from "template_macro", "workflow", "line_path", or "terminal"
 - set expectedDurationSeconds when the brief or narration gives a useful timing hint
 
-# Planner template manifest
-${buildPlannerTemplateManifestPrompt()}
-
-# Render strategy decision v1
-- Current supported strategies are "template_macro", "primitive_scene_graph", and bounded "procedural_generator".
-- Use "primitive_scene_graph" only when templateId is "scene-graph" and the
-  segment needs custom layered Visual IR that is NOT one of the supported
-  procedural generator shapes.
-- For deterministic workflow, node graph, dependency flow, agent loop, system
-  pipeline, journey, timeline, progression, terminal command session,
-  build/test/deploy trace, or command output walkthrough segments, you MUST use
-  templateId "scene-graph" with strategyDecision.strategy
-  "procedural_generator" and include proceduralGenerator. Do not use
-  "primitive_scene_graph" for those cases.
-- Use "template_macro" for scripted, spotlight, stats-dashboard, and any other fixed registered macro template.
-- Prefer "scene-graph" for product workflows, UI walkthroughs, system pipelines,
-  agent loops, generation flows, command sessions, process visuals, cinematic
-  openers/closings, node/path/code/terminal visuals, or when the brief asks for
-  visual variety beyond cards and scripted text.
-- Prefer "stats-dashboard" when the segment needs KPI, comparison, trend,
-  category share, report, analytics, growth, or multi-chart/dashboard visuals.
-- Use "spotlight" mainly for short hooks, recap cards, single key messages,
-  metrics, and calls to action. Do not use spotlight for every segment of a
-  multi-step product or workflow demo.
-- Use "scripted" mainly for text-heavy narrative/explainer segments that need
-  multiple internal text scenes but not a graph, path, terminal, or dashboard.
-- Set fallbackStrategy to "template_macro" for scene-graph segments so the compiler can fall back to a stable macro if Visual IR validation fails.
-- Set fallbackStrategy to "template_macro" for template_macro segments.
-- Keep confidence between 0 and 1, and explain the strategy choice in reason.
-- Do not emit media_asset_composite or generated_component in this phase.
-
-# Procedural generator v1
-- If strategyDecision.strategy is "procedural_generator", include proceduralGenerator.
-- Supported proceduralGenerator.generatorId values are "node-graph-flow", "line-path-flow", and "terminal-session".
-- Use "node-graph-flow" for deterministic workflow, agent loop, system pipeline, dependency graph, state machine, or node-and-edge visuals.
-- Use "line-path-flow" for deterministic journeys, timelines, progressions, funnels, milestone paths, sequencing paths, or narration-driven path reveals.
-- Use "terminal-session" for deterministic CLI, build, test, deploy, install, migration dry-run, smoke check, or command-output walkthroughs where terminal lines are the main visual object.
-- proceduralGenerator.renderStrategy must be "procedural_generator".
-- For "node-graph-flow", use 2-12 nodes and 1-18 edges. Every edge.from, edge.to, and beat.nodeId must reference declared node ids.
-- For "node-graph-flow", use lane values only from "input", "plan", "build", "verify", "output".
-- For "node-graph-flow", use status values only from "idle", "active", "success", "error".
-- For "node-graph-flow", use beat action values only from "reveal", "activate", "complete", "error".
-- For "line-path-flow", use 2-8 points. Each point must have id, label, x, and y, where x and y are normalized numbers from 0 to 1.
-- For "line-path-flow", every beat.pointId must reference a declared point id.
-- For "line-path-flow", use tone values only from "primary", "secondary", "success", "warning".
-- For "line-path-flow", use beat action values only from "reveal", "advance", "highlight".
-- For "terminal-session", use 1-8 lines. Every line must have id and text; keep command/output text concise and caption-safe.
-- For "terminal-session", use status values only from "idle", "running", "success", "error".
-- For "terminal-session", every beat.lineId must reference a declared line id.
-- For "terminal-session", use beat action values only from "reveal", "run", "complete", "error", "focus".
-- For "terminal-session", use prompt as a short shell prompt such as "$" or "web$".
-- Set proceduralGenerator.durationInFrames from the expected segment duration when possible; otherwise choose a reasonable duration for the narration.
-- Do not include proceduralGenerator on template_macro or primitive_scene_graph segments.
+# Visual kind routing
+- Use "workflow" for deterministic workflow, node graph, dependency flow, agent
+  loop, system pipeline, state machine, or node-and-edge visuals.
+- Use "line_path" for journeys, timelines, progressions, funnels, milestone
+  paths, sequencing paths, or narration-driven path reveals.
+- Use "terminal" for CLI, build, test, deploy, install, migration dry-run,
+  smoke check, command output, or terminal walkthrough segments.
+- Use "template_macro" for short hooks, recap cards, single key messages,
+  text-heavy narration, metrics, calls to action, or cases where no bounded
+  workflow/path/terminal visual is needed.
+- For workflow and line_path segments, include steps as short labels. The code
+  compiler will generate ids, refs, graph/path structures, and beats.
+- For terminal segments, include commands as concise terminal lines. The code
+  compiler will generate ids, refs, statuses, and beats.
+- Do not output templateId, templateReason, strategyDecision,
+  proceduralGenerator, nodes, edges, points, lines with ids, beats, atFrame,
+  durationInFrames, implementation, scenes, callouts, theme, colors, or template props.
 
 # Asset plan boundary
-- If the video will need concrete visual evidence later, add top-level assetPlan.requiredAssets with stable ids, kind, purpose, and fallback.
-- Use assetPlan ids such as "dashboard-screenshot" or "pricing-chart-data"; do not use URLs, file paths, src fields, or remote media references.
-- Do not invent asset URLs. AssetPlan only requests future assets; it does not make media_asset_composite executable in this phase.
+- Do not output assetPlan in StoryboardPlanDraft. Future asset requests remain
+  a separate bounded StoryboardPlan feature.
 
 # Planning boundaries
 - Do not generate implementation, scenes, callouts, theme, colors, or template props.
-- Do not invent template ids.
 - Do not model one segment as multiple template instances.
 - Do not create arbitrary media URLs.
 - Preserve the user's intent and language when possible.
 
 # JSON output contract (CRITICAL)
-Return the complete StoryboardPlan object directly as JSON. The top-level keys
-must be title, brief, segments, and optional language/globalStyle/assetPlan.
+Return the complete StoryboardPlanDraft object directly as JSON. The top-level keys
+must be title, brief, segments, and optional language/globalStyle.
 Do not wrap the result inside "emit_result", "arguments", "result", "data", or
 any other container.`;
 
@@ -128,8 +83,8 @@ const buildStoryboardRepairInstructions = ({
 
   return [
     "# Repair input",
-    "The previous StoryboardPlan output was rejected. Return a corrected StoryboardPlan object only.",
-    "Preserve the user's intent, but fix JSON shape, required fields, valid templateId values, unique ids, and contiguous order values.",
+    "The previous StoryboardPlanDraft output was rejected. Return a corrected StoryboardPlanDraft object only.",
+    "Preserve the user's intent, but fix JSON shape, required draft fields, valid visualKind values, and concise steps/commands.",
     validationError ? `Validation error: ${validationError}` : "",
     previousInvalidOutput
       ? `Previous invalid output:\n\`\`\`json\n${previousInvalidOutput.slice(0, 4000)}\n\`\`\``
@@ -288,56 +243,40 @@ export const buildSegmentPlanRevisionPrompt = ({
       role: "system",
       content: `You revise one storyboard segment inside an existing video project.
 
-Return a StoryboardPlan containing EXACTLY ONE segment: the target segment to regenerate.
-This is the planning stage only. Do not generate final template implementation fields.
+Return a StoryboardPlanDraft containing EXACTLY ONE segment: the target segment to regenerate.
+This is the planning stage only. Deterministic code will compile the draft into
+the final StoryboardPlan, including ids, order, templateId, strategyDecision,
+proceduralGenerator, refs, and beats.
 
 # Output requirements
-- Keep the target segment id exactly "${segmentId}".
-- Set the single segment order to 1.
 - Preserve the original language unless the revision request explicitly asks otherwise.
-- Choose one registered primary template from: ${templateIds.map((id) => `"${id}"`).join(", ")}.
-- Keep the current template unless the revision request clearly asks for a different presentation style.
-- Include strategyDecision. Use "primitive_scene_graph" only with templateId "scene-graph";
-  use "procedural_generator" only with templateId "scene-graph" when the segment
-  is best represented as a deterministic workflow, node graph, agent loop,
-  system pipeline, dependency flow, journey, timeline, progression, funnel,
-  milestone path, sequencing path, narration-driven path reveal, terminal
-  command session, build/test/deploy trace, or command output walkthrough;
-  otherwise use "template_macro". Use fallbackStrategy "template_macro" for
-  this phase.
-- If strategyDecision.strategy is "procedural_generator", include a bounded
-  proceduralGenerator object with generatorId "node-graph-flow" or
-  "line-path-flow" or "terminal-session".
-- Use "node-graph-flow" for deterministic workflow, agent loop, system
-  pipeline, dependency graph, state machine, or node-and-edge visuals.
-- Use "line-path-flow" for deterministic journeys, timelines, progressions,
-  funnels, milestone paths, sequencing paths, or narration-driven path reveals.
-- Use "terminal-session" for deterministic CLI, build, test, deploy, install,
-  migration dry-run, smoke check, or command-output walkthroughs where terminal
-  lines are the main visual object.
-- For "node-graph-flow", use renderStrategy "procedural_generator", 2-12
-  nodes, 1-18 edges, and edge/beat references that point only at declared node
-  ids.
-- For "line-path-flow", use renderStrategy "procedural_generator", 2-8 points,
-  normalized x/y coordinates from 0 to 1, and beat pointId references that
-  point only at declared point ids.
-- For "terminal-session", use renderStrategy "procedural_generator", 1-8
-  concise terminal lines, status values from "idle", "running", "success",
-  "error", and beat lineId references that point only at declared line ids.
-- Write narration.text as the actual spoken script for this segment, not as an instruction.
+- The top-level draft must include title, brief, and exactly one segment.
+- The single segment must include purpose, narrationText, visualBrief, and visualKind.
+- Use title when useful; the compiler can fill a fallback title.
+- Choose visualKind from "template_macro", "workflow", "line_path", or "terminal".
+- Keep narrationText as the actual spoken script for this segment, not as an instruction.
 - Keep narration concise enough for a short product-demo segment.
-- Describe visualBrief for this segment without inventing media URLs or Remotion source code.
-- Do not include implementation, scenes, callouts, theme, colors, audio URLs, or provider metadata.
-
-# Planner template manifest
-${buildPlannerTemplateManifestPrompt()}
+- Describe visualBrief without inventing media URLs or Remotion source code.
+- Use "workflow" for deterministic workflow, node graph, agent loop, system
+  pipeline, dependency graph, state machine, or node-and-edge visuals.
+- Use "line_path" for journeys, timelines, progressions, funnels, milestone
+  paths, sequencing paths, or narration-driven path reveals.
+- Use "terminal" for CLI, build, test, deploy, install, migration dry-run,
+  smoke check, command output, or terminal walkthroughs.
+- Use "template_macro" when no bounded workflow/path/terminal visual is needed.
+- For workflow and line_path segments, include steps as short labels.
+- For terminal segments, include commands as concise terminal lines.
+- Do not output id, order, templateId, templateReason, strategyDecision,
+  proceduralGenerator, nodes, edges, points, lines with ids, beats, atFrame,
+  durationInFrames, implementation, scenes, callouts, theme, colors, audio URLs,
+  or provider metadata.
 
 ${repairInstructions}
 
 # JSON output contract (CRITICAL)
-Return the complete one-segment StoryboardPlan object directly as JSON. Do not
-wrap the result inside "emit_result", "arguments", "result", "data", or any
-other container.`,
+Return the complete one-segment StoryboardPlanDraft object directly as JSON.
+Do not wrap the result inside "emit_result", "arguments", "result", "data", or
+any other container.`,
     },
     {
       role: "user",

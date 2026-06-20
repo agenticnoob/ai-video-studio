@@ -5,7 +5,9 @@ import type {
   VisualReviewDiagnostics,
   VisualReviewFinding,
   VisualReviewFrame,
+  VisualReviewStillExtraction,
 } from "../visual-review-schema";
+import { buildVisualReviewStillAnalysisFindings } from "../visual-review-still-findings";
 
 export const summarizeVisualReviewFindings = ({
   findings,
@@ -22,6 +24,29 @@ export const summarizeVisualReviewFindings = ({
   reviewFrames,
   warningCount: findings.filter((finding) => finding.severity === "warning").length,
 });
+
+export const mergeVisualReviewStillAnalysisDiagnostics = ({
+  diagnostics,
+  extraction,
+}: {
+  diagnostics: VisualReviewDiagnostics;
+  extraction: VisualReviewStillExtraction;
+}): VisualReviewDiagnostics => {
+  const stillAnalysisFindings = extraction.stills.flatMap((still) =>
+    buildVisualReviewStillAnalysisFindings({
+      analysis: still.analysis,
+      frame: still.frame,
+      reason: still.reason,
+      segmentId: still.segmentId,
+      stillId: still.stillId,
+    }),
+  );
+
+  return summarizeVisualReviewFindings({
+    findings: [...diagnostics.findings, ...stillAnalysisFindings],
+    reviewFrames: diagnostics.reviewFrames,
+  });
+};
 
 const reviewSegmentTiming = (segment: VideoSegment): VisualReviewFinding[] => {
   const findings: VisualReviewFinding[] = [];

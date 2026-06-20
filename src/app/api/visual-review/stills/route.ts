@@ -7,14 +7,13 @@ import { videoProjectSchema } from "../../../../lib/project-schema";
 import { renderVisualReviewStills } from "../../../../lib/render-project";
 import {
   buildStaticVisualReviewDiagnostics,
-  summarizeVisualReviewFindings,
+  mergeVisualReviewStillAnalysisDiagnostics,
 } from "../../../../lib/staged-generation/visual-review";
 import {
   finishTaskProgress,
   startTaskProgress,
   updateTaskProgressStep,
 } from "../../../../lib/task-progress";
-import { buildVisualReviewStillAnalysisFindings } from "../../../../lib/visual-review-still-analysis";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -74,10 +73,9 @@ export async function POST(request: Request) {
         reviewFrames: diagnostics.reviewFrames,
       }),
     );
-    const stillAnalysisFindings = mergeStillAnalysisFindings(extraction.stills);
-    const visualReview = summarizeVisualReviewFindings({
-      findings: [...diagnostics.findings, ...stillAnalysisFindings],
-      reviewFrames: diagnostics.reviewFrames,
+    const visualReview = mergeVisualReviewStillAnalysisDiagnostics({
+      diagnostics,
+      extraction,
     });
 
     finishTaskProgress({ id: progressId, status: "success" });
@@ -104,16 +102,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
-
-const mergeStillAnalysisFindings = (
-  stills: Awaited<ReturnType<typeof renderVisualReviewStills>>["stills"],
-) =>
-  stills.flatMap((still) =>
-    buildVisualReviewStillAnalysisFindings({
-      analysis: still.analysis,
-      frame: still.frame,
-      reason: still.reason,
-      segmentId: still.segmentId,
-      stillId: still.stillId,
-    }),
-  );

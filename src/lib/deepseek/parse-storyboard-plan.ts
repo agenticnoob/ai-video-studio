@@ -21,6 +21,31 @@ const finiteNumber = (value: unknown): number | null =>
 const hasOwn = (record: Record<string, unknown>, key: string): boolean =>
   Object.prototype.hasOwnProperty.call(record, key);
 
+const stringifyObjectFields = (record: Record<string, unknown>): string | null => {
+  const parts = Object.entries(record)
+    .map(([key, value]) => {
+      const text = nonEmptyString(value) ?? finiteNumber(value)?.toString();
+      return text ? `${key}: ${text}` : null;
+    })
+    .filter((part): part is string => part !== null);
+
+  return parts.length ? parts.join("; ") : null;
+};
+
+const readFrameAlias = (record: Record<string, unknown>): number | null =>
+  finiteNumber(record.time) ?? finiteNumber(record.startFrame) ?? finiteNumber(record.frame);
+
+const PROCEDURAL_GENERATOR_BEAT_LIMITS: Record<string, number> = {
+  "line-path-flow": 16,
+  "node-graph-flow": 20,
+  "terminal-session": 16,
+};
+
+const proceduralGeneratorBeatLimit = (generatorId: unknown): number | null => {
+  const id = nonEmptyString(generatorId);
+  return id ? (PROCEDURAL_GENERATOR_BEAT_LIMITS[id] ?? null) : null;
+};
+
 const formatIssues = (issues: z.ZodIssue[]): string =>
   issues
     .slice(0, 5)
@@ -61,6 +86,15 @@ const recoverMissingSegmentPlanningFields = (value: unknown): unknown | null => 
   if (hasOwn(nextPlan, "projectId")) {
     delete nextPlan.projectId;
     changed = true;
+  }
+
+  const globalStyleRecord = toRecord(nextPlan.globalStyle);
+  if (globalStyleRecord) {
+    const globalStyle = stringifyObjectFields(globalStyleRecord);
+    if (globalStyle) {
+      nextPlan.globalStyle = globalStyle;
+      changed = true;
+    }
   }
 
   const planBrief = nonEmptyString(plan.brief) ?? "Describe the segment clearly.";
@@ -152,21 +186,40 @@ const recoverMissingSegmentPlanningFields = (value: unknown): unknown | null => 
         let beatsChanged = false;
         const beats = proceduralGenerator.beats.map((beat) => {
           const beatRecord = toRecord(beat);
-          const time = finiteNumber(beatRecord?.time);
-          if (!beatRecord || beatRecord.atFrame !== undefined || time === null) {
+          if (!beatRecord) {
             return beat;
           }
 
-          const { time: _time, ...rest } = beatRecord;
+          const frameAlias = readFrameAlias(beatRecord);
+          if (beatRecord.atFrame !== undefined && !hasOwn(beatRecord, "duration")) {
+            return beat;
+          }
+
+          const {
+            duration: _duration,
+            frame: _frame,
+            startFrame: _startFrame,
+            time: _time,
+            ...rest
+          } = beatRecord;
           beatsChanged = true;
-          return {
-            ...rest,
-            atFrame: time,
-          };
+          return frameAlias === null
+            ? rest
+            : {
+                ...rest,
+                atFrame: frameAlias,
+              };
         });
+        const beatLimit = proceduralGeneratorBeatLimit(proceduralGenerator.generatorId);
+        const limitedBeats =
+          beatLimit !== null && beats.length > beatLimit ? beats.slice(0, beatLimit) : beats;
+
+        if (limitedBeats.length !== beats.length) {
+          beatsChanged = true;
+        }
 
         if (beatsChanged) {
-          nextGenerator.beats = beats;
+          nextGenerator.beats = limitedBeats;
           generatorChanged = true;
         }
       }
@@ -226,12 +279,14 @@ export const parseStoryboardPlanToolCallArguments = (argumentsString: string): S
     return result.data;
   }
 
+  let validationIssues = result.error.issues;
   const recovered = recoverMissingSegmentPlanningFields(parsed);
   if (recovered !== null) {
     const retry = storyboardPlanSchema.safeParse(recovered);
     if (retry.success) {
       return retry.data;
     }
+    validationIssues = retry.error.issues;
   }
 
   const wrapped = looksLikeWrappedPlan(parsed);
@@ -243,7 +298,7 @@ export const parseStoryboardPlanToolCallArguments = (argumentsString: string): S
   }
 
   throw new StoryboardPlanParseError(
-    `Generated storyboard plan failed schema validation: ${formatIssues(result.error.issues)} ; raw=${head}`,
+    `Generated storyboard plan failed schema validation: ${formatIssues(validationIssues)} ; raw=${head}`,
     argumentsString,
   );
 };
