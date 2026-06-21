@@ -31,7 +31,22 @@ const requiredRecipeIds = [
   "code-diff-highlight",
 ];
 
-const requiredTransitionIds = ["light-sweep-bridge", "scanline-wipe", "panel-push"];
+const requiredTransitionIds = [
+  "light-sweep-bridge",
+  "scanline-wipe",
+  "panel-push",
+  "stage-push",
+  "fly-through",
+  "cube-turn",
+];
+
+const requiredMotionSnippets = [
+  "SceneStage",
+  "translate3d(",
+  "rotateY(",
+  "motionStyle",
+  "SCENE_CONTENT_PREROLL_IN_FRAMES",
+];
 
 const forbiddenAudioSnippets = ["<Audio", "segmentNarrationFromAsset", "/api/tts/assets/smoke"];
 
@@ -51,6 +66,10 @@ for (const recipeId of requiredRecipeIds) {
 
 for (const transitionId of requiredTransitionIds) {
   assertIncludes(showcaseSource, transitionId, "Recipe showcase transition");
+}
+
+for (const motionSnippet of requiredMotionSnippets) {
+  assertIncludes(showcaseSource, motionSnippet, "Recipe showcase stage motion");
 }
 
 for (const snippet of forbiddenAudioSnippets) {

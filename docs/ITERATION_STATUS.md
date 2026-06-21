@@ -6,15 +6,25 @@ Last updated: Visual recipe roadmap branch
 
 - Committed the initial Phase 1 showcase baseline as
   `c313f02 feat: add recipe showcase preview`.
-- Added a small transition bridge pass on top of `RecipeShowcasePreview` so
-  the preview is no longer only static scene-to-scene cuts.
-- Added three bounded transition treatments inside the showcase composition:
-  `light-sweep-bridge`, `scanline-wipe`, and `panel-push`.
+- Reworked the first transition pass after review: the earlier light/scanline
+  bridge helped hide cuts, but did not make the scene content itself leave or
+  enter the frame.
+- Added frame-driven `SceneStage` motion so full scene containers now overlap
+  briefly and move through actual 2.5D / 3D transforms.
+- The showcase now uses three bounded subject-motion treatments:
+  `stage-push` as the default 2.5D push/pull, `fly-through` for higher-energy
+  terminal/metric cuts, and `cube-turn` as a one-off accent into the code-diff
+  scene.
+- Retained `light-sweep-bridge`, `scanline-wipe`, and `panel-push` only as
+  lower-opacity auxiliary light/texture effects, not as the main transition.
+- Added a scene-content preroll so entering scenes already have visible content
+  while they fly in, instead of moving an empty background.
 - Kept this as preview-only Remotion code: no live LLM changes, no template
   provider schema changes, no new API route, and no placeholder narration
   audio.
 - Extended `npm run smoke:recipe-showcase-preview` to assert that the expected
-  transition treatment ids stay present in the showcase source.
+  transition treatment ids and frame-driven stage-motion markers stay present
+  in the showcase source.
 - Rendered transition boundary stills for visual inspection:
   `/workspace/out/recipe-transition-light-sweep.png`,
   `/workspace/out/recipe-transition-scanline-terminal.png`,
@@ -22,6 +32,12 @@ Last updated: Visual recipe roadmap branch
   `/workspace/out/recipe-transition-light-sweep-timeline.png`,
   `/workspace/out/recipe-transition-panel-push.png`, and
   `/workspace/out/recipe-transition-panel-push-clean.png`.
+- Rendered subject-motion stills for the revised pass:
+  `/workspace/out/recipe-motion-stage-push-v2.png`,
+  `/workspace/out/recipe-motion-terminal-entry-mid.png`,
+  `/workspace/out/recipe-motion-terminal-entry-late.png`,
+  `/workspace/out/recipe-motion-fly-through-metric-v2.png`, and
+  `/workspace/out/recipe-motion-cube-turn-v3.png`.
 
 Validation performed so far:
 - `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:recipe-showcase-preview'`
@@ -30,6 +46,9 @@ Validation performed so far:
 - `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts RecipeShowcasePreview /workspace/out/recipe-transition-scanline-metric.png --frame=980 --scale=0.5'`
 - `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts RecipeShowcasePreview /workspace/out/recipe-transition-light-sweep-timeline.png --frame=1310 --scale=0.5'`
 - `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts RecipeShowcasePreview /workspace/out/recipe-transition-panel-push-clean.png --frame=1640 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts RecipeShowcasePreview /workspace/out/recipe-motion-terminal-entry-mid.png --frame=622 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts RecipeShowcasePreview /workspace/out/recipe-motion-terminal-entry-late.png --frame=650 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts RecipeShowcasePreview /workspace/out/recipe-motion-cube-turn-v3.png --frame=1612 --scale=0.5'`
 
 ## Latest continuation — Recipe Showcase Preview Phase 1
 

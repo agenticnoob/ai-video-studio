@@ -4,6 +4,10 @@ import { AbsoluteFill, Easing, interpolate, Sequence, useCurrentFrame } from "re
 const WIDTH = 1280;
 const HEIGHT = 720;
 const SCENE_DURATION = 330;
+const SCENE_OVERLAP_IN_FRAMES = 48;
+const STAGE_TRANSITION_IN_FRAMES = 56;
+const SCENE_CONTENT_PREROLL_IN_FRAMES = 36;
+const SCENE_SEQUENCE_DURATION = SCENE_DURATION + SCENE_OVERLAP_IN_FRAMES;
 
 export const RECIPE_SHOWCASE_DURATION_IN_FRAMES = SCENE_DURATION * 6;
 
@@ -29,7 +33,19 @@ const showcaseRecipes = [
   "code-diff-highlight",
 ] as const;
 
-const showcaseTransitions = ["light-sweep-bridge", "scanline-wipe", "panel-push"] as const;
+const showcaseTransitions = [
+  "light-sweep-bridge",
+  "scanline-wipe",
+  "panel-push",
+  "stage-push",
+  "fly-through",
+  "cube-turn",
+] as const;
+
+type StageMotion =
+  | (typeof showcaseTransitions)[3]
+  | (typeof showcaseTransitions)[4]
+  | (typeof showcaseTransitions)[5];
 
 const clamp = {
   extrapolateLeft: "clamp" as const,
@@ -41,9 +57,6 @@ const focusedOut = Easing.bezier(0.22, 1, 0.36, 1);
 
 const enter = (frame: number, start = 0, end = 32) =>
   interpolate(frame, [start, end], [0, 1], { ...clamp, easing: softOut });
-
-const exit = (frame: number, start = SCENE_DURATION - 36, end = SCENE_DURATION) =>
-  interpolate(frame, [start, end], [1, 0], { ...clamp, easing: Easing.in(Easing.ease) });
 
 const recipeShellStyle: CSSProperties = {
   background: "linear-gradient(135deg, #07111f 0%, #0b1524 42%, #1a1024 72%, #111827 100%)",
@@ -97,6 +110,155 @@ const RecipeLabel: FC<{ index: number; name: string; tint: string }> = ({ index,
   </div>
 );
 
+const stageMotionEase = {
+  ...clamp,
+  easing: Easing.bezier(0.16, 1, 0.3, 1),
+};
+
+const stageProgress = (frame: number, start: number, end: number) =>
+  interpolate(frame, [start, end], [0, 1], stageMotionEase);
+
+const stageOpacity = (frame: number, index: number, sceneCount: number) => {
+  const enterOpacity =
+    index === 0
+      ? 1
+      : interpolate(frame, [0, STAGE_TRANSITION_IN_FRAMES * 0.7], [0, 1], stageMotionEase);
+  const exitOpacity =
+    index === sceneCount - 1
+      ? 1
+      : interpolate(
+          frame,
+          [
+            SCENE_DURATION - STAGE_TRANSITION_IN_FRAMES * 0.65,
+            SCENE_DURATION + SCENE_OVERLAP_IN_FRAMES,
+          ],
+          [1, 0.18],
+          { ...clamp, easing: Easing.in(Easing.ease) },
+        );
+
+  return Math.min(enterOpacity, exitOpacity);
+};
+
+const stagePushStyle = (frame: number, index: number, sceneCount: number) => {
+  const incoming = index === 0 ? 1 : stageProgress(frame, 0, STAGE_TRANSITION_IN_FRAMES);
+  const outgoing =
+    index === sceneCount - 1
+      ? 0
+      : stageProgress(
+          frame,
+          SCENE_DURATION - STAGE_TRANSITION_IN_FRAMES,
+          SCENE_DURATION + SCENE_OVERLAP_IN_FRAMES,
+        );
+
+  const enterX = interpolate(incoming, [0, 1], [WIDTH * 0.62, 0], clamp);
+  const enterScale = interpolate(incoming, [0, 1], [0.78, 1], clamp);
+  const enterRotateY = interpolate(incoming, [0, 1], [34, 0], clamp);
+  const exitX = interpolate(outgoing, [0, 1], [0, -WIDTH * 0.72], clamp);
+  const exitScale = interpolate(outgoing, [0, 1], [1, 0.82], clamp);
+  const exitRotateY = interpolate(outgoing, [0, 1], [0, -42], clamp);
+
+  return {
+    filter: `blur(${interpolate(Math.max(1 - incoming, outgoing), [0, 1], [0, 1.8], clamp)}px)`,
+    transform: `translate3d(${enterX + exitX}px, 0, 0) rotateY(${enterRotateY + exitRotateY}deg) scale(${enterScale * exitScale})`,
+  };
+};
+
+const flyThroughStyle = (frame: number, index: number, sceneCount: number) => {
+  const incoming = index === 0 ? 1 : stageProgress(frame, 0, STAGE_TRANSITION_IN_FRAMES);
+  const outgoing =
+    index === sceneCount - 1
+      ? 0
+      : stageProgress(
+          frame,
+          SCENE_DURATION - STAGE_TRANSITION_IN_FRAMES,
+          SCENE_DURATION + SCENE_OVERLAP_IN_FRAMES,
+        );
+
+  const enterX = interpolate(incoming, [0, 1], [WIDTH * 0.46, 0], clamp);
+  const enterY = interpolate(incoming, [0, 1], [HEIGHT * 0.24, 0], clamp);
+  const enterScale = interpolate(incoming, [0, 1], [1.28, 1], clamp);
+  const enterRotateY = interpolate(incoming, [0, 1], [24, 0], clamp);
+  const enterRotateZ = interpolate(incoming, [0, 1], [7, 0], clamp);
+  const exitX = interpolate(outgoing, [0, 1], [0, -WIDTH * 0.86], clamp);
+  const exitY = interpolate(outgoing, [0, 1], [0, -HEIGHT * 0.28], clamp);
+  const exitScale = interpolate(outgoing, [0, 1], [1, 0.44], clamp);
+  const exitRotateY = interpolate(outgoing, [0, 1], [0, -38], clamp);
+  const exitRotateZ = interpolate(outgoing, [0, 1], [0, -10], clamp);
+
+  return {
+    filter: `blur(${interpolate(Math.max(1 - incoming, outgoing), [0, 1], [0, 3.2], clamp)}px)`,
+    transform: `translate3d(${enterX + exitX}px, ${enterY + exitY}px, 0) rotateZ(${
+      enterRotateZ + exitRotateZ
+    }deg) rotateY(${enterRotateY + exitRotateY}deg) scale(${enterScale * exitScale})`,
+  };
+};
+
+const cubeTurnStyle = (frame: number, index: number, sceneCount: number) => {
+  const incoming = index === 0 ? 1 : stageProgress(frame, 0, STAGE_TRANSITION_IN_FRAMES);
+  const outgoing =
+    index === sceneCount - 1
+      ? 0
+      : stageProgress(
+          frame,
+          SCENE_DURATION - STAGE_TRANSITION_IN_FRAMES,
+          SCENE_DURATION + SCENE_OVERLAP_IN_FRAMES,
+        );
+
+  const enterX = interpolate(incoming, [0, 1], [WIDTH * 0.22, 0], clamp);
+  const enterRotateY = interpolate(incoming, [0, 1], [88, 0], clamp);
+  const exitX = interpolate(outgoing, [0, 1], [0, -WIDTH * 0.25], clamp);
+  const exitRotateY = interpolate(outgoing, [0, 1], [0, -88], clamp);
+
+  return {
+    filter: `blur(${interpolate(Math.max(1 - incoming, outgoing), [0, 1], [0, 1.4], clamp)}px)`,
+    transform: `translate3d(${enterX + exitX}px, 0, 0) rotateY(${enterRotateY + exitRotateY}deg) scale(${interpolate(
+      Math.max(1 - incoming, outgoing),
+      [0, 1],
+      [1, 0.9],
+      clamp,
+    )})`,
+  };
+};
+
+const motionStyle = (motion: StageMotion, frame: number, index: number, sceneCount: number) => {
+  if (motion === "fly-through") {
+    return flyThroughStyle(frame, index, sceneCount);
+  }
+
+  if (motion === "cube-turn") {
+    return cubeTurnStyle(frame, index, sceneCount);
+  }
+
+  return stagePushStyle(frame, index, sceneCount);
+};
+
+const SceneStage: FC<{
+  children: ReactNode;
+  index: number;
+  motion: StageMotion;
+  sceneCount: number;
+}> = ({ children, index, motion, sceneCount }) => {
+  const frame = useCurrentFrame();
+  const stage = motionStyle(motion, frame, index, sceneCount);
+
+  return (
+    <AbsoluteFill
+      style={{
+        filter: stage.filter,
+        opacity: stageOpacity(frame, index, sceneCount),
+        perspective: 1200,
+        transform: stage.transform,
+        transformOrigin:
+          motion === "cube-turn" ? (index % 2 === 0 ? "right center" : "left center") : "50% 50%",
+        transformStyle: "preserve-3d",
+        willChange: "transform, opacity, filter",
+      }}
+    >
+      {children}
+    </AbsoluteFill>
+  );
+};
+
 const SceneFrame: FC<{
   children: ReactNode;
   index: number;
@@ -104,7 +266,7 @@ const SceneFrame: FC<{
   tint: string;
 }> = ({ children, index, name, tint }) => {
   const frame = useCurrentFrame();
-  const sceneOpacity = Math.min(enter(frame, 0, 24), exit(frame));
+  const sceneOpacity = enter(frame, 0, 24);
   const y = interpolate(enter(frame, 0, 28), [0, 1], [18, 0], clamp);
 
   return (
@@ -811,7 +973,7 @@ const LightSweepBridge: FC<{ center: number }> = ({ center }) => {
   return (
     <AbsoluteFill
       style={{
-        opacity: progress,
+        opacity: progress * 0.62,
         pointerEvents: "none",
       }}
     >
@@ -849,12 +1011,12 @@ const ScanlineWipe: FC<{ center: number }> = ({ center }) => {
   }
 
   return (
-    <AbsoluteFill style={{ opacity: progress, pointerEvents: "none" }}>
+    <AbsoluteFill style={{ opacity: progress * 0.42, pointerEvents: "none" }}>
       <div
         style={{
-          background: `linear-gradient(180deg, transparent, ${palette.green}55, ${palette.green}cc, ${palette.green}55, transparent)`,
+          background: `linear-gradient(180deg, transparent, ${palette.green}28, ${palette.green}77, ${palette.green}28, transparent)`,
           filter: "blur(0.4px)",
-          height: 135,
+          height: 104,
           left: 0,
           position: "absolute",
           right: 0,
@@ -865,7 +1027,7 @@ const ScanlineWipe: FC<{ center: number }> = ({ center }) => {
         style={{
           backgroundImage: `repeating-linear-gradient(0deg, ${palette.green}18 0px, ${palette.green}18 1px, transparent 1px, transparent 6px)`,
           inset: 0,
-          opacity: progress * 0.7,
+          opacity: progress * 0.24,
           position: "absolute",
         }}
       />
@@ -884,10 +1046,10 @@ const PanelPush: FC<{ center: number }> = ({ center }) => {
   }
 
   return (
-    <AbsoluteFill style={{ opacity: progress, pointerEvents: "none" }}>
+    <AbsoluteFill style={{ opacity: progress * 0.45, pointerEvents: "none" }}>
       <div
         style={{
-          background: `linear-gradient(90deg, ${palette.rose}dd, ${palette.violet}88)`,
+          background: `linear-gradient(90deg, ${palette.rose}aa, ${palette.violet}55)`,
           bottom: 0,
           left: leftPanel,
           position: "absolute",
@@ -898,7 +1060,7 @@ const PanelPush: FC<{ center: number }> = ({ center }) => {
       />
       <div
         style={{
-          background: `linear-gradient(90deg, ${palette.cyan}88, ${palette.green}cc)`,
+          background: `linear-gradient(90deg, ${palette.cyan}55, ${palette.green}aa)`,
           bottom: 0,
           position: "absolute",
           right: rightPanel,
@@ -911,7 +1073,7 @@ const PanelPush: FC<{ center: number }> = ({ center }) => {
         style={{
           backgroundImage: `repeating-linear-gradient(90deg, ${palette.text}1a 0px, ${palette.text}1a 2px, transparent 2px, transparent 18px)`,
           inset: 0,
-          opacity: progress * 0.45,
+          opacity: progress * 0.18,
           position: "absolute",
         }}
       />
@@ -930,32 +1092,41 @@ const TransitionOverlay: FC = () => (
   </>
 );
 
+const showcaseScenes: Array<{
+  component: FC;
+  motion: StageMotion;
+}> = [
+  { component: HeroTitleReveal, motion: "stage-push" },
+  { component: WorkflowNodeMap, motion: "stage-push" },
+  { component: TerminalBuildRun, motion: "fly-through" },
+  { component: MetricCountUp, motion: "fly-through" },
+  { component: TimelineProgress, motion: "stage-push" },
+  { component: CodeDiffHighlight, motion: "cube-turn" },
+];
+
 export const RecipeShowcasePreview: FC = () => (
   <AbsoluteFill
     style={{
       backgroundColor: palette.background,
       height: HEIGHT,
+      overflow: "hidden",
+      perspective: 1200,
       width: WIDTH,
     }}
   >
-    <Sequence durationInFrames={SCENE_DURATION}>
-      <HeroTitleReveal />
-    </Sequence>
-    <Sequence durationInFrames={SCENE_DURATION} from={SCENE_DURATION}>
-      <WorkflowNodeMap />
-    </Sequence>
-    <Sequence durationInFrames={SCENE_DURATION} from={SCENE_DURATION * 2}>
-      <TerminalBuildRun />
-    </Sequence>
-    <Sequence durationInFrames={SCENE_DURATION} from={SCENE_DURATION * 3}>
-      <MetricCountUp />
-    </Sequence>
-    <Sequence durationInFrames={SCENE_DURATION} from={SCENE_DURATION * 4}>
-      <TimelineProgress />
-    </Sequence>
-    <Sequence durationInFrames={SCENE_DURATION} from={SCENE_DURATION * 5}>
-      <CodeDiffHighlight />
-    </Sequence>
+    {showcaseScenes.map(({ component: SceneComponent, motion }, index) => (
+      <Sequence
+        durationInFrames={SCENE_SEQUENCE_DURATION}
+        from={Math.max(0, index * SCENE_DURATION - (index === 0 ? 0 : SCENE_OVERLAP_IN_FRAMES))}
+        key={showcaseRecipes[index]}
+      >
+        <SceneStage index={index} motion={motion} sceneCount={showcaseScenes.length}>
+          <Sequence from={index === 0 ? 0 : -SCENE_CONTENT_PREROLL_IN_FRAMES}>
+            <SceneComponent />
+          </Sequence>
+        </SceneStage>
+      </Sequence>
+    ))}
     <TransitionOverlay />
   </AbsoluteFill>
 );

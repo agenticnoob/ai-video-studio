@@ -142,8 +142,9 @@ Deliver:
 
 - a Remotion Studio preview composition that demonstrates 6 polished recipe
   treatments using static fixture data
-- bounded transition bridges between showcase scenes, starting with
-  `light-sweep-bridge`, `scanline-wipe`, and `panel-push`
+- bounded subject-motion transitions between showcase scenes, starting with
+  `stage-push`, `fly-through`, and `cube-turn`; auxiliary light/scanline/panel
+  effects may support those transitions but should not be the main motion
 - no live LLM changes
 - no new provider schema
 - no project persistence changes
@@ -171,9 +172,9 @@ Acceptance:
 - `npm run smoke:staged-fixtures` confirms Remotion can bundle and list the new
   composition beside the existing template previews
 - transition boundary stills render for visual inspection, including:
-  - `/workspace/out/recipe-transition-light-sweep.png`
-  - `/workspace/out/recipe-transition-scanline-terminal.png`
-  - `/workspace/out/recipe-transition-panel-push-clean.png`
+  - `/workspace/out/recipe-motion-stage-push-v2.png`
+  - `/workspace/out/recipe-motion-terminal-entry-mid.png`
+  - `/workspace/out/recipe-motion-cube-turn-v3.png`
 
 ### Phase 2: Recipe Runtime Primitives
 
