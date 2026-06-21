@@ -66,6 +66,14 @@ export type PlannerTemplateManifestEntry = {
   narrationFit: string;
   mediaExpectations: string;
   examples: string[];
+  recipes?: {
+    recipeId: string;
+    label: string;
+    bestFor: string[];
+    avoidCases: string[];
+    requiredInputsSummary: string;
+    durationFit: string;
+  }[];
 };
 
 const framesToSeconds = (frames: number): number => Math.round((frames / 30) * 10) / 10;
@@ -90,6 +98,7 @@ export const buildPlannerTemplateManifest = (): PlannerTemplateManifestEntry[] =
       narrationFit: template.planner.narrationFit,
       mediaExpectations: template.planner.mediaExpectations,
       examples: template.planner.examples,
+      recipes: template.planner.recipes,
     };
   });
 };
@@ -107,9 +116,72 @@ export const buildPlannerTemplateManifestPrompt = (): string => {
         `  narrationFit: ${template.narrationFit}`,
         `  mediaExpectations: ${template.mediaExpectations}`,
         `  examples: ${template.examples.join("; ")}`,
+        template.recipes && template.recipes.length > 0
+          ? `  recipes: ${template.recipes.map((recipe) => recipe.recipeId).join(", ")}`
+          : "  recipes: none",
       ].join("\n"),
     )
     .join("\n\n");
+};
+
+export type PlannerRecipeManifestEntry = {
+  templateId: TemplateId;
+  templateLabel: string;
+  recipeId: string;
+  label: string;
+  bestFor: string[];
+  avoidCases: string[];
+  requiredInputsSummary: string;
+  durationFit: string;
+};
+
+export const buildPlannerRecipeManifest = (): PlannerRecipeManifestEntry[] => {
+  return templateIds.flatMap((templateId) => {
+    const template = templateDefinitions[templateId];
+    return (template.planner.recipes ?? []).map((recipe) => ({
+      templateId,
+      templateLabel: template.label,
+      recipeId: recipe.recipeId,
+      label: recipe.label,
+      bestFor: recipe.bestFor,
+      avoidCases: recipe.avoidCases,
+      requiredInputsSummary: recipe.requiredInputsSummary,
+      durationFit: recipe.durationFit,
+    }));
+  });
+};
+
+export const getPlannerRecipeIdsForTemplate = (templateId: TemplateId): string[] => {
+  return (templateDefinitions[templateId].planner.recipes ?? []).map((recipe) => recipe.recipeId);
+};
+
+export const buildPlannerRecipeManifestPrompt = (): string => {
+  const byTemplate = templateIds
+    .map((templateId) => {
+      const template = templateDefinitions[templateId];
+      const recipes = template.planner.recipes ?? [];
+      if (recipes.length === 0) {
+        return "";
+      }
+
+      return [
+        `- ${templateId} (${template.label})`,
+        ...recipes.map((recipe) =>
+          [
+            `  - ${recipe.recipeId} (${recipe.label})`,
+            `    bestFor: ${recipe.bestFor.join(", ")}`,
+            `    avoidCases: ${recipe.avoidCases.join(", ")}`,
+            `    requiredInputs: ${recipe.requiredInputsSummary}`,
+            `    durationFit: ${recipe.durationFit}`,
+          ].join("\n"),
+        ),
+      ].join("\n");
+    })
+    .filter(Boolean);
+
+  return byTemplate.length > 0
+    ? byTemplate.join("\n\n")
+    : "No planner-facing recipes are registered.";
 };
 
 export const buildTemplateSelectionPrompt = (): string => {

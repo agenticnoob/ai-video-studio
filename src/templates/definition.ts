@@ -11,12 +11,22 @@ export type TemplateCapabilities = {
   supportsBaseLayer: boolean;
 };
 
+export type TemplatePlannerRecipe = {
+  recipeId: string;
+  label: string;
+  bestFor: string[];
+  avoidCases: string[];
+  requiredInputsSummary: string;
+  durationFit: string;
+};
+
 export type TemplatePlannerMetadata = {
   description: string;
   avoidCases: string[];
   narrationFit: string;
   mediaExpectations: string;
   examples: string[];
+  recipes?: TemplatePlannerRecipe[];
 };
 
 export type TemplateDefinition<

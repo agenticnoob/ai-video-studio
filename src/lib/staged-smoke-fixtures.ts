@@ -512,6 +512,21 @@ export const technicalExplainerStoryboardPlan: StoryboardPlan = storyboardPlanSc
         tone: "clear",
       },
       visualBrief: "Hero title, workflow map, and terminal smoke check.",
+      recipeHints: [
+        {
+          recipeId: "hero-title-reveal",
+          reason: "The opening beat introduces the phase three template boundary.",
+        },
+        {
+          recipeId: "workflow-node-map",
+          reason:
+            "The segment explains how reusable recipe primitives flow into generated output.",
+        },
+        {
+          recipeId: "terminal-build-run",
+          reason: "The segment references the deterministic smoke check path.",
+        },
+      ],
       expectedDurationSeconds: 7,
     },
     {
@@ -526,6 +541,16 @@ export const technicalExplainerStoryboardPlan: StoryboardPlan = storyboardPlanSc
         tone: "confident",
       },
       visualBrief: "Metric cards followed by a timeline progress view.",
+      recipeHints: [
+        {
+          recipeId: "metric-countup",
+          reason: "The segment recaps measurable outcomes.",
+        },
+        {
+          recipeId: "timeline-progress",
+          reason: "The segment closes with implementation checkpoints.",
+        },
+      ],
       expectedDurationSeconds: 6,
     },
   ],

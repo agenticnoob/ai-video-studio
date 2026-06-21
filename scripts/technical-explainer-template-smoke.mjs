@@ -91,6 +91,9 @@ assertIncludes(rootSource, 'id="TechnicalExplainerTemplatePreview"', "Remotion r
 assertIncludes(rootSource, "technicalExplainerSmokeProject", "Remotion root");
 assertIncludes(fixtureSource, "technicalExplainerSmokeProject", "staged smoke fixtures");
 assertIncludes(fixtureSource, "technicalExplainerStagedProject", "staged smoke fixtures");
+assertIncludes(fixtureSource, "recipeHints", "staged smoke fixtures");
+assertIncludes(fixtureSource, 'recipeId: "workflow-node-map"', "staged smoke fixtures");
+assertIncludes(fixtureSource, 'recipeId: "terminal-build-run"', "staged smoke fixtures");
 
 for (const recipeId of requiredRecipeIds) {
   assertIncludes(schemaSource, recipeId, "technical explainer schema");

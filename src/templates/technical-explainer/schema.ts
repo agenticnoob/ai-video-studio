@@ -4,13 +4,15 @@ import { themeSchema } from "../../lib/video-schema";
 import { TECHNICAL_EXPLAINER_TEMPLATE_ID } from "../ids";
 import { createTemplateSegmentSchema } from "../segment-schema";
 
-export const technicalExplainerRecipeIdSchema = z.enum([
+export const technicalExplainerRecipeIds = [
   "hero-title-reveal",
   "terminal-build-run",
   "workflow-node-map",
   "metric-countup",
   "timeline-progress",
-]);
+] as const;
+
+export const technicalExplainerRecipeIdSchema = z.enum(technicalExplainerRecipeIds);
 
 const sectionBaseSchema = z.object({
   id: z.string().trim().min(1).max(80),

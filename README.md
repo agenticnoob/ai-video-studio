@@ -168,9 +168,10 @@ Current visual-quality direction:
   `technical-explainer` template. It uses bounded recipe sections for hero
   title, terminal session, workflow map, metric cards, and timeline progress
   while preserving `ProjectVideo` preview/export behavior.
-- Phase 4 planner recipe selection has been designed but not implemented. The
-  accepted plan keeps recipe choice as optional planner hints derived from
-  template definitions, not as a new top-level `VideoProject` model.
+- Phase 4 planner recipe selection is in place: recipe-capable templates expose
+  compact planner-facing recipe metadata, DeepSeek can return optional
+  `recipeHints`, and the selected-template compiler turns those hints into
+  schema-valid template implementation while keeping `VideoProject` unchanged.
 - keep AI output bounded to registered template / recipe parameters; do not use
   unrestricted generated TSX as the normal path
 - avoid broad visual-review scoring or automatic screenshot repair as the next

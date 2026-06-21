@@ -6,6 +6,7 @@ import type {
 } from "./provider";
 import type { VideoProject } from "../project-schema";
 import {
+  buildPlannerRecipeManifestPrompt,
   buildPlannerTemplateManifestPrompt,
   getTemplateDefinition,
   templateIds,
@@ -37,13 +38,22 @@ The output must:
 - explain templateReason using the selected template's fit for the segment purpose
 - describe visualBrief without inventing media URLs or Remotion source code
 - set expectedDurationSeconds when the brief or narration gives a useful timing hint
+- when a selected template lists planner-facing recipes, optionally set segment.recipeHints to the most relevant recipe ids from that template only
+- each recipe hint must be { recipeId, reason }
+- leave recipeHints omitted when no listed recipe fits the segment
 
 # Planner template manifest
 ${buildPlannerTemplateManifestPrompt()}
 
+# Planner recipe manifest
+${buildPlannerRecipeManifestPrompt()}
+
 # Planning boundaries
 - Do not generate implementation, scenes, callouts, theme, colors, or template props.
 - Do not invent template ids.
+- Do not invent recipe ids.
+- Do not use recipe hints from a different template.
+- The compiler turns recipe hints into implementation fields; the planner must not output sections, theme, colors, or template props.
 - Do not model one segment as multiple template instances.
 - Do not create arbitrary media URLs.
 - Preserve the user's intent and language when possible.
@@ -123,6 +133,9 @@ ${template.implementationPrompt}
 - The visual implementation duration must be at least ${request.targetDurationInFrames} frames.
 - Prefer exactly ${request.targetDurationInFrames} frames unless the template needs a small visual tail.
 - Use the real narration duration as the timing anchor; do not guess a shorter duration.
+- Treat segment.recipeHints as planner guidance, not as output fields.
+- Respect valid recipe hints when they fit the narration duration and selected template schema.
+- The implementation must still validate against the selected template schema if hints are omitted.
 
 # Theme rules
 - Include all required theme fields when the selected template schema requires theme.
@@ -221,10 +234,15 @@ This is the planning stage only. Do not generate final template implementation f
 - Write narration.text as the actual spoken script for this segment, not as an instruction.
 - Keep narration concise enough for a short product-demo segment.
 - Describe visualBrief for this segment without inventing media URLs or Remotion source code.
+- If the selected template lists planner-facing recipes, optionally set recipeHints using ids from that template only.
+- Keep recipeHints omitted when the revision request does not imply a recipe-specific presentation.
 - Do not include implementation, scenes, callouts, theme, colors, audio URLs, or provider metadata.
 
 # Planner template manifest
 ${buildPlannerTemplateManifestPrompt()}
+
+# Planner recipe manifest
+${buildPlannerRecipeManifestPrompt()}
 
 ${repairInstructions}
 
@@ -269,6 +287,7 @@ export const buildTemplateCompilerPrompt = (
         templateId: template.id,
         label: template.label,
         planner: template.planner,
+        plannerRecipes: template.planner.recipes ?? [],
         capabilities: template.capabilities,
         implementationJsonSchema: template.implementationJsonSchema,
       },

@@ -1,8 +1,42 @@
 # Iteration Status
 
-Last updated: Visual recipe roadmap branch
+Last updated: Planner Recipe Selection Phase 4
 
-## Latest continuation — Planner Recipe Selection Phase 4 planning
+## Latest continuation — Planner Recipe Selection Phase 4
+
+- Completed Phase 4 by adding planner-facing recipe hints for recipe-capable
+  templates.
+- Added a compact recipe manifest derived from registered template definitions.
+- `technical-explainer` now publishes planner-safe metadata for
+  `hero-title-reveal`, `terminal-build-run`, `workflow-node-map`,
+  `metric-countup`, and `timeline-progress`.
+- `StoryboardPlan.segments[].recipeHints[]` is optional, validated against the
+  selected template, and remains outside `VideoProject` implementation data.
+- DeepSeek planner/revision prompts can request recipe hints without seeing
+  Remotion internals; the selected-template compiler still owns schema-valid
+  `implementation` output.
+- Deterministic technical-explainer staged fixtures now carry valid recipe
+  hints through the storyboard boundary while assembled output remains a normal
+  editable `VideoProject`.
+- Scope remains unchanged: no global recipe model, no media library, no
+  generated TSX execution, no visual-review scoring, and no persistence work.
+
+Validation performed:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:planner-recipe-manifest'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:storyboard-recipe-hints'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:technical-explainer-template'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `git diff --check`
+
+Provider-backed live smoke status:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-live'`
+  was attempted, but did not reach the staged route because the Next app was not
+  reachable at `http://127.0.0.1:3000` in this checkpoint. It should be rerun
+  after starting the local Next runtime.
+
+## Prior continuation — Planner Recipe Selection Phase 4 planning
 
 - Added a Phase 4 design spec and implementation plan for planner-facing recipe
   selection:

@@ -5,7 +5,58 @@ import {
   getTechnicalExplainerDuration,
   technicalExplainerSegmentSchema,
   technicalExplainerSpecSchema,
+  type TechnicalExplainerRecipeId,
 } from "./schema";
+
+const technicalExplainerPlannerRecipes = [
+  {
+    recipeId: "hero-title-reveal",
+    label: "Hero title reveal",
+    bestFor: ["opening thesis", "promise framing", "concept introduction"],
+    avoidCases: ["dense process details", "raw logs", "metric recap"],
+    requiredInputsSummary: "primary text, optional eyebrow, supporting text, and up to 3 callouts",
+    durationFit: "Works well as a short opener or thesis beat.",
+  },
+  {
+    recipeId: "terminal-build-run",
+    label: "Terminal build/run",
+    bestFor: ["CLI flow", "logs", "build/test/deploy command", "developer workflow proof"],
+    avoidCases: ["non-technical emotion", "chart-only recap", "timeline milestones"],
+    requiredInputsSummary: "command, 2-6 terminal lines, optional status label",
+    durationFit: "Works best for a medium beat with enough time to read command output.",
+  },
+  {
+    recipeId: "workflow-node-map",
+    label: "Workflow node map",
+    bestFor: ["architecture", "pipeline", "dependencies", "multi-step system flow"],
+    avoidCases: ["single-card punchline", "raw command output", "numeric-only recap"],
+    requiredInputsSummary: "3-6 labeled nodes, optional detail text, optional active node",
+    durationFit: "Works well for medium explanations with staged activation.",
+  },
+  {
+    recipeId: "metric-countup",
+    label: "Metric count-up",
+    bestFor: ["outcomes", "signals", "KPI recap", "before/after numbers"],
+    avoidCases: ["step-by-step process", "long prose", "CLI logs"],
+    requiredInputsSummary: "2-4 metric labels, values, and optional details",
+    durationFit: "Works well for concise recap beats.",
+  },
+  {
+    recipeId: "timeline-progress",
+    label: "Timeline progress",
+    bestFor: ["milestones", "phase rollout", "implementation checkpoints", "delivery path"],
+    avoidCases: ["raw code output", "single opening title", "dashboard-heavy analysis"],
+    requiredInputsSummary: "3-5 checkpoints and optional note",
+    durationFit: "Works well as a closing or progress-oriented beat.",
+  },
+] satisfies {
+  recipeId: TechnicalExplainerRecipeId;
+  label: string;
+  bestFor: string[];
+  avoidCases: string[];
+  requiredInputsSummary: string;
+  durationFit: string;
+}[];
 
 const sectionBaseJsonSchema = {
   type: "object",
@@ -158,6 +209,7 @@ export const technicalExplainerTemplate = defineTemplate({
       "Explain a CLI build flow with terminal output and a metric recap",
       "Describe a product architecture using node map, metric cards, and timeline progress",
     ],
+    recipes: technicalExplainerPlannerRecipes,
   },
   implementationSchema: technicalExplainerSpecSchema,
   segmentSchema: technicalExplainerSegmentSchema,

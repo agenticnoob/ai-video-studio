@@ -253,7 +253,7 @@ Acceptance:
 
 ### Phase 4: Planner Recipe Selection
 
-Status: planned. Design and execution plan are captured in
+Status: implemented for planner-facing recipe hints. Design and execution plan are captured in
 `docs/superpowers/specs/2026-06-22-planner-recipe-selection-phase-4-design.md`
 and
 `docs/superpowers/plans/2026-06-22-planner-recipe-selection-phase-4.md`.
@@ -263,6 +263,10 @@ Goal: let DeepSeek choose recipes without exposing rendering internals.
 Deliver:
 
 - compact recipe manifest derived from registered template definitions
+- recipe choices remain optional `StoryboardPlan` hints, not top-level
+  `VideoProject` fields
+- invalid recipe ids are rejected at the planner schema boundary or repaired by
+  the bounded planner repair loop
 - planner prompt guidance that chooses recipe families for common briefs
 - selected-template compiler validation and bounded fallback
 - live smoke for one normal brief that naturally selects recipe-rich output

@@ -1,4 +1,6 @@
 export {
+  buildPlannerRecipeManifest,
+  buildPlannerRecipeManifestPrompt,
   buildPlannerTemplateManifest,
   buildPlannerTemplateManifestPrompt,
   buildTemplateImplementationPrompt,
@@ -7,6 +9,7 @@ export {
   buildTemplateSelectionPrompt,
   getTemplateDefinition,
   getTemplateLabel,
+  getPlannerRecipeIdsForTemplate,
   registeredTemplateIds,
   SCRIPTED_TEMPLATE_ID,
   SPOTLIGHT_TEMPLATE_ID,
@@ -18,4 +21,8 @@ export {
   videoSegmentSchemaVariants,
 } from "../templates/registry";
 
-export type { PlannerTemplateManifestEntry, TemplateId } from "../templates/registry";
+export type {
+  PlannerRecipeManifestEntry,
+  PlannerTemplateManifestEntry,
+  TemplateId,
+} from "../templates/registry";

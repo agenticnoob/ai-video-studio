@@ -130,6 +130,27 @@ const assertDiagnostics = (diagnostics, segmentCount) => {
   }
 };
 
+const assertTechnicalExplainerRecipeSections = (project) => {
+  const technicalSegments = project.segments.filter(
+    (segment) => segment.templateId === "technical-explainer",
+  );
+  if (technicalSegments.length === 0) {
+    fail("Expected staged live smoke to select at least one technical-explainer segment.");
+  }
+
+  for (const segment of technicalSegments) {
+    const sections = segment.implementation?.sections;
+    if (!Array.isArray(sections) || sections.length === 0) {
+      fail("Expected technical-explainer segment to compile recipe sections.");
+    }
+    for (const section of sections) {
+      if (typeof section.recipeId !== "string") {
+        fail("Expected each technical-explainer section to include a recipeId.");
+      }
+    }
+  }
+};
+
 const run = async () => {
   if (skipIfMissingConfig()) {
     return;
@@ -145,7 +166,7 @@ const run = async () => {
       mode: "brief",
       provider: "f5-tts",
       brief:
-        "Create a concise two-segment product demo for AI Video Studio. Explain staged planning, F5 narration, aligned captions, preview, and local export.",
+        "Explain how a local AI video studio turns a brief into storyboard planning, F5 narration, template compilation, preview, and export. Show the workflow, a terminal smoke check, and a delivery recap.",
     }),
   });
 
@@ -154,6 +175,7 @@ const run = async () => {
     fail("Response did not include project.segments");
   }
   assertDiagnostics(body.diagnostics, segments.length);
+  assertTechnicalExplainerRecipeSections(body.project);
 
   for (const segment of segments) {
     await assertSegmentNarration(segment);
