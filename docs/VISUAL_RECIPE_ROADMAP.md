@@ -143,8 +143,9 @@ Deliver:
 - a Remotion Studio preview composition that demonstrates 6 polished recipe
   treatments using static fixture data
 - bounded subject-motion transitions between showcase scenes, starting with
-  `stage-push`, `fly-through`, and `cube-turn`; auxiliary light/scanline/panel
-  effects may support those transitions but should not be the main motion
+  `stage-push`, `fly-through`, and `cube-turn`; the low-value full-frame
+  light-sweep and scanline-wipe overlays have been removed from the active
+  showcase, while `panel-push` remains as the only auxiliary overlay bridge
 - no live LLM changes
 - no new provider schema
 - no project persistence changes
@@ -178,7 +179,8 @@ Acceptance:
 
 ### Phase 2: Recipe Runtime Primitives
 
-Status: started with reusable subject-motion primitives.
+Status: started with reusable subject-motion and grouped visual block
+primitives.
 
 Goal: factor the showcase into reusable template internals.
 
@@ -189,7 +191,8 @@ Deliver:
   `src/remotion/recipes/motion/scene-transition-stage.tsx`
 - shared transition helpers for common reveal/exit patterns; v1 includes
   reusable scene sequencing, overlap, and content-preroll helpers
-- grouped visual blocks for terminal, metric card, workflow map, and timeline
+- grouped visual blocks for terminal, metric card, workflow map, and timeline;
+  v2 exposes these through `src/remotion/recipes/blocks/`
 - caption-safe layout defaults
 - duration-aware helpers that map narration frames into reveal/hold/exit beats
 
@@ -201,6 +204,9 @@ Acceptance:
 - existing `scripted`, `spotlight`, and `stats-dashboard` previews still load
 - `RecipeShowcasePreview` consumes shared recipe-motion primitives instead of
   owning local copies of the stage transition logic
+- `RecipeShowcasePreview` consumes shared recipe-block primitives instead of
+  owning local copies of terminal, metric-card, workflow-map, and timeline
+  block rendering
 
 ### Phase 3: High-Quality Recipe Templates
 

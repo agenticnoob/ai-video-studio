@@ -2,7 +2,55 @@
 
 Last updated: Visual recipe roadmap branch
 
-## Latest continuation — Recipe Runtime Primitives Phase 2 v1
+## Latest continuation — Recipe Showcase Preview Performance Pass
+
+- Removed the low-value full-frame auxiliary overlays from
+  `RecipeShowcasePreview`: `light-sweep-bridge` / `LightSweepBridge` and
+  `scanline-wipe` / `ScanlineWipe`.
+- Kept the main bounded subject-motion transitions intact:
+  `stage-push`, `fly-through`, and `cube-turn`.
+- Kept the lighter `panel-push` auxiliary overlay as the only showcase overlay
+  bridge.
+- Updated `npm run smoke:recipe-showcase-preview` to require that the removed
+  light-sweep and scanline-wipe snippets stay out of the showcase source.
+- Scope remains preview/runtime-only: no DeepSeek prompt changes, no provider
+  schema changes, no staged-generation API changes, and no live generated
+  project behavior changes.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:recipe-showcase-preview'` (red first for the still-present `light-sweep-bridge` snippet, then green after removal)
+- `docker compose run --rm web bash -lc 'rm -rf .next/types && [ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts RecipeShowcasePreview /workspace/out/recipe-preview-no-light-scanline.png --frame=650 --scale=0.5'`
+
+## Latest continuation — Recipe Runtime Visual Blocks Phase 2 v2
+
+- Continued Phase 2 by extracting the validated showcase grouped visual blocks
+  into reusable Remotion recipe primitives.
+- Added `src/remotion/recipes/blocks/` with reusable:
+  `TerminalSessionBlock`, `MetricCardGrid` / `MetricCard`,
+  `WorkflowMapBlock`, and `TimelineProgressBlock`.
+- Added `src/remotion/recipes/blocks/index.ts` as the public recipe-block
+  export surface.
+- Updated `RecipeShowcasePreview` to consume the shared block primitives for
+  terminal, metric-card, workflow-map, and timeline scenes while keeping the
+  same static showcase composition, scene copy, recipe ids, and transition
+  choreography.
+- Kept this slice preview/runtime-only: no DeepSeek prompt changes, no
+  template provider schema changes, no staged-generation API changes, and no
+  live project rendering behavior changes.
+- Updated `npm run smoke:recipe-showcase-preview` so it now checks that the
+  reusable recipe-block barrel exists, exports the four expected visual blocks,
+  and is imported by the showcase preview.
+- The next Phase 2 slice can either extract another showcase-local treatment
+  such as code-diff/title reveal or start preparing these blocks for one real
+  recipe-oriented template boundary.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:recipe-showcase-preview'` (red first for missing reusable recipe-block barrel, then green after extraction)
+- `docker compose run --rm web bash -lc 'rm -rf .next/types && [ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+
+## Prior continuation — Recipe Runtime Primitives Phase 2 v1
 
 - Started Phase 2 by extracting the validated showcase subject-motion
   transition layer into reusable Remotion recipe primitives.

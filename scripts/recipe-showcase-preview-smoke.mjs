@@ -13,6 +13,18 @@ const motionSource = (() => {
     );
   }
 })();
+const blockExportsSource = (() => {
+  try {
+    return readFileSync("src/remotion/recipes/blocks/index.ts", "utf8");
+  } catch (error) {
+    throw new Error(
+      "Reusable recipe visual blocks are missing at src/remotion/recipes/blocks/index.ts",
+      {
+        cause: error,
+      },
+    );
+  }
+})();
 const showcaseSource = (() => {
   try {
     return readFileSync("src/remotion/RecipeShowcase/RecipeShowcasePreview.tsx", "utf8");
@@ -41,14 +53,7 @@ const requiredRecipeIds = [
   "code-diff-highlight",
 ];
 
-const requiredTransitionIds = [
-  "light-sweep-bridge",
-  "scanline-wipe",
-  "panel-push",
-  "stage-push",
-  "fly-through",
-  "cube-turn",
-];
+const requiredTransitionIds = ["panel-push", "stage-push", "fly-through", "cube-turn"];
 
 const requiredMotionSnippets = [
   "SceneTransitionStage",
@@ -62,9 +67,24 @@ const requiredShowcaseImports = [
   "SceneTransitionStage",
   "getSceneContentPrerollFrom",
   'from "../recipes/motion"',
+  'from "../recipes/blocks"',
+];
+
+const requiredBlockExports = [
+  "TerminalSessionBlock",
+  "MetricCardGrid",
+  "MetricCard",
+  "WorkflowMapBlock",
+  "TimelineProgressBlock",
 ];
 
 const forbiddenAudioSnippets = ["<Audio", "segmentNarrationFromAsset", "/api/tts/assets/smoke"];
+const forbiddenOverlaySnippets = [
+  "light-sweep-bridge",
+  "scanline-wipe",
+  "LightSweepBridge",
+  "ScanlineWipe",
+];
 
 const assertIncludes = (source, snippet, label) => {
   if (!source.includes(snippet)) {
@@ -92,9 +112,19 @@ for (const showcaseImport of requiredShowcaseImports) {
   assertIncludes(showcaseSource, showcaseImport, "Recipe showcase reusable motion import");
 }
 
+for (const blockExport of requiredBlockExports) {
+  assertIncludes(blockExportsSource, blockExport, "Reusable recipe visual block exports");
+}
+
 for (const snippet of forbiddenAudioSnippets) {
   if (showcaseSource.includes(snippet) || rootSource.includes(snippet)) {
     throw new Error(`Recipe showcase preview must not use placeholder audio: ${snippet}`);
+  }
+}
+
+for (const snippet of forbiddenOverlaySnippets) {
+  if (showcaseSource.includes(snippet)) {
+    throw new Error(`Recipe showcase preview should not keep low-value overlay effect: ${snippet}`);
   }
 }
 

@@ -6,6 +6,15 @@ import {
   SceneTransitionStage,
   type RecipeSceneTransitionMotion,
 } from "../recipes/motion";
+import {
+  MetricCardGrid,
+  TerminalSessionBlock,
+  TimelineProgressBlock,
+  WorkflowMapBlock,
+  type MetricCardDatum,
+  type TerminalSessionLine,
+  type WorkflowMapNode,
+} from "../recipes/blocks";
 
 const WIDTH = 1280;
 const HEIGHT = 720;
@@ -37,14 +46,7 @@ const showcaseRecipes = [
   "code-diff-highlight",
 ] as const;
 
-const showcaseTransitions = [
-  "light-sweep-bridge",
-  "scanline-wipe",
-  "panel-push",
-  "stage-push",
-  "fly-through",
-  "cube-turn",
-] as const;
+const showcaseTransitions = ["panel-push", "stage-push", "fly-through", "cube-turn"] as const;
 
 const clamp = {
   extrapolateLeft: "clamp" as const,
@@ -52,7 +54,6 @@ const clamp = {
 };
 
 const softOut = Easing.bezier(0.16, 1, 0.3, 1);
-const focusedOut = Easing.bezier(0.22, 1, 0.36, 1);
 
 const enter = (frame: number, start = 0, end = 32) =>
   interpolate(frame, [start, end], [0, 1], { ...clamp, easing: softOut });
@@ -256,7 +257,7 @@ const HeroTitleReveal: FC = () => {
   );
 };
 
-const workflowNodes = [
+const workflowNodes: WorkflowMapNode[] = [
   { id: "brief", label: "Brief", x: 155, y: 330, tint: palette.cyan },
   { id: "plan", label: "Plan", x: 330, y: 210, tint: palette.violet },
   { id: "voice", label: "Voice", x: 535, y: 330, tint: palette.green },
@@ -288,59 +289,12 @@ const WorkflowNodeMap: FC = () => {
         >
           Workflow map, not a bullet list.
         </div>
-        <svg height={360} style={{ position: "absolute", top: 90 }} width={1050}>
-          {workflowNodes.slice(0, -1).map((node, index) => {
-            const next = workflowNodes[index + 1];
-            const edgeProgress = enter(frame, 66 + index * 26, 96 + index * 26);
-            return (
-              <line
-                key={`${node.id}-${next.id}`}
-                stroke={node.tint}
-                strokeDasharray="10 12"
-                strokeLinecap="round"
-                strokeWidth={4}
-                x1={node.x + 58}
-                x2={next.x - 58}
-                y1={node.y}
-                y2={next.y}
-                opacity={edgeProgress}
-              />
-            );
-          })}
-        </svg>
-        {workflowNodes.map((node, index) => {
-          const nodeIn = enter(frame, 34 + index * 26, 68 + index * 26);
-          const pulse = interpolate(frame, [130 + index * 12, 160 + index * 12], [0, 1], {
-            ...clamp,
-            easing: focusedOut,
-          });
-          return (
-            <div
-              key={node.id}
-              style={{
-                alignItems: "center",
-                backgroundColor: palette.panel,
-                border: `1px solid ${node.tint}88`,
-                borderRadius: 20,
-                boxShadow: `0 0 ${Math.round(18 + pulse * 22)}px ${node.tint}33`,
-                color: palette.text,
-                display: "flex",
-                fontSize: 20,
-                fontWeight: 900,
-                height: 94,
-                justifyContent: "center",
-                left: node.x - 70,
-                opacity: nodeIn,
-                position: "absolute",
-                top: 90 + node.y - 47,
-                transform: `scale(${interpolate(nodeIn, [0, 1], [0.82, 1], clamp)})`,
-                width: 140,
-              }}
-            >
-              {node.label}
-            </div>
-          );
-        })}
+        <WorkflowMapBlock
+          nodes={workflowNodes}
+          panelColor={palette.panel}
+          style={{ left: 0, position: "absolute", top: 0 }}
+          textColor={palette.text}
+        />
         <div
           style={{
             backgroundColor: "rgba(16,27,45,0.78)",
@@ -364,7 +318,7 @@ const WorkflowNodeMap: FC = () => {
   );
 };
 
-const terminalLines = [
+const terminalLines: TerminalSessionLine[] = [
   { text: "$ npm run generate:video", status: "running", tint: palette.cyan },
   { text: "DeepSeek planned 5 recipe scenes", status: "info", tint: palette.violet },
   { text: "$ npm run voice:f5", status: "running", tint: palette.green },
@@ -376,7 +330,6 @@ const terminalLines = [
 const TerminalBuildRun: FC = () => {
   const frame = useCurrentFrame();
   const panelIn = enter(frame, 18, 54);
-  const scanY = interpolate(frame, [60, 280], [0, 390], clamp);
 
   return (
     <SceneFrame index={3} name={showcaseRecipes[2]} tint={palette.green}>
@@ -399,107 +352,27 @@ const TerminalBuildRun: FC = () => {
         >
           Terminal sessions should perform, not sit still.
         </div>
-        <div
+        <TerminalSessionBlock
+          accentColor={palette.green}
+          dotColors={[palette.rose, palette.amber, palette.green]}
+          lines={terminalLines}
+          mutedColor={palette.muted}
           style={{
-            backgroundColor: "#070b12",
-            border: `1px solid ${palette.green}77`,
-            borderRadius: 24,
-            boxShadow: "0 28px 100px rgba(0,0,0,0.44)",
-            height: 405,
             opacity: panelIn,
-            overflow: "hidden",
-            position: "relative",
-            transform: `scale(${interpolate(panelIn, [0, 1], [0.96, 1], clamp)})`,
           }}
-        >
-          <div
-            style={{
-              alignItems: "center",
-              borderBottom: "1px solid rgba(255,255,255,0.1)",
-              display: "flex",
-              gap: 10,
-              height: 52,
-              padding: "0 22px",
-            }}
-          >
-            {[palette.rose, palette.amber, palette.green].map((color) => (
-              <div
-                key={color}
-                style={{ backgroundColor: color, borderRadius: 99, height: 12, width: 12 }}
-              />
-            ))}
-            <div style={{ color: palette.muted, fontSize: 14, fontWeight: 800, marginLeft: 12 }}>
-              recipe-runner
-            </div>
-          </div>
-          <div
-            style={{
-              background: `linear-gradient(180deg, transparent, ${palette.green}24, transparent)`,
-              height: 80,
-              left: 0,
-              opacity: 0.75,
-              position: "absolute",
-              right: 0,
-              top: scanY,
-            }}
-          />
-          <div style={{ padding: "26px 32px" }}>
-            {terminalLines.map((line, index) => {
-              const lineStart = 58 + index * 28;
-              const lineIn = enter(frame, lineStart, lineStart + 20);
-              const chars = Math.round(
-                interpolate(frame, [lineStart, lineStart + 28], [0, line.text.length], clamp),
-              );
-              return (
-                <div
-                  key={line.text}
-                  style={{
-                    color: line.tint,
-                    fontFamily:
-                      '"JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace',
-                    fontSize: 22,
-                    fontWeight: line.status === "success" ? 850 : 700,
-                    height: 42,
-                    opacity: lineIn,
-                  }}
-                >
-                  {line.text.slice(0, chars)}
-                  {chars < line.text.length ? "█" : ""}
-                </div>
-              );
-            })}
-          </div>
-          <div
-            style={{
-              backgroundColor: `${palette.green}22`,
-              border: `1px solid ${palette.green}88`,
-              borderRadius: 999,
-              bottom: 24,
-              color: palette.green,
-              fontSize: 15,
-              fontWeight: 900,
-              padding: "9px 16px",
-              position: "absolute",
-              right: 24,
-            }}
-          >
-            checks passed
-          </div>
-        </div>
+        />
       </div>
     </SceneFrame>
   );
 };
 
-const metrics = [
+const metrics: MetricCardDatum[] = [
   { label: "Render clarity", value: 92, suffix: "%", tint: palette.cyan },
   { label: "Motion beats", value: 18, suffix: "", tint: palette.amber },
   { label: "Recipe scenes", value: 6, suffix: "", tint: palette.rose },
 ];
 
 const MetricCountUp: FC = () => {
-  const frame = useCurrentFrame();
-
   return (
     <SceneFrame index={4} name={showcaseRecipes[3]} tint={palette.amber}>
       <div style={{ left: 92, position: "absolute", right: 92, top: 136 }}>
@@ -515,59 +388,12 @@ const MetricCountUp: FC = () => {
         >
           Metrics need motion hierarchy, not just bigger numbers.
         </div>
-        <div style={{ display: "flex", gap: 26, marginTop: 54 }}>
-          {metrics.map((metric, index) => {
-            const cardIn = enter(frame, 34 + index * 20, 74 + index * 20);
-            const drift = interpolate(frame, [90, 260], [-4, 4], clamp) * (index % 2 ? -1 : 1);
-            const value = Math.round(
-              interpolate(frame, [72 + index * 14, 160 + index * 14], [0, metric.value], {
-                ...clamp,
-                easing: focusedOut,
-              }),
-            );
-            return (
-              <div
-                key={metric.label}
-                style={{
-                  background: `linear-gradient(180deg, ${metric.tint}22, rgba(16,27,45,0.9))`,
-                  border: `1px solid ${metric.tint}66`,
-                  borderRadius: 24,
-                  boxShadow: `0 24px 80px ${metric.tint}20`,
-                  height: 250,
-                  opacity: cardIn,
-                  padding: 28,
-                  transform: `translateY(${interpolate(cardIn, [0, 1], [34, drift], clamp)}px) rotateX(${drift}deg)`,
-                  width: 320,
-                }}
-              >
-                <div style={{ color: palette.muted, fontSize: 18, fontWeight: 850 }}>
-                  {metric.label}
-                </div>
-                <div
-                  style={{
-                    color: palette.text,
-                    fontSize: 78,
-                    fontWeight: 950,
-                    lineHeight: 1,
-                    marginTop: 42,
-                  }}
-                >
-                  {value}
-                  {metric.suffix}
-                </div>
-                <div
-                  style={{
-                    backgroundColor: metric.tint,
-                    borderRadius: 999,
-                    height: 6,
-                    marginTop: 34,
-                    width: `${Math.max(18, value)}%`,
-                  }}
-                />
-              </div>
-            );
-          })}
-        </div>
+        <MetricCardGrid
+          metrics={metrics}
+          mutedColor={palette.muted}
+          style={{ marginTop: 54 }}
+          textColor={palette.text}
+        />
       </div>
     </SceneFrame>
   );
@@ -576,9 +402,6 @@ const MetricCountUp: FC = () => {
 const checkpoints = ["Prompt", "Voice", "Recipe", "Preview", "Export"];
 
 const TimelineProgress: FC = () => {
-  const frame = useCurrentFrame();
-  const fill = interpolate(frame, [42, 236], [0, 1], clamp);
-
   return (
     <SceneFrame index={5} name={showcaseRecipes[4]} tint={palette.rose}>
       <div style={{ left: 110, position: "absolute", right: 110, top: 150 }}>
@@ -593,80 +416,17 @@ const TimelineProgress: FC = () => {
         >
           A timeline recipe makes the pipeline legible at a glance.
         </div>
-        <div
-          style={{
-            backgroundColor: "rgba(255,255,255,0.12)",
-            borderRadius: 999,
-            height: 8,
-            marginTop: 114,
-            position: "relative",
-            width: 980,
-          }}
-        >
-          <div
-            style={{
-              background: `linear-gradient(90deg, ${palette.rose}, ${palette.amber}, ${palette.green})`,
-              borderRadius: 999,
-              height: 8,
-              width: `${fill * 100}%`,
-            }}
-          />
-          {checkpoints.map((label, index) => {
-            const ratio = index / (checkpoints.length - 1);
-            const active = fill >= ratio ? 1 : 0;
-            const pointIn = enter(frame, 54 + index * 34, 88 + index * 34);
-            return (
-              <div
-                key={label}
-                style={{
-                  left: ratio * 980 - 48,
-                  opacity: pointIn,
-                  position: "absolute",
-                  top: -42,
-                  width: 96,
-                }}
-              >
-                <div
-                  style={{
-                    backgroundColor: active ? palette.text : palette.panel,
-                    border: `2px solid ${active ? palette.rose : "rgba(255,255,255,0.24)"}`,
-                    borderRadius: 999,
-                    height: 34,
-                    margin: "0 auto",
-                    width: 34,
-                  }}
-                />
-                <div
-                  style={{
-                    color: active ? palette.text : palette.muted,
-                    fontSize: 17,
-                    fontWeight: 850,
-                    marginTop: 18,
-                    textAlign: "center",
-                  }}
-                >
-                  {label}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        <div
-          style={{
-            backgroundColor: "rgba(16,27,45,0.8)",
-            border: `1px solid ${palette.rose}66`,
-            borderRadius: 20,
-            color: palette.text,
-            fontSize: 25,
-            fontWeight: 850,
-            lineHeight: 1.3,
-            marginTop: 118,
-            padding: "22px 26px",
-            width: 520,
-          }}
-        >
-          Reveal, hold, and exit beats are compiled from real narration duration.
-        </div>
+        <TimelineProgressBlock
+          accentGradient={`linear-gradient(90deg, ${palette.rose}, ${palette.amber}, ${palette.green})`}
+          activeColor={palette.rose}
+          checkpointLabels={checkpoints}
+          mutedColor={palette.muted}
+          note="Reveal, hold, and exit beats are compiled from real narration duration."
+          notePanelColor="rgba(16,27,45,0.8)"
+          style={{ marginTop: 114 }}
+          textColor={palette.text}
+          trackColor="rgba(255,255,255,0.12)"
+        />
       </div>
     </SceneFrame>
   );
@@ -811,80 +571,6 @@ const transitionProgress = (frame: number, center: number, radius = 34) => {
   return interpolate(distance, [0, radius], [1, 0], clamp);
 };
 
-const LightSweepBridge: FC<{ center: number }> = ({ center }) => {
-  const frame = useCurrentFrame();
-  const progress = transitionProgress(frame, center, 38);
-  const travel = interpolate(frame, [center - 38, center + 38], [-260, WIDTH + 220], clamp);
-
-  if (progress <= 0) {
-    return null;
-  }
-
-  return (
-    <AbsoluteFill
-      style={{
-        opacity: progress * 0.62,
-        pointerEvents: "none",
-      }}
-    >
-      <div
-        style={{
-          background: `linear-gradient(90deg, transparent, ${palette.text}dd, ${palette.cyan}66, transparent)`,
-          filter: "blur(1px)",
-          height: HEIGHT * 1.35,
-          left: travel,
-          position: "absolute",
-          top: -120,
-          transform: "rotate(16deg)",
-          width: 160,
-        }}
-      />
-      <div
-        style={{
-          background: `radial-gradient(circle at 50% 50%, ${palette.cyan}3b, transparent 64%)`,
-          inset: 0,
-          opacity: progress,
-          position: "absolute",
-        }}
-      />
-    </AbsoluteFill>
-  );
-};
-
-const ScanlineWipe: FC<{ center: number }> = ({ center }) => {
-  const frame = useCurrentFrame();
-  const progress = transitionProgress(frame, center, 42);
-  const wipe = interpolate(frame, [center - 42, center + 42], [-160, HEIGHT + 160], clamp);
-
-  if (progress <= 0) {
-    return null;
-  }
-
-  return (
-    <AbsoluteFill style={{ opacity: progress * 0.42, pointerEvents: "none" }}>
-      <div
-        style={{
-          background: `linear-gradient(180deg, transparent, ${palette.green}28, ${palette.green}77, ${palette.green}28, transparent)`,
-          filter: "blur(0.4px)",
-          height: 104,
-          left: 0,
-          position: "absolute",
-          right: 0,
-          top: wipe,
-        }}
-      />
-      <div
-        style={{
-          backgroundImage: `repeating-linear-gradient(0deg, ${palette.green}18 0px, ${palette.green}18 1px, transparent 1px, transparent 6px)`,
-          inset: 0,
-          opacity: progress * 0.24,
-          position: "absolute",
-        }}
-      />
-    </AbsoluteFill>
-  );
-};
-
 const PanelPush: FC<{ center: number }> = ({ center }) => {
   const frame = useCurrentFrame();
   const progress = transitionProgress(frame, center, 40);
@@ -933,10 +619,6 @@ const PanelPush: FC<{ center: number }> = ({ center }) => {
 
 const TransitionOverlay: FC = () => (
   <>
-    <LightSweepBridge center={SCENE_DURATION - 8} />
-    <ScanlineWipe center={SCENE_DURATION * 2 - 10} />
-    <ScanlineWipe center={SCENE_DURATION * 3 - 10} />
-    <LightSweepBridge center={SCENE_DURATION * 4 - 10} />
     <PanelPush center={SCENE_DURATION * 5 - 10} />
     <span style={{ display: "none" }}>{showcaseTransitions.join(" ")}</span>
   </>

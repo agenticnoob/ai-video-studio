@@ -153,10 +153,13 @@ Current visual-quality direction:
 - `RecipeShowcasePreview` is the first static Remotion Studio quality baseline,
   with hero title, workflow map, terminal session, metric cards, timeline, and
   code-diff recipe scenes plus bounded subject-motion transitions: 2.5D
-  stage push/pull, fly-through, and a one-off cube turn accent
-- Phase 2 recipe-runtime work has started by extracting those subject-motion
+  stage push/pull, fly-through, and a one-off cube turn accent. Low-value
+  full-frame light-sweep and scanline-wipe overlay bridges were removed to
+  keep Studio preview lighter.
+- Phase 2 recipe-runtime work has started by extracting subject-motion
   transitions into reusable Remotion primitives under
-  `src/remotion/recipes/motion/`
+  `src/remotion/recipes/motion/`, plus terminal, metric-card, workflow-map,
+  and timeline grouped visual blocks under `src/remotion/recipes/blocks/`
 - keep AI output bounded to registered template / recipe parameters; do not use
   unrestricted generated TSX as the normal path
 - avoid broad visual-review scoring or automatic screenshot repair as the next
