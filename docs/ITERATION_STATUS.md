@@ -1,6 +1,60 @@
 # Iteration Status
 
-Last updated: DeepSeek + F5-only provider migration
+Last updated: Visual recipe roadmap branch
+
+## Latest continuation — Recipe Showcase Preview Phase 1
+
+- Implemented the first Phase 1 visual-quality baseline on the clean
+  `codex/visual-recipe-roadmap` branch.
+- Added `RecipeShowcasePreview`, a 66-second Remotion Studio composition with
+  six static recipe scenes:
+  `hero-title-reveal`, `workflow-node-map`, `terminal-build-run`,
+  `metric-countup`, `timeline-progress`, and `code-diff-highlight`.
+- Kept the slice isolated from live generation: no DeepSeek prompt changes, no
+  provider schema changes, no new API routes, no placeholder narration audio,
+  and no visual-review scoring or repair loop.
+- Added `npm run smoke:recipe-showcase-preview` to guard Remotion root
+  registration, expected recipe ids, dimensions/duration, and the no-placeholder
+  audio rule.
+- Registered `RecipeShowcasePreview` in Remotion Studio beside the existing
+  `ScriptedTemplatePreview`, `SpotlightTemplatePreview`, and
+  `StatsDashboardTemplatePreview` compositions.
+- Rendered representative stills for visual inspection:
+  `/workspace/out/recipe-showcase-hero.png`,
+  `/workspace/out/recipe-showcase-terminal.png`,
+  `/workspace/out/recipe-showcase-terminal-late.png`, and
+  `/workspace/out/recipe-showcase-code.png`.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:recipe-showcase-preview'` (red first for missing showcase source, then green after implementation)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts RecipeShowcasePreview /workspace/out/recipe-showcase-hero.png --frame=45 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts RecipeShowcasePreview /workspace/out/recipe-showcase-terminal.png --frame=760 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts RecipeShowcasePreview /workspace/out/recipe-showcase-terminal-late.png --frame=885 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts RecipeShowcasePreview /workspace/out/recipe-showcase-code.png --frame=1810 --scale=0.5'`
+
+## Latest continuation — Visual recipe roadmap branch
+
+- Created `codex/visual-recipe-roadmap` from local `main`, not from the heavier
+  scene-graph roadmap exploration branch.
+- Re-centered the next product direction on the existing staged generation
+  product loop: brief -> `StoryboardPlan` -> F5 narration/captions -> selected
+  template implementation -> `VideoProject` -> preview/edit/export.
+- Added `docs/VISUAL_RECIPE_ROADMAP.md` as the active visual-quality roadmap
+  for the clean main line.
+- The roadmap explicitly favors high-quality scene recipes over a broad Visual
+  IR rewrite or visual-review scoring loop. Recipes are polished,
+  duration-aware template internals such as title reveals, terminal sessions,
+  workflow maps, metric count-ups, timelines, and code highlights.
+- The prior scene-graph branch remains useful as research, but should not be
+  merged wholesale. Bring back only ideas that directly improve generated video
+  quality without widening the product boundary.
+- Recommended next implementation slice: a Remotion Studio recipe showcase
+  composition using static fixture data, before changing live LLM prompts or
+  provider schemas.
+
+Validation performed so far:
+- `git diff --check`
 
 ## Latest continuation — DeepSeek + F5-only provider migration
 

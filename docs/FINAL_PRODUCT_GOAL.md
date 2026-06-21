@@ -5,9 +5,9 @@ Status: authoritative product target and roadmap source.
 This document defines the long-term generation target for `ai-video-studio`.
 When roadmap, architecture, provider, template, TTS, or media-layer work needs
 direction, use this document as the highest-level product goal. More specific
-documents such as `PRODUCT_REQUIREMENTS.md`, `PRODUCT_ARCHITECTURE.md`,
-`TEMPLATE_ARCHITECTURE.md`, `MEDIA_LAYERS.md`, and provider notes should align
-with this target.
+documents such as `VISUAL_RECIPE_ROADMAP.md`, `PRODUCT_REQUIREMENTS.md`,
+`PRODUCT_ARCHITECTURE.md`, `TEMPLATE_ARCHITECTURE.md`, `MEDIA_LAYERS.md`, and
+provider notes should align with this target.
 
 ## 0. Product Statement
 
@@ -73,6 +73,20 @@ The system should:
 
 This keeps the product segment-first, template-driven, voice-aware, and
 scalable as the template library grows.
+
+Current visual-quality direction:
+
+- Continue from the clean `main` product line.
+- Keep the staged generation / F5 narration / caption / `VideoProject`
+  preview-export loop as the product base.
+- Improve generated-video quality by upgrading templates into high-quality
+  scene recipes: polished, duration-aware visual treatments with stronger
+  motion, transitions, grouped visual blocks, and Remotion Studio preview
+  examples.
+- Use `docs/VISUAL_RECIPE_ROADMAP.md` as the active roadmap for this visual
+  recipe direction.
+- Treat heavier scene-graph / visual-review scoring exploration as research,
+  not as the branch to merge wholesale into the product line.
 
 ## 2. Authoritative Terminology
 

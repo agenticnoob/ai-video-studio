@@ -7,20 +7,24 @@ Use this file as the first-stop workflow note when starting a new task in this r
 Before planning or editing, read these files in order:
 1. `docs/FINAL_PRODUCT_GOAL.md`
 2. `docs/ITERATION_STATUS.md`
-3. `docs/PRODUCT_REQUIREMENTS.md`
-4. `docs/FUTURE_DIRECTION_NOTES.md`
-5. `docs/HANDOFF_F5_TTS_CAPTIONS.md` when the task involves F5-TTS,
+3. `docs/VISUAL_RECIPE_ROADMAP.md` when the task involves visual quality,
+   template direction, recipe design, motion/transition/effect work, or
+   generated video polish
+4. `docs/PRODUCT_REQUIREMENTS.md`
+5. `docs/FUTURE_DIRECTION_NOTES.md`
+6. `docs/HANDOFF_F5_TTS_CAPTIONS.md` when the task involves F5-TTS,
    captions/subtitles, or narration provider work
-6. `docs/providers/f5-tts-service-plan.md` when the task involves the local
+7. `docs/providers/f5-tts-service-plan.md` when the task involves the local
    F5-TTS runtime service or Docker service setup
-7. `docs/STRUCTURE_REFACTOR_PLAN.md` and
+8. `docs/STRUCTURE_REFACTOR_PLAN.md` and
    `docs/HANDOFF_STRUCTURE_REFACTOR.md` when the task is behavior-preserving
    structure cleanup, modularization, or Subagent-Driven refactor work
-8. `README.md`
+9. `README.md`
 
 These files together explain:
 - authoritative final generation goal
 - current implemented stage
+- clean-main visual recipe roadmap when visual quality is relevant
 - product requirements
 - roadmap direction
 - deferred scope

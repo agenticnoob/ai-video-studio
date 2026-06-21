@@ -1,0 +1,325 @@
+# Visual Recipe Roadmap
+
+Status: active roadmap for the clean `main` product line.
+
+Use this document when the next task is about making generated videos look
+better while preserving the current staged generation product model. The goal
+is not to restart the product, not to merge the heavier scene-graph exploration
+branch wholesale, and not to build a broad visual-review scoring system.
+
+## 1. Thesis
+
+The current `main` branch already has the right product skeleton:
+
+```txt
+brief
+  -> StoryboardPlan
+  -> per-segment narration synthesis
+  -> audio + aligned captions
+  -> selected template implementation
+  -> VideoProject
+  -> preview / edit / export
+```
+
+The weak point is visual quality, not the end-to-end pipeline.
+
+The next product direction should upgrade simple templates into high-quality
+scene recipes: reusable, polished, duration-aware visual treatments that the
+planner can choose and the compiler can fill with schema-valid data.
+
+In plain terms:
+
+```txt
+Do not widen the product.
+Make the generated segments look more like finished videos.
+```
+
+## 2. Product Model
+
+Keep the existing user-facing model:
+
+- one `VideoProject` per generated video
+- one or more `VideoSegment` entries per project
+- one primary `templateId` per segment
+- segment-owned narration audio and captions outside template-specific
+  `implementation`
+- real narration duration as the timing anchor
+- local preview/edit/export through the existing Remotion path
+
+Add a stronger internal concept:
+
+```txt
+template = registered segment implementation mechanism
+recipe = polished visual treatment inside a template
+```
+
+A recipe is not a new top-level project object yet. It can start as a
+template-local field or internal compiler decision.
+
+Examples:
+
+- `hero-title-reveal`
+- `workflow-node-map`
+- `terminal-build-run`
+- `metric-countup`
+- `timeline-progress`
+- `code-diff-highlight`
+- `before-after-compare`
+- `product-ui-zoom`
+
+The planner may eventually choose a recipe, but v1 can keep recipe selection
+inside the selected template compiler.
+
+## 3. Inspiration To Adopt
+
+External video-generation frameworks such as VideoFlow are useful because they
+make motion and composition first-class:
+
+- sequential authoring with `wait`, parallel actions, and explicit holds
+- reusable transition presets such as slide, blur resolve, typewriter, count-up,
+  glitch resolve, and light sweep
+- grouped layer trees that move as one visual unit
+- keyframe/property animation across position, scale, opacity, blur, rotation,
+  and effect parameters
+- example videos that double as a capability showcase
+
+Local mapping:
+
+- use Remotion as the renderer
+- keep AI output as bounded structured parameters
+- encode motion grammar in repo-owned components and compilers
+- add preview compositions for every important visual treatment
+- expose recipes through existing templates before introducing a broader
+  Visual IR system
+
+## 4. What Not To Bring Back
+
+Do not merge the prior scene-graph roadmap branch wholesale.
+
+For this clean product line, avoid:
+
+- broad visual-review scoring as the main quality strategy
+- automatic screenshot repair loops
+- browser/canvas QA as a core generation stage
+- generic generated TSX as the normal path
+- media-asset composite execution before recipes are visually strong
+- multi-template-per-segment orchestration
+- large roadmap or handoff document churn that obscures the current product
+  boundary
+
+The earlier exploration is still useful as research. Bring back ideas only
+when they directly improve generated video quality in the current product
+loop.
+
+## 5. Roadmap
+
+### Phase 0: Lock The Clean Product Boundary
+
+Status: current branch goal.
+
+Deliver:
+
+- this roadmap
+- active-doc links from `FINAL_PRODUCT_GOAL`, `ITERATION_STATUS`, `README`, and
+  `AGENTS`
+- explicit decision that `main` remains the product base
+- explicit decision that the prior heavy review/scoring branch remains an
+  experiment, not the merge target
+
+Acceptance:
+
+- a new worker can understand the next visual-quality direction without reading
+  the experimental branch
+- no implementation code changes are required
+
+### Phase 1: Recipe Showcase Baseline
+
+Status: implemented as the first visual-quality baseline.
+
+Goal: create a visual quality target before changing live generation.
+
+Deliver:
+
+- a Remotion Studio preview composition that demonstrates 6 polished recipe
+  treatments using static fixture data
+- no live LLM changes
+- no new provider schema
+- no project persistence changes
+
+Candidate showcase treatments:
+
+- title reveal with blur resolve and light sweep
+- terminal session with typewriter rows, cursor, scanline, and success badge
+- metric count-up with grouped card motion
+- workflow map with staggered node/edge activation
+- timeline progress with checkpoint emphasis
+- code diff highlight with semantic color and line focus
+
+Acceptance:
+
+- `RecipeShowcasePreview` renders without placeholder audio
+- still renders from the preview show visibly richer frames than the current
+  simple template output:
+  - `/workspace/out/recipe-showcase-hero.png`
+  - `/workspace/out/recipe-showcase-terminal-late.png`
+  - `/workspace/out/recipe-showcase-code.png`
+- `npm run smoke:recipe-showcase-preview` ensures the preview composition stays
+  registered and keeps the 6 expected recipe ids visible in source
+- `npm run smoke:staged-fixtures` confirms Remotion can bundle and list the new
+  composition beside the existing template previews
+
+### Phase 2: Recipe Runtime Primitives
+
+Goal: factor the showcase into reusable template internals.
+
+Deliver:
+
+- a small motion preset catalog
+- shared transition helpers for common reveal/exit patterns
+- grouped visual blocks for terminal, metric card, workflow map, and timeline
+- caption-safe layout defaults
+- duration-aware helpers that map narration frames into reveal/hold/exit beats
+
+Acceptance:
+
+- recipes are deterministic Remotion code
+- animation remains frame-driven with Remotion APIs
+- no CSS animation is used for render-critical timing
+- existing `scripted`, `spotlight`, and `stats-dashboard` previews still load
+
+### Phase 3: High-Quality Recipe Templates
+
+Goal: make real generated segments use the better visual treatments.
+
+Deliver:
+
+- either upgrade existing `spotlight` / `stats-dashboard` internals or add one
+  new registered recipe-oriented template
+- template schema stays small and planner-friendly
+- selected-template compiler fills recipe parameters from narration duration,
+  visual brief, and structured segment intent
+- selected-segment regeneration preserves non-target segments
+
+Recommended first template path:
+
+```txt
+technical-explainer
+```
+
+Initial recipes:
+
+- `hero-title-reveal`
+- `terminal-build-run`
+- `workflow-node-map`
+- `metric-countup`
+- `timeline-progress`
+
+Acceptance:
+
+- a deterministic staged fixture can render a multi-segment technical explainer
+- each recipe can be inspected in Remotion Studio
+- exported video uses the same `ProjectVideo` path as preview
+
+### Phase 4: Planner Recipe Selection
+
+Goal: let DeepSeek choose recipes without exposing rendering internals.
+
+Deliver:
+
+- compact recipe manifest derived from registered template definitions
+- planner prompt guidance that chooses recipe families for common briefs
+- selected-template compiler validation and bounded fallback
+- live smoke for one normal brief that naturally selects recipe-rich output
+
+Acceptance:
+
+- the planner does not invent recipe ids
+- invalid recipe choices fail validation or fallback clearly
+- generated videos remain editable as `VideoProject`
+
+### Phase 5: Asset-Aware Recipes
+
+Goal: introduce concrete media only after recipe quality is strong.
+
+Deliver:
+
+- bounded fields for screenshots, images, icons, code snippets, terminal output,
+  or chart data when a recipe explicitly supports them
+- missing-asset fallback behavior inside the recipe
+- no broad media library UI in the first pass
+
+Acceptance:
+
+- assets are referenced through controlled fields, not arbitrary remote URLs
+- preview and export resolve the same asset data
+- missing assets produce a useful fallback frame, not a broken render
+
+## 6. First Implementation Slice
+
+Recommended next implementation after this roadmap:
+
+```txt
+Recipe Runtime Primitives
+```
+
+Why:
+
+- the visual baseline now exists as `RecipeShowcasePreview`
+- the next useful work is extracting reusable motion, grouped blocks, and
+  duration-aware timing helpers from that showcase
+- live provider prompts should still wait until the recipe internals are
+  reusable inside real templates
+
+Minimum scope:
+
+- keep the existing `RecipeShowcasePreview` behavior intact
+- extract one or two reusable blocks first, such as terminal session and metric
+  cards
+- add targeted tests or smoke coverage before moving those blocks into a real
+  template
+- preserve existing `scripted`, `spotlight`, and `stats-dashboard` preview
+  compositions
+
+Do not include:
+
+- live provider changes
+- new API routes
+- visual scoring
+- automatic repair
+- persistent storage
+- media library
+
+## 7. Validation
+
+Use Docker-first validation on this workstation.
+
+For roadmap-only changes:
+
+```bash
+git diff --check
+```
+
+For preview/recipe implementation slices:
+
+```bash
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'
+```
+
+Add a targeted Remotion still render for each new showcase composition.
+
+## 8. Decision Record
+
+Current decision:
+
+- Continue from `main`, not from the heavier scene-graph roadmap branch.
+- Treat the scene-graph roadmap branch as research.
+- Preserve the staged generation / F5 / caption / preview / export product
+  loop.
+- Invest next in high-quality recipe visuals, motion grammar, and previewable
+  examples.
+
+This keeps the product moving toward better generated videos without adding
+another layer of review infrastructure before the visuals themselves are good.

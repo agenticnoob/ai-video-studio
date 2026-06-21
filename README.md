@@ -71,6 +71,8 @@ Current implementation status:
   share the same border and shadow system
 - roadmap decisions should use `docs/FINAL_PRODUCT_GOAL.md` as the top-level
   source
+- visual-quality roadmap decisions for the clean main product line should use
+  `docs/VISUAL_RECIPE_ROADMAP.md`
 - current progress and next-step notes live in `docs/ITERATION_STATUS.md`
 - product requirements live in `docs/PRODUCT_REQUIREMENTS.md`
 - F5-TTS / aligned captions provider target lives in
@@ -141,6 +143,21 @@ Current modeling direction:
 - future existing video, image, audio, or color inputs should be modeled as
   project-level or segment-level `media.layers[]` data; `baseLayer` is now a
   media-layer role, not a separate project field
+
+Current visual-quality direction:
+- keep `main` as the product base instead of merging the heavier scene-graph
+  exploration branch wholesale
+- upgrade simple template output into high-quality scene recipes: polished,
+  duration-aware treatments with stronger motion, transitions, grouped visual
+  blocks, and Remotion Studio preview examples
+- `RecipeShowcasePreview` is the first static Remotion Studio quality baseline,
+  with hero title, workflow map, terminal session, metric cards, timeline, and
+  code-diff recipe scenes
+- keep AI output bounded to registered template / recipe parameters; do not use
+  unrestricted generated TSX as the normal path
+- avoid broad visual-review scoring or automatic screenshot repair as the next
+  quality strategy; first make the generated segments look better
+- use `docs/VISUAL_RECIPE_ROADMAP.md` for the phased recipe roadmap
 
 Current top-level boundaries:
 1. `/src/app/page.tsx`
@@ -318,6 +335,12 @@ List Remotion compositions and load the deterministic staged smoke fixtures:
 ```bash
 cd /data/projects/labs/ai-video-studio
 docker compose run --rm web npm run smoke:staged-fixtures
+```
+
+Validate the recipe showcase preview registration:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose run --rm web npm run smoke:recipe-showcase-preview
 ```
 
 Start the optional F5-TTS contract-smoke runtime:
