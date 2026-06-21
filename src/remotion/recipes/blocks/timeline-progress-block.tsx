@@ -1,11 +1,19 @@
 import type { CSSProperties, FC } from "react";
 import { interpolate, useCurrentFrame } from "remotion";
 import { recipeBlockClamp, recipeBlockEnter } from "./block-animation";
+import {
+  DEFAULT_RECIPE_CAPTION_SAFE_AREA,
+  getRecipeBeatTiming,
+  type RecipeBeatTiming,
+  type RecipeCaptionSafeArea,
+} from "../timing";
 
 export type TimelineProgressBlockProps = {
   activeColor: string;
   accentGradient: string;
+  captionSafeArea?: RecipeCaptionSafeArea;
   checkpointLabels: string[];
+  durationInFrames?: number;
   inactiveBorderColor?: string;
   mutedColor: string;
   note?: string;
@@ -13,6 +21,7 @@ export type TimelineProgressBlockProps = {
   notePanelColor?: string;
   style?: CSSProperties;
   textColor: string;
+  timing?: RecipeBeatTiming;
   trackColor?: string;
   width?: number;
 };
@@ -20,7 +29,9 @@ export type TimelineProgressBlockProps = {
 export const TimelineProgressBlock: FC<TimelineProgressBlockProps> = ({
   activeColor,
   accentGradient,
+  captionSafeArea = DEFAULT_RECIPE_CAPTION_SAFE_AREA,
   checkpointLabels,
+  durationInFrames = 330,
   inactiveBorderColor = "rgba(255,255,255,0.24)",
   mutedColor,
   note,
@@ -29,10 +40,17 @@ export const TimelineProgressBlock: FC<TimelineProgressBlockProps> = ({
   style,
   textColor,
   trackColor = "rgba(255,255,255,0.12)",
+  timing,
   width = 980,
 }) => {
   const frame = useCurrentFrame();
-  const fill = interpolate(frame, [42, 236], [0, 1], recipeBlockClamp);
+  const beatTiming = timing ?? getRecipeBeatTiming({ durationInFrames });
+  const fill = interpolate(
+    frame,
+    [beatTiming.revealEndFrame, beatTiming.holdEndFrame],
+    [0, 1],
+    recipeBlockClamp,
+  );
 
   return (
     <div style={style}>
@@ -105,9 +123,9 @@ export const TimelineProgressBlock: FC<TimelineProgressBlockProps> = ({
             fontSize: 25,
             fontWeight: 850,
             lineHeight: 1.3,
-            marginTop: 118,
+            marginTop: Math.max(92, captionSafeArea.bottom + 22),
             padding: "22px 26px",
-            width: 520,
+            width: Math.max(420, width - captionSafeArea.left - captionSafeArea.right),
           }}
         >
           {note}

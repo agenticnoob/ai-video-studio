@@ -156,10 +156,11 @@ Current visual-quality direction:
   stage push/pull, fly-through, and a one-off cube turn accent. Low-value
   full-frame light-sweep and scanline-wipe overlay bridges were removed to
   keep Studio preview lighter.
-- Phase 2 recipe-runtime work has started by extracting subject-motion
-  transitions into reusable Remotion primitives under
-  `src/remotion/recipes/motion/`, plus terminal, metric-card, workflow-map,
-  and timeline grouped visual blocks under `src/remotion/recipes/blocks/`
+- Phase 2 recipe-runtime work has completed for reusable runtime primitives:
+  subject-motion transitions live under `src/remotion/recipes/motion/`,
+  terminal, metric-card, workflow-map, and timeline grouped visual blocks live
+  under `src/remotion/recipes/blocks/`, and duration-aware / caption-safe
+  timing helpers live under `src/remotion/recipes/timing/`
 - keep AI output bounded to registered template / recipe parameters; do not use
   unrestricted generated TSX as the normal path
 - avoid broad visual-review scoring or automatic screenshot repair as the next

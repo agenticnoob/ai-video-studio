@@ -2,6 +2,33 @@
 
 Last updated: Visual recipe roadmap branch
 
+## Latest continuation — Recipe Runtime Primitives Phase 2 completion
+
+- Completed Phase 2 for the reusable recipe runtime primitive layer.
+- Added `src/remotion/recipes/timing/` with pure duration-aware beat timing and
+  caption-safe layout defaults:
+  `getRecipeBeatTiming()`, `DEFAULT_RECIPE_CAPTION_SAFE_AREA`,
+  `RecipeBeatTiming`, and `RecipeCaptionSafeArea`.
+- Added `npm run smoke:recipe-timing` to compile and validate monotonic
+  reveal / hold / exit timing behavior, including short and invalid duration
+  normalization.
+- Updated `TimelineProgressBlock` to consume the shared timing helper and
+  caption-safe defaults while keeping the work preview/runtime-only.
+- Updated `RecipeShowcasePreview` to pass `SCENE_DURATION` and the shared
+  caption-safe defaults into the timeline recipe block.
+- Updated `npm run smoke:recipe-showcase-preview` to guard the timing barrel,
+  required timing exports, and showcase usage.
+- Scope remains unchanged: no DeepSeek prompt changes, no provider schema
+  changes, no staged-generation API changes, no new registered template, and no
+  live generated project behavior changes.
+- Next roadmap step is Phase 3: adopt the reusable recipe primitives inside one
+  real recipe-oriented template boundary.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:recipe-showcase-preview'` (red first for missing timing barrel, then green after implementation)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:recipe-timing'` (red first for missing `recipe-timing.ts`, then green after implementation)
+- `docker compose run --rm web bash -lc 'rm -rf .next/types && [ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+
 ## Latest continuation — Recipe Showcase Preview Performance Pass
 
 - Removed the low-value full-frame auxiliary overlays from

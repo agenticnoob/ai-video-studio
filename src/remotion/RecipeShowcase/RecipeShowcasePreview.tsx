@@ -15,6 +15,7 @@ import {
   type TerminalSessionLine,
   type WorkflowMapNode,
 } from "../recipes/blocks";
+import { DEFAULT_RECIPE_CAPTION_SAFE_AREA } from "../recipes/timing";
 
 const WIDTH = 1280;
 const HEIGHT = 720;
@@ -419,7 +420,9 @@ const TimelineProgress: FC = () => {
         <TimelineProgressBlock
           accentGradient={`linear-gradient(90deg, ${palette.rose}, ${palette.amber}, ${palette.green})`}
           activeColor={palette.rose}
+          captionSafeArea={DEFAULT_RECIPE_CAPTION_SAFE_AREA}
           checkpointLabels={checkpoints}
+          durationInFrames={SCENE_DURATION}
           mutedColor={palette.muted}
           note="Reveal, hold, and exit beats are compiled from real narration duration."
           notePanelColor="rgba(16,27,45,0.8)"

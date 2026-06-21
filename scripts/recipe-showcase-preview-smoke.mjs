@@ -25,6 +25,18 @@ const blockExportsSource = (() => {
     );
   }
 })();
+const timingExportsSource = (() => {
+  try {
+    return readFileSync("src/remotion/recipes/timing/index.ts", "utf8");
+  } catch (error) {
+    throw new Error(
+      "Reusable recipe timing helpers are missing at src/remotion/recipes/timing/index.ts",
+      {
+        cause: error,
+      },
+    );
+  }
+})();
 const showcaseSource = (() => {
   try {
     return readFileSync("src/remotion/RecipeShowcase/RecipeShowcasePreview.tsx", "utf8");
@@ -78,6 +90,19 @@ const requiredBlockExports = [
   "TimelineProgressBlock",
 ];
 
+const requiredTimingExports = [
+  "RecipeBeatTiming",
+  "RecipeCaptionSafeArea",
+  "DEFAULT_RECIPE_CAPTION_SAFE_AREA",
+  "getRecipeBeatTiming",
+];
+
+const requiredTimingShowcaseSnippets = [
+  'from "../recipes/timing"',
+  "DEFAULT_RECIPE_CAPTION_SAFE_AREA",
+  "durationInFrames={SCENE_DURATION}",
+];
+
 const forbiddenAudioSnippets = ["<Audio", "segmentNarrationFromAsset", "/api/tts/assets/smoke"];
 const forbiddenOverlaySnippets = [
   "light-sweep-bridge",
@@ -114,6 +139,14 @@ for (const showcaseImport of requiredShowcaseImports) {
 
 for (const blockExport of requiredBlockExports) {
   assertIncludes(blockExportsSource, blockExport, "Reusable recipe visual block exports");
+}
+
+for (const timingExport of requiredTimingExports) {
+  assertIncludes(timingExportsSource, timingExport, "Reusable recipe timing exports");
+}
+
+for (const timingSnippet of requiredTimingShowcaseSnippets) {
+  assertIncludes(showcaseSource, timingSnippet, "Recipe showcase reusable timing usage");
 }
 
 for (const snippet of forbiddenAudioSnippets) {

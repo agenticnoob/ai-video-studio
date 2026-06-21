@@ -179,8 +179,7 @@ Acceptance:
 
 ### Phase 2: Recipe Runtime Primitives
 
-Status: started with reusable subject-motion and grouped visual block
-primitives.
+Status: complete for reusable runtime primitives.
 
 Goal: factor the showcase into reusable template internals.
 
@@ -193,8 +192,10 @@ Deliver:
   reusable scene sequencing, overlap, and content-preroll helpers
 - grouped visual blocks for terminal, metric card, workflow map, and timeline;
   v2 exposes these through `src/remotion/recipes/blocks/`
-- caption-safe layout defaults
-- duration-aware helpers that map narration frames into reveal/hold/exit beats
+- caption-safe layout defaults; v3 exposes
+  `DEFAULT_RECIPE_CAPTION_SAFE_AREA` through `src/remotion/recipes/timing/`
+- duration-aware helpers that map narration frames into reveal/hold/exit beats;
+  v3 exposes `getRecipeBeatTiming()` through `src/remotion/recipes/timing/`
 
 Acceptance:
 
@@ -207,6 +208,12 @@ Acceptance:
 - `RecipeShowcasePreview` consumes shared recipe-block primitives instead of
   owning local copies of terminal, metric-card, workflow-map, and timeline
   block rendering
+- `TimelineProgressBlock` consumes shared recipe timing helpers and
+  caption-safe defaults
+- `npm run smoke:recipe-timing` validates monotonic timing behavior for normal,
+  short, and invalid durations
+- `npm run smoke:recipe-showcase-preview` guards the `motion`, `blocks`, and
+  `timing` public export surfaces
 
 ### Phase 3: High-Quality Recipe Templates
 
