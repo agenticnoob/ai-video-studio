@@ -1,8 +1,43 @@
 # Iteration Status
 
-Last updated: Phase 6 scope narrowed to hard-failure gate
+Last updated: Node graph flow expression slice
 
-## Latest continuation — Phase 6 scope narrowed to hard-failure gate
+## Latest continuation — Node graph flow expression slice
+
+- Shifted the next product work back upstream after closing Phase 6 v1 as a
+  hard-failure diagnostics gate. This slice does not widen visual review,
+  browser/canvas analysis, automatic repair, media composites, or provider
+  freedom.
+- Added an internal deterministic `node-graph-flow` SceneGraph preset selector
+  inside the existing procedural generator compile boundary. Dense workflow
+  graphs now compile to a `dense-system-map` treatment: radial node graph
+  layout, medium pan-right camera motion, a summary callout, later status-panel
+  timing, and beat targeting that keeps graph activation on the graph layer.
+- Kept the provider-facing schema unchanged. DeepSeek still emits the small
+  `StoryboardPlanDraft` visual kind, the draft compiler still owns final nodes,
+  edges, refs, and beats, and execution still compiles to validated
+  `primitive_scene_graph`.
+- Expanded deterministic smoke coverage so the storyboard draft path preserves
+  bounded dense workflow graph data and the staged fixture fails if dense
+  `node-graph-flow` silently regresses to the old pipeline-only layout.
+- Exposed the dense workflow treatment as a Remotion Studio preview composition,
+  `NodeGraphFlowDensePreview`, so the effect can be inspected directly on port
+  3001 without going through a live provider run.
+- Documented and guarded the recurring Studio preview audio pitfall: visual /
+  caption fixture compositions must not attach placeholder narration audio such
+  as `/api/tts/assets/smoke/*.mp3`, because Studio playback parses `<Audio>`
+  sources and can throw `UnsupportedInputFormatError` even when still renders
+  pass.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:storyboard-draft'` (red/green target: dense draft graph stays bounded)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'` (red first for missing radial dense preset, then green)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:remotion-preview'` (guards preview composition registration, `ProjectVideo`, and the no-placeholder-audio rule)
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:visual-review-ui'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts NodeGraphFlowDensePreview /workspace/out/node-graph-flow-dense-preview.png --frame=90 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts SceneGraphTemplatePreview /workspace/out/scene-graph-process.png --frame=215 --scale=0.5'`
+
+## Previous continuation — Phase 6 scope narrowed to hard-failure gate
 
 - Re-scoped Phase 6 v1 away from a broad visual QA / automatic repair loop.
   Current template and bounded SceneGraph output are still too constrained for

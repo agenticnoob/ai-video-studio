@@ -103,6 +103,7 @@ const boundedPlan = compileStoryboardPlanDraft(longDraft);
 const boundedGenerator = boundedPlan.segments[0]?.proceduralGenerator;
 assert.equal(boundedGenerator?.generatorId, "node-graph-flow");
 assert.equal(boundedGenerator?.nodes.length, 12);
+assert.equal(boundedGenerator?.edges.length, 11);
 assert.equal(boundedGenerator?.beats.length, 12);
 
 const longDurationDraft = storyboardPlanDraftSchema.parse({

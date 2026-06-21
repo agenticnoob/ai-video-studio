@@ -1,4 +1,9 @@
-import { segmentNarrationFromAsset, type SegmentNarrationAsset } from "./narration-asset-schema";
+import {
+  segmentNarrationFromAsset,
+  segmentNarrationSchema,
+  type SegmentNarration,
+  type SegmentNarrationAsset,
+} from "./narration-asset-schema";
 import { normalizeSegmentCaptions } from "./captions";
 import { buildFallbackSpotlightContent } from "./fallback-spotlight-content";
 import { buildSegmentPlanRevisionPrompt, buildStoryboardPlanPrompt } from "./deepseek/prompts";
@@ -64,6 +69,12 @@ const createNarrationAsset = ({
     text,
   }),
 });
+
+const previewNarrationFromAsset = (narration: SegmentNarrationAsset): SegmentNarration =>
+  segmentNarrationSchema.parse({
+    text: narration.text,
+    captions: narration.captions,
+  });
 
 const templateMacroStrategyDecision = {
   strategy: "template_macro",
@@ -1042,21 +1053,65 @@ export const nodeGraphFlowProceduralGeneratorFixture = nodeGraphFlowGeneratorSch
     { id: "plan", label: "Plan", detail: "storyboard", lane: "plan", status: "success" },
     { id: "voice", label: "Voice", detail: "F5 captions", lane: "build", status: "active" },
     { id: "visual", label: "Visual", detail: "bounded output", lane: "build", status: "idle" },
+    { id: "review", label: "Review", detail: "hard-failure gate", lane: "verify", status: "idle" },
     { id: "export", label: "Export", detail: "ProjectVideo", lane: "output", status: "idle" },
   ],
   edges: [
     { from: "input", to: "plan", status: "success" },
     { from: "plan", to: "voice", status: "success" },
     { from: "voice", to: "visual", status: "active" },
-    { from: "visual", to: "export", status: "idle" },
+    { from: "visual", to: "review", status: "idle" },
+    { from: "review", to: "export", status: "idle" },
+    { from: "review", to: "visual", status: "idle" },
   ],
   beats: [
     { atFrame: 0, nodeId: "input", action: "reveal" },
     { atFrame: 32, nodeId: "plan", action: "complete" },
     { atFrame: 68, nodeId: "voice", action: "activate" },
     { atFrame: 112, nodeId: "visual", action: "activate" },
+    { atFrame: 142, nodeId: "review", action: "activate" },
   ],
 });
+
+const nodeGraphFlowDensePreviewNarration = createNarrationAsset({
+  durationInFrames: nodeGraphFlowProceduralGeneratorFixture.durationInFrames,
+  segmentId: "node-graph-flow-dense-preview",
+  text: "A dense node graph flow can now show the system map, review loop, and export path in one procedural scene.",
+});
+
+export const nodeGraphFlowDensePreviewProject: VideoProject = videoProjectSchema.parse({
+  meta: {
+    title: "Node Graph Flow Dense Preview",
+    fps: 30,
+    width: 1280,
+    height: 720,
+  },
+  brief: "Preview the dense node-graph-flow procedural generator treatment.",
+  segments: [
+    videoSegmentSchema.parse({
+      id: "node-graph-flow-dense-preview",
+      title: "Dense system map",
+      intent: "Show the dense node-graph-flow procedural generator preview.",
+      templateId: SCENE_GRAPH_TEMPLATE_ID,
+      durationInFrames: nodeGraphFlowProceduralGeneratorFixture.durationInFrames,
+      narration: previewNarrationFromAsset(nodeGraphFlowDensePreviewNarration),
+      implementation: compileNodeGraphFlowToSceneGraph(nodeGraphFlowProceduralGeneratorFixture),
+    }),
+  ],
+});
+
+const assertNodeGraphFlowDensePreviewFixture = (): void => {
+  const [segment] = nodeGraphFlowDensePreviewProject.segments;
+
+  if (!segment?.narration?.captions?.cues.length) {
+    throw new Error("Node graph dense preview expected segment-owned captions.");
+  }
+  if (segment.narration.audio) {
+    throw new Error("Node graph dense preview must not load placeholder narration audio.");
+  }
+};
+
+assertNodeGraphFlowDensePreviewFixture();
 
 const proceduralGeneratorPlannedSegment: StoryboardSegmentPlan = {
   id: "procedural-node-graph-flow",
@@ -1135,6 +1190,17 @@ const assertProceduralGeneratorFixture = (): void => {
   }
   if (!compiled.layers.some((layer) => layer.type === "node-graph")) {
     throw new Error("Procedural generator fixture expected a compiled node-graph layer.");
+  }
+  const graphLayer = compiled.layers.find((layer) => layer.id === "generator-graph");
+  if (graphLayer?.type !== "node-graph") {
+    throw new Error("Procedural generator fixture expected generator-graph node layer.");
+  }
+  if (graphLayer.layout !== "radial") {
+    throw new Error("Dense node graph flow fixture expected radial graph layout.");
+  }
+  const summaryLayer = compiled.layers.find((layer) => layer.id === "generator-summary");
+  if (summaryLayer?.type !== "callout") {
+    throw new Error("Dense node graph flow fixture expected a summary callout.");
   }
   if (compiled.layers.some((layer) => layer.type === "line-path")) {
     throw new Error("Node graph flow fixture should not include a line-path layer.");
@@ -1442,7 +1508,7 @@ const sceneGraphSegments: VideoSegment[] = [
     title: "Visual opener",
     intent: "Open with a strong shot-language hook.",
     templateId: SCENE_GRAPH_TEMPLATE_ID,
-    narration: segmentNarrationFromAsset(
+    narration: previewNarrationFromAsset(
       createNarrationAsset({
         durationInFrames: 120,
         segmentId: "scene-graph-1",
@@ -1563,7 +1629,7 @@ const sceneGraphSegments: VideoSegment[] = [
     title: "Process explanation",
     intent: "Explain the bounded scene graph path with distinct process rhythm.",
     templateId: SCENE_GRAPH_TEMPLATE_ID,
-    narration: segmentNarrationFromAsset(
+    narration: previewNarrationFromAsset(
       createNarrationAsset({
         durationInFrames: 150,
         segmentId: "scene-graph-2",
@@ -1701,7 +1767,7 @@ const sceneGraphSegments: VideoSegment[] = [
     title: "Closing lockup",
     intent: "Close with a coherent visual language lockup.",
     templateId: SCENE_GRAPH_TEMPLATE_ID,
-    narration: segmentNarrationFromAsset(
+    narration: previewNarrationFromAsset(
       createNarrationAsset({
         durationInFrames: 120,
         segmentId: "scene-graph-3",
@@ -1839,6 +1905,9 @@ const assertSceneGraphFixture = (): void => {
     sceneGraphSmokeProject.segments.some((segment) => !segment.narration?.captions?.cues.length)
   ) {
     throw new Error("Scene-graph smoke fixture expected segment-owned captions.");
+  }
+  if (sceneGraphSmokeProject.segments.some((segment) => segment.narration?.audio)) {
+    throw new Error("Scene-graph preview fixture must not load placeholder narration audio.");
   }
   if (
     sceneGraphSmokeProject.segments.some(

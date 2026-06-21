@@ -153,6 +153,36 @@ in provider prompts.
 - Do not expose provider-facing choices before the deterministic compiler and
   fallback behavior exist.
 
+## Remotion Studio Preview Fixtures
+
+Port 3001 runs Remotion Studio. Studio playback exercises media parsing that a
+single-frame `remotion still` command may not touch. A recurring failure mode is
+adding a preview composition whose fixture narration points at
+`/api/tts/assets/smoke/*.mp3` even though no valid audio file exists. When
+Studio tries to play the composition, Mediabunny parses the `<Audio>` source and
+throws `UnsupportedInputFormatError`.
+
+Rule for preview compositions:
+
+- Keep fixture narration text and `VideoSegment.narration.captions` so caption
+  rendering remains visible.
+- Do not attach placeholder narration audio to visual/caption fixtures.
+- Use a preview-only helper such as `previewNarrationFromAsset()` for
+  `SceneGraphTemplatePreview`, `NodeGraphFlowDensePreview`, and future 3001
+  preview-only compositions.
+- Keep `segmentNarrationFromAsset()` for real staged generation, TTS,
+  selected-segment regeneration, and export paths where an audio artifact
+  exists.
+- Preserve the generic `ProjectVideo` composition in `src/remotion/Root.tsx`;
+  local export still selects that composition.
+
+Validation for a new preview composition:
+
+```bash
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:remotion-preview'
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'
+```
+
 ## Intake Checklist
 
 When a future external Remotion skill, example, or component library looks

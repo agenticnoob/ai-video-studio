@@ -38,7 +38,9 @@ const main = async () => {
     visualRepairSource,
     stillAnalysisSource,
     renderProjectSource,
+    remotionRootSource,
     routeSource,
+    stagedFixturesSource,
     packageSource,
   ] = await Promise.all([
     readSource("src/app/page.tsx"),
@@ -52,7 +54,9 @@ const main = async () => {
     readSource("src/lib/deterministic-visual-repair.ts"),
     readSource("src/lib/visual-review-still-analysis.ts"),
     readSource("src/lib/render-project.ts"),
+    readSource("src/remotion/Root.tsx"),
     readSource("src/app/api/visual-review/stills/route.ts"),
+    readSource("src/lib/staged-smoke-fixtures.ts"),
     readSource("package.json"),
   ]);
 
@@ -102,7 +106,11 @@ const main = async () => {
   assertIncludes(panelSource, "afterSummary", "Visual review repair summary");
   assertIncludes(panelSource, "reviewStageLabelMap", "Visual review diagnostic metadata");
   assertIncludes(panelSource, "nextActionLabelMap", "Visual review diagnostic metadata");
-  assertIncludes(panelSource, "state.visualReview.reviewStage", "Visual review diagnostic metadata");
+  assertIncludes(
+    panelSource,
+    "state.visualReview.reviewStage",
+    "Visual review diagnostic metadata",
+  );
   assertIncludes(panelSource, "state.visualReview.nextAction", "Visual review diagnostic metadata");
   assertIncludes(panelSource, "source still", "Visual review repair attribution");
   assertIncludes(panelSource, "review reason", "Visual review repair attribution");
@@ -173,6 +181,9 @@ const main = async () => {
     "Visual review still findings",
   );
   assertIncludes(renderProjectSource, "analyzeVisualReviewStill", "Visual review still renderer");
+  assertIncludes(remotionRootSource, "NodeGraphFlowDensePreview", "Remotion preview root");
+  assertIncludes(remotionRootSource, "nodeGraphFlowDensePreviewProject", "Remotion preview root");
+  assertIncludes(stagedFixturesSource, "nodeGraphFlowDensePreviewProject", "Staged smoke fixtures");
   assertIncludes(
     routeSource,
     "mergeVisualReviewStillAnalysisDiagnostics",

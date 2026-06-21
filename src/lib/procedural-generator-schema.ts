@@ -332,11 +332,28 @@ const terminalBeatActionToSceneBeatAction = (
   return "reveal-layer";
 };
 
+type NodeGraphFlowPreset = "pipeline" | "dense-system-map";
+
+const selectNodeGraphFlowPreset = (generator: NodeGraphFlowGenerator): NodeGraphFlowPreset =>
+  generator.direction === "top-to-bottom" ||
+  generator.nodes.length >= 6 ||
+  generator.edges.length >= generator.nodes.length
+    ? "dense-system-map"
+    : "pipeline";
+
 export const compileNodeGraphFlowToSceneGraph = (generator: NodeGraphFlowGenerator): SceneGraph => {
   const activeNode = generator.nodes.find((node) => node.status === "active");
   const terminalStatus = statusToTerminalStatus(activeNode?.status ?? "success");
   const durationInFrames = generator.durationInFrames;
-  const graphDuration = Math.max(30, durationInFrames - 32);
+  const preset = selectNodeGraphFlowPreset(generator);
+  const isDenseSystemMap = preset === "dense-system-map";
+  const graphDuration = Math.max(30, durationInFrames - (isDenseSystemMap ? 56 : 32));
+  const statusStartFrame = Math.max(
+    isDenseSystemMap ? 78 : 36,
+    Math.floor(durationInFrames * (isDenseSystemMap ? 0.58 : 0.46)),
+  );
+  const graphLayerId = "generator-graph";
+  const statusLayerId = "generator-status";
 
   return sceneGraphSchema.parse({
     meta: {
@@ -352,8 +369,8 @@ export const compileNodeGraphFlowToSceneGraph = (generator: NodeGraphFlowGenerat
     layout: "node-graph",
     durationInFrames,
     camera: {
-      movement: generator.direction === "top-to-bottom" ? "pan-right" : "drift",
-      intensity: "subtle",
+      movement: isDenseSystemMap || generator.direction === "top-to-bottom" ? "pan-right" : "drift",
+      intensity: isDenseSystemMap ? "medium" : "subtle",
     },
     transitionIn: {
       type: "slide-up",
@@ -380,18 +397,35 @@ export const compileNodeGraphFlowToSceneGraph = (generator: NodeGraphFlowGenerat
         durationInFrames: Math.min(72, durationInFrames),
       },
       {
-        id: "generator-graph",
+        id: graphLayerId,
         type: "node-graph",
         title: generator.summary ?? generator.title,
         nodes: generator.nodes.slice(0, 8),
         edges: generator.edges.slice(0, 10).map(({ from, status, to }) => ({ from, status, to })),
-        layout: generator.direction === "left-to-right" ? "pipeline" : "horizontal",
+        layout: isDenseSystemMap
+          ? "radial"
+          : generator.direction === "left-to-right"
+            ? "pipeline"
+            : "horizontal",
         motionPreset: "draw-path",
-        startFrame: 14,
+        startFrame: isDenseSystemMap ? 18 : 14,
         durationInFrames: graphDuration,
       },
+      ...(isDenseSystemMap
+        ? [
+            {
+              id: "generator-summary",
+              type: "callout" as const,
+              text: generator.summary ?? generator.title,
+              anchor: "right" as const,
+              motionPreset: "highlight" as const,
+              startFrame: Math.max(42, Math.floor(durationInFrames * 0.34)),
+              durationInFrames: Math.max(36, Math.floor(durationInFrames * 0.3)),
+            },
+          ]
+        : []),
       {
-        id: "generator-status",
+        id: statusLayerId,
         type: "terminal-panel",
         title: activeNode ? activeNode.label : "generator status",
         lines: generator.nodes
@@ -400,8 +434,8 @@ export const compileNodeGraphFlowToSceneGraph = (generator: NodeGraphFlowGenerat
         status: terminalStatus,
         layout: "bottom",
         motionPreset: "type-text",
-        startFrame: Math.max(36, Math.floor(durationInFrames * 0.46)),
-        durationInFrames: Math.max(30, Math.floor(durationInFrames * 0.44)),
+        startFrame: statusStartFrame,
+        durationInFrames: Math.max(30, durationInFrames - statusStartFrame - 12),
       },
       {
         id: "generator-caption-zone",
@@ -413,7 +447,10 @@ export const compileNodeGraphFlowToSceneGraph = (generator: NodeGraphFlowGenerat
       id: `generator-beat-${index + 1}`,
       atFrame: beat.atFrame,
       action: generatorBeatActionToSceneBeatAction(beat.action),
-      targetLayerId: beat.action === "reveal" ? "generator-graph" : "generator-status",
+      targetLayerId:
+        beat.action === "reveal" || (isDenseSystemMap && beat.action === "activate")
+          ? graphLayerId
+          : statusLayerId,
     })),
   });
 };

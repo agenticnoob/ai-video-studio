@@ -51,7 +51,10 @@ Product direction:
   module contracts first; the current `node-graph-flow`, `line-path-flow`, and
   `terminal-session` paths are provider-planner selectable only through
   bounded schemas and still compile deterministically into actual
-  `primitive_scene_graph`
+  `primitive_scene_graph`. Larger `node-graph-flow` workflow maps may compile
+  through an internal dense-system-map treatment, but this remains an
+  implementation detail of the deterministic compiler rather than a new
+  provider-authored schema
 - asset planning should be introduced before media compositing: the current
   planner may request future assets through `assetPlan.requiredAssets[]` using
   stable ids, bounded kinds, purpose, and fallback, but it must not invent

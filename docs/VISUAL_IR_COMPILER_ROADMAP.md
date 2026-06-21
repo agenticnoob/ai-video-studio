@@ -285,7 +285,10 @@ Current groundwork:
 - deterministic smoke fixtures validate the schemas, diagnostics helper, and
   compile-to-SceneGraph paths.
 - `node-graph-flow` can now compile into bounded `primitive_scene_graph`
-  `SceneGraph` data that reuses the existing scene-graph renderer.
+  `SceneGraph` data that reuses the existing scene-graph renderer. Dense
+  workflow graphs use an internal `dense-system-map` compile treatment with a
+  radial graph layer, summary callout, later status-panel timing, and graph
+  activation beats, while smaller flows keep the compact pipeline treatment.
 - `line-path-flow` can now compile into bounded `primitive_scene_graph`
   `SceneGraph` data using the existing `line-path` primitive.
 - `terminal-session` can now compile into bounded `primitive_scene_graph`

@@ -1,7 +1,10 @@
 import type { FC } from "react";
 import { Composition } from "remotion";
 import { getProjectDuration, videoProjectSchema, type VideoProject } from "../lib/project-schema";
-import { sceneGraphSmokeProject } from "../lib/staged-smoke-fixtures";
+import {
+  nodeGraphFlowDensePreviewProject,
+  sceneGraphSmokeProject,
+} from "../lib/staged-smoke-fixtures";
 import { ProjectVideo } from "./ProjectVideo/ProjectVideo";
 
 const calculateVideoProjectMetadata = ({ props }: { props: VideoProject }) => {
@@ -319,6 +322,17 @@ export const RemotionRoot: FC = () => {
         schema={videoProjectSchema}
         defaultProps={sceneGraphSmokeProject}
         durationInFrames={390}
+        fps={30}
+        width={1280}
+        height={720}
+        calculateMetadata={calculateVideoProjectMetadata}
+      />
+      <Composition
+        id="NodeGraphFlowDensePreview"
+        component={ProjectVideo}
+        schema={videoProjectSchema}
+        defaultProps={nodeGraphFlowDensePreviewProject}
+        durationInFrames={nodeGraphFlowDensePreviewProject.segments[0]?.durationInFrames ?? 180}
         fps={30}
         width={1280}
         height={720}

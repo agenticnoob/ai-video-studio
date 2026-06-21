@@ -75,7 +75,9 @@ Current implementation status:
   deterministic workflow, node graph, agent loop, system-flow, journey,
   timeline, terminal, build/test, and deploy trace briefs toward draft
   procedural visuals instead of card-only macro templates or brittle direct
-  Visual IR
+  Visual IR. Dense `node-graph-flow` workflows now compile through an internal
+  radial system-map treatment with a summary callout and delayed status panel,
+  while the provider-facing schema remains the same
 - asset-plan groundwork has started for Phase 5: `StoryboardPlan` can carry
   top-level `assetPlan.requiredAssets[]` entries with stable ids, bounded
   kinds, purpose, and fallback. This is planner/diagnostics data only; it does
@@ -473,6 +475,30 @@ cd /data/projects/labs/ai-video-studio
 docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts SceneGraphTemplatePreview /workspace/out/scene-graph-opener.png --frame=90 --scale=0.5'
 docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts SceneGraphTemplatePreview /workspace/out/scene-graph-process.png --frame=215 --scale=0.5'
 docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts SceneGraphTemplatePreview /workspace/out/scene-graph-closing.png --frame=340 --scale=0.5'
+```
+
+Preview the dense `node-graph-flow` procedural generator treatment directly:
+```bash
+cd /data/projects/labs/ai-video-studio
+./scripts/studio.sh
+# Open http://localhost:3001 and select NodeGraphFlowDensePreview.
+
+docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts NodeGraphFlowDensePreview /workspace/out/node-graph-flow-dense-preview.png --frame=90 --scale=0.5'
+```
+
+`SceneGraphTemplatePreview` and `NodeGraphFlowDensePreview` are visual/caption
+fixtures; they intentionally do not attach placeholder narration audio.
+
+When adding another Remotion Studio preview composition, do not attach
+placeholder narration audio such as `/api/tts/assets/smoke/*.mp3` unless the
+file exists and is a valid media asset. Studio playback on port 3001 parses
+`<Audio>` sources with Mediabunny and can throw `UnsupportedInputFormatError`;
+still rendering may not catch it. Use preview-only narration data with text and
+captions, preserve the generic `ProjectVideo` composition, then validate:
+
+```bash
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:remotion-preview'
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'
 ```
 
 Start the optional F5-TTS contract-smoke runtime:

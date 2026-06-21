@@ -56,6 +56,23 @@ components, also consult
 `.agents/skills/remotion-best-practices/SKILL.md`. Treat it as the repo-local
 Remotion rendering guide.
 
+When adding or changing Remotion Studio preview compositions on port 3001,
+remember the recurring fixture-audio failure:
+- 3001 Studio playback parses `<Audio>` sources with Mediabunny. A fixture that
+  points narration audio at `/api/tts/assets/smoke/*.mp3` without a real file
+  can throw `UnsupportedInputFormatError` even if `remotion still` succeeds.
+- Preview compositions such as `SceneGraphTemplatePreview` and
+  `NodeGraphFlowDensePreview` are visual/caption fixtures. They should keep
+  segment narration text and captions, but must not attach placeholder
+  narration audio.
+- Use a preview-only narration helper such as `previewNarrationFromAsset()` for
+  Remotion Studio fixtures. Keep `segmentNarrationFromAsset()` for real staged
+  generation, TTS, selected-segment regeneration, and export paths.
+- Preserve the generic `ProjectVideo` composition when adding preview
+  compositions; local export still selects `ProjectVideo`.
+- Run `npm run smoke:remotion-preview` and `npm run smoke:staged-fixtures`
+  after adding a preview composition.
+
 ## Current project stage
 
 `ai-video-studio` already has a usable one-primary-template-per-segment authoring loop:

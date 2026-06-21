@@ -120,7 +120,10 @@ Current executable strategy note:
   deterministic modules such as `node-graph-flow`, `line-path-flow`, and
   `terminal-session`; these paths compile deterministically to SceneGraph,
   expose staged diagnostics metadata, and support guarded execution for
-  bounded generator payloads. The provider-facing storyboard planner
+  bounded generator payloads. `node-graph-flow` now has an internal
+  dense-system-map compile treatment for larger workflow/system maps, but the
+  provider-facing schema and render strategy stay unchanged. The
+  provider-facing storyboard planner
   prompt/schema can currently select `procedural_generator` only for `scene-graph`
   segments with bounded `node-graph-flow`, `line-path-flow`, or
   `terminal-session` payloads. The actual compiled render path remains
