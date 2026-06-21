@@ -1,13 +1,17 @@
 import type { CSSProperties, FC, ReactNode } from "react";
 import { AbsoluteFill, Easing, interpolate, Sequence, useCurrentFrame } from "remotion";
+import {
+  getSceneContentPrerollFrom,
+  getSceneTransitionSequenceTiming,
+  SceneTransitionStage,
+  type RecipeSceneTransitionMotion,
+} from "../recipes/motion";
 
 const WIDTH = 1280;
 const HEIGHT = 720;
 const SCENE_DURATION = 330;
 const SCENE_OVERLAP_IN_FRAMES = 48;
 const STAGE_TRANSITION_IN_FRAMES = 56;
-const SCENE_CONTENT_PREROLL_IN_FRAMES = 36;
-const SCENE_SEQUENCE_DURATION = SCENE_DURATION + SCENE_OVERLAP_IN_FRAMES;
 
 export const RECIPE_SHOWCASE_DURATION_IN_FRAMES = SCENE_DURATION * 6;
 
@@ -41,11 +45,6 @@ const showcaseTransitions = [
   "fly-through",
   "cube-turn",
 ] as const;
-
-type StageMotion =
-  | (typeof showcaseTransitions)[3]
-  | (typeof showcaseTransitions)[4]
-  | (typeof showcaseTransitions)[5];
 
 const clamp = {
   extrapolateLeft: "clamp" as const,
@@ -109,155 +108,6 @@ const RecipeLabel: FC<{ index: number; name: string; tint: string }> = ({ index,
     </div>
   </div>
 );
-
-const stageMotionEase = {
-  ...clamp,
-  easing: Easing.bezier(0.16, 1, 0.3, 1),
-};
-
-const stageProgress = (frame: number, start: number, end: number) =>
-  interpolate(frame, [start, end], [0, 1], stageMotionEase);
-
-const stageOpacity = (frame: number, index: number, sceneCount: number) => {
-  const enterOpacity =
-    index === 0
-      ? 1
-      : interpolate(frame, [0, STAGE_TRANSITION_IN_FRAMES * 0.7], [0, 1], stageMotionEase);
-  const exitOpacity =
-    index === sceneCount - 1
-      ? 1
-      : interpolate(
-          frame,
-          [
-            SCENE_DURATION - STAGE_TRANSITION_IN_FRAMES * 0.65,
-            SCENE_DURATION + SCENE_OVERLAP_IN_FRAMES,
-          ],
-          [1, 0.18],
-          { ...clamp, easing: Easing.in(Easing.ease) },
-        );
-
-  return Math.min(enterOpacity, exitOpacity);
-};
-
-const stagePushStyle = (frame: number, index: number, sceneCount: number) => {
-  const incoming = index === 0 ? 1 : stageProgress(frame, 0, STAGE_TRANSITION_IN_FRAMES);
-  const outgoing =
-    index === sceneCount - 1
-      ? 0
-      : stageProgress(
-          frame,
-          SCENE_DURATION - STAGE_TRANSITION_IN_FRAMES,
-          SCENE_DURATION + SCENE_OVERLAP_IN_FRAMES,
-        );
-
-  const enterX = interpolate(incoming, [0, 1], [WIDTH * 0.62, 0], clamp);
-  const enterScale = interpolate(incoming, [0, 1], [0.78, 1], clamp);
-  const enterRotateY = interpolate(incoming, [0, 1], [34, 0], clamp);
-  const exitX = interpolate(outgoing, [0, 1], [0, -WIDTH * 0.72], clamp);
-  const exitScale = interpolate(outgoing, [0, 1], [1, 0.82], clamp);
-  const exitRotateY = interpolate(outgoing, [0, 1], [0, -42], clamp);
-
-  return {
-    filter: `blur(${interpolate(Math.max(1 - incoming, outgoing), [0, 1], [0, 1.8], clamp)}px)`,
-    transform: `translate3d(${enterX + exitX}px, 0, 0) rotateY(${enterRotateY + exitRotateY}deg) scale(${enterScale * exitScale})`,
-  };
-};
-
-const flyThroughStyle = (frame: number, index: number, sceneCount: number) => {
-  const incoming = index === 0 ? 1 : stageProgress(frame, 0, STAGE_TRANSITION_IN_FRAMES);
-  const outgoing =
-    index === sceneCount - 1
-      ? 0
-      : stageProgress(
-          frame,
-          SCENE_DURATION - STAGE_TRANSITION_IN_FRAMES,
-          SCENE_DURATION + SCENE_OVERLAP_IN_FRAMES,
-        );
-
-  const enterX = interpolate(incoming, [0, 1], [WIDTH * 0.46, 0], clamp);
-  const enterY = interpolate(incoming, [0, 1], [HEIGHT * 0.24, 0], clamp);
-  const enterScale = interpolate(incoming, [0, 1], [1.28, 1], clamp);
-  const enterRotateY = interpolate(incoming, [0, 1], [24, 0], clamp);
-  const enterRotateZ = interpolate(incoming, [0, 1], [7, 0], clamp);
-  const exitX = interpolate(outgoing, [0, 1], [0, -WIDTH * 0.86], clamp);
-  const exitY = interpolate(outgoing, [0, 1], [0, -HEIGHT * 0.28], clamp);
-  const exitScale = interpolate(outgoing, [0, 1], [1, 0.44], clamp);
-  const exitRotateY = interpolate(outgoing, [0, 1], [0, -38], clamp);
-  const exitRotateZ = interpolate(outgoing, [0, 1], [0, -10], clamp);
-
-  return {
-    filter: `blur(${interpolate(Math.max(1 - incoming, outgoing), [0, 1], [0, 3.2], clamp)}px)`,
-    transform: `translate3d(${enterX + exitX}px, ${enterY + exitY}px, 0) rotateZ(${
-      enterRotateZ + exitRotateZ
-    }deg) rotateY(${enterRotateY + exitRotateY}deg) scale(${enterScale * exitScale})`,
-  };
-};
-
-const cubeTurnStyle = (frame: number, index: number, sceneCount: number) => {
-  const incoming = index === 0 ? 1 : stageProgress(frame, 0, STAGE_TRANSITION_IN_FRAMES);
-  const outgoing =
-    index === sceneCount - 1
-      ? 0
-      : stageProgress(
-          frame,
-          SCENE_DURATION - STAGE_TRANSITION_IN_FRAMES,
-          SCENE_DURATION + SCENE_OVERLAP_IN_FRAMES,
-        );
-
-  const enterX = interpolate(incoming, [0, 1], [WIDTH * 0.22, 0], clamp);
-  const enterRotateY = interpolate(incoming, [0, 1], [88, 0], clamp);
-  const exitX = interpolate(outgoing, [0, 1], [0, -WIDTH * 0.25], clamp);
-  const exitRotateY = interpolate(outgoing, [0, 1], [0, -88], clamp);
-
-  return {
-    filter: `blur(${interpolate(Math.max(1 - incoming, outgoing), [0, 1], [0, 1.4], clamp)}px)`,
-    transform: `translate3d(${enterX + exitX}px, 0, 0) rotateY(${enterRotateY + exitRotateY}deg) scale(${interpolate(
-      Math.max(1 - incoming, outgoing),
-      [0, 1],
-      [1, 0.9],
-      clamp,
-    )})`,
-  };
-};
-
-const motionStyle = (motion: StageMotion, frame: number, index: number, sceneCount: number) => {
-  if (motion === "fly-through") {
-    return flyThroughStyle(frame, index, sceneCount);
-  }
-
-  if (motion === "cube-turn") {
-    return cubeTurnStyle(frame, index, sceneCount);
-  }
-
-  return stagePushStyle(frame, index, sceneCount);
-};
-
-const SceneStage: FC<{
-  children: ReactNode;
-  index: number;
-  motion: StageMotion;
-  sceneCount: number;
-}> = ({ children, index, motion, sceneCount }) => {
-  const frame = useCurrentFrame();
-  const stage = motionStyle(motion, frame, index, sceneCount);
-
-  return (
-    <AbsoluteFill
-      style={{
-        filter: stage.filter,
-        opacity: stageOpacity(frame, index, sceneCount),
-        perspective: 1200,
-        transform: stage.transform,
-        transformOrigin:
-          motion === "cube-turn" ? (index % 2 === 0 ? "right center" : "left center") : "50% 50%",
-        transformStyle: "preserve-3d",
-        willChange: "transform, opacity, filter",
-      }}
-    >
-      {children}
-    </AbsoluteFill>
-  );
-};
 
 const SceneFrame: FC<{
   children: ReactNode;
@@ -1094,7 +944,7 @@ const TransitionOverlay: FC = () => (
 
 const showcaseScenes: Array<{
   component: FC;
-  motion: StageMotion;
+  motion: RecipeSceneTransitionMotion;
 }> = [
   { component: HeroTitleReveal, motion: "stage-push" },
   { component: WorkflowNodeMap, motion: "stage-push" },
@@ -1114,19 +964,32 @@ export const RecipeShowcasePreview: FC = () => (
       width: WIDTH,
     }}
   >
-    {showcaseScenes.map(({ component: SceneComponent, motion }, index) => (
-      <Sequence
-        durationInFrames={SCENE_SEQUENCE_DURATION}
-        from={Math.max(0, index * SCENE_DURATION - (index === 0 ? 0 : SCENE_OVERLAP_IN_FRAMES))}
-        key={showcaseRecipes[index]}
-      >
-        <SceneStage index={index} motion={motion} sceneCount={showcaseScenes.length}>
-          <Sequence from={index === 0 ? 0 : -SCENE_CONTENT_PREROLL_IN_FRAMES}>
-            <SceneComponent />
-          </Sequence>
-        </SceneStage>
-      </Sequence>
-    ))}
+    {showcaseScenes.map(({ component: SceneComponent, motion }, index) => {
+      const sequenceTiming = getSceneTransitionSequenceTiming({
+        index,
+        overlapFrames: SCENE_OVERLAP_IN_FRAMES,
+        sceneDurationInFrames: SCENE_DURATION,
+      });
+
+      return (
+        <Sequence {...sequenceTiming} key={showcaseRecipes[index]}>
+          <SceneTransitionStage
+            height={HEIGHT}
+            index={index}
+            motion={motion}
+            overlapFrames={SCENE_OVERLAP_IN_FRAMES}
+            sceneCount={showcaseScenes.length}
+            sceneDurationInFrames={SCENE_DURATION}
+            transitionFrames={STAGE_TRANSITION_IN_FRAMES}
+            width={WIDTH}
+          >
+            <Sequence from={getSceneContentPrerollFrom(index)}>
+              <SceneComponent />
+            </Sequence>
+          </SceneTransitionStage>
+        </Sequence>
+      );
+    })}
     <TransitionOverlay />
   </AbsoluteFill>
 );

@@ -3,6 +3,16 @@ import { readFileSync } from "node:fs";
 /* global console */
 
 const rootSource = readFileSync("src/remotion/Root.tsx", "utf8");
+const motionSource = (() => {
+  try {
+    return readFileSync("src/remotion/recipes/motion/scene-transition-stage.tsx", "utf8");
+  } catch (error) {
+    throw new Error(
+      "Reusable recipe scene transition primitive is missing at src/remotion/recipes/motion/scene-transition-stage.tsx",
+      { cause: error },
+    );
+  }
+})();
 const showcaseSource = (() => {
   try {
     return readFileSync("src/remotion/RecipeShowcase/RecipeShowcasePreview.tsx", "utf8");
@@ -41,11 +51,17 @@ const requiredTransitionIds = [
 ];
 
 const requiredMotionSnippets = [
-  "SceneStage",
+  "SceneTransitionStage",
   "translate3d(",
   "rotateY(",
   "motionStyle",
   "SCENE_CONTENT_PREROLL_IN_FRAMES",
+];
+
+const requiredShowcaseImports = [
+  "SceneTransitionStage",
+  "getSceneContentPrerollFrom",
+  'from "../recipes/motion"',
 ];
 
 const forbiddenAudioSnippets = ["<Audio", "segmentNarrationFromAsset", "/api/tts/assets/smoke"];
@@ -69,7 +85,11 @@ for (const transitionId of requiredTransitionIds) {
 }
 
 for (const motionSnippet of requiredMotionSnippets) {
-  assertIncludes(showcaseSource, motionSnippet, "Recipe showcase stage motion");
+  assertIncludes(motionSource, motionSnippet, "Reusable recipe scene transition primitive");
+}
+
+for (const showcaseImport of requiredShowcaseImports) {
+  assertIncludes(showcaseSource, showcaseImport, "Recipe showcase reusable motion import");
 }
 
 for (const snippet of forbiddenAudioSnippets) {

@@ -2,6 +2,33 @@
 
 Last updated: Visual recipe roadmap branch
 
+## Latest continuation — Recipe Runtime Primitives Phase 2 v1
+
+- Started Phase 2 by extracting the validated showcase subject-motion
+  transition layer into reusable Remotion recipe primitives.
+- Added `src/remotion/recipes/motion/scene-transition-stage.tsx` with:
+  `SceneTransitionStage`, `RecipeSceneTransitionMotion`,
+  `RECIPE_SCENE_TRANSITION_MOTIONS`, `SCENE_CONTENT_PREROLL_IN_FRAMES`,
+  `getSceneTransitionSequenceTiming()`, and `getSceneContentPrerollFrom()`.
+- Added `src/remotion/recipes/motion/index.ts` as the public recipe-motion
+  export surface.
+- Updated `RecipeShowcasePreview` to consume the shared primitive instead of
+  carrying local copies of the `stage-push`, `fly-through`, and `cube-turn`
+  stage-motion calculations.
+- Kept this slice preview/runtime-only: no DeepSeek prompt changes, no
+  template provider schema changes, no staged-generation API changes, and no
+  live project rendering behavior changes.
+- Updated `npm run smoke:recipe-showcase-preview` so it now checks that the
+  reusable primitive module exists, contains frame-driven 3D motion markers,
+  and is imported by the showcase preview.
+- Deferred extraction of terminal, metric-card, workflow-map, and timeline
+  visual blocks to the next Phase 2 slice after the motion primitive boundary
+  is stable.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:recipe-showcase-preview'` (red first for missing reusable primitive file, then green after extraction)
+- `docker compose run --rm web bash -lc 'rm -rf .next/types && [ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+
 ## Latest continuation — Recipe Showcase transition pass
 
 - Committed the initial Phase 1 showcase baseline as

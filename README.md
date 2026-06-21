@@ -154,6 +154,9 @@ Current visual-quality direction:
   with hero title, workflow map, terminal session, metric cards, timeline, and
   code-diff recipe scenes plus bounded subject-motion transitions: 2.5D
   stage push/pull, fly-through, and a one-off cube turn accent
+- Phase 2 recipe-runtime work has started by extracting those subject-motion
+  transitions into reusable Remotion primitives under
+  `src/remotion/recipes/motion/`
 - keep AI output bounded to registered template / recipe parameters; do not use
   unrestricted generated TSX as the normal path
 - avoid broad visual-review scoring or automatic screenshot repair as the next

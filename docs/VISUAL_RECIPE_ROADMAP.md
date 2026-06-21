@@ -178,12 +178,17 @@ Acceptance:
 
 ### Phase 2: Recipe Runtime Primitives
 
+Status: started with reusable subject-motion primitives.
+
 Goal: factor the showcase into reusable template internals.
 
 Deliver:
 
-- a small motion preset catalog
-- shared transition helpers for common reveal/exit patterns
+- a small motion preset catalog; v1 now exposes `stage-push`,
+  `fly-through`, and `cube-turn` through
+  `src/remotion/recipes/motion/scene-transition-stage.tsx`
+- shared transition helpers for common reveal/exit patterns; v1 includes
+  reusable scene sequencing, overlap, and content-preroll helpers
 - grouped visual blocks for terminal, metric card, workflow map, and timeline
 - caption-safe layout defaults
 - duration-aware helpers that map narration frames into reveal/hold/exit beats
@@ -194,6 +199,8 @@ Acceptance:
 - animation remains frame-driven with Remotion APIs
 - no CSS animation is used for render-critical timing
 - existing `scripted`, `spotlight`, and `stats-dashboard` previews still load
+- `RecipeShowcasePreview` consumes shared recipe-motion primitives instead of
+  owning local copies of the stage transition logic
 
 ### Phase 3: High-Quality Recipe Templates
 
