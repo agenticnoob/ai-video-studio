@@ -2,6 +2,35 @@
 
 Last updated: Visual recipe roadmap branch
 
+## Latest continuation — Recipe Showcase transition pass
+
+- Committed the initial Phase 1 showcase baseline as
+  `c313f02 feat: add recipe showcase preview`.
+- Added a small transition bridge pass on top of `RecipeShowcasePreview` so
+  the preview is no longer only static scene-to-scene cuts.
+- Added three bounded transition treatments inside the showcase composition:
+  `light-sweep-bridge`, `scanline-wipe`, and `panel-push`.
+- Kept this as preview-only Remotion code: no live LLM changes, no template
+  provider schema changes, no new API route, and no placeholder narration
+  audio.
+- Extended `npm run smoke:recipe-showcase-preview` to assert that the expected
+  transition treatment ids stay present in the showcase source.
+- Rendered transition boundary stills for visual inspection:
+  `/workspace/out/recipe-transition-light-sweep.png`,
+  `/workspace/out/recipe-transition-scanline-terminal.png`,
+  `/workspace/out/recipe-transition-scanline-metric.png`,
+  `/workspace/out/recipe-transition-light-sweep-timeline.png`,
+  `/workspace/out/recipe-transition-panel-push.png`, and
+  `/workspace/out/recipe-transition-panel-push-clean.png`.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:recipe-showcase-preview'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts RecipeShowcasePreview /workspace/out/recipe-transition-light-sweep.png --frame=322 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts RecipeShowcasePreview /workspace/out/recipe-transition-scanline-terminal.png --frame=650 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts RecipeShowcasePreview /workspace/out/recipe-transition-scanline-metric.png --frame=980 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts RecipeShowcasePreview /workspace/out/recipe-transition-light-sweep-timeline.png --frame=1310 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts RecipeShowcasePreview /workspace/out/recipe-transition-panel-push-clean.png --frame=1640 --scale=0.5'`
+
 ## Latest continuation — Recipe Showcase Preview Phase 1
 
 - Implemented the first Phase 1 visual-quality baseline on the clean

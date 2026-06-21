@@ -152,7 +152,8 @@ Current visual-quality direction:
   blocks, and Remotion Studio preview examples
 - `RecipeShowcasePreview` is the first static Remotion Studio quality baseline,
   with hero title, workflow map, terminal session, metric cards, timeline, and
-  code-diff recipe scenes
+  code-diff recipe scenes plus bounded light-sweep, scanline, and panel-push
+  transition bridges
 - keep AI output bounded to registered template / recipe parameters; do not use
   unrestricted generated TSX as the normal path
 - avoid broad visual-review scoring or automatic screenshot repair as the next

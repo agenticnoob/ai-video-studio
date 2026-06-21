@@ -31,6 +31,8 @@ const requiredRecipeIds = [
   "code-diff-highlight",
 ];
 
+const requiredTransitionIds = ["light-sweep-bridge", "scanline-wipe", "panel-push"];
+
 const forbiddenAudioSnippets = ["<Audio", "segmentNarrationFromAsset", "/api/tts/assets/smoke"];
 
 const assertIncludes = (source, snippet, label) => {
@@ -45,6 +47,10 @@ for (const snippet of requiredRootSnippets) {
 
 for (const recipeId of requiredRecipeIds) {
   assertIncludes(showcaseSource, recipeId, "Recipe showcase");
+}
+
+for (const transitionId of requiredTransitionIds) {
+  assertIncludes(showcaseSource, transitionId, "Recipe showcase transition");
 }
 
 for (const snippet of forbiddenAudioSnippets) {

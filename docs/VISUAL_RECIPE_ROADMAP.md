@@ -142,6 +142,8 @@ Deliver:
 
 - a Remotion Studio preview composition that demonstrates 6 polished recipe
   treatments using static fixture data
+- bounded transition bridges between showcase scenes, starting with
+  `light-sweep-bridge`, `scanline-wipe`, and `panel-push`
 - no live LLM changes
 - no new provider schema
 - no project persistence changes
@@ -164,9 +166,14 @@ Acceptance:
   - `/workspace/out/recipe-showcase-terminal-late.png`
   - `/workspace/out/recipe-showcase-code.png`
 - `npm run smoke:recipe-showcase-preview` ensures the preview composition stays
-  registered and keeps the 6 expected recipe ids visible in source
+  registered and keeps the 6 expected recipe ids plus transition ids visible
+  in source
 - `npm run smoke:staged-fixtures` confirms Remotion can bundle and list the new
   composition beside the existing template previews
+- transition boundary stills render for visual inspection, including:
+  - `/workspace/out/recipe-transition-light-sweep.png`
+  - `/workspace/out/recipe-transition-scanline-terminal.png`
+  - `/workspace/out/recipe-transition-panel-push-clean.png`
 
 ### Phase 2: Recipe Runtime Primitives
 

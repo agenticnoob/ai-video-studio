@@ -29,6 +29,8 @@ const showcaseRecipes = [
   "code-diff-highlight",
 ] as const;
 
+const showcaseTransitions = ["light-sweep-bridge", "scanline-wipe", "panel-push"] as const;
+
 const clamp = {
   extrapolateLeft: "clamp" as const,
   extrapolateRight: "clamp" as const,
@@ -792,6 +794,142 @@ const CodeDiffHighlight: FC = () => {
   );
 };
 
+const transitionProgress = (frame: number, center: number, radius = 34) => {
+  const distance = Math.abs(frame - center);
+  return interpolate(distance, [0, radius], [1, 0], clamp);
+};
+
+const LightSweepBridge: FC<{ center: number }> = ({ center }) => {
+  const frame = useCurrentFrame();
+  const progress = transitionProgress(frame, center, 38);
+  const travel = interpolate(frame, [center - 38, center + 38], [-260, WIDTH + 220], clamp);
+
+  if (progress <= 0) {
+    return null;
+  }
+
+  return (
+    <AbsoluteFill
+      style={{
+        opacity: progress,
+        pointerEvents: "none",
+      }}
+    >
+      <div
+        style={{
+          background: `linear-gradient(90deg, transparent, ${palette.text}dd, ${palette.cyan}66, transparent)`,
+          filter: "blur(1px)",
+          height: HEIGHT * 1.35,
+          left: travel,
+          position: "absolute",
+          top: -120,
+          transform: "rotate(16deg)",
+          width: 160,
+        }}
+      />
+      <div
+        style={{
+          background: `radial-gradient(circle at 50% 50%, ${palette.cyan}3b, transparent 64%)`,
+          inset: 0,
+          opacity: progress,
+          position: "absolute",
+        }}
+      />
+    </AbsoluteFill>
+  );
+};
+
+const ScanlineWipe: FC<{ center: number }> = ({ center }) => {
+  const frame = useCurrentFrame();
+  const progress = transitionProgress(frame, center, 42);
+  const wipe = interpolate(frame, [center - 42, center + 42], [-160, HEIGHT + 160], clamp);
+
+  if (progress <= 0) {
+    return null;
+  }
+
+  return (
+    <AbsoluteFill style={{ opacity: progress, pointerEvents: "none" }}>
+      <div
+        style={{
+          background: `linear-gradient(180deg, transparent, ${palette.green}55, ${palette.green}cc, ${palette.green}55, transparent)`,
+          filter: "blur(0.4px)",
+          height: 135,
+          left: 0,
+          position: "absolute",
+          right: 0,
+          top: wipe,
+        }}
+      />
+      <div
+        style={{
+          backgroundImage: `repeating-linear-gradient(0deg, ${palette.green}18 0px, ${palette.green}18 1px, transparent 1px, transparent 6px)`,
+          inset: 0,
+          opacity: progress * 0.7,
+          position: "absolute",
+        }}
+      />
+    </AbsoluteFill>
+  );
+};
+
+const PanelPush: FC<{ center: number }> = ({ center }) => {
+  const frame = useCurrentFrame();
+  const progress = transitionProgress(frame, center, 40);
+  const leftPanel = interpolate(frame, [center - 40, center + 40], [-WIDTH, WIDTH], clamp);
+  const rightPanel = interpolate(frame, [center - 40, center + 40], [WIDTH, -WIDTH], clamp);
+
+  if (progress <= 0) {
+    return null;
+  }
+
+  return (
+    <AbsoluteFill style={{ opacity: progress, pointerEvents: "none" }}>
+      <div
+        style={{
+          background: `linear-gradient(90deg, ${palette.rose}dd, ${palette.violet}88)`,
+          bottom: 0,
+          left: leftPanel,
+          position: "absolute",
+          top: 0,
+          transform: "skewX(-10deg)",
+          width: WIDTH * 0.72,
+        }}
+      />
+      <div
+        style={{
+          background: `linear-gradient(90deg, ${palette.cyan}88, ${palette.green}cc)`,
+          bottom: 0,
+          position: "absolute",
+          right: rightPanel,
+          top: 0,
+          transform: "skewX(-10deg)",
+          width: WIDTH * 0.5,
+        }}
+      />
+      <div
+        style={{
+          backgroundImage: `repeating-linear-gradient(90deg, ${palette.text}1a 0px, ${palette.text}1a 2px, transparent 2px, transparent 18px)`,
+          inset: 0,
+          opacity: progress * 0.45,
+          position: "absolute",
+        }}
+      />
+    </AbsoluteFill>
+  );
+};
+
+const TransitionOverlay: FC = () => (
+  <>
+    <LightSweepBridge center={SCENE_DURATION - 8} />
+    <ScanlineWipe center={SCENE_DURATION * 2 - 10} />
+    <ScanlineWipe center={SCENE_DURATION * 3 - 10} />
+    <LightSweepBridge center={SCENE_DURATION * 4 - 10} />
+    <PanelPush center={SCENE_DURATION * 5 - 10} />
+    <span style={{ display: "none" }}>{showcaseTransitions.join(" ")}</span>
+  </>
+);
+
 export const RecipeShowcasePreview: FC = () => (
   <AbsoluteFill
     style={{
@@ -818,5 +956,6 @@ export const RecipeShowcasePreview: FC = () => (
     <Sequence durationInFrames={SCENE_DURATION} from={SCENE_DURATION * 5}>
       <CodeDiffHighlight />
     </Sequence>
+    <TransitionOverlay />
   </AbsoluteFill>
 );
