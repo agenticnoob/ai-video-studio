@@ -162,14 +162,21 @@ inside a segment:
     `subheadline`, `callouts`, and `durationInFrames`
   - `stats-dashboard`: data-statistics implementation with `layout`,
     dashboard `blocks`, optional `timeline`, and `durationInFrames`
+  - `technical-explainer`: recipe-oriented implementation with
+    `hero-title-reveal`, `terminal-build-run`, `workflow-node-map`,
+    `metric-countup`, and `timeline-progress` sections
 
 ## Current highest-priority next milestone
 
-The DeepSeek-backed staged generation path is usable for the current stage, and
-the validated storyboard-plan contract / compact planner manifest / internal
-planner/compiler facade are already present. The next product milestone should
-continue moving toward the authoritative final generation pipeline in
-`docs/FINAL_PRODUCT_GOAL.md`:
+The clean-main visual recipe path has completed Phase 3 through the registered
+`technical-explainer` template. The next bounded product milestone is Phase 4
+Planner Recipe Selection, documented in:
+
+- `docs/superpowers/specs/2026-06-22-planner-recipe-selection-phase-4-design.md`
+- `docs/superpowers/plans/2026-06-22-planner-recipe-selection-phase-4.md`
+
+Phase 4 should continue moving toward the authoritative final generation
+pipeline in `docs/FINAL_PRODUCT_GOAL.md`:
 
 ```txt
 brief -> StoryboardPlan -> per-segment narration synthesis
@@ -180,30 +187,33 @@ brief -> StoryboardPlan -> per-segment narration synthesis
 Keep the next iteration focused on:
 1. keep `VideoProject` as the preview/edit/export boundary
 2. keep the existing StoryboardPlan contract as the planner-stage boundary
-3. keep the bounded planner repair path active and visible in diagnostics
-4. keep generated narration audio in `VideoSegment.narration.audio`
-5. keep segment-owned `VideoSegment.narration.captions` normalization and
+3. derive planner-facing recipe metadata from registered template definitions
+4. keep recipe choices as optional planner hints, not top-level project fields
+5. keep the bounded planner repair path active and visible in diagnostics
+6. keep generated narration audio in `VideoSegment.narration.audio`
+7. keep segment-owned `VideoSegment.narration.captions` normalization and
    shared caption rendering active
-6. keep the optional local F5-TTS runtime service healthy behind the existing
+8. keep the optional local F5-TTS runtime service healthy behind the existing
    in-project provider adapter, including contract-smoke and real GPU smoke
    coverage
-7. keep narration audio and subtitle/caption cues outside template-specific
+9. keep narration audio and subtitle/caption cues outside template-specific
    `implementation`
-8. use real audio duration plus the selected template context to generate
+10. use real audio duration plus the selected template context to generate
    schema-valid `implementation`
-9. preserve validation, bounded repair, and non-target segment preservation
-10. use deterministic smoke fixtures and a full provider-backed
+11. preserve validation, bounded repair, and non-target segment preservation
+12. use deterministic smoke fixtures and a full provider-backed
    `POST /api/generate/staged` live smoke to harden mixed registered-template
    output before widening scope
-11. do not widen into persistence/history, generic media-layer work, or
+13. do not widen into persistence/history, generic media-layer work, or
    multi-template-per-segment orchestration unless the task explicitly asks for it
 
 Current product modeling decision:
 - keep one primary template per `VideoSegment`
 - `templateId` determines the schema of `implementation`
 - `implementation` is template-specific; current registered templates are
-  `scripted` (`VideoSpec`), `spotlight` (`SpotlightSpec`), and
-  `stats-dashboard` (`StatsDashboardSpec`)
+  `scripted` (`VideoSpec`), `spotlight` (`SpotlightSpec`),
+  `stats-dashboard` (`StatsDashboardSpec`), and `technical-explainer`
+  (`TechnicalExplainerSpec`)
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
 - treat generated narration/TTS as part of the main generation pipeline, not
   as a generic media-layer feature to solve first

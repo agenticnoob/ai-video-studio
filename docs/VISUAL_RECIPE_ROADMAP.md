@@ -217,12 +217,15 @@ Acceptance:
 
 ### Phase 3: High-Quality Recipe Templates
 
+Status: implemented through the registered `technical-explainer` template.
+
 Goal: make real generated segments use the better visual treatments.
 
 Deliver:
 
 - either upgrade existing `spotlight` / `stats-dashboard` internals or add one
   new registered recipe-oriented template
+- v1 landed through the registered `technical-explainer` template
 - template schema stays small and planner-friendly
 - selected-template compiler fills recipe parameters from narration duration,
   visual brief, and structured segment intent
@@ -249,6 +252,11 @@ Acceptance:
 - exported video uses the same `ProjectVideo` path as preview
 
 ### Phase 4: Planner Recipe Selection
+
+Status: planned. Design and execution plan are captured in
+`docs/superpowers/specs/2026-06-22-planner-recipe-selection-phase-4-design.md`
+and
+`docs/superpowers/plans/2026-06-22-planner-recipe-selection-phase-4.md`.
 
 Goal: let DeepSeek choose recipes without exposing rendering internals.
 

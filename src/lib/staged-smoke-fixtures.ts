@@ -16,6 +16,7 @@ import {
   SCRIPTED_TEMPLATE_ID,
   SPOTLIGHT_TEMPLATE_ID,
   STATS_DASHBOARD_TEMPLATE_ID,
+  TECHNICAL_EXPLAINER_TEMPLATE_ID,
 } from "./template-registry";
 
 const createNarrationAsset = ({
@@ -394,3 +395,204 @@ const assertStatsDashboardFixture = (): void => {
 };
 
 assertStatsDashboardFixture();
+
+const technicalExplainerImplementation = {
+  meta: {
+    title: "Recipe runtime explained",
+    fps: 30,
+    width: 1280,
+    height: 720,
+  },
+  theme: {
+    background: "#0b1020",
+    panel: "rgba(255,255,255,0.10)",
+    primary: "#38bdf8",
+    secondary: "#f59e0b",
+    text: "#f8fafc",
+    muted: "#cbd5e1",
+  },
+  durationInFrames: 420,
+  title: "Recipe primitives now power a real template",
+  subtitle: "Phase 3 proves the runtime boundary without changing the product flow.",
+  sections: [
+    {
+      id: "hero",
+      recipeId: "hero-title-reveal",
+      title: "Phase 3",
+      eyebrow: "Visual recipe compiler",
+      primaryText: "Reusable recipes become generated segments",
+      secondaryText: "A registered template keeps AI output bounded and editable.",
+      callouts: ["Template", "Recipes", "ProjectVideo"],
+      durationInFrames: 90,
+    },
+    {
+      id: "workflow",
+      recipeId: "workflow-node-map",
+      title: "Pipeline",
+      nodes: [
+        { id: "plan", label: "StoryboardPlan", detail: "Segment intent" },
+        { id: "voice", label: "Narration", detail: "Audio + captions" },
+        { id: "compile", label: "Template compile", detail: "Schema-valid params" },
+        { id: "render", label: "ProjectVideo", detail: "Preview and export" },
+      ],
+      activeNodeId: "compile",
+      durationInFrames: 90,
+    },
+    {
+      id: "terminal",
+      recipeId: "terminal-build-run",
+      title: "Runtime check",
+      command: "npm run smoke:technical-explainer-template",
+      lines: [
+        "checking template id",
+        "checking runtime bundle",
+        "checking Remotion preview",
+        "technical explainer template smoke passed",
+      ],
+      statusLabel: "Green",
+      durationInFrames: 90,
+    },
+    {
+      id: "metrics",
+      recipeId: "metric-countup",
+      title: "Outcome",
+      metrics: [
+        { label: "Recipe sections", value: "5", detail: "Bounded visual treatments" },
+        { label: "Template instances", value: "1", detail: "One primary template per segment" },
+        { label: "Generated TSX", value: "0", detail: "Structured params only" },
+      ],
+      durationInFrames: 75,
+    },
+    {
+      id: "timeline",
+      recipeId: "timeline-progress",
+      title: "Delivery path",
+      checkpoints: ["Schema", "Runtime", "Fixture", "Preview", "Export"],
+      note: "The same ProjectVideo composition remains the preview and export boundary.",
+      durationInFrames: 75,
+    },
+  ],
+};
+
+const technicalExplainerSegment = videoSegmentSchema.parse({
+  id: "segment-1",
+  title: "Recipe runtime explained",
+  intent: "Explain how recipe primitives become real generated template output.",
+  templateId: TECHNICAL_EXPLAINER_TEMPLATE_ID,
+  implementation: technicalExplainerImplementation,
+});
+
+export const technicalExplainerSmokeProject: VideoProject = videoProjectSchema.parse({
+  meta: {
+    title: "Technical Explainer Smoke",
+    fps: 30,
+    width: 1280,
+    height: 720,
+  },
+  brief: "Render one recipe-oriented technical explainer segment.",
+  segments: [technicalExplainerSegment],
+});
+
+export const technicalExplainerStoryboardPlan: StoryboardPlan = storyboardPlanSchema.parse({
+  title: "Technical Explainer Multi-Segment Smoke",
+  brief: "Explain how reusable recipe primitives become real generated segments.",
+  language: "en",
+  globalStyle: "Crisp technical explainer with strong motion and readable contrast.",
+  segments: [
+    {
+      id: "segment-1",
+      order: 1,
+      title: "Runtime boundary",
+      purpose: "Show the registered template boundary.",
+      templateId: TECHNICAL_EXPLAINER_TEMPLATE_ID,
+      templateReason:
+        "A recipe-oriented template can explain the runtime with multiple visual beats.",
+      narration: {
+        text: "Phase three takes the reusable recipe primitives and makes them part of a real generated template.",
+        tone: "clear",
+      },
+      visualBrief: "Hero title, workflow map, and terminal smoke check.",
+      expectedDurationSeconds: 7,
+    },
+    {
+      id: "segment-2",
+      order: 2,
+      title: "Delivery path",
+      purpose: "Show the measurable outcome and implementation checkpoints.",
+      templateId: TECHNICAL_EXPLAINER_TEMPLATE_ID,
+      templateReason: "The metric and timeline recipes fit a concise delivery recap.",
+      narration: {
+        text: "The result is still a normal VideoProject, with preview and export using the same ProjectVideo composition.",
+        tone: "confident",
+      },
+      visualBrief: "Metric cards followed by a timeline progress view.",
+      expectedDurationSeconds: 6,
+    },
+  ],
+});
+
+const technicalExplainerCompiledSegments = [
+  videoSegmentSchema.parse({
+    ...technicalExplainerSegment,
+    id: "segment-1",
+    title: "Runtime boundary",
+    intent: "Show the registered template boundary.",
+  }),
+  videoSegmentSchema.parse({
+    ...technicalExplainerSegment,
+    id: "segment-2",
+    title: "Delivery path",
+    intent: "Show the measurable outcome and implementation checkpoints.",
+    implementation: {
+      ...technicalExplainerImplementation,
+      meta: {
+        ...technicalExplainerImplementation.meta,
+        title: "Delivery path",
+      },
+      title: "Preview and export stay unified",
+      subtitle: "The recipe template is still just one segment implementation.",
+      durationInFrames: 360,
+      sections: technicalExplainerImplementation.sections.filter((section) =>
+        ["metric-countup", "timeline-progress"].includes(section.recipeId),
+      ),
+    },
+  }),
+];
+
+const technicalExplainerCompiledSegmentsWithNarration = orderPlanSegments(
+  technicalExplainerStoryboardPlan,
+).map((segmentPlan, index) =>
+  videoSegmentSchema.parse({
+    ...technicalExplainerCompiledSegments[index],
+    narration: segmentNarrationFromAsset(
+      createNarrationAsset({
+        durationInFrames: index === 0 ? 210 : 180,
+        segmentId: segmentPlan.id,
+        text: segmentPlan.narration.text,
+      }),
+    ),
+  }),
+);
+
+export const technicalExplainerStagedProject: VideoProject = assembleStagedProject({
+  compiledSegments: technicalExplainerCompiledSegmentsWithNarration.map((segment) => ({ segment })),
+  plan: technicalExplainerStoryboardPlan,
+});
+
+const assertTechnicalExplainerFixture = (): void => {
+  if (technicalExplainerStagedProject.segments.length !== 2) {
+    throw new Error("Technical explainer staged fixture expected two segments.");
+  }
+  for (const segment of technicalExplainerStagedProject.segments) {
+    if (segment.templateId !== TECHNICAL_EXPLAINER_TEMPLATE_ID) {
+      throw new Error("Technical explainer staged fixture expected technical-explainer segments.");
+    }
+    if (!segment.narration?.audio?.src || !segment.narration.captions?.cues.length) {
+      throw new Error(
+        "Technical explainer staged fixture expected segment-owned narration and captions.",
+      );
+    }
+  }
+};
+
+assertTechnicalExplainerFixture();

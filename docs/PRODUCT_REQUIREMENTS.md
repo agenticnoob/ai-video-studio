@@ -156,8 +156,15 @@ Product model:
 Current registered templates:
 - `scripted`: `implementation` is `VideoSpec`
 - `spotlight`: `implementation` is `SpotlightSpec`
+- `stats-dashboard`: `implementation` is `StatsDashboardSpec`
+- `technical-explainer`: `implementation` is `TechnicalExplainerSpec`
 - `VideoSpec.scenes` is the scripted template's internal sequence model
 - `SpotlightSpec.callouts` is the spotlight template's focused-card content model
+- `StatsDashboardSpec.blocks` and optional `timeline` are stats-dashboard
+  implementation details
+- `TechnicalExplainerSpec.sections` are recipe-oriented implementation details
+  with bounded recipe ids such as `hero-title-reveal`, `terminal-build-run`,
+  `workflow-node-map`, `metric-countup`, and `timeline-progress`
 - `scenes` is not a required field for every template; future templates may have completely different implementation fields
 - multi-template-per-segment orchestration is not part of the near-term product direction
 

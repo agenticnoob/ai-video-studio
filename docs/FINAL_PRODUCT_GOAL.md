@@ -582,7 +582,8 @@ Implemented capability:
 - prompt input
 - DeepSeek-backed staged generation
 - schema-validated `VideoProject`
-- registered `scripted` and `spotlight` templates
+- registered `scripted`, `spotlight`, `stats-dashboard`, and
+  `technical-explainer` templates
 - full-video preview
 - selected-segment editing
 - selected-segment regeneration

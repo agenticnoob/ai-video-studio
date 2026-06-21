@@ -2,6 +2,54 @@
 
 Last updated: Visual recipe roadmap branch
 
+## Latest continuation — Planner Recipe Selection Phase 4 planning
+
+- Added a Phase 4 design spec and implementation plan for planner-facing recipe
+  selection:
+  - `docs/superpowers/specs/2026-06-22-planner-recipe-selection-phase-4-design.md`
+  - `docs/superpowers/plans/2026-06-22-planner-recipe-selection-phase-4.md`
+- The accepted Phase 4 boundary is `StoryboardPlan` recipe hints derived from
+  registered template definitions, then compiled by the selected-template
+  compiler into schema-valid template implementation.
+- Phase 4 is planned, not implemented in runtime code in this checkpoint.
+- Scope remains unchanged: no top-level `VideoProject` recipe model, no global
+  recipe registry outside template definitions, no generated TSX execution, no
+  media library, no visual-review scoring, and no persistence work.
+
+Validation for this planning checkpoint:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:technical-explainer-template'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `git diff --check`
+
+## Latest continuation — High-Quality Recipe Templates Phase 3
+
+- Completed Phase 3 by adding the registered `technical-explainer` template.
+- The template consumes reusable recipe primitives from
+  `src/remotion/recipes/motion/`, `src/remotion/recipes/blocks/`, and
+  `src/remotion/recipes/timing/`.
+- Added bounded recipe sections for `hero-title-reveal`,
+  `terminal-build-run`, `workflow-node-map`, `metric-countup`, and
+  `timeline-progress`.
+- Kept the product model unchanged: one primary template per segment,
+  segment-owned narration/captions outside template implementation, and
+  `ProjectVideo` as the preview/export boundary.
+- Added deterministic technical-explainer staged fixtures and
+  `TechnicalExplainerTemplatePreview` for Remotion Studio inspection.
+- Scope remains unchanged: no Phase 4 planner recipe manifest, no new API
+  route, no visual-review scoring, no generated TSX execution, no media
+  library, and no persistence work.
+
+Validation performed so far:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:technical-explainer-template'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts TechnicalExplainerTemplatePreview /workspace/out/technical-explainer-hero.png --frame=45 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts TechnicalExplainerTemplatePreview /workspace/out/technical-explainer-workflow.png --frame=125 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts TechnicalExplainerTemplatePreview /workspace/out/technical-explainer-terminal.png --frame=215 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts TechnicalExplainerTemplatePreview /workspace/out/technical-explainer-timeline.png --frame=380 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+
 ## Latest continuation — Recipe Runtime Primitives Phase 2 completion
 
 - Completed Phase 2 for the reusable recipe runtime primitive layer.

@@ -25,8 +25,8 @@ Current implementation status:
 - the segment-first editing workflow is implemented
 - local project render/export is implemented
 - generation and rendering support registered segment templates (`scripted`,
-  `spotlight`, and `stats-dashboard`) while preserving one primary template per
-  segment
+  `spotlight`, `stats-dashboard`, and `technical-explainer`) while preserving
+  one primary template per segment
 - the active generation path is the staged planner -> narration synthesis ->
   audio + aligned captions -> template compiler pipeline documented in
   `docs/FINAL_PRODUCT_GOAL.md`
@@ -119,6 +119,9 @@ Current modeling direction:
     `callouts`, and `durationInFrames`
   - `stats-dashboard`: `StatsDashboardSpec` with `layout`, dashboard
     `blocks`, optional `timeline`, and `durationInFrames`
+  - `technical-explainer`: `TechnicalExplainerSpec` with bounded recipe
+    sections for hero title, terminal session, workflow map, metric cards, and
+    timeline progress
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
 - generated narration audio should be carried outside template-specific
   `implementation` fields; the target home is segment-owned
@@ -161,6 +164,13 @@ Current visual-quality direction:
   terminal, metric-card, workflow-map, and timeline grouped visual blocks live
   under `src/remotion/recipes/blocks/`, and duration-aware / caption-safe
   timing helpers live under `src/remotion/recipes/timing/`
+- Phase 3 recipe-template work has landed through the registered
+  `technical-explainer` template. It uses bounded recipe sections for hero
+  title, terminal session, workflow map, metric cards, and timeline progress
+  while preserving `ProjectVideo` preview/export behavior.
+- Phase 4 planner recipe selection has been designed but not implemented. The
+  accepted plan keeps recipe choice as optional planner hints derived from
+  template definitions, not as a new top-level `VideoProject` model.
 - keep AI output bounded to registered template / recipe parameters; do not use
   unrestricted generated TSX as the normal path
 - avoid broad visual-review scoring or automatic screenshot repair as the next

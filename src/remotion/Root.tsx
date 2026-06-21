@@ -1,5 +1,6 @@
 import type { FC } from "react";
 import { Composition } from "remotion";
+import { technicalExplainerSmokeProject } from "../lib/staged-smoke-fixtures";
 import { getProjectDuration, videoProjectSchema, type VideoProject } from "../lib/project-schema";
 import { ProjectVideo } from "./ProjectVideo/ProjectVideo";
 import { RecipeShowcasePreview } from "./RecipeShowcase/RecipeShowcasePreview";
@@ -263,6 +264,17 @@ export const RemotionRoot: FC = () => {
           ],
         }}
         durationInFrames={180}
+        fps={30}
+        width={1280}
+        height={720}
+        calculateMetadata={calculateVideoProjectMetadata}
+      />
+      <Composition
+        id="TechnicalExplainerTemplatePreview"
+        component={ProjectVideo}
+        schema={videoProjectSchema}
+        defaultProps={technicalExplainerSmokeProject}
+        durationInFrames={420}
         fps={30}
         width={1280}
         height={720}
