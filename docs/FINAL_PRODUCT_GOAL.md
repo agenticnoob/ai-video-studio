@@ -596,7 +596,9 @@ Known limitation:
   segment-owned narration audio/captions and the Next-side F5 adapter are in
   place; the optional F5 runtime service has passed GPU real-mode direct,
   Next-adapter, deterministic staged, and staged-export smoke coverage;
-  provider-backed full staged-route live smoke coverage still needs hardening
+  Phase 4 planner recipe selection has deterministic and contract-smoke
+  provider-backed staged-route coverage. Real-GPU staged-route smoke should be
+  rerun only in an environment where Docker can see an NVIDIA driver.
 
 ### Milestone 1: Authoritative Goal And Contracts
 

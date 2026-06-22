@@ -1,6 +1,6 @@
 # Iteration Status
 
-Last updated: Planner Recipe Selection Phase 4
+Last updated: Planner Recipe Selection Phase 4 live-smoke closure
 
 ## Latest continuation — Planner Recipe Selection Phase 4
 
@@ -31,10 +31,20 @@ Validation performed:
 - `git diff --check`
 
 Provider-backed live smoke status:
-- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-live'`
-  was attempted, but did not reach the staged route because the Next app was not
-  reachable at `http://127.0.0.1:3000` in this checkpoint. It should be rerun
-  after starting the local Next runtime.
+- Real F5 mode was attempted with `bash scripts/f5-tts-real.sh up` and the
+  running Next route was reachable, but synthesis failed at the F5 runtime with
+  a 503 error because this execution environment reported no NVIDIA driver.
+- Route-level provider-backed smoke passed after switching the F5 service to
+  `F5_TTS_SERVICE_MODE=contract-smoke` and running:
+  `docker compose -f docker-compose.yml -f docker-compose.f5.yml exec -T web bash -lc 'npm run smoke:staged-live'`.
+- The smoke returned 4 `technical-explainer` segments, segment-owned
+  `/api/tts/assets/...` narration audio, caption cues for every segment,
+  `diagnostics.narrationProviders=["f5-tts"]`, planner bounded repair
+  (`attempts=2`, `repaired=true`), and compiler success without repair for all
+  segments.
+- Current blocker for a real-GPU live smoke is environment/runtime only:
+  provide an NVIDIA driver-visible Docker runtime, then rerun the same smoke in
+  `F5_TTS_SERVICE_MODE=f5`.
 
 ## Prior continuation — Planner Recipe Selection Phase 4 planning
 
@@ -45,7 +55,8 @@ Provider-backed live smoke status:
 - The accepted Phase 4 boundary is `StoryboardPlan` recipe hints derived from
   registered template definitions, then compiled by the selected-template
   compiler into schema-valid template implementation.
-- Phase 4 is planned, not implemented in runtime code in this checkpoint.
+- At that earlier checkpoint, Phase 4 was planned but not yet implemented in
+  runtime code; current status is superseded by the latest continuation above.
 - Scope remains unchanged: no top-level `VideoProject` recipe model, no global
   recipe registry outside template definitions, no generated TSX execution, no
   media library, no visual-review scoring, and no persistence work.

@@ -1,6 +1,9 @@
 # Planner Recipe Selection Phase 4 Design
 
-Status: approved direction, pending implementation.
+Status: implemented and closed. Deterministic smoke and contract-smoke
+provider-backed route smoke have validated the planner recipe selection
+boundary. Real-GPU F5 staged-route smoke remains environment-dependent and
+requires Docker access to an NVIDIA driver.
 
 ## Goal
 

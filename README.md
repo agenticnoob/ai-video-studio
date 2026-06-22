@@ -172,6 +172,9 @@ Current visual-quality direction:
   compact planner-facing recipe metadata, DeepSeek can return optional
   `recipeHints`, and the selected-template compiler turns those hints into
   schema-valid template implementation while keeping `VideoProject` unchanged.
+  Deterministic smoke and contract-smoke provider-backed route smoke have
+  validated this path; real-GPU F5 live smoke still requires a Docker runtime
+  with a visible NVIDIA driver.
 - keep AI output bounded to registered template / recipe parameters; do not use
   unrestricted generated TSX as the normal path
 - avoid broad visual-review scoring or automatic screenshot repair as the next
@@ -267,15 +270,16 @@ Best next bounded slice:
 - use `StoryboardPlan` as the planner-stage contract
 - continue from `VideoSegment.narration` as the target home for generated
   narration text, audio metadata, and segment-local caption cues
-- behavior-preserving structure cleanup now has dedicated module boundaries for
-  staged generation, F5 provider selection, frontend
-  generation state, Remotion timeline flattening, and smoke entrypoints
-- use `npm run smoke:staged-live` for the provider-backed
-  `POST /api/generate/staged` live smoke that combines DeepSeek
-  planner/compiler with real F5 narration; it skips when required credentials
-  are missing
-- avoid persistence/history, generic media-layer compositing, and
-  multi-template-per-segment orchestration unless explicitly reopened
+- treat Phase 4 planner recipe selection as closed for deterministic coverage
+  and contract-smoke provider-backed route validation
+- keep the real-GPU F5 live smoke as an environment follow-up: rerun it only
+  when Docker can see an NVIDIA driver
+- next Phase 5 work should add asset-aware inputs to one recipe only, with
+  bounded structured fields and missing-asset fallback behavior inside the
+  owning template
+- avoid persistence/history, broad media-library UI, generic media-layer
+  compositing, and multi-template-per-segment orchestration unless explicitly
+  reopened
 
 ## Docker usage
 

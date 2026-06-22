@@ -168,15 +168,34 @@ inside a segment:
 
 ## Current highest-priority next milestone
 
-The clean-main visual recipe path has completed Phase 3 through the registered
-`technical-explainer` template. The next bounded product milestone is Phase 4
-Planner Recipe Selection, documented in:
+The clean-main visual recipe path has completed Phase 4 Planner Recipe
+Selection:
 
 - `docs/superpowers/specs/2026-06-22-planner-recipe-selection-phase-4-design.md`
 - `docs/superpowers/plans/2026-06-22-planner-recipe-selection-phase-4.md`
+- `docs/superpowers/plans/2026-06-22-phase-4-live-smoke-closure.md`
 
-Phase 4 should continue moving toward the authoritative final generation
-pipeline in `docs/FINAL_PRODUCT_GOAL.md`:
+Phase 4 is closed for deterministic validation and route-level provider-backed
+validation:
+- planner-facing recipe metadata is derived from registered template
+  definitions
+- `StoryboardPlan.segments[].recipeHints[]` is optional, validated at the
+  planner boundary, and remains outside `VideoProject`
+- DeepSeek planner/revision prompts can request recipe hints without seeing
+  Remotion internals
+- the selected-template compiler turns valid hints into schema-valid
+  template-owned `implementation`
+- contract-smoke `POST /api/generate/staged` live route validation returned
+  editable `technical-explainer` `VideoProject` output with segment-owned
+  F5-provider narration audio and captions
+
+The only remaining live-smoke caveat is environment/runtime: real
+`F5_TTS_SERVICE_MODE=f5` validation currently requires a Docker runtime with a
+visible NVIDIA driver. That is not a Phase 4 product-model blocker.
+
+The next bounded product milestone is Phase 5 Asset-Aware Recipes v1, still
+moving toward the authoritative final generation pipeline in
+`docs/FINAL_PRODUCT_GOAL.md`:
 
 ```txt
 brief -> StoryboardPlan -> per-segment narration synthesis
@@ -187,24 +206,25 @@ brief -> StoryboardPlan -> per-segment narration synthesis
 Keep the next iteration focused on:
 1. keep `VideoProject` as the preview/edit/export boundary
 2. keep the existing StoryboardPlan contract as the planner-stage boundary
-3. derive planner-facing recipe metadata from registered template definitions
+3. keep planner-facing recipe metadata derived from registered template
+   definitions
 4. keep recipe choices as optional planner hints, not top-level project fields
 5. keep the bounded planner repair path active and visible in diagnostics
 6. keep generated narration audio in `VideoSegment.narration.audio`
 7. keep segment-owned `VideoSegment.narration.captions` normalization and
    shared caption rendering active
 8. keep the optional local F5-TTS runtime service healthy behind the existing
-   in-project provider adapter, including contract-smoke and real GPU smoke
-   coverage
+   in-project provider adapter; use contract-smoke for route checks and real
+   GPU mode only when the host runtime exposes an NVIDIA driver
 9. keep narration audio and subtitle/caption cues outside template-specific
    `implementation`
 10. use real audio duration plus the selected template context to generate
    schema-valid `implementation`
 11. preserve validation, bounded repair, and non-target segment preservation
-12. use deterministic smoke fixtures and a full provider-backed
-   `POST /api/generate/staged` live smoke to harden mixed registered-template
-   output before widening scope
-13. do not widen into persistence/history, generic media-layer work, or
+12. if starting Phase 5, add asset-aware inputs to one recipe only, with
+   bounded structured fields and missing-asset fallback behavior inside the
+   owning template
+13. do not widen into persistence/history, broad media-library UI, or
    multi-template-per-segment orchestration unless the task explicitly asks for it
 
 Current product modeling decision:

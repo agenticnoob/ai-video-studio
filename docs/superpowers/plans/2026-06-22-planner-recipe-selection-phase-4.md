@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+**Status:** Implemented and closed. Follow-up live-smoke closure is documented in `docs/superpowers/plans/2026-06-22-phase-4-live-smoke-closure.md`; contract-smoke provider-backed route validation passed, while real-GPU F5 route validation is blocked by the current environment lacking a visible NVIDIA driver.
+
 **Goal:** Complete Visual Recipe Roadmap Phase 4 by letting DeepSeek choose planner-safe recipe families for recipe-capable templates while keeping generated output as a normal editable `VideoProject`.
 
 **Architecture:** Publish recipe metadata from registered template definitions, derive a compact planner recipe manifest in the registry, validate optional `StoryboardPlan.segments[].recipeHints[]` against the selected template, and pass those hints into the existing selected-template compiler. Keep recipe runtime and implementation ownership inside the selected template; do not add a global recipe model or expose Remotion internals to the planner.

@@ -253,7 +253,10 @@ Acceptance:
 
 ### Phase 4: Planner Recipe Selection
 
-Status: implemented for planner-facing recipe hints. Design and execution plan are captured in
+Status: implemented for planner-facing recipe hints. Deterministic smoke and
+contract-smoke provider-backed route smoke have passed. A real-GPU F5 smoke is
+blocked in the current execution environment by a missing NVIDIA driver, not by
+the staged route or recipe-hint implementation. Design and execution plan are captured in
 `docs/superpowers/specs/2026-06-22-planner-recipe-selection-phase-4-design.md`
 and
 `docs/superpowers/plans/2026-06-22-planner-recipe-selection-phase-4.md`.
@@ -276,6 +279,8 @@ Acceptance:
 - the planner does not invent recipe ids
 - invalid recipe choices fail validation or fallback clearly
 - generated videos remain editable as `VideoProject`
+- contract-smoke live route validation returns technical-explainer segments with
+  segment-owned F5-provider narration audio, captions, and recipe sections
 
 ### Phase 5: Asset-Aware Recipes
 
