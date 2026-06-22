@@ -20,6 +20,10 @@ const requiredRecipeIds = [
   "workflow-node-map",
   "metric-countup",
   "timeline-progress",
+  "code-diff-highlight",
+  "before-after-compare",
+  "decision-matrix",
+  "architecture-layer-stack",
 ];
 
 const assertIncludes = (source, snippet, label) => {

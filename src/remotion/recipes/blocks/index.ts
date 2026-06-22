@@ -1,3 +1,5 @@
+export { CodeDiffBlock } from "./code-diff-block";
+export type { CodeDiffBlockProps, CodeDiffLine, CodeDiffLineMode } from "./code-diff-block";
 export { MetricCard, MetricCardGrid } from "./metric-card-grid";
 export type { MetricCardDatum, MetricCardGridProps, MetricCardProps } from "./metric-card-grid";
 export { TerminalSessionBlock } from "./terminal-session-block";

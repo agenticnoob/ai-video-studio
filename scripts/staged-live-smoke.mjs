@@ -149,6 +149,19 @@ const assertTechnicalExplainerRecipeSections = (project) => {
       }
     }
   }
+
+  const expandedRecipeIds = new Set([
+    "code-diff-highlight",
+    "before-after-compare",
+    "decision-matrix",
+    "architecture-layer-stack",
+  ]);
+  const expandedRecipeCount = technicalSegments
+    .flatMap((segment) => segment.implementation.sections ?? [])
+    .filter((section) => expandedRecipeIds.has(section.recipeId)).length;
+
+  console.log(`Expanded technical-explainer recipe sections: ${expandedRecipeCount}`);
+  return expandedRecipeCount;
 };
 
 const run = async () => {
@@ -175,7 +188,8 @@ const run = async () => {
     fail("Response did not include project.segments");
   }
   assertDiagnostics(body.diagnostics, segments.length);
-  assertTechnicalExplainerRecipeSections(body.project);
+  const expandedTechnicalExplainerRecipeSectionCount =
+    assertTechnicalExplainerRecipeSections(body.project);
 
   for (const segment of segments) {
     await assertSegmentNarration(segment);
@@ -185,6 +199,7 @@ const run = async () => {
     audioSources: segments.map((segment) => segment.narration.audio.src),
     captionCueCounts: segments.map((segment) => segment.narration.captions.cues.length),
     diagnostics: body.diagnostics,
+    expandedTechnicalExplainerRecipeSectionCount,
     render: undefined,
     segmentCount: segments.length,
     templateIds: segments.map((segment) => segment.templateId),

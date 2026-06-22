@@ -10,6 +10,10 @@ export const technicalExplainerRecipeIds = [
   "workflow-node-map",
   "metric-countup",
   "timeline-progress",
+  "code-diff-highlight",
+  "before-after-compare",
+  "decision-matrix",
+  "architecture-layer-stack",
 ] as const;
 
 export const technicalExplainerRecipeIdSchema = z.enum(technicalExplainerRecipeIds);
@@ -71,12 +75,103 @@ const timelineProgressSectionSchema = sectionBaseSchema.extend({
   note: z.string().trim().min(1).max(220).optional(),
 });
 
+const codeDiffHighlightSectionSchema = sectionBaseSchema.extend({
+  recipeId: z.literal("code-diff-highlight"),
+  fileLabel: z.string().trim().min(1).max(80).optional(),
+  beforeLabel: z.string().trim().min(1).max(80).optional(),
+  afterLabel: z.string().trim().min(1).max(80).optional(),
+  lines: z
+    .array(
+      z
+        .object({
+          text: z.string().trim().min(1).max(120),
+          mode: z.enum(["add", "remove", "neutral"]),
+          focus: z.boolean().optional(),
+        })
+        .strict(),
+    )
+    .min(3)
+    .max(8),
+  note: z.string().trim().min(1).max(220).optional(),
+});
+
+const beforeAfterCompareSectionSchema = sectionBaseSchema.extend({
+  recipeId: z.literal("before-after-compare"),
+  before: z
+    .object({
+      label: z.string().trim().min(1).max(80),
+      headline: z.string().trim().min(1).max(120),
+      points: z.array(z.string().trim().min(1).max(80)).min(2).max(4),
+    })
+    .strict(),
+  after: z
+    .object({
+      label: z.string().trim().min(1).max(80),
+      headline: z.string().trim().min(1).max(120),
+      points: z.array(z.string().trim().min(1).max(80)).min(2).max(4),
+    })
+    .strict(),
+  emphasis: z.string().trim().min(1).max(160).optional(),
+});
+
+const decisionMatrixSectionSchema = sectionBaseSchema.extend({
+  recipeId: z.literal("decision-matrix"),
+  criteria: z.array(z.string().trim().min(1).max(60)).min(2).max(4),
+  options: z
+    .array(
+      z
+        .object({
+          label: z.string().trim().min(1).max(80),
+          summary: z.string().trim().min(1).max(100).optional(),
+          scores: z
+            .array(
+              z
+                .object({
+                  criterion: z.string().trim().min(1).max(60),
+                  rating: z.enum(["low", "medium", "high"]),
+                  note: z.string().trim().min(1).max(100).optional(),
+                })
+                .strict(),
+            )
+            .min(2)
+            .max(4),
+          recommended: z.boolean().optional(),
+        })
+        .strict(),
+    )
+    .min(2)
+    .max(4),
+  decision: z.string().trim().min(1).max(180).optional(),
+});
+
+const architectureLayerStackSectionSchema = sectionBaseSchema.extend({
+  recipeId: z.literal("architecture-layer-stack"),
+  layers: z
+    .array(
+      z
+        .object({
+          label: z.string().trim().min(1).max(80),
+          detail: z.string().trim().min(1).max(120).optional(),
+          tone: z.enum(["foundation", "runtime", "interface", "provider"]).optional(),
+        })
+        .strict(),
+    )
+    .min(3)
+    .max(6),
+  dataFlow: z.array(z.string().trim().min(1).max(80)).min(2).max(5).optional(),
+  emphasis: z.string().trim().min(1).max(160).optional(),
+});
+
 export const technicalExplainerSectionSchema = z.discriminatedUnion("recipeId", [
   heroTitleRevealSectionSchema,
   terminalBuildRunSectionSchema,
   workflowNodeMapSectionSchema,
   metricCountupSectionSchema,
   timelineProgressSectionSchema,
+  codeDiffHighlightSectionSchema,
+  beforeAfterCompareSectionSchema,
+  decisionMatrixSectionSchema,
+  architectureLayerStackSectionSchema,
 ]);
 
 export const technicalExplainerSpecSchema = z.object({
@@ -97,7 +192,7 @@ export const technicalExplainerSpecSchema = z.object({
   durationInFrames: z.number().int().min(120).max(900).default(300),
   title: z.string().trim().min(1).max(120),
   subtitle: z.string().trim().min(1).max(260).optional(),
-  sections: z.array(technicalExplainerSectionSchema).min(1).max(5),
+  sections: z.array(technicalExplainerSectionSchema).min(1).max(9),
 });
 
 export type TechnicalExplainerRecipeId = z.infer<typeof technicalExplainerRecipeIdSchema>;

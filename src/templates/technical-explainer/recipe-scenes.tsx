@@ -2,10 +2,12 @@ import type { CSSProperties, FC } from "react";
 import { interpolate, useCurrentFrame } from "remotion";
 
 import {
+  CodeDiffBlock,
   MetricCardGrid,
   TerminalSessionBlock,
   TimelineProgressBlock,
   WorkflowMapBlock,
+  type CodeDiffLine,
   type MetricCardDatum,
   type TerminalSessionLine,
   type WorkflowMapNode,
@@ -217,3 +219,400 @@ export const TimelineProgressScene: FC<
     />
   </div>
 );
+
+export const CodeDiffHighlightScene: FC<
+  TechnicalExplainerSceneProps<
+    Extract<TechnicalExplainerSection, { recipeId: "code-diff-highlight" }>
+  >
+> = ({ section, theme }) => {
+  const lines: CodeDiffLine[] = section.lines.map((line) => ({
+    focus: line.focus,
+    mode: line.mode,
+    text:
+      line.mode === "add"
+        ? `+ ${line.text}`
+        : line.mode === "remove"
+          ? `- ${line.text}`
+          : `  ${line.text}`,
+  }));
+
+  return (
+    <div style={panelStyle(theme)}>
+      <div style={{ display: "flex", gap: 42, marginTop: 44 }}>
+        <div style={{ flex: 1, paddingTop: 42 }}>
+          <div style={{ color: theme.primary, fontSize: 20, fontWeight: 900, marginBottom: 18 }}>
+            {section.beforeLabel ?? "Change"}
+          </div>
+          <div style={{ color: theme.secondary, fontSize: 16, fontWeight: 850, marginBottom: 12 }}>
+            {section.afterLabel ?? "After"}
+          </div>
+          <div style={{ fontSize: 46, fontWeight: 930, lineHeight: 1.05 }}>{section.title}</div>
+          {section.subtitle ? (
+            <div
+              style={{
+                color: theme.muted,
+                fontSize: 22,
+                fontWeight: 760,
+                lineHeight: 1.35,
+                marginTop: 24,
+              }}
+            >
+              {section.subtitle}
+            </div>
+          ) : null}
+          {section.note ? (
+            <div
+              style={{
+                borderLeft: `4px solid ${theme.secondary}`,
+                color: theme.muted,
+                fontSize: 19,
+                lineHeight: 1.35,
+                marginTop: 28,
+                paddingLeft: 16,
+              }}
+            >
+              {section.note}
+            </div>
+          ) : null}
+        </div>
+        <CodeDiffBlock
+          accentColor={theme.primary}
+          addColor="#22c55e"
+          fileLabel={section.fileLabel}
+          lines={lines}
+          mutedColor={theme.muted}
+          neutralColor={theme.muted}
+          removeColor="#fb7185"
+        />
+      </div>
+    </div>
+  );
+};
+
+const ComparePanel: FC<{
+  accentColor: string;
+  label: string;
+  headline: string;
+  points: string[];
+  mutedColor: string;
+  panelColor: string;
+  textColor: string;
+}> = ({ accentColor, headline, label, mutedColor, panelColor, points, textColor }) => (
+  <div
+    style={{
+      background: panelColor,
+      border: `1px solid ${accentColor}66`,
+      borderRadius: 22,
+      boxShadow: "0 24px 80px rgba(0,0,0,0.28)",
+      flex: 1,
+      minHeight: 360,
+      padding: "34px 36px",
+    }}
+  >
+    <div style={{ color: accentColor, fontSize: 18, fontWeight: 900, marginBottom: 22 }}>
+      {label}
+    </div>
+    <div style={{ color: textColor, fontSize: 38, fontWeight: 920, lineHeight: 1.04 }}>
+      {headline}
+    </div>
+    <div style={{ display: "grid", gap: 14, marginTop: 32 }}>
+      {points.map((point) => (
+        <div
+          key={point}
+          style={{
+            color: mutedColor,
+            fontSize: 20,
+            fontWeight: 760,
+            lineHeight: 1.28,
+          }}
+        >
+          {point}
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+export const BeforeAfterCompareScene: FC<
+  TechnicalExplainerSceneProps<
+    Extract<TechnicalExplainerSection, { recipeId: "before-after-compare" }>
+  >
+> = ({ section, theme }) => {
+  const frame = useCurrentFrame();
+  const afterIn = interpolate(frame, [36, 96], [0, 1], clamp);
+
+  return (
+    <div style={panelStyle(theme)}>
+      <div style={{ fontSize: 44, fontWeight: 930, lineHeight: 1.04, marginTop: 24 }}>
+        {section.title}
+      </div>
+      {section.subtitle ? (
+        <div
+          style={{ color: theme.muted, fontSize: 23, lineHeight: 1.32, marginTop: 16, width: 760 }}
+        >
+          {section.subtitle}
+        </div>
+      ) : null}
+      <div style={{ display: "flex", gap: 26, marginTop: 40 }}>
+        <ComparePanel
+          accentColor="#fb7185"
+          headline={section.before.headline}
+          label={section.before.label}
+          mutedColor={theme.muted}
+          panelColor={theme.panel}
+          points={section.before.points}
+          textColor={theme.text}
+        />
+        <div
+          style={{
+            flex: 1,
+            opacity: afterIn,
+            transform: `translateX(${interpolate(afterIn, [0, 1], [34, 0], clamp)}px)`,
+          }}
+        >
+          <ComparePanel
+            accentColor={theme.primary}
+            headline={section.after.headline}
+            label={section.after.label}
+            mutedColor={theme.muted}
+            panelColor={theme.panel}
+            points={section.after.points}
+            textColor={theme.text}
+          />
+        </div>
+      </div>
+      {section.emphasis ? (
+        <div
+          style={{
+            border: `1px solid ${theme.secondary}66`,
+            borderRadius: 999,
+            color: theme.secondary,
+            display: "inline-flex",
+            fontSize: 18,
+            fontWeight: 900,
+            marginTop: 28,
+            padding: "11px 18px",
+          }}
+        >
+          {section.emphasis}
+        </div>
+      ) : null}
+    </div>
+  );
+};
+
+const ratingColor = (
+  rating: "low" | "medium" | "high",
+  theme: TechnicalExplainerSpec["theme"],
+) => {
+  if (rating === "high") {
+    return "#22c55e";
+  }
+  if (rating === "medium") {
+    return theme.secondary;
+  }
+  return "#fb7185";
+};
+
+export const DecisionMatrixScene: FC<
+  TechnicalExplainerSceneProps<Extract<TechnicalExplainerSection, { recipeId: "decision-matrix" }>>
+> = ({ section, theme }) => {
+  const frame = useCurrentFrame();
+  const tableIn = interpolate(frame, [24, 76], [0, 1], clamp);
+
+  return (
+    <div style={panelStyle(theme)}>
+      <div style={{ fontSize: 44, fontWeight: 930, lineHeight: 1.04, marginTop: 16 }}>
+        {section.title}
+      </div>
+      {section.subtitle ? (
+        <div
+          style={{ color: theme.muted, fontSize: 22, lineHeight: 1.32, marginTop: 14, width: 820 }}
+        >
+          {section.subtitle}
+        </div>
+      ) : null}
+      <div
+        style={{
+          background: theme.panel,
+          border: `1px solid ${theme.primary}55`,
+          borderRadius: 22,
+          marginTop: 34,
+          opacity: tableIn,
+          overflow: "hidden",
+          transform: `translateY(${interpolate(tableIn, [0, 1], [28, 0], clamp)}px)`,
+        }}
+      >
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: `220px repeat(${section.criteria.length}, 1fr)`,
+          }}
+        >
+          <div style={{ color: theme.muted, fontSize: 16, fontWeight: 900, padding: "18px 20px" }}>
+            Option
+          </div>
+          {section.criteria.map((criterion) => (
+            <div
+              key={criterion}
+              style={{ color: theme.muted, fontSize: 16, fontWeight: 900, padding: "18px 16px" }}
+            >
+              {criterion}
+            </div>
+          ))}
+          {section.options.map((option) => (
+            <div
+              key={option.label}
+              style={{
+                display: "contents",
+              }}
+            >
+              <div
+                style={{
+                  borderTop: "1px solid rgba(255,255,255,0.10)",
+                  color: option.recommended ? theme.primary : theme.text,
+                  fontSize: 20,
+                  fontWeight: 900,
+                  padding: "18px 20px",
+                }}
+              >
+                {option.label}
+                {option.summary ? (
+                  <div style={{ color: theme.muted, fontSize: 14, fontWeight: 700, marginTop: 6 }}>
+                    {option.summary}
+                  </div>
+                ) : null}
+              </div>
+              {section.criteria.map((criterion) => {
+                const score =
+                  option.scores.find((candidate) => candidate.criterion === criterion) ??
+                  option.scores[0]!;
+
+                return (
+                  <div
+                    key={`${option.label}-${criterion}`}
+                    style={{
+                      borderTop: "1px solid rgba(255,255,255,0.10)",
+                      color: ratingColor(score.rating, theme),
+                      fontSize: 18,
+                      fontWeight: 850,
+                      padding: "18px 16px",
+                    }}
+                  >
+                    {score.rating.toUpperCase()}
+                    {score.note ? (
+                      <div style={{ color: theme.muted, fontSize: 13, fontWeight: 700, marginTop: 5 }}>
+                        {score.note}
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+      {section.decision ? (
+        <div style={{ color: theme.secondary, fontSize: 20, fontWeight: 900, marginTop: 24 }}>
+          {section.decision}
+        </div>
+      ) : null}
+    </div>
+  );
+};
+
+const layerToneColor = (
+  tone: "foundation" | "runtime" | "interface" | "provider" | undefined,
+  theme: TechnicalExplainerSpec["theme"],
+) => {
+  if (tone === "foundation") {
+    return "#64748b";
+  }
+  if (tone === "runtime") {
+    return theme.primary;
+  }
+  if (tone === "interface") {
+    return theme.secondary;
+  }
+  if (tone === "provider") {
+    return "#22c55e";
+  }
+  return theme.primary;
+};
+
+export const ArchitectureLayerStackScene: FC<
+  TechnicalExplainerSceneProps<
+    Extract<TechnicalExplainerSection, { recipeId: "architecture-layer-stack" }>
+  >
+> = ({ section, theme }) => {
+  const frame = useCurrentFrame();
+  const stackIn = interpolate(frame, [20, 78], [0, 1], clamp);
+
+  return (
+    <div style={panelStyle(theme)}>
+      <div style={{ display: "flex", gap: 48, marginTop: 24 }}>
+        <div style={{ flex: 1, paddingTop: 34 }}>
+          <div style={{ fontSize: 44, fontWeight: 930, lineHeight: 1.04 }}>{section.title}</div>
+          {section.subtitle ? (
+            <div style={{ color: theme.muted, fontSize: 22, lineHeight: 1.32, marginTop: 18 }}>
+              {section.subtitle}
+            </div>
+          ) : null}
+          {section.dataFlow?.length ? (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 30 }}>
+              {section.dataFlow.map((step) => (
+                <div
+                  key={step}
+                  style={{
+                    border: `1px solid ${theme.primary}55`,
+                    borderRadius: 999,
+                    color: theme.primary,
+                    fontSize: 15,
+                    fontWeight: 850,
+                    padding: "8px 12px",
+                  }}
+                >
+                  {step}
+                </div>
+              ))}
+            </div>
+          ) : null}
+          {section.emphasis ? (
+            <div style={{ color: theme.secondary, fontSize: 20, fontWeight: 900, marginTop: 26 }}>
+              {section.emphasis}
+            </div>
+          ) : null}
+        </div>
+        <div style={{ flex: 1, opacity: stackIn }}>
+          {section.layers.map((layer, index) => {
+            const layerIn = interpolate(frame, [34 + index * 16, 78 + index * 16], [0, 1], clamp);
+            const color = layerToneColor(layer.tone, theme);
+
+            return (
+              <div
+                key={layer.label}
+                style={{
+                  background: theme.panel,
+                  border: `1px solid ${color}66`,
+                  borderRadius: 20,
+                  boxShadow: "0 22px 70px rgba(0,0,0,0.24)",
+                  marginBottom: 14,
+                  opacity: layerIn,
+                  padding: "18px 22px",
+                  transform: `translateX(${interpolate(layerIn, [0, 1], [32, 0], clamp)}px)`,
+                }}
+              >
+                <div style={{ color, fontSize: 18, fontWeight: 900 }}>{layer.label}</div>
+                {layer.detail ? (
+                  <div style={{ color: theme.muted, fontSize: 16, lineHeight: 1.32, marginTop: 6 }}>
+                    {layer.detail}
+                  </div>
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};

@@ -175,6 +175,11 @@ Current visual-quality direction:
   Deterministic smoke and contract-smoke provider-backed route smoke have
   validated this path; real-GPU F5 live smoke still requires a Docker runtime
   with a visible NVIDIA driver.
+- Phase 4.5 recipe coverage expansion adds generated `code-diff-highlight`,
+  `before-after-compare`, `decision-matrix`, and
+  `architecture-layer-stack` recipes to `technical-explainer`, bringing the real
+  planner/compiler template to 9 bounded recipe sections while keeping
+  `product-ui-zoom` deferred to asset-aware Phase 5.
 - keep AI output bounded to registered template / recipe parameters; do not use
   unrestricted generated TSX as the normal path
 - avoid broad visual-review scoring or automatic screenshot repair as the next

@@ -1,6 +1,39 @@
 # Iteration Status
 
-Last updated: Planner Recipe Selection Phase 4 live-smoke closure
+Last updated: Recipe Coverage Expansion Phase 4.5
+
+## Latest continuation — Recipe Coverage Expansion Phase 4.5
+
+- Expanded the real generated `technical-explainer` template from 5 to 9
+  planner-selectable recipes by adding `code-diff-highlight`,
+  `before-after-compare`, `decision-matrix`, and `architecture-layer-stack`.
+- Kept the branch goal focused on visual expression: no media library, no
+  arbitrary asset URLs, no generated TSX execution, no visual-review scoring,
+  and no persistence work.
+- `code-diff-highlight` renders semantic add/remove/neutral code or config
+  lines inside the existing template implementation model.
+- `before-after-compare` renders old/new workflow or problem/solution contrast
+  without requiring screenshots or uploaded assets.
+- `decision-matrix` renders option/criteria tradeoffs for technical decisions
+  without adding a separate planning model.
+- `architecture-layer-stack` renders ownership layers and data-flow labels for
+  architecture explanations without widening `VideoProject`.
+- `product-ui-zoom` remains deferred to Phase 5 Asset-Aware Recipes because it
+  needs controlled screenshot or UI image inputs to be useful.
+
+Validation performed:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:planner-recipe-manifest'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:technical-explainer-template'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:storyboard-recipe-hints'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- Remotion still renders:
+  - `/workspace/out/technical-explainer-code-diff.png`
+  - `/workspace/out/technical-explainer-before-after.png`
+  - `/workspace/out/technical-explainer-decision-matrix.png`
+  - `/workspace/out/technical-explainer-layer-stack.png`
+  - `/workspace/out/technical-explainer-expanded-hero.png`
 
 ## Latest continuation — Planner Recipe Selection Phase 4
 

@@ -10,6 +10,10 @@ import type { RuntimeTemplateEditorProps } from "../editor-types";
 import { defineRuntimeTemplate } from "../runtime-definition";
 import { TechnicalExplainerEditor } from "./editor";
 import {
+  ArchitectureLayerStackScene,
+  BeforeAfterCompareScene,
+  CodeDiffHighlightScene,
+  DecisionMatrixScene,
   HeroTitleRevealScene,
   MetricCountupScene,
   TerminalBuildRunScene,
@@ -48,7 +52,11 @@ export const getTechnicalExplainerSectionTimings = (spec: TechnicalExplainerSpec
 };
 
 const getMotionForSection = (section: TechnicalExplainerSection): RecipeSceneTransitionMotion => {
-  if (section.recipeId === "terminal-build-run" || section.recipeId === "metric-countup") {
+  if (
+    section.recipeId === "terminal-build-run" ||
+    section.recipeId === "metric-countup" ||
+    section.recipeId === "code-diff-highlight"
+  ) {
     return "fly-through";
   }
   return "stage-push";
@@ -95,6 +103,38 @@ const SectionScene: FC<{
     case "timeline-progress":
       return (
         <TimelineProgressScene
+          durationInFrames={durationInFrames}
+          section={section}
+          theme={spec.theme}
+        />
+      );
+    case "code-diff-highlight":
+      return (
+        <CodeDiffHighlightScene
+          durationInFrames={durationInFrames}
+          section={section}
+          theme={spec.theme}
+        />
+      );
+    case "before-after-compare":
+      return (
+        <BeforeAfterCompareScene
+          durationInFrames={durationInFrames}
+          section={section}
+          theme={spec.theme}
+        />
+      );
+    case "decision-matrix":
+      return (
+        <DecisionMatrixScene
+          durationInFrames={durationInFrames}
+          section={section}
+          theme={spec.theme}
+        />
+      );
+    case "architecture-layer-stack":
+      return (
+        <ArchitectureLayerStackScene
           durationInFrames={durationInFrames}
           section={section}
           theme={spec.theme}

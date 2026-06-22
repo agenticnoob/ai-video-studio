@@ -54,6 +54,10 @@ const requiredRecipeIds = [
   "workflow-node-map",
   "metric-countup",
   "timeline-progress",
+  "code-diff-highlight",
+  "before-after-compare",
+  "decision-matrix",
+  "architecture-layer-stack",
 ];
 
 assertIncludes(
@@ -86,6 +90,10 @@ assertIncludes(sceneSource, "TerminalSessionBlock", "technical explainer scene r
 assertIncludes(sceneSource, "MetricCardGrid", "technical explainer scene renderers");
 assertIncludes(sceneSource, "WorkflowMapBlock", "technical explainer scene renderers");
 assertIncludes(sceneSource, "TimelineProgressBlock", "technical explainer scene renderers");
+assertIncludes(sceneSource, "CodeDiffHighlightScene", "technical explainer scene renderers");
+assertIncludes(sceneSource, "BeforeAfterCompareScene", "technical explainer scene renderers");
+assertIncludes(sceneSource, "DecisionMatrixScene", "technical explainer scene renderers");
+assertIncludes(sceneSource, "ArchitectureLayerStackScene", "technical explainer scene renderers");
 assertIncludes(sceneSource, "getRecipeBeatTiming", "technical explainer scene renderers");
 assertIncludes(rootSource, 'id="TechnicalExplainerTemplatePreview"', "Remotion root");
 assertIncludes(rootSource, "technicalExplainerSmokeProject", "Remotion root");
@@ -94,6 +102,10 @@ assertIncludes(fixtureSource, "technicalExplainerStagedProject", "staged smoke f
 assertIncludes(fixtureSource, "recipeHints", "staged smoke fixtures");
 assertIncludes(fixtureSource, 'recipeId: "workflow-node-map"', "staged smoke fixtures");
 assertIncludes(fixtureSource, 'recipeId: "terminal-build-run"', "staged smoke fixtures");
+assertIncludes(fixtureSource, 'recipeId: "code-diff-highlight"', "staged smoke fixtures");
+assertIncludes(fixtureSource, 'recipeId: "before-after-compare"', "staged smoke fixtures");
+assertIncludes(fixtureSource, 'recipeId: "decision-matrix"', "staged smoke fixtures");
+assertIncludes(fixtureSource, 'recipeId: "architecture-layer-stack"', "staged smoke fixtures");
 
 for (const recipeId of requiredRecipeIds) {
   assertIncludes(schemaSource, recipeId, "technical explainer schema");

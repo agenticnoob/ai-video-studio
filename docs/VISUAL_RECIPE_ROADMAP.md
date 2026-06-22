@@ -245,6 +245,9 @@ Initial recipes:
 - `metric-countup`
 - `timeline-progress`
 
+Phase 4.5 expands this generated template vocabulary to 9 planner-facing
+recipes while preserving the same template boundary.
+
 Acceptance:
 
 - a deterministic staged fixture can render a multi-segment technical explainer
@@ -281,6 +284,32 @@ Acceptance:
 - generated videos remain editable as `VideoProject`
 - contract-smoke live route validation returns technical-explainer segments with
   segment-owned F5-provider narration audio, captions, and recipe sections
+
+### Phase 4.5: Recipe Coverage Expansion
+
+Status: implemented.
+
+Goal: increase the real generated recipe vocabulary before introducing
+asset-aware recipes.
+
+Deliver:
+
+- promote `code-diff-highlight` from showcase-only to the real
+  `technical-explainer` template
+- add `before-after-compare` for old/new workflow and problem/solution contrast
+- add `decision-matrix` for bounded technical tradeoff explanations
+- add `architecture-layer-stack` for module/layer ownership explanations
+- keep all four recipes as bounded template-owned implementation fields
+- keep `product-ui-zoom` deferred until Phase 5 because it depends on
+  controlled screenshot or UI image inputs
+
+Acceptance:
+
+- `technical-explainer` publishes 9 planner-facing recipes
+- deterministic staged fixtures include the four new recipes
+- preview/export still use `ProjectVideo`
+- no media library, arbitrary URLs, generated TSX execution, or visual scoring is
+  introduced
 
 ### Phase 5: Asset-Aware Recipes
 

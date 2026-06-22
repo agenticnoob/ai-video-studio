@@ -411,7 +411,7 @@ const technicalExplainerImplementation = {
     text: "#f8fafc",
     muted: "#cbd5e1",
   },
-  durationInFrames: 420,
+  durationInFrames: 720,
   title: "Recipe primitives now power a real template",
   subtitle: "Phase 3 proves the runtime boundary without changing the product flow.",
   sections: [
@@ -471,6 +471,86 @@ const technicalExplainerImplementation = {
       note: "The same ProjectVideo composition remains the preview and export boundary.",
       durationInFrames: 75,
     },
+    {
+      id: "code-diff",
+      recipeId: "code-diff-highlight",
+      title: "Compiler boundary stays structured",
+      subtitle: "The model changes data, not renderer code.",
+      fileLabel: "src/templates/technical-explainer/schema.ts",
+      beforeLabel: "Before",
+      afterLabel: "After",
+      lines: [
+        { text: "template: simple spotlight", mode: "remove" },
+        { text: "recipe: code-diff-highlight", mode: "add", focus: true },
+        { text: "recipe: decision-matrix", mode: "add", focus: true },
+        { text: "output: VideoProject", mode: "neutral" },
+      ],
+      note: "The section remains schema-valid template data.",
+      durationInFrames: 75,
+    },
+    {
+      id: "compare",
+      recipeId: "before-after-compare",
+      title: "From sparse template output to recipe coverage",
+      subtitle: "The product model stays stable while the visual vocabulary grows.",
+      before: {
+        label: "Before",
+        headline: "Five generated recipes",
+        points: ["Good skeleton", "Limited contrast scenes", "Code changes stuck in showcase"],
+      },
+      after: {
+        label: "After",
+        headline: "Nine generated recipes",
+        points: ["Code diffs compile", "Tradeoffs render", "Architecture boundaries show clearly"],
+      },
+      emphasis: "More visual range without media-library scope.",
+      durationInFrames: 75,
+    },
+    {
+      id: "decision",
+      recipeId: "decision-matrix",
+      title: "Choose the next bounded slice",
+      subtitle: "Tradeoffs stay readable without turning the project into a planning deck.",
+      criteria: ["Visual impact", "Scope risk", "Reuse"],
+      options: [
+        {
+          label: "Asset-aware recipes",
+          summary: "Powerful but wider",
+          scores: [
+            { criterion: "Visual impact", rating: "high", note: "Real material helps" },
+            { criterion: "Scope risk", rating: "low", note: "Needs asset rules" },
+            { criterion: "Reuse", rating: "medium", note: "Useful later" },
+          ],
+        },
+        {
+          label: "Recipe expansion",
+          summary: "Best next branch fit",
+          scores: [
+            { criterion: "Visual impact", rating: "high", note: "More scene language" },
+            { criterion: "Scope risk", rating: "high", note: "No new asset model" },
+            { criterion: "Reuse", rating: "high", note: "Compiler can select it" },
+          ],
+          recommended: true,
+        },
+      ],
+      decision: "Expand generated recipe coverage before Phase 5 assets.",
+      durationInFrames: 75,
+    },
+    {
+      id: "layers",
+      recipeId: "architecture-layer-stack",
+      title: "Keep ownership layered",
+      subtitle: "Recipes grow inside the template while the product model stays stable.",
+      layers: [
+        { label: "VideoProject", detail: "Preview and export boundary", tone: "interface" },
+        { label: "StoryboardPlan", detail: "Planner-stage segment intent", tone: "foundation" },
+        { label: "technical-explainer", detail: "Template-owned recipe schema", tone: "runtime" },
+        { label: "DeepSeek", detail: "Compiler fills bounded parameters", tone: "provider" },
+      ],
+      dataFlow: ["brief", "recipeHints", "implementation", "ProjectVideo"],
+      emphasis: "More recipes, same segment-first architecture.",
+      durationInFrames: 75,
+    },
   ],
 };
 
@@ -526,6 +606,15 @@ export const technicalExplainerStoryboardPlan: StoryboardPlan = storyboardPlanSc
           recipeId: "terminal-build-run",
           reason: "The segment references the deterministic smoke check path.",
         },
+        {
+          recipeId: "code-diff-highlight",
+          reason: "The segment explains a concrete implementation change.",
+        },
+        {
+          recipeId: "architecture-layer-stack",
+          reason:
+            "The segment explains ownership boundaries between planning, compiling, and rendering.",
+        },
       ],
       expectedDurationSeconds: 7,
     },
@@ -549,6 +638,15 @@ export const technicalExplainerStoryboardPlan: StoryboardPlan = storyboardPlanSc
         {
           recipeId: "timeline-progress",
           reason: "The segment closes with implementation checkpoints.",
+        },
+        {
+          recipeId: "before-after-compare",
+          reason: "The segment compares the previous recipe range with the expanded range.",
+        },
+        {
+          recipeId: "decision-matrix",
+          reason:
+            "The segment explains why recipe expansion is the better bounded next slice.",
         },
       ],
       expectedDurationSeconds: 6,
@@ -576,9 +674,11 @@ const technicalExplainerCompiledSegments = [
       },
       title: "Preview and export stay unified",
       subtitle: "The recipe template is still just one segment implementation.",
-      durationInFrames: 360,
+      durationInFrames: 480,
       sections: technicalExplainerImplementation.sections.filter((section) =>
-        ["metric-countup", "timeline-progress"].includes(section.recipeId),
+        ["metric-countup", "timeline-progress", "before-after-compare", "decision-matrix"].includes(
+          section.recipeId,
+        ),
       ),
     },
   }),
