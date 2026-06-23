@@ -177,6 +177,13 @@ type StoryboardSegmentPlan = {
 };
 ```
 
+Implementation note:
+
+Provider-facing planner output may use a smaller `StoryboardPlanDraft` contract
+so AI is responsible for semantic choices and narration text, while repo-owned
+code deterministically compiles the draft into the strict internal
+`StoryboardPlan`. The internal pipeline still consumes `StoryboardPlan`.
+
 Planner responsibilities:
 
 - decide how many segments the video needs

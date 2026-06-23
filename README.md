@@ -32,6 +32,10 @@ Current implementation status:
   `docs/FINAL_PRODUCT_GOAL.md`
 - the storyboard-planning contract is in place as a server-safe schema,
   compact registered-template manifest, and DeepSeek planner/compiler facade
+- DeepSeek planner output is normalized through a provider-facing
+  `StoryboardPlanDraft` -> strict `StoryboardPlan` compiler boundary, so AI
+  chooses segment intent and narration while repo code owns final IDs, ordering,
+  nesting, and validation
 - the first TTS asset boundary is in place for planned segments:
   `SegmentNarrationAsset`, internal `POST /api/tts`, local TTS audio artifacts
   under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts`, sidecar
@@ -178,8 +182,11 @@ Current visual-quality direction:
 - Phase 4.5 recipe coverage expansion adds generated `code-diff-highlight`,
   `before-after-compare`, `decision-matrix`, and
   `architecture-layer-stack` recipes to `technical-explainer`, bringing the real
-  planner/compiler template to 9 bounded recipe sections while keeping
-  `product-ui-zoom` deferred to asset-aware Phase 5.
+  planner/compiler template to 9 bounded recipe sections.
+- Phase 5 v1 asset-aware recipes add `product-ui-zoom` to
+  `technical-explainer` with controlled `public` or `route` image asset
+  descriptors, deterministic missing-asset fallback rendering, and export-time
+  route source rewriting while broader media-layer work remains deferred.
 - keep AI output bounded to registered template / recipe parameters; do not use
   unrestricted generated TSX as the normal path
 - avoid broad visual-review scoring or automatic screenshot repair as the next
@@ -279,9 +286,8 @@ Best next bounded slice:
   and contract-smoke provider-backed route validation
 - keep the real-GPU F5 live smoke as an environment follow-up: rerun it only
   when Docker can see an NVIDIA driver
-- next Phase 5 work should add asset-aware inputs to one recipe only, with
-  bounded structured fields and missing-asset fallback behavior inside the
-  owning template
+- Phase 5 v1 is landed as one asset-aware recipe inside the owning template;
+  broader media-layer work remains deferred
 - avoid persistence/history, broad media-library UI, generic media-layer
   compositing, and multi-template-per-segment orchestration unless explicitly
   reopened

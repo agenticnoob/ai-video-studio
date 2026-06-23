@@ -20,7 +20,7 @@ export type DeepSeekPrompt = {
   messages: DeepSeekChatMessage[];
 };
 
-const STORYBOARD_PLAN_SYSTEM_PROMPT = `You create a structured "StoryboardPlan" for a segment-first video studio.
+const STORYBOARD_PLAN_SYSTEM_PROMPT = `You create a provider-facing "StoryboardPlanDraft" for a segment-first video studio.
 
 This is the planning stage only. The output decides segment intent, narration,
 visual direction, and one primary registered template per segment. It must not
@@ -28,19 +28,39 @@ generate final template implementation fields.
 
 The output must:
 - be a single JSON object (no markdown fence, no commentary)
-- validate against the StoryboardPlan schema
+- validate against the StoryboardPlanDraft schema
 - contain between 1 and 6 segments; prefer 1-3 unless the brief clearly needs more
 - use one primary template per segment
 - choose templateId from the registered template ids: ${templateIds.map((id) => `"${id}"`).join(", ")}
-- set segment.order as contiguous integers starting at 1
-- use stable segment ids like "segment-1", "segment-2"
-- write narration.text as the spoken script for that segment
-- explain templateReason using the selected template's fit for the segment purpose
+- may omit segment.id and segment.order; deterministic code will assign stable values
+- write segment.narrationText as the spoken script for that segment
+- optionally set segment.narrationTone for delivery guidance
+- explain templateReason when it is useful; deterministic code can fill a default reason
 - describe visualBrief without inventing media URLs or Remotion source code
 - set expectedDurationSeconds when the brief or narration gives a useful timing hint
 - when a selected template lists planner-facing recipes, optionally set segment.recipeHints to the most relevant recipe ids from that template only
 - each recipe hint must be { recipeId, reason }
 - leave recipeHints omitted when no listed recipe fits the segment
+
+# Draft shape
+Top-level:
+- title
+- brief
+- language?
+- globalStyle?
+- segments[]
+
+Each segment:
+- title?
+- purpose
+- templateId
+- templateReason?
+- narrationText
+- narrationTone?
+- visualBrief
+- recipeHints? as [{ recipeId, reason }]
+- pacingHint?
+- expectedDurationSeconds?
 
 # Planner template manifest
 ${buildPlannerTemplateManifestPrompt()}
@@ -59,7 +79,7 @@ ${buildPlannerRecipeManifestPrompt()}
 - Preserve the user's intent and language when possible.
 
 # JSON output contract (CRITICAL)
-Return the complete StoryboardPlan object directly as JSON. The top-level keys
+Return the complete StoryboardPlanDraft object directly as JSON. The top-level keys
 must be title, brief, segments, and optional language/globalStyle. Do not wrap
 the result inside "emit_result", "arguments", "result", "data", or any other
 container.`;
@@ -77,8 +97,8 @@ const buildStoryboardRepairInstructions = ({
 
   return [
     "# Repair input",
-    "The previous StoryboardPlan output was rejected. Return a corrected StoryboardPlan object only.",
-    "Preserve the user's intent, but fix JSON shape, required fields, valid templateId values, unique ids, and contiguous order values.",
+    "The previous StoryboardPlanDraft output was rejected. Return a corrected StoryboardPlanDraft object only.",
+    "Preserve the user's intent, but fix JSON shape, required fields, valid templateId values, narrationText, visualBrief, and recipe hint ids.",
     validationError ? `Validation error: ${validationError}` : "",
     previousInvalidOutput
       ? `Previous invalid output:\n\`\`\`json\n${previousInvalidOutput.slice(0, 4000)}\n\`\`\``
@@ -115,7 +135,8 @@ const buildTemplateCompilerSystemPrompt = (request: DeepSeekTemplateCompileReque
 - Do not return a VideoProject.
 - Do not return a VideoSegment.
 - Do not wrap the object in "implementation", "segment", "project", "media", or "narration".
-- Do not include audio source fields, media fields, narration asset metadata, or provider metadata.
+- Do not include audio source fields, project-level media fields, narration asset metadata, or provider metadata.
+- Only include template-owned controlled asset descriptors when the selected template schema explicitly allows them.
 - Generated narration audio is carried outside template implementation through VideoSegment.narration.
 - The implementation must validate against the selected template schema.
 
@@ -196,7 +217,7 @@ export const buildStoryboardPlanPrompt = ({
     },
     {
       role: "user",
-      content: `Brief:\n"""\n${safeBrief}\n"""\n\nReturn a single JSON object matching the StoryboardPlan contract above.`,
+      content: `Brief:\n"""\n${safeBrief}\n"""\n\nReturn a single JSON object matching the StoryboardPlanDraft contract above.`,
     },
   ];
 
@@ -222,16 +243,15 @@ export const buildSegmentPlanRevisionPrompt = ({
       role: "system",
       content: `You revise one storyboard segment inside an existing video project.
 
-Return a StoryboardPlan containing EXACTLY ONE segment: the target segment to regenerate.
+Return a StoryboardPlanDraft containing EXACTLY ONE segment: the target segment to regenerate.
 This is the planning stage only. Do not generate final template implementation fields.
 
 # Output requirements
-- Keep the target segment id exactly "${segmentId}".
-- Set the single segment order to 1.
+- You may omit id and order; deterministic code will restore the target segment id and order.
 - Preserve the original language unless the revision request explicitly asks otherwise.
 - Choose one registered primary template from: ${templateIds.map((id) => `"${id}"`).join(", ")}.
 - Keep the current template unless the revision request clearly asks for a different presentation style.
-- Write narration.text as the actual spoken script for this segment, not as an instruction.
+- Write narrationText as the actual spoken script for this segment, not as an instruction.
 - Keep narration concise enough for a short product-demo segment.
 - Describe visualBrief for this segment without inventing media URLs or Remotion source code.
 - If the selected template lists planner-facing recipes, optionally set recipeHints using ids from that template only.
@@ -247,13 +267,13 @@ ${buildPlannerRecipeManifestPrompt()}
 ${repairInstructions}
 
 # JSON output contract (CRITICAL)
-Return the complete one-segment StoryboardPlan object directly as JSON. Do not
+Return the complete one-segment StoryboardPlanDraft object directly as JSON. Do not
 wrap the result inside "emit_result", "arguments", "result", "data", or any
 other container.`,
     },
     {
       role: "user",
-      content: `Current project and target segment:\n\`\`\`json\n${payload}\n\`\`\`\n\nRevision request:\n"""\n${revisionPrompt}\n"""\n\nReturn exactly one planned segment for "${segmentId}" with fresh narration text.`,
+      content: `Current project and target segment:\n\`\`\`json\n${payload}\n\`\`\`\n\nRevision request:\n"""\n${revisionPrompt}\n"""\n\nReturn exactly one draft segment for "${segmentId}" with fresh narrationText.`,
     },
   ];
 

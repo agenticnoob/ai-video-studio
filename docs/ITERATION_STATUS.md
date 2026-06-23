@@ -1,6 +1,48 @@
 # Iteration Status
 
-Last updated: Recipe Coverage Expansion Phase 4.5
+Last updated: Storyboard Draft Compiler Boundary
+
+## Latest continuation — Storyboard Draft Compiler Boundary
+
+- Added a provider-facing `StoryboardPlanDraft` boundary for DeepSeek planner
+  output.
+- Kept internal `StoryboardPlan` strict and unchanged; deterministic repo code
+  now compiles draft semantics into the final planner contract.
+- Hardened planner parsing against provider drift such as extra
+  `narration.intent` keys without adding broad hardcoded JSON repair rules.
+- Kept scope limited to storyboard planning: no `VideoProject`, TTS, Remotion,
+  template runtime, media-library, or persistence changes.
+
+Validation performed:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:storyboard-plan-draft'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:storyboard-recipe-hints'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:planner-recipe-manifest'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `git diff --check`
+
+## Latest continuation — Asset-Aware Recipes Phase 5 v1
+
+- Added `product-ui-zoom` as the first asset-aware
+  `technical-explainer` recipe.
+- Kept Phase 5 bounded to one template-owned recipe: no media library, no
+  arbitrary remote URLs, no persistence, no generated TSX, no visual-review
+  scoring, and no multi-template-per-segment orchestration.
+- The recipe accepts controlled `public` or `route` image descriptors and
+  renders a useful fallback frame when no asset source is available.
+- Local export rewrites route image sources for `product-ui-zoom` through the
+  existing render asset origin path.
+
+Validation performed:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:planner-recipe-manifest'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:technical-explainer-template'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:storyboard-recipe-hints'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- Remotion still renders:
+  - `/workspace/out/technical-explainer-product-ui-zoom.png`
 
 ## Latest continuation — Recipe Coverage Expansion Phase 4.5
 
