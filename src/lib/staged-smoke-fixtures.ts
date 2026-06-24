@@ -19,6 +19,8 @@ import {
   TECHNICAL_EXPLAINER_TEMPLATE_ID,
 } from "./template-registry";
 
+const TECHNICAL_EXPLAINER_PREVIEW_SECTION_DURATION = 150;
+
 const createNarrationAsset = ({
   durationInFrames,
   segmentId,
@@ -411,7 +413,7 @@ const technicalExplainerImplementation = {
     text: "#f8fafc",
     muted: "#cbd5e1",
   },
-  durationInFrames: 720,
+  durationInFrames: 795,
   title: "Recipe primitives now power a real template",
   subtitle: "Phase 3 proves the runtime boundary without changing the product flow.",
   sections: [
@@ -507,6 +509,27 @@ const technicalExplainerImplementation = {
       durationInFrames: 75,
     },
     {
+      id: "ui-zoom",
+      recipeId: "product-ui-zoom",
+      title: "Zoom into the product surface",
+      subtitle: "Phase 5 proves controlled image material inside one recipe.",
+      asset: {
+        sourceType: "public",
+        src: "fixtures/phase5-ui-screenshot.svg",
+        alt: "A deterministic product UI screenshot fixture for Phase 5.",
+        frameLabel: "Controlled screenshot",
+      },
+      focalPoint: {
+        xPercent: 72,
+        yPercent: 48,
+        zoomPercent: 138,
+        label: "Inspect the active panel",
+      },
+      callouts: ["Controlled asset", "Template-owned", "Preview/export"],
+      fallbackSummary: "A product UI screenshot would be highlighted here.",
+      durationInFrames: 75,
+    },
+    {
       id: "decision",
       recipeId: "decision-matrix",
       title: "Choose the next bounded slice",
@@ -573,6 +596,138 @@ export const technicalExplainerSmokeProject: VideoProject = videoProjectSchema.p
   segments: [technicalExplainerSegment],
 });
 
+const technicalExplainerPreviewImplementation = {
+  ...technicalExplainerImplementation,
+  durationInFrames: 900,
+  title: "Technical explainer preview",
+  subtitle: "A slower Studio fixture for inspecting recipe animation timing.",
+  sections: [
+    {
+      id: "preview-hero",
+      recipeId: "hero-title-reveal",
+      title: "Preview pacing",
+      eyebrow: "Studio inspection",
+      primaryText: "Recipe animation has room to breathe",
+      secondaryText: "This fixture is intentionally slower than deterministic smoke coverage.",
+      callouts: ["Readable", "Frame-driven", "Fixture-only"],
+      durationInFrames: TECHNICAL_EXPLAINER_PREVIEW_SECTION_DURATION,
+    },
+    {
+      id: "preview-workflow",
+      recipeId: "workflow-node-map",
+      title: "Pipeline",
+      nodes: [
+        { id: "plan", label: "StoryboardPlan", detail: "Segment intent" },
+        { id: "voice", label: "Narration", detail: "Audio + captions" },
+        { id: "compile", label: "Template compile", detail: "Schema-valid params" },
+        { id: "render", label: "ProjectVideo", detail: "Preview and export" },
+      ],
+      activeNodeId: "compile",
+      durationInFrames: TECHNICAL_EXPLAINER_PREVIEW_SECTION_DURATION,
+    },
+    {
+      id: "preview-ui-zoom",
+      recipeId: "product-ui-zoom",
+      title: "Zoom into the product surface",
+      subtitle: "Phase 5 proves controlled image material inside one recipe.",
+      asset: {
+        sourceType: "public",
+        src: "fixtures/phase5-ui-screenshot.svg",
+        alt: "A deterministic product UI screenshot fixture for Phase 5.",
+        frameLabel: "Controlled screenshot",
+      },
+      focalPoint: {
+        xPercent: 72,
+        yPercent: 48,
+        zoomPercent: 138,
+        label: "Inspect the active panel",
+      },
+      callouts: ["Controlled asset", "Template-owned", "Preview/export"],
+      fallbackSummary: "A product UI screenshot would be highlighted here.",
+      durationInFrames: TECHNICAL_EXPLAINER_PREVIEW_SECTION_DURATION,
+    },
+    {
+      id: "preview-decision",
+      recipeId: "decision-matrix",
+      title: "Choose the next bounded slice",
+      subtitle: "Tradeoffs stay readable without turning the project into a planning deck.",
+      criteria: ["Visual impact", "Scope risk", "Reuse"],
+      options: [
+        {
+          label: "Asset-aware recipes",
+          summary: "Best bounded proof",
+          scores: [
+            { criterion: "Visual impact", rating: "high", note: "Real material helps" },
+            { criterion: "Scope risk", rating: "high", note: "One recipe only" },
+            { criterion: "Reuse", rating: "medium", note: "Useful later" },
+          ],
+          recommended: true,
+        },
+        {
+          label: "Media library",
+          summary: "Too wide for v1",
+          scores: [
+            { criterion: "Visual impact", rating: "medium", note: "Needs UI scope" },
+            { criterion: "Scope risk", rating: "low", note: "Storage expands" },
+            { criterion: "Reuse", rating: "medium", note: "Later milestone" },
+          ],
+        },
+      ],
+      decision: "Start with one controlled template-owned asset recipe.",
+      durationInFrames: TECHNICAL_EXPLAINER_PREVIEW_SECTION_DURATION,
+    },
+    {
+      id: "preview-fallback",
+      recipeId: "product-ui-zoom",
+      title: "Fallback stays useful",
+      subtitle: "The recipe remains renderable when no screenshot is provided.",
+      focalPoint: {
+        xPercent: 50,
+        yPercent: 50,
+        zoomPercent: 120,
+        label: "Fallback mode",
+      },
+      callouts: ["No broken frame", "Clear summary", "Same schema"],
+      fallbackSummary:
+        "No screenshot was attached, so the recipe renders a structured fallback frame.",
+      durationInFrames: TECHNICAL_EXPLAINER_PREVIEW_SECTION_DURATION,
+    },
+    {
+      id: "preview-layers",
+      recipeId: "architecture-layer-stack",
+      title: "Keep ownership layered",
+      subtitle: "Recipes grow inside the template while the product model stays stable.",
+      layers: [
+        { label: "VideoProject", detail: "Preview and export boundary", tone: "interface" },
+        { label: "StoryboardPlan", detail: "Planner-stage segment intent", tone: "foundation" },
+        { label: "technical-explainer", detail: "Template-owned recipe schema", tone: "runtime" },
+        { label: "DeepSeek", detail: "Compiler fills bounded parameters", tone: "provider" },
+      ],
+      dataFlow: ["brief", "recipeHints", "implementation", "ProjectVideo"],
+      emphasis: "More recipes, same segment-first architecture.",
+      durationInFrames: TECHNICAL_EXPLAINER_PREVIEW_SECTION_DURATION,
+    },
+  ],
+};
+
+const technicalExplainerPreviewSegment = videoSegmentSchema.parse({
+  ...technicalExplainerSegment,
+  id: "preview-segment",
+  title: "Technical explainer preview",
+  implementation: technicalExplainerPreviewImplementation,
+});
+
+export const technicalExplainerPreviewProject: VideoProject = videoProjectSchema.parse({
+  meta: {
+    title: "Technical Explainer Preview",
+    fps: 30,
+    width: 1280,
+    height: 720,
+  },
+  brief: "Inspect a slower recipe-oriented technical explainer preview.",
+  segments: [technicalExplainerPreviewSegment],
+});
+
 export const technicalExplainerStoryboardPlan: StoryboardPlan = storyboardPlanSchema.parse({
   title: "Technical Explainer Multi-Segment Smoke",
   brief: "Explain how reusable recipe primitives become real generated segments.",
@@ -599,8 +754,7 @@ export const technicalExplainerStoryboardPlan: StoryboardPlan = storyboardPlanSc
         },
         {
           recipeId: "workflow-node-map",
-          reason:
-            "The segment explains how reusable recipe primitives flow into generated output.",
+          reason: "The segment explains how reusable recipe primitives flow into generated output.",
         },
         {
           recipeId: "terminal-build-run",
@@ -629,7 +783,8 @@ export const technicalExplainerStoryboardPlan: StoryboardPlan = storyboardPlanSc
         text: "The result is still a normal VideoProject, with preview and export using the same ProjectVideo composition.",
         tone: "confident",
       },
-      visualBrief: "Metric cards followed by a timeline progress view.",
+      visualBrief:
+        "Metric cards, a timeline progress view, and controlled product UI screenshot material.",
       recipeHints: [
         {
           recipeId: "metric-countup",
@@ -645,8 +800,11 @@ export const technicalExplainerStoryboardPlan: StoryboardPlan = storyboardPlanSc
         },
         {
           recipeId: "decision-matrix",
-          reason:
-            "The segment explains why recipe expansion is the better bounded next slice.",
+          reason: "The segment explains why recipe expansion is the better bounded next slice.",
+        },
+        {
+          recipeId: "product-ui-zoom",
+          reason: "The segment needs to focus attention on a controlled product UI screenshot.",
         },
       ],
       expectedDurationSeconds: 6,
@@ -675,11 +833,91 @@ const technicalExplainerCompiledSegments = [
       title: "Preview and export stay unified",
       subtitle: "The recipe template is still just one segment implementation.",
       durationInFrames: 480,
-      sections: technicalExplainerImplementation.sections.filter((section) =>
-        ["metric-countup", "timeline-progress", "before-after-compare", "decision-matrix"].includes(
-          section.recipeId,
-        ),
-      ),
+      sections: [
+        {
+          id: "metrics",
+          recipeId: "metric-countup",
+          title: "Outcome",
+          metrics: [
+            { label: "Recipe sections", value: "10", detail: "Bounded visual treatments" },
+            { label: "Template instances", value: "1", detail: "One primary template per segment" },
+            { label: "Generated TSX", value: "0", detail: "Structured params only" },
+          ],
+          durationInFrames: 75,
+        },
+        {
+          id: "timeline",
+          recipeId: "timeline-progress",
+          title: "Delivery path",
+          checkpoints: ["Schema", "Runtime", "Fixture", "Preview", "Export"],
+          note: "The same ProjectVideo composition remains the preview and export boundary.",
+          durationInFrames: 75,
+        },
+        {
+          id: "compare",
+          recipeId: "before-after-compare",
+          title: "From sparse template output to recipe coverage",
+          subtitle: "The product model stays stable while the visual vocabulary grows.",
+          before: {
+            label: "Before",
+            headline: "Five generated recipes",
+            points: ["Good skeleton", "Limited contrast scenes", "Code changes stuck in showcase"],
+          },
+          after: {
+            label: "After",
+            headline: "Ten generated recipes",
+            points: ["Code diffs compile", "UI zoom renders", "Fallbacks stay useful"],
+          },
+          emphasis: "More visual range without media-library scope.",
+          durationInFrames: 75,
+        },
+        {
+          id: "decision",
+          recipeId: "decision-matrix",
+          title: "Choose the next bounded slice",
+          subtitle: "Tradeoffs stay readable without turning the project into a planning deck.",
+          criteria: ["Visual impact", "Scope risk", "Reuse"],
+          options: [
+            {
+              label: "Asset-aware recipes",
+              summary: "Best bounded proof",
+              scores: [
+                { criterion: "Visual impact", rating: "high", note: "Real material helps" },
+                { criterion: "Scope risk", rating: "high", note: "One recipe only" },
+                { criterion: "Reuse", rating: "medium", note: "Useful later" },
+              ],
+              recommended: true,
+            },
+            {
+              label: "Media library",
+              summary: "Too wide for v1",
+              scores: [
+                { criterion: "Visual impact", rating: "medium", note: "Needs UI scope" },
+                { criterion: "Scope risk", rating: "low", note: "Storage expands" },
+                { criterion: "Reuse", rating: "medium", note: "Later milestone" },
+              ],
+            },
+          ],
+          decision: "Start with one controlled template-owned asset recipe.",
+          durationInFrames: 75,
+        },
+        {
+          id: "ui-zoom-fallback",
+          recipeId: "product-ui-zoom",
+          title: "Fallback stays useful",
+          subtitle: "The recipe remains renderable when no screenshot is provided.",
+          focalPoint: {
+            xPercent: 50,
+            yPercent: 50,
+            zoomPercent: 120,
+            label: "Fallback mode",
+          },
+          callouts: ["No broken frame", "Clear summary", "Same schema"],
+          fallbackSummary:
+            "No screenshot was attached, so the recipe renders a structured fallback frame.",
+          durationInFrames: 75,
+        },
+      ],
     },
   }),
 ];

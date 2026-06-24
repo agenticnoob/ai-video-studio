@@ -2,9 +2,8 @@ import { readFileSync } from "node:fs";
 
 /* global console */
 
-const { buildPlannerRecipeManifest, buildPlannerRecipeManifestPrompt } = await import(
-  "../src/templates/registry.js"
-);
+const { buildPlannerRecipeManifest, buildPlannerRecipeManifestPrompt } =
+  await import("../src/templates/registry.js");
 
 const read = (path) => readFileSync(path, "utf8");
 
@@ -24,6 +23,7 @@ const requiredRecipeIds = [
   "before-after-compare",
   "decision-matrix",
   "architecture-layer-stack",
+  "product-ui-zoom",
 ];
 
 const assertIncludes = (source, snippet, label) => {
@@ -33,11 +33,7 @@ const assertIncludes = (source, snippet, label) => {
 };
 
 assertIncludes(definitionTypes, "TemplatePlannerRecipe", "template definition types");
-assertIncludes(
-  definitionTypes,
-  "recipes?: TemplatePlannerRecipe[]",
-  "template planner metadata",
-);
+assertIncludes(definitionTypes, "recipes?: TemplatePlannerRecipe[]", "template planner metadata");
 assertIncludes(technicalSchema, "technicalExplainerRecipeIds", "technical explainer schema");
 assertIncludes(technicalDefinition, "recipes:", "technical explainer planner metadata");
 assertIncludes(registry, "buildPlannerRecipeManifest", "template registry");

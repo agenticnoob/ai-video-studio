@@ -58,6 +58,7 @@ const requiredRecipeIds = [
   "before-after-compare",
   "decision-matrix",
   "architecture-layer-stack",
+  "product-ui-zoom",
 ];
 
 assertIncludes(
@@ -94,10 +95,22 @@ assertIncludes(sceneSource, "CodeDiffHighlightScene", "technical explainer scene
 assertIncludes(sceneSource, "BeforeAfterCompareScene", "technical explainer scene renderers");
 assertIncludes(sceneSource, "DecisionMatrixScene", "technical explainer scene renderers");
 assertIncludes(sceneSource, "ArchitectureLayerStackScene", "technical explainer scene renderers");
+assertIncludes(sceneSource, "ProductUiZoomScene", "technical explainer scene renderers");
 assertIncludes(sceneSource, "getRecipeBeatTiming", "technical explainer scene renderers");
 assertIncludes(rootSource, 'id="TechnicalExplainerTemplatePreview"', "Remotion root");
-assertIncludes(rootSource, "technicalExplainerSmokeProject", "Remotion root");
+assertIncludes(rootSource, "technicalExplainerPreviewProject", "Remotion root");
+assertIncludes(
+  rootSource,
+  "getProjectDuration(technicalExplainerPreviewProject)",
+  "Remotion root",
+);
 assertIncludes(fixtureSource, "technicalExplainerSmokeProject", "staged smoke fixtures");
+assertIncludes(fixtureSource, "technicalExplainerPreviewProject", "staged smoke fixtures");
+assertIncludes(
+  fixtureSource,
+  "TECHNICAL_EXPLAINER_PREVIEW_SECTION_DURATION = 150",
+  "staged smoke fixtures",
+);
 assertIncludes(fixtureSource, "technicalExplainerStagedProject", "staged smoke fixtures");
 assertIncludes(fixtureSource, "recipeHints", "staged smoke fixtures");
 assertIncludes(fixtureSource, 'recipeId: "workflow-node-map"', "staged smoke fixtures");
@@ -106,6 +119,17 @@ assertIncludes(fixtureSource, 'recipeId: "code-diff-highlight"', "staged smoke f
 assertIncludes(fixtureSource, 'recipeId: "before-after-compare"', "staged smoke fixtures");
 assertIncludes(fixtureSource, 'recipeId: "decision-matrix"', "staged smoke fixtures");
 assertIncludes(fixtureSource, 'recipeId: "architecture-layer-stack"', "staged smoke fixtures");
+assertIncludes(fixtureSource, 'recipeId: "product-ui-zoom"', "staged smoke fixtures");
+assertIncludes(fixtureSource, "phase5-ui-screenshot.svg", "staged smoke fixtures");
+assertIncludes(fixtureSource, "fallbackSummary", "staged smoke fixtures");
+
+if (
+  schemaSource.includes('"remote"') ||
+  fixtureSource.includes('sourceType: "remote"') ||
+  fixtureSource.includes("https://")
+) {
+  throw new Error("Phase 5 v1 product-ui-zoom must not allow arbitrary remote image URLs.");
+}
 
 for (const recipeId of requiredRecipeIds) {
   assertIncludes(schemaSource, recipeId, "technical explainer schema");

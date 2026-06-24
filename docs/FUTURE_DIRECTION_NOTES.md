@@ -12,7 +12,11 @@ Status: partially resumed.
   staged API request/error 边界、以及 staged project assembly 边界已经拆开；
   这是为了继续 harden staged loop，不代表产品模型变化。
 - 本文件保留“更后续方向”的判断，不再代表当前实现是否已开始。
-- 产品模型已收敛为：一个 segment 对应一个 primary template；`templateId` 决定 `implementation` 的 schema；当前注册模板包括 `scripted`、`spotlight`、`stats-dashboard` 和 `technical-explainer`。`scripted` 的 `implementation` 是 `VideoSpec`，其中 `scenes` 是 scripted 专有的内部序列字段；`spotlight` 的 `implementation` 是 `SpotlightSpec`，其中 `callouts` 是 spotlight 专有内容字段；`stats-dashboard` 的 `implementation` 是 `StatsDashboardSpec`，用于数据仪表盘分段；`technical-explainer` 的 `implementation` 是 `TechnicalExplainerSpec`，用于 recipe-oriented 技术解释分段。已有视频、图片、音频或纯色素材通过 project-level / segment-level `media.layers[]` 表达；旧的 `baseLayer` 概念作为媒体层 role，而不是单独字段。
+- 产品模型已收敛为：一个 segment 对应一个 primary template；`templateId` 决定 `implementation` 的 schema；当前注册模板包括 `scripted`、`spotlight`、`stats-dashboard` 和 `technical-explainer`。`scripted` 的 `implementation` 是 `VideoSpec`，其中 `scenes` 是 scripted 专有的内部序列字段；`spotlight` 的 `implementation` 是 `SpotlightSpec`，其中 `callouts` 是 spotlight 专有内容字段；`stats-dashboard` 的 `implementation` 是 `StatsDashboardSpec`，用于数据仪表盘分段；`technical-explainer` 的 `implementation` 是 `TechnicalExplainerSpec`，用于 recipe-oriented 技术解释分段；当前已有 10 个 bounded recipe，包括 Phase 5 v1 的 `product-ui-zoom`。已有视频、图片、音频或纯色素材通过 project-level / segment-level `media.layers[]` 表达；旧的 `baseLayer` 概念作为媒体层 role，而不是单独字段。
+- Phase 5 v1 已落在一个模板自有边界内：`technical-explainer/product-ui-zoom`
+  允许 controlled `public` / `route` image descriptor，并提供 missing-asset
+  fallback；这不代表 broad media library、upload/storage API 或 project-level
+  image/video media layers 已经启动。
 - 最新模型决策：当前 TTS 音频已经迁入 `VideoSegment.narration.audio`，
   字幕已经进入 `VideoSegment.narration.captions`，二者都通过
   render-time flatten 预览和导出。`VideoProject.media.layers[]` 保留给真正的

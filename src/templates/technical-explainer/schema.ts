@@ -14,6 +14,7 @@ export const technicalExplainerRecipeIds = [
   "before-after-compare",
   "decision-matrix",
   "architecture-layer-stack",
+  "product-ui-zoom",
 ] as const;
 
 export const technicalExplainerRecipeIdSchema = z.enum(technicalExplainerRecipeIds);
@@ -162,6 +163,32 @@ const architectureLayerStackSectionSchema = sectionBaseSchema.extend({
   emphasis: z.string().trim().min(1).max(160).optional(),
 });
 
+const productUiZoomAssetSchema = z
+  .object({
+    sourceType: z.enum(["public", "route"]),
+    src: z.string().trim().min(1).max(240).optional(),
+    alt: z.string().trim().min(1).max(160),
+    frameLabel: z.string().trim().min(1).max(80).optional(),
+  })
+  .strict();
+
+const productUiZoomFocalPointSchema = z
+  .object({
+    xPercent: z.number().min(0).max(100),
+    yPercent: z.number().min(0).max(100),
+    zoomPercent: z.number().min(100).max(180),
+    label: z.string().trim().min(1).max(80).optional(),
+  })
+  .strict();
+
+const productUiZoomSectionSchema = sectionBaseSchema.extend({
+  recipeId: z.literal("product-ui-zoom"),
+  asset: productUiZoomAssetSchema.optional(),
+  focalPoint: productUiZoomFocalPointSchema.optional(),
+  callouts: z.array(z.string().trim().min(1).max(64)).min(1).max(3).optional(),
+  fallbackSummary: z.string().trim().min(1).max(220),
+});
+
 export const technicalExplainerSectionSchema = z.discriminatedUnion("recipeId", [
   heroTitleRevealSectionSchema,
   terminalBuildRunSectionSchema,
@@ -172,6 +199,7 @@ export const technicalExplainerSectionSchema = z.discriminatedUnion("recipeId", 
   beforeAfterCompareSectionSchema,
   decisionMatrixSectionSchema,
   architectureLayerStackSectionSchema,
+  productUiZoomSectionSchema,
 ]);
 
 export const technicalExplainerSpecSchema = z.object({
@@ -192,7 +220,7 @@ export const technicalExplainerSpecSchema = z.object({
   durationInFrames: z.number().int().min(120).max(900).default(300),
   title: z.string().trim().min(1).max(120),
   subtitle: z.string().trim().min(1).max(260).optional(),
-  sections: z.array(technicalExplainerSectionSchema).min(1).max(9),
+  sections: z.array(technicalExplainerSectionSchema).min(1).max(10),
 });
 
 export type TechnicalExplainerRecipeId = z.infer<typeof technicalExplainerRecipeIdSchema>;

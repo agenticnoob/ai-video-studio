@@ -124,8 +124,9 @@ Current modeling direction:
   - `stats-dashboard`: `StatsDashboardSpec` with `layout`, dashboard
     `blocks`, optional `timeline`, and `durationInFrames`
   - `technical-explainer`: `TechnicalExplainerSpec` with bounded recipe
-    sections for hero title, terminal session, workflow map, metric cards, and
-    timeline progress
+    sections for hero title, terminal session, workflow map, metric cards,
+    timeline progress, code diff, before/after comparison, decision matrix,
+    architecture layers, and product UI zoom
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
 - generated narration audio should be carried outside template-specific
   `implementation` fields; the target home is segment-owned
@@ -351,6 +352,10 @@ cd /data/projects/labs/ai-video-studio
 ```
 Then open:
 - http://localhost:3001
+
+For visual-recipe inspection, open `TechnicalExplainerTemplatePreview`. It uses
+a slower Studio-only fixture so each recipe holds for about five seconds; the
+Phase 5 `product-ui-zoom` section starts around frame 300.
 
 Preview the local Remotion primitive catalog in the app:
 - http://localhost:3000/primitives

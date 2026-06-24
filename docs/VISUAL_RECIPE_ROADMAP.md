@@ -313,7 +313,13 @@ Acceptance:
 
 ### Phase 5: Asset-Aware Recipes
 
+Status: implemented for v1.
+
 Goal: introduce concrete media only after recipe quality is strong.
+
+Phase 5 v1 is bounded to `technical-explainer/product-ui-zoom`: controlled
+`public` or `route` screenshot/image descriptors, route-source export rewrite,
+and deterministic missing-asset fallback rendering.
 
 Deliver:
 
@@ -321,6 +327,13 @@ Deliver:
   or chart data when a recipe explicitly supports them
 - missing-asset fallback behavior inside the recipe
 - no broad media library UI in the first pass
+
+Still deferred:
+- broad media library UI
+- arbitrary remote asset URLs
+- upload/storage APIs
+- project-level image/video media layers
+- visual-review scoring or screenshot repair
 
 Acceptance:
 

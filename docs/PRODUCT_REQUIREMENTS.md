@@ -163,8 +163,10 @@ Current registered templates:
 - `StatsDashboardSpec.blocks` and optional `timeline` are stats-dashboard
   implementation details
 - `TechnicalExplainerSpec.sections` are recipe-oriented implementation details
-  with bounded recipe ids such as `hero-title-reveal`, `terminal-build-run`,
-  `workflow-node-map`, `metric-countup`, and `timeline-progress`
+  with bounded recipe ids: `hero-title-reveal`, `terminal-build-run`,
+  `workflow-node-map`, `metric-countup`, `timeline-progress`,
+  `code-diff-highlight`, `before-after-compare`, `decision-matrix`,
+  `architecture-layer-stack`, and `product-ui-zoom`
 - `scenes` is not a required field for every template; future templates may have completely different implementation fields
 - multi-template-per-segment orchestration is not part of the near-term product direction
 
@@ -218,6 +220,11 @@ Examples:
 ### 6.2 Optional future input
 
 The user may later provide existing media such as a video or image.
+
+Current bounded exception:
+- `technical-explainer/product-ui-zoom` may reference controlled `public` or
+  `route` image descriptors inside that template-owned section, with
+  deterministic fallback rendering when no asset source is present
 
 Planned future use:
 - treat the uploaded media as project-level or segment-level base material

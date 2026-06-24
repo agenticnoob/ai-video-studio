@@ -1,8 +1,7 @@
 /* global console */
 
-const { parseStoryboardPlanToolCallArguments } = await import(
-  "../src/lib/deepseek/parse-storyboard-plan.js"
-);
+const { parseStoryboardPlanToolCallArguments } =
+  await import("../src/lib/deepseek/parse-storyboard-plan.js");
 
 const basePlan = {
   title: "Recipe hint smoke",
@@ -28,6 +27,10 @@ const basePlan = {
           recipeId: "terminal-build-run",
           reason: "The narration references running commands and tests.",
         },
+        {
+          recipeId: "product-ui-zoom",
+          reason: "The segment can focus attention on a controlled product UI surface.",
+        },
       ],
     },
   ],
@@ -37,7 +40,7 @@ const parse = (value) => parseStoryboardPlanToolCallArguments(JSON.stringify(val
 const clone = (value) => JSON.parse(JSON.stringify(value));
 
 const validPlan = parse(basePlan);
-if (validPlan.segments[0].recipeHints?.length !== 2) {
+if (validPlan.segments[0].recipeHints?.length !== 3) {
   throw new Error("Expected valid recipe hints to survive storyboard parsing.");
 }
 

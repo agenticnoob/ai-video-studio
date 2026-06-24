@@ -1,5 +1,5 @@
 import type { CSSProperties, FC } from "react";
-import { interpolate, useCurrentFrame } from "remotion";
+import { Img, interpolate, staticFile, useCurrentFrame } from "remotion";
 
 import {
   CodeDiffBlock,
@@ -401,10 +401,7 @@ export const BeforeAfterCompareScene: FC<
   );
 };
 
-const ratingColor = (
-  rating: "low" | "medium" | "high",
-  theme: TechnicalExplainerSpec["theme"],
-) => {
+const ratingColor = (rating: "low" | "medium" | "high", theme: TechnicalExplainerSpec["theme"]) => {
   if (rating === "high") {
     return "#22c55e";
   }
@@ -501,7 +498,9 @@ export const DecisionMatrixScene: FC<
                   >
                     {score.rating.toUpperCase()}
                     {score.note ? (
-                      <div style={{ color: theme.muted, fontSize: 13, fontWeight: 700, marginTop: 5 }}>
+                      <div
+                        style={{ color: theme.muted, fontSize: 13, fontWeight: 700, marginTop: 5 }}
+                      >
                         {score.note}
                       </div>
                     ) : null}
@@ -611,6 +610,146 @@ export const ArchitectureLayerStackScene: FC<
               </div>
             );
           })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const resolveProductUiZoomAssetSrc = (
+  asset: Extract<TechnicalExplainerSection, { recipeId: "product-ui-zoom" }>["asset"],
+): string | null => {
+  if (!asset?.src) {
+    return null;
+  }
+
+  if (asset.sourceType === "public") {
+    return staticFile(asset.src.replace(/^\/+/, ""));
+  }
+
+  return asset.src;
+};
+
+export const ProductUiZoomScene: FC<
+  TechnicalExplainerSceneProps<Extract<TechnicalExplainerSection, { recipeId: "product-ui-zoom" }>>
+> = ({ durationInFrames, section, theme }) => {
+  const frame = useCurrentFrame();
+  const assetSrc = resolveProductUiZoomAssetSrc(section.asset);
+  const timing = getRecipeBeatTiming({ durationInFrames });
+  const reveal = interpolate(frame, [0, timing.revealEndFrame], [0, 1], clamp);
+  const focus = interpolate(frame, [timing.revealEndFrame, timing.holdEndFrame], [0, 1], clamp);
+  const focalPoint = section.focalPoint ?? { xPercent: 50, yPercent: 50, zoomPercent: 126 };
+  const zoomScale = interpolate(focus, [0, 1], [1, focalPoint.zoomPercent / 100], clamp);
+  const translateX = (50 - focalPoint.xPercent) * 3.2 * focus;
+  const translateY = (50 - focalPoint.yPercent) * 1.8 * focus;
+
+  return (
+    <div style={panelStyle(theme)}>
+      <div style={{ display: "grid", gap: 38, gridTemplateColumns: "430px 1fr", height: "100%" }}>
+        <div style={{ paddingTop: 38 }}>
+          <div style={{ color: theme.primary, fontSize: 18, fontWeight: 900, marginBottom: 18 }}>
+            {section.asset?.frameLabel ?? "Product surface"}
+          </div>
+          <div style={{ fontSize: 48, fontWeight: 930, lineHeight: 1.04 }}>{section.title}</div>
+          {section.subtitle ? (
+            <div style={{ color: theme.muted, fontSize: 22, lineHeight: 1.32, marginTop: 20 }}>
+              {section.subtitle}
+            </div>
+          ) : null}
+          <div
+            style={{
+              borderLeft: `4px solid ${theme.secondary}`,
+              color: theme.muted,
+              fontSize: 19,
+              lineHeight: 1.35,
+              marginTop: 30,
+              paddingLeft: 16,
+            }}
+          >
+            {section.fallbackSummary}
+          </div>
+          {section.callouts?.length ? (
+            <div style={{ display: "grid", gap: 10, marginTop: 28 }}>
+              {section.callouts.map((callout) => (
+                <div
+                  key={callout}
+                  style={{
+                    background: theme.panel,
+                    border: `1px solid ${theme.primary}55`,
+                    borderRadius: 999,
+                    color: theme.text,
+                    fontSize: 17,
+                    fontWeight: 850,
+                    padding: "10px 14px",
+                  }}
+                >
+                  {callout}
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </div>
+        <div
+          style={{
+            alignSelf: "center",
+            background: assetSrc ? "#020617" : theme.panel,
+            border: `1px solid ${theme.primary}66`,
+            borderRadius: 28,
+            boxShadow: "0 30px 90px rgba(0,0,0,0.36)",
+            height: 470,
+            opacity: reveal,
+            overflow: "hidden",
+            position: "relative",
+            transform: `translateY(${(1 - reveal) * 28}px)`,
+          }}
+        >
+          {assetSrc ? (
+            <Img
+              alt={section.asset?.alt}
+              src={assetSrc}
+              style={{
+                height: "100%",
+                objectFit: "cover",
+                transform: `translate(${translateX}px, ${translateY}px) scale(${zoomScale})`,
+                transformOrigin: `${focalPoint.xPercent}% ${focalPoint.yPercent}%`,
+                width: "100%",
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                alignItems: "center",
+                color: theme.text,
+                display: "flex",
+                fontSize: 28,
+                fontWeight: 900,
+                height: "100%",
+                justifyContent: "center",
+                lineHeight: 1.2,
+                padding: 48,
+                textAlign: "center",
+              }}
+            >
+              {section.fallbackSummary}
+            </div>
+          )}
+          {section.focalPoint?.label ? (
+            <div
+              style={{
+                background: theme.secondary,
+                borderRadius: 999,
+                bottom: 24,
+                color: "#111827",
+                fontSize: 16,
+                fontWeight: 900,
+                left: 24,
+                padding: "10px 14px",
+                position: "absolute",
+              }}
+            >
+              {section.focalPoint.label}
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

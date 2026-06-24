@@ -13,6 +13,7 @@ import {
   getRenderArtifactDownloadUrl,
   getRenderArtifactOutputPath,
 } from "./render-artifacts";
+import { TECHNICAL_EXPLAINER_TEMPLATE_ID } from "../templates/ids";
 
 export const PROJECT_VIDEO_COMPOSITION_ID = "ProjectVideo";
 const DEFAULT_RENDER_ASSET_ORIGIN = "http://127.0.0.1:3000";
@@ -74,6 +75,110 @@ const getRenderAssetOrigin = (): string => {
   return configuredOrigin.replace(/\/+$/, "") || DEFAULT_RENDER_ASSET_ORIGIN;
 };
 
+type ProductUiZoomSectionLike = {
+  recipeId: "product-ui-zoom";
+  asset?: {
+    sourceType?: string;
+    src?: string;
+  };
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  value !== null && typeof value === "object" && !Array.isArray(value);
+
+const rewriteProductUiZoomSectionAsset = (section: unknown, assetOrigin: string): unknown => {
+  if (!isRecord(section) || section.recipeId !== "product-ui-zoom") {
+    return section;
+  }
+
+  const typedSection = section as ProductUiZoomSectionLike;
+  const asset = typedSection.asset;
+  if (asset?.sourceType !== "route" || !asset.src?.startsWith("/")) {
+    return section;
+  }
+
+  return {
+    ...section,
+    asset: {
+      ...asset,
+      src: `${assetOrigin}${asset.src}`,
+    },
+  };
+};
+
+const getImplementationSectionsRecord = (
+  implementation: unknown,
+): (Record<string, unknown> & { sections: unknown[] }) | null => {
+  if (!isRecord(implementation) || !Array.isArray(implementation.sections)) {
+    return null;
+  }
+
+  return implementation as Record<string, unknown> & { sections: unknown[] };
+};
+
+const hasRouteProductUiZoomAsset = (project: VideoProject): boolean =>
+  project.segments.some((segment) => {
+    if (segment.templateId !== TECHNICAL_EXPLAINER_TEMPLATE_ID) {
+      return false;
+    }
+
+    const implementation = getImplementationSectionsRecord(segment.implementation);
+    if (!implementation) {
+      return false;
+    }
+
+    return implementation.sections.some((section) => {
+      if (!isRecord(section) || section.recipeId !== "product-ui-zoom") {
+        return false;
+      }
+
+      const asset = section.asset;
+      return isRecord(asset) && asset.sourceType === "route" && typeof asset.src === "string"
+        ? asset.src.startsWith("/")
+        : false;
+    });
+  });
+
+const rewriteSegmentRouteAssets = (
+  segment: VideoProject["segments"][number],
+  assetOrigin: string,
+): unknown => {
+  const narration = segment.narration;
+  const audio = narration?.audio;
+  const implementation = getImplementationSectionsRecord(segment.implementation);
+  const shouldRewriteProductUiZoomAssets =
+    segment.templateId === TECHNICAL_EXPLAINER_TEMPLATE_ID && implementation !== null;
+
+  if (!shouldRewriteProductUiZoomAssets && (!narration || !audio?.src.startsWith("/"))) {
+    return segment;
+  }
+
+  return {
+    ...segment,
+    ...(shouldRewriteProductUiZoomAssets
+      ? {
+          implementation: {
+            ...implementation,
+            sections: implementation.sections.map((section: unknown) =>
+              rewriteProductUiZoomSectionAsset(section, assetOrigin),
+            ),
+          },
+        }
+      : {}),
+    ...(narration && audio?.src.startsWith("/")
+      ? {
+          narration: {
+            ...narration,
+            audio: {
+              ...audio,
+              src: `${assetOrigin}${audio.src}`,
+            },
+          },
+        }
+      : {}),
+  };
+};
+
 const resolveRouteMediaForRender = (project: VideoProject): VideoProject => {
   const hasRouteMediaLayer = project.media?.layers.some(
     (layer) => layer.sourceType === "route" && layer.src.startsWith("/"),
@@ -81,8 +186,9 @@ const resolveRouteMediaForRender = (project: VideoProject): VideoProject => {
   const hasRouteSegmentNarration = project.segments.some((segment) =>
     segment.narration?.audio?.src.startsWith("/"),
   );
+  const hasRouteTemplateAsset = hasRouteProductUiZoomAsset(project);
 
-  if (!hasRouteMediaLayer && !hasRouteSegmentNarration) {
+  if (!hasRouteMediaLayer && !hasRouteSegmentNarration && !hasRouteTemplateAsset) {
     return project;
   }
 
@@ -106,26 +212,8 @@ const resolveRouteMediaForRender = (project: VideoProject): VideoProject => {
           },
         }
       : {}),
-    segments: project.segments.map((segment) => {
-      const narration = segment.narration;
-      const audio = narration?.audio;
-
-      if (!narration || !audio?.src.startsWith("/")) {
-        return segment;
-      }
-
-      return {
-        ...segment,
-        narration: {
-          ...narration,
-          audio: {
-            ...audio,
-            src: `${assetOrigin}${audio.src}`,
-          },
-        },
-      };
-    }),
-  });
+    segments: project.segments.map((segment) => rewriteSegmentRouteAssets(segment, assetOrigin)),
+  } as Parameters<typeof normalizeProject>[0]);
 };
 
 export {

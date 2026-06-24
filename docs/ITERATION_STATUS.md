@@ -1,8 +1,29 @@
 # Iteration Status
 
-Last updated: Storyboard Draft Compiler Boundary
+Last updated: Technical Explainer Slow Studio Preview
 
-## Latest continuation — Storyboard Draft Compiler Boundary
+## Latest continuation — Technical Explainer Slow Studio Preview
+
+- Switched `TechnicalExplainerTemplatePreview` to a Studio-only slow preview
+  fixture so visual recipe animations can be inspected instead of flashing by
+  at smoke-test pacing.
+- Kept deterministic smoke/staged fixtures intact; this does not change the
+  provider planner, schema, generated `VideoProject` boundary, or export path.
+- The Remotion composition now lasts 900 frames / 30 seconds, with each preview
+  section holding for 150 frames / 5 seconds. The Phase 5 `product-ui-zoom`
+  preview starts around frame 300.
+- Added smoke coverage so the Studio preview keeps using
+  `technicalExplainerPreviewProject` and the slower section duration.
+
+Validation performed:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:technical-explainer-template'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts TechnicalExplainerTemplatePreview /workspace/out/technical-explainer-preview-ui-zoom-slow.png --frame=375 --scale=0.5'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+- `git diff --check`
+
+## Prior continuation — Storyboard Draft Compiler Boundary
 
 - Added a provider-facing `StoryboardPlanDraft` boundary for DeepSeek planner
   output.

@@ -16,6 +16,7 @@ import {
   DecisionMatrixScene,
   HeroTitleRevealScene,
   MetricCountupScene,
+  ProductUiZoomScene,
   TerminalBuildRunScene,
   TimelineProgressScene,
   WorkflowNodeMapScene,
@@ -135,6 +136,14 @@ const SectionScene: FC<{
     case "architecture-layer-stack":
       return (
         <ArchitectureLayerStackScene
+          durationInFrames={durationInFrames}
+          section={section}
+          theme={spec.theme}
+        />
+      );
+    case "product-ui-zoom":
+      return (
+        <ProductUiZoomScene
           durationInFrames={durationInFrames}
           section={section}
           theme={spec.theme}
