@@ -46,6 +46,7 @@ export type GenerationActionsContext = {
   setProject: (project: VideoProject) => void;
   setRevisionPrompt: (prompt: string) => void;
   setSelectedSegmentId: (segmentId: string | null) => void;
+  transformGeneratedProject: (project: VideoProject) => VideoProject;
 };
 
 export type UseGenerationActionsResult = {
@@ -66,6 +67,7 @@ export const useGenerationActions = ({
   setProject,
   setRevisionPrompt,
   setSelectedSegmentId,
+  transformGeneratedProject,
 }: GenerationActionsContext): UseGenerationActionsResult => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isRegeneratingSegment, setIsRegeneratingSegment] = useState(false);
@@ -83,10 +85,11 @@ export const useGenerationActions = ({
 
     try {
       const voiceClonePayload = getVoiceClonePayload(true);
+      const requestBody = { mode: "brief", brief, progressId, voiceClone: voiceClonePayload };
       const response = await fetch("/api/generate/staged", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode: "brief", brief, progressId, voiceClone: voiceClonePayload }),
+        body: JSON.stringify(requestBody),
       });
       const data = (await response.json()) as GenerateResponse;
 
@@ -94,7 +97,9 @@ export const useGenerationActions = ({
         throw new Error(data.error ?? "生成视频项目失败。");
       }
 
-      const nextProject = normalizeProject(data.project);
+      const nextProject = normalizeProject(
+        transformGeneratedProject(normalizeProject(data.project)),
+      );
       setProject(nextProject);
       setSelectedSegmentId(getInitialSelectedSegmentId(nextProject));
       setRevisionPrompt("");
@@ -138,17 +143,18 @@ export const useGenerationActions = ({
 
     try {
       const voiceClonePayload = getVoiceClonePayload(true);
+      const requestBody = {
+        mode: "segment",
+        project: normalizedProject,
+        progressId,
+        segmentId: selectedSegmentId,
+        revisionPrompt,
+        ...(voiceClonePayload ? { voiceClone: voiceClonePayload } : {}),
+      };
       const response = await fetch("/api/generate/staged", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mode: "segment",
-          project: normalizedProject,
-          progressId,
-          segmentId: selectedSegmentId,
-          revisionPrompt,
-          ...(voiceClonePayload ? { voiceClone: voiceClonePayload } : {}),
-        }),
+        body: JSON.stringify(requestBody),
       });
       const data = (await response.json()) as GenerateResponse;
 

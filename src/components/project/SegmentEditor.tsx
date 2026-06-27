@@ -1,14 +1,20 @@
 import type { FC } from "react";
 
 import type { VideoSegment } from "../../lib/project-schema";
+import type { ProductUiAssetPoolItem } from "../../helpers/project-generation/use-product-ui-assets";
 import { getTemplateLabel } from "../../lib/template-registry";
 import { getTemplateEditor } from "../../templates/component-registry";
 import { Card } from "../ui/Card";
 
 type SegmentEditorProps = {
+  isUploadingProductUiAsset: boolean;
   isRegenerating: boolean;
   segment: VideoSegment | null;
+  productUiAssetError: string | null;
+  productUiAssets: readonly ProductUiAssetPoolItem[];
   revisionPrompt: string;
+  onProductUiAssetRemove: (assetId: string) => void;
+  onProductUiAssetUpload: (file: File) => Promise<void>;
   onRegenerateSegment: () => void;
   onRevisionPromptChange: (value: string) => void;
   onSegmentChange: (segment: VideoSegment) => void;
@@ -39,9 +45,14 @@ const themeLabelMap = {
 } as const;
 
 export const SegmentEditor: FC<SegmentEditorProps> = ({
+  isUploadingProductUiAsset,
   isRegenerating,
   segment,
+  productUiAssetError,
+  productUiAssets,
   revisionPrompt,
+  onProductUiAssetRemove,
+  onProductUiAssetUpload,
   onRegenerateSegment,
   onRevisionPromptChange,
   onSegmentChange,
@@ -159,8 +170,13 @@ export const SegmentEditor: FC<SegmentEditorProps> = ({
       </Card>
 
       <TemplateEditor
+        isUploadingProductUiAsset={isUploadingProductUiAsset}
         inputClassName={inputClassName}
+        onProductUiAssetRemove={onProductUiAssetRemove}
+        onProductUiAssetUpload={onProductUiAssetUpload}
         parsePositiveInteger={parsePositiveInteger}
+        productUiAssetError={productUiAssetError}
+        productUiAssets={productUiAssets}
         segment={segment}
         onSegmentChange={onSegmentChange}
       />

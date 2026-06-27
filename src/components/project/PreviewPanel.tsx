@@ -1,3 +1,5 @@
+"use client";
+
 import { Player } from "@remotion/player";
 import type { FC } from "react";
 

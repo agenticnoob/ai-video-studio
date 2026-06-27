@@ -32,11 +32,17 @@ export type UseProjectStateResult = {
   updateSegment: (nextSegment: VideoSegment) => void;
 };
 
-export const useProjectState = (): UseProjectStateResult => {
+type UseProjectStateOptions = {
+  readonly initialProject?: VideoProject;
+};
+
+export const useProjectState = ({
+  initialProject = sampleProject,
+}: UseProjectStateOptions = {}): UseProjectStateResult => {
   const [brief, setBrief] = useState(defaultBrief);
-  const [project, setProject] = useState<VideoProject>(sampleProject);
+  const [project, setProject] = useState<VideoProject>(initialProject);
   const [selectedSegmentId, setSelectedSegmentId] = useState<string | null>(
-    getInitialSelectedSegmentId(sampleProject),
+    getInitialSelectedSegmentId(initialProject),
   );
   const [revisionPrompt, setRevisionPrompt] = useState("");
 

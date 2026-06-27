@@ -28,3 +28,7 @@ export const getTtsOutputDirectory = (): string => {
 export const getVoiceReferenceDirectory = (): string => {
   return path.join(getArtifactRoot(), "voice-references");
 };
+
+export const getProductUiAssetDirectory = (): string => {
+  return path.join(getArtifactRoot(), "product-ui-assets");
+};

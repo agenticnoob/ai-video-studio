@@ -197,8 +197,13 @@ export const TechnicalExplainerVideo: FC<TechnicalExplainerSpec> = (spec) => {
 
 const TechnicalExplainerRuntimeEditor: FC<RuntimeTemplateEditorProps> = (props) => (
   <TechnicalExplainerEditor
+    isUploadingProductUiAsset={props.isUploadingProductUiAsset}
     inputClassName={props.inputClassName}
+    onProductUiAssetRemove={props.onProductUiAssetRemove}
+    onProductUiAssetUpload={props.onProductUiAssetUpload}
     parsePositiveInteger={props.parsePositiveInteger}
+    productUiAssetError={props.productUiAssetError}
+    productUiAssets={props.productUiAssets}
     segment={props.segment as TechnicalExplainerSegment}
     onSegmentChange={props.onSegmentChange as (segment: TechnicalExplainerSegment) => void}
   />

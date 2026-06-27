@@ -1,6 +1,10 @@
 import type { FC } from "react";
 
-import type { GenerationOperation, VoiceCloneSettings } from "../../helpers/use-project-generation";
+import type {
+  GenerationOperation,
+  ProductUiAssetPoolItem,
+  VoiceCloneSettings,
+} from "../../helpers/use-project-generation";
 import { useTaskProgress } from "../../helpers/use-task-progress";
 import { Card } from "../ui/Card";
 import { ActivityProgress } from "../ui/ActivityProgress";
@@ -11,11 +15,16 @@ type GenerationPanelProps = {
   error: string | null;
   generationOperation: GenerationOperation;
   isGenerating: boolean;
+  isUploadingProductUiAsset: boolean;
   isUploadingVoiceReference: boolean;
   onBriefChange: (value: string) => void;
   onGenerate: () => void;
+  onProductUiAssetRemove: (assetId: string) => void;
+  onProductUiAssetUpload: (file: File) => void;
   onVoiceCloneChange: (settings: VoiceCloneSettings) => void;
   onVoiceReferenceUpload: (file: File) => void;
+  productUiAssetError: string | null;
+  productUiAssets: readonly ProductUiAssetPoolItem[];
   voiceClone: VoiceCloneSettings;
   voiceReferenceError: string | null;
 };
@@ -29,11 +38,16 @@ export const GenerationPanel: FC<GenerationPanelProps> = ({
   error,
   generationOperation,
   isGenerating,
+  isUploadingProductUiAsset,
   isUploadingVoiceReference,
   onBriefChange,
   onGenerate,
+  onProductUiAssetRemove,
+  onProductUiAssetUpload,
   onVoiceCloneChange,
   onVoiceReferenceUpload,
+  productUiAssetError,
+  productUiAssets,
   voiceClone,
   voiceReferenceError,
 }) => {
@@ -125,9 +139,63 @@ export const GenerationPanel: FC<GenerationPanelProps> = ({
         ) : null}
       </div>
 
+      <div className="mt-4 rounded-geist border border-panel-border-color bg-panel-surface-color p-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="text-sm font-medium text-foreground">产品截图素材</div>
+            <div className="mt-1 text-xs text-foreground">PNG / JPEG / WebP，最多保留 5 张</div>
+          </div>
+          <label className="cursor-pointer rounded-geist border border-foreground px-3 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-foreground hover:text-background">
+            {isUploadingProductUiAsset ? "上传中..." : "上传"}
+            <input
+              accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
+              className="sr-only"
+              disabled={disabled || isUploadingProductUiAsset}
+              type="file"
+              onChange={(event) => {
+                const file = event.currentTarget.files?.[0];
+                event.currentTarget.value = "";
+                if (file) {
+                  onProductUiAssetUpload(file);
+                }
+              }}
+            />
+          </label>
+        </div>
+
+        {productUiAssets.length > 0 ? (
+          <ul className="mt-3 space-y-2">
+            {productUiAssets.map((item) => (
+              <li
+                className="flex items-center justify-between gap-3 rounded-geist border border-field-border-color bg-field-surface-color px-3 py-2"
+                key={item.metadata.assetId}
+              >
+                <span className="min-w-0 truncate text-sm text-foreground">
+                  {item.metadata.originalName}
+                </span>
+                <button
+                  className="shrink-0 rounded-geist border border-panel-border-color px-2 py-1 text-xs font-semibold text-foreground disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={disabled || isUploadingProductUiAsset}
+                  type="button"
+                  onClick={() => onProductUiAssetRemove(item.metadata.assetId)}
+                >
+                  移除
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="mt-3 text-sm text-foreground">未上传产品截图</div>
+        )}
+
+        {productUiAssetError ? (
+          <div className="mt-3 text-sm font-medium text-foreground">{productUiAssetError}</div>
+        ) : null}
+      </div>
+
       <button
         className="mt-4 rounded-geist border border-foreground bg-foreground px-4 py-2 text-sm font-semibold text-background disabled:cursor-not-allowed disabled:opacity-60"
-        disabled={disabled || isUploadingVoiceReference}
+        disabled={disabled || isUploadingProductUiAsset || isUploadingVoiceReference}
         onClick={onGenerate}
         type="button"
       >

@@ -2,6 +2,7 @@ import type { FC } from "react";
 
 import { Card } from "../../components/ui/Card";
 import type { TemplateEditorProps } from "../editor-types";
+import { ProductUiZoomAssetEditor } from "./product-ui-zoom-asset-editor";
 import type { TechnicalExplainerSegment, TechnicalExplainerSpec } from "./schema";
 
 const updateImplementation = (
@@ -28,8 +29,13 @@ const parseJsonArray = <TValue,>(value: string, fallback: TValue[]): TValue[] =>
 
 export const TechnicalExplainerEditor: FC<TemplateEditorProps<TechnicalExplainerSegment>> = ({
   inputClassName,
+  isUploadingProductUiAsset,
+  onProductUiAssetRemove,
+  onProductUiAssetUpload,
   parsePositiveInteger,
   segment,
+  productUiAssetError,
+  productUiAssets,
   onSegmentChange,
 }) => {
   const fieldClassName = "block text-xs font-medium text-foreground";
@@ -85,6 +91,15 @@ export const TechnicalExplainerEditor: FC<TemplateEditorProps<TechnicalExplainer
           />
         </label>
       </div>
+      <ProductUiZoomAssetEditor
+        isUploadingProductUiAsset={isUploadingProductUiAsset}
+        onProductUiAssetRemove={onProductUiAssetRemove}
+        onProductUiAssetUpload={onProductUiAssetUpload}
+        productUiAssetError={productUiAssetError}
+        productUiAssets={productUiAssets}
+        segment={segment}
+        onSegmentChange={onSegmentChange}
+      />
       <label className={`${fieldClassName} mt-3`}>
         Sections JSON
         <textarea

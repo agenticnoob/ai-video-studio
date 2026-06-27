@@ -1,6 +1,78 @@
 # Iteration Status
 
-Last updated: Technical Explainer Slow Studio Preview
+Last updated: Phase 5.1 Product Screenshot Upload Loop Complete
+
+## Latest continuation — Phase 5.1 Product Screenshot Upload Loop Complete
+
+- Completed the bounded product screenshot upload loop for
+  `technical-explainer/product-ui-zoom`.
+- The shipped interaction supports both paths: upload before generation into the
+  client-side pool, then locally bind the latest uploaded screenshot to the
+  first unbound `product-ui-zoom` placeholder after generation; or generate
+  first, then upload/replace/unbind from the segment editor.
+- Kept the scope recipe-owned: no broad media library, no arbitrary remote
+  image URLs, no project-level image/video media layers, and no provider-visible
+  upload descriptors in `/api/generate/staged` requests.
+- Fixed the post-review export contract by registering the generic
+  `ProjectVideo` Remotion composition and keeping `/api/render` on that
+  composition instead of a template-preview composition.
+- Removed the temporary product QA fixture route and browser-debug scripts from
+  the product diff. Browser QA was handed to the user, and the user confirmed
+  the logic flow is now working.
+
+Validation performed:
+- `docker compose run --rm web bash -lc 'set -euo pipefail ... npm run smoke:product-ui-assets ... npm run lint'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures && npx remotion still src/remotion/index.ts ProjectVideo /workspace/out/product-ui-upload-fallback-check.png --props=.omo/evidence/product-ui-image-upload-loop/render-product-ui-unbound-project.json --frame=120 --scale=0.5 && npx tsc --noEmit --pretty false && npm run lint'`
+- `POST /api/render` with `{ project }` returned `200` and a non-empty mp4
+  artifact (`sizeInBytes: 1421184`).
+- `git diff --check`
+
+## Latest continuation — Template Implementation Duration Boundary Fix
+
+- Fixed a provider-drift failure where generated `technical-explainer`
+  implementation JSON could set `sections[].durationInFrames` outside the
+  schema range and stop project generation with:
+  `Generated "technical-explainer" implementation failed schema validation:
+  sections.0.durationInFrames: Too big: expected number to be <=420`.
+- Kept the schema strict. The parser now normalizes only
+  `technical-explainer.sections[].durationInFrames` into the existing `45..420`
+  range before validation; other invalid implementation fields still fail.
+- Covered both direct implementation JSON and wrapped
+  `{ implementation: ... }` tool outputs. This is a template implementation
+  boundary fix, not a product screenshot upload/bind change.
+
+Validation performed:
+- `docker compose run --rm web bash -lc 'npm run smoke:template-implementation-boundary'`
+- `docker compose run --rm web bash -lc 'npm run smoke:technical-explainer-template'`
+- `docker compose run --rm web bash -lc 'npx tsc --noEmit --pretty false'`
+
+## Latest continuation — Phase 5.1 Upload-Bind Loop Bugfix
+
+- Narrowed the next Phase 5 slice to a product screenshot upload-and-bind loop
+  for `technical-explainer/product-ui-zoom`, not a general media library.
+- The current loop is: upload a product screenshot either before generation or
+  from a `product-ui-zoom` section. Pre-generation uploads still do not go into
+  `/api/generate/staged`; after a full project generation returns, the client
+  deterministically binds the latest uploaded screenshot to the first unbound
+  `product-ui-zoom` placeholder.
+- Segment editing can bind, replace, and unbind the current section asset
+  without raw JSON editing. The editor counts both current upload-pool assets
+  and already-bound route assets so a generated/bound section is not shown as
+  `0` material.
+- Kept the product boundary unchanged: this is still a template-owned recipe
+  input path, not project-level media management, arbitrary remote asset
+  handling, or multi-asset orchestration.
+- Todo 6 command gates and render/source artifacts have been refreshed against
+  the current `ProjectWorkbench` upload/bind architecture; browser confirmation
+  was completed by user manual QA.
+- `public/product-ui-upload-smoke.png` remains the stable fixture for this
+  bounded upload/bind loop.
+
+Validation performed:
+- `docker compose run --rm web bash -lc 'npm run smoke:product-ui-upload-client'`
+- `docker compose run --rm web bash -lc 'npm run smoke:product-ui-editor-binding'`
+- `docker compose run --rm web bash -lc 'npx tsc --noEmit --pretty false'`
+- `git diff --check`
 
 ## Latest continuation — Technical Explainer Slow Studio Preview
 

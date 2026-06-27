@@ -188,6 +188,11 @@ Current visual-quality direction:
   `technical-explainer` with controlled `public` or `route` image asset
   descriptors, deterministic missing-asset fallback rendering, and export-time
   route source rewriting while broader media-layer work remains deferred.
+- Phase 5.1 lands the bounded product screenshot upload-and-bind loop for
+  `technical-explainer/product-ui-zoom`: uploads stay client-side until binding,
+  generation requests do not receive screenshot descriptors, and full project
+  generation locally applies the latest uploaded screenshot to the first
+  unbound product-ui placeholder.
 - keep AI output bounded to registered template / recipe parameters; do not use
   unrestricted generated TSX as the normal path
 - avoid broad visual-review scoring or automatic screenshot repair as the next
@@ -278,7 +283,7 @@ Current code checkpoint:
   export smoke
 - not implemented yet: persistence/history and broad media-layer editing
 
-Best next bounded slice:
+Current bounded direction and guardrails:
 - keep `VideoProject` as the preview/edit/export boundary
 - use `StoryboardPlan` as the planner-stage contract
 - continue from `VideoSegment.narration` as the target home for generated
@@ -289,6 +294,9 @@ Best next bounded slice:
   when Docker can see an NVIDIA driver
 - Phase 5 v1 is landed as one asset-aware recipe inside the owning template;
   broader media-layer work remains deferred
+- Phase 5.1 is complete for the bounded recipe-owned loop: upload one product screenshot before
+  generation or inside a `product-ui-zoom` section, bind it to that recipe, and
+  keep preview/export on the same controlled reference
 - avoid persistence/history, broad media-library UI, generic media-layer
   compositing, and multi-template-per-segment orchestration unless explicitly
   reopened
@@ -355,7 +363,10 @@ Then open:
 
 For visual-recipe inspection, open `TechnicalExplainerTemplatePreview`. It uses
 a slower Studio-only fixture so each recipe holds for about five seconds; the
-Phase 5 `product-ui-zoom` section starts around frame 300.
+Phase 5 `product-ui-zoom` section starts around frame 300. The bounded product
+screenshot upload-and-bind loop is now available through the app generation
+panel and the segment editor; it remains recipe-owned rather than a media
+library.
 
 Preview the local Remotion primitive catalog in the app:
 - http://localhost:3000/primitives

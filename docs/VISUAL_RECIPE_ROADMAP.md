@@ -331,7 +331,7 @@ Deliver:
 Still deferred:
 - broad media library UI
 - arbitrary remote asset URLs
-- upload/storage APIs
+- general upload/storage APIs beyond the bounded product-ui screenshot route
 - project-level image/video media layers
 - visual-review scoring or screenshot repair
 
@@ -340,6 +340,49 @@ Acceptance:
 - assets are referenced through controlled fields, not arbitrary remote URLs
 - preview and export resolve the same asset data
 - missing assets produce a useful fallback frame, not a broken render
+
+### Phase 5.1: Product Screenshot Upload-Bind Loop
+
+Status: complete for the bounded client loop; user manual QA confirmed the flow.
+
+Goal: keep `product-ui-zoom` useful by making one product screenshot easy to
+upload and bind, without turning the feature into a media library.
+
+Deliver:
+
+- one screenshot upload entry point for the `product-ui-zoom` recipe
+- pre-generation uploads remain a client-side pool and are not sent to
+  `/api/generate/staged`
+- after full project generation, the latest uploaded screenshot is
+  deterministically bound to the first unbound `product-ui-zoom` placeholder
+- a single controlled bind step that attaches the uploaded screenshot to the
+  recipe
+- structured segment-editor controls to upload, replace, choose from the current
+  upload pool, or unbind a section asset
+- preview/export reading the same bound screenshot reference
+- a stable local fixture path such as `public/product-ui-upload-smoke.png` if a
+  concrete image is needed for later QA
+- generic `ProjectVideo` remains the preview/export composition boundary for
+  edited projects
+
+Still deferred:
+
+- broad media library UI
+- arbitrary remote asset URLs
+- project-level image/video media layers
+- general asset browsing, tagging, or collection management
+- visual-review scoring or screenshot repair
+
+Acceptance:
+
+- the flow stays recipe-owned and bounded to `technical-explainer/product-ui-zoom`
+- generation request payloads do not include uploaded product screenshot
+  descriptors
+- a user who uploads before generation sees the generated `product-ui-zoom`
+  section use that latest uploaded screenshot without manually editing JSON
+- upload and bind are enough to make the recipe useful for real product
+  screenshots
+- the feature does not become a general-purpose media library
 
 ## 6. First Implementation Slice
 
