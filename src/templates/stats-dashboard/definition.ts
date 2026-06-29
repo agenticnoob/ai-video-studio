@@ -208,6 +208,27 @@ export const statsDashboardTemplate = defineTemplate({
       "Show one KPI, reveal a line trend, then finish with a split summary",
       "Compare campaign channels in a bar chart beside a KPI block",
       "Show category share with a donut chart plus one insight block",
+      "Rank betting markets by no-vig probability, expected value, and risk",
+    ],
+    recipes: [
+      {
+        recipeId: "odds-ev-ranking",
+        label: "Odds EV ranking",
+        bestFor: [
+          "odds comparison",
+          "expected value ranking",
+          "no-vig probability analysis",
+          "risk-aware betting market recap",
+        ],
+        avoidCases: [
+          "non-numeric sports commentary",
+          "single emotional prediction",
+          "analysis without odds, probability, or ranking data",
+        ],
+        requiredInputsSummary:
+          "compact market labels, odds or implied probabilities, expected value values, risk notes, and ranking takeaway",
+        durationFit: "Works well for a concise 5-12 second data-analysis segment.",
+      },
     ],
   },
   implementationSchema: statsDashboardSpecSchema,
@@ -243,7 +264,17 @@ Block types:
 Timeline steps:
   { from, durationInFrames, blockIds, layout? }
 Use timeline only when the data story should reveal blocks over time. Every blockId must match a block.id.
-For chart blocks, each series.values length should match categories length. Keep data realistic and compact.`,
+For chart blocks, each series.values length should match categories length. Keep data realistic and compact.
+
+Planner recipe guidance:
+  - If segment.recipeHints includes "odds-ev-ranking", express the analysis with existing blocks:
+    1) a kpi block for the best expected value or top-ranked market,
+    2) a bar-chart block comparing non-negative EV edge, no-vig probability, implied probability, or risk score across 3-5 markets,
+    3) an insight block that states the risk caveat or ranking conclusion,
+    4) optional timeline steps that reveal source odds, formula/result, then final ranking.
+  - Use concise labels such as EV edge, no-vig probability, implied probability, risk, or ranking.
+  - Bar and line chart values should be non-negative; describe negative EV or avoid cases in insight text rather than as negative chart values.
+  - Never present betting output as guaranteed advice; include uncertainty or source-note language in footerNote or insight text.`,
   revisionPrompt: `Stats dashboard implementation schema:
 - implementation.meta: { title, fps=30, width=1280, height=720 }
 - implementation.theme: { background, panel, primary, secondary, text, muted }

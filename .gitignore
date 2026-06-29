@@ -47,6 +47,10 @@ __pycache__/
 models/f5-tts/
 voices/f5-tts/
 
+# Locally generated Remotion static assets. Regenerate with the matching
+# `npm run generate:*` command while the web service is up.
+public/generated/
+
 # AppleDouble (macOS SMB access artifact)
 ._*
 

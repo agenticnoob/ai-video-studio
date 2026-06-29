@@ -126,7 +126,7 @@ Current modeling direction:
   - `technical-explainer`: `TechnicalExplainerSpec` with bounded recipe
     sections for hero title, terminal session, workflow map, metric cards,
     timeline progress, code diff, before/after comparison, decision matrix,
-    architecture layers, and product UI zoom
+    architecture layers, screenshot evidence flow, and product UI zoom
 - `VideoSpec.scenes` is specific to the current `scripted` template, not a universal field for all future templates
 - generated narration audio should be carried outside template-specific
   `implementation` fields; the target home is segment-owned
@@ -193,6 +193,35 @@ Current visual-quality direction:
   generation requests do not receive screenshot descriptors, and full project
   generation locally applies the latest uploaded screenshot to the first
   unbound product-ui placeholder.
+- Main-site recipe abstractions now extract the useful visual language from the
+  two standalone samples back into generated `VideoProject` output:
+  `technical-explainer/screenshot-evidence-flow` lets the planner choose a
+  screenshot-backed evidence/process treatment, and
+  `stats-dashboard/odds-ev-ranking` lets the planner choose a compact odds,
+  no-vig probability, expected value, and risk-ranking data story. These recipes
+  are exposed through the planner manifest and `recipeHints`, so they affect
+  normal `/api/generate/staged` generation rather than duplicate standalone
+  videos.
+- The current sample-first checkpoint adds
+  `PixelRAGChineseStandalonePreview`, a Chinese standalone Remotion video for
+  [StarTrail-org/PixelRAG](https://github.com/StarTrail-org/PixelRAG). It
+  generates F5-TTS first, writes the audio into Remotion-readable static assets,
+  uses real GitHub screenshots, keeps the main screenshot/card/page/index
+  content in foreground 3D motion, and renders through a custom composition
+  rather than existing templates.
+- The latest finished-video-first sample adds `WorldCupBettingAnalysis`, a
+  standalone 1080x1920 / about 69.6s / 30fps Remotion composition for a世界杯竞彩
+  EV analysis short. It keeps data in a local module, uses 8 generated Chinese
+  F5-TTS voiceover files from `public/generated/world-cup-betting-analysis/`,
+  redraws the odds table when no screenshot asset is present, and is intended
+  as a concrete source for later data-analysis template extraction.
+- Finished-video-first samples share the categorized
+  `src/remotion/standalone-video/` runtime for timing, static voiceover,
+  captions, and canvas profiles. This is a reusable production skeleton, not a
+  universal visual template: PixelRAG remains `landscape-16x9` /
+  `project-intro`, while WorldCup remains `portrait-9x16` / `data-analysis`.
+  The product path for better generated videos is still planner-visible
+  templates and recipes in the main `VideoProject` flow.
 - keep AI output bounded to registered template / recipe parameters; do not use
   unrestricted generated TSX as the normal path
 - avoid broad visual-review scoring or automatic screenshot repair as the next
@@ -297,6 +326,9 @@ Current bounded direction and guardrails:
 - Phase 5.1 is complete for the bounded recipe-owned loop: upload one product screenshot before
   generation or inside a `product-ui-zoom` section, bind it to that recipe, and
   keep preview/export on the same controlled reference
+- the current visual-quality path is main-site recipe-first: use standalone
+  samples as reference artifacts, then promote reusable visual language into
+  planner-visible templates and `recipeHints`
 - avoid persistence/history, broad media-library UI, generic media-layer
   compositing, and multi-template-per-segment orchestration unless explicitly
   reopened
@@ -363,10 +395,25 @@ Then open:
 
 For visual-recipe inspection, open `TechnicalExplainerTemplatePreview`. It uses
 a slower Studio-only fixture so each recipe holds for about five seconds; the
-Phase 5 `product-ui-zoom` section starts around frame 300. The bounded product
-screenshot upload-and-bind loop is now available through the app generation
-panel and the segment editor; it remains recipe-owned rather than a media
-library.
+sample-derived `screenshot-evidence-flow` section starts around frame 300, and
+the Phase 5 `product-ui-zoom` section starts around frame 450. The bounded
+product screenshot upload-and-bind loop is now available through the app
+generation panel and the segment editor; it remains recipe-owned rather than a
+media library.
+
+For the current real sample, open `PixelRAGChineseStandalonePreview`. It is a
+12-scene Chinese PixelRAG intro whose duration comes from generated F5-TTS
+narration, currently about 46 seconds after short scene overlaps. It uses real
+GitHub project screenshots plus varied foreground 3D entry/exit motion for
+cards, sliced pages, visual vectors, index stacks, and answer panels. It is a
+standalone Remotion composition and does not use `ProjectVideo`,
+`technical-explainer`, or the registered template renderer.
+
+For the current data-analysis short sample, open `WorldCupBettingAnalysis`.
+It is a standalone 9:16世界杯竞彩 analysis video built from structured local
+match data, generated Chinese F5-TTS voiceover, and code-drawn visuals. It
+does not require screenshot assets; when `public/assets/jingcai-odds.png` is
+absent, the source scene redraws a compact odds table.
 
 Preview the local Remotion primitive catalog in the app:
 - http://localhost:3000/primitives
@@ -385,6 +432,51 @@ List Remotion compositions and load the deterministic staged smoke fixtures:
 ```bash
 cd /data/projects/labs/ai-video-studio
 docker compose run --rm web npm run smoke:staged-fixtures
+```
+
+Regenerate the standalone Chinese PixelRAG sample from real F5-TTS assets. This
+command needs the Next `web` service running because it calls `POST /api/tts`:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose exec -T web bash -lc 'NEXT_ORIGIN=http://127.0.0.1:3000 npm run generate:pixelrag-chinese-standalone'
+```
+
+Validate the standalone PixelRAG sample contract without regenerating audio:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose run --rm web npm run smoke:pixelrag-chinese-standalone
+```
+
+Render the standalone PixelRAG sample:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose run --rm web bash -lc 'npx remotion render src/remotion/index.ts PixelRAGChineseStandalonePreview /workspace/out/pixelrag-chinese-standalone-v3.mp4'
+```
+
+Validate the standalone WorldCup betting analysis sample:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose run --rm web npm run smoke:world-cup-betting-analysis
+```
+
+Validate the shared standalone finished-video runtime:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose run --rm web npm run smoke:standalone-video-runtime
+```
+
+Regenerate the standalone WorldCup betting analysis voiceover from local TTS.
+This command needs the Next `web` service running because it calls
+`POST /api/tts`:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose exec -T web bash -lc 'NEXT_ORIGIN=http://127.0.0.1:3000 npm run generate:world-cup-betting-analysis'
+```
+
+Render the standalone WorldCup betting analysis sample:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose run --rm web bash -lc 'npx remotion render src/remotion/index.ts WorldCupBettingAnalysis /workspace/out/world-cup-betting-analysis.mp4'
 ```
 
 Validate the recipe showcase preview registration:

@@ -384,40 +384,216 @@ Acceptance:
   screenshots
 - the feature does not become a general-purpose media library
 
+### Phase 5.2: Standalone Real Open Source Intro Sample
+
+Status: implemented for the first Chinese standalone sample,
+`PixelRAGChineseStandalonePreview`.
+
+Goal: validate the practical workflow the user will actually use: pick one real
+open-source project, generate narration with TTS, let that narration own timing,
+compose the video with a dedicated Remotion component, then extract reusable
+helpers from the finished artifact.
+
+Deliver:
+
+- 12 short Chinese narration beats for
+  [StarTrail-org/PixelRAG](https://github.com/StarTrail-org/PixelRAG), generated
+  through strict per-beat `StoryboardPlan` / `POST /api/tts` calls
+- Chinese `POST /api/tts` narration assets generated before final video assembly
+- static Remotion audio files under `public/generated/pixelrag-chinese-standalone/`
+- static GitHub repo/README screenshots under
+  `public/generated/pixelrag-chinese-standalone/`
+- scene durations derived from generated F5-TTS
+- a registered Remotion composition, `PixelRAGChineseStandalonePreview`
+- a custom TSX renderer under `src/remotion/PixelRAGChineseStandalone/`
+  instead of `ProjectVideo` or existing templates
+- frame-driven Remotion ThreeCanvas visuals plus foreground 3D motion for the
+  main screenshot cards, sliced pages, vector cubes, index stacks, and answer
+  panels
+- overlapping short scenes with varied entry/exit styles and no hard cuts
+- a scriptable regeneration path:
+  `NEXT_ORIGIN=http://127.0.0.1:3000 npm run generate:pixelrag-chinese-standalone`
+- a smoke guard for the sample contract:
+  `npm run smoke:pixelrag-chinese-standalone`
+- verified local export through Remotion render for the standalone composition
+
+Still deferred:
+
+- automatic repo/source ingestion into the product UI
+- generic open-source-project video generation for arbitrary repos
+- broad media library UI or project-level image/video layers
+- generated TSX or arbitrary Remotion code from providers
+- a new top-level video grammar before more real samples prove the shape
+
+Acceptance:
+
+- the generated mp4 uses real TTS audio and aligned captions
+- composition timing is derived from generated narration durations, with short
+  overlap between scenes for faster pacing
+- Remotion Studio preview loads real static audio without route-media errors
+- visible scenes include real GitHub screenshots, foreground 3D content motion,
+  and nonblank 3D visuals
+- the renderer does not depend on `VideoProject`, `ProjectVideo`, or
+  `technical-explainer`
+- preview/export use the standalone `PixelRAGChineseStandalonePreview`
+  composition, not the registered template renderer
+- the sample is useful as a concrete basis for extracting a reusable
+  LLM-plus-Remotion video workflow
+
+### Phase 5.3: Standalone Data Analysis Short Sample
+
+Status: implemented for the first sports-data EV analysis sample,
+`WorldCupBettingAnalysis`.
+
+Goal: validate the sample-first path for a data-heavy vertical short before
+promoting anything into the template registry. The target is a finished,
+renderable video that can later be mined for reusable data-analysis blocks.
+
+Deliver:
+
+- a registered standalone Remotion composition, `WorldCupBettingAnalysis`
+- 1080x1920 vertical canvas, `2089` frames / about `69.63` seconds at 30fps
+- an 8-scene structure covering title, data source, EV formula, Brazil/Japan,
+  Germany/Paraguay, Netherlands/Morocco, rankings, and disclaimer
+- 8 generated Chinese F5-TTS voiceover files under
+  `public/generated/world-cup-betting-analysis/`
+- local structured data under `src/remotion/WorldCupBettingAnalysis/data.ts`
+  for odds, average odds, no-vig probabilities, EV values, model/context
+  notes, rankings, and disclaimer copy
+- a custom renderer under `src/remotion/WorldCupBettingAnalysis/` using
+  Remotion `Sequence`, `interpolate`, and `spring`
+- football tactics-board SVG lines, code-redrawn odds table, EV bars,
+  probability bars, ranking columns, and fixed bottom subtitles
+- no dependency on current registered templates or generated TSX
+- a scriptable voiceover regeneration path:
+  `NEXT_ORIGIN=http://127.0.0.1:3000 npm run generate:world-cup-betting-analysis`
+- a smoke guard: `npm run smoke:world-cup-betting-analysis`
+
+Still deferred:
+
+- adding this as a provider-visible registered template
+- converting the visuals into reusable primitives or blocks
+- screenshot ingestion for real竞彩 source images
+- betting-product flows, wagering UX, or any recommendation workflow
+
+Acceptance:
+
+- the video renders in Remotion Studio and CLI without affecting existing
+  compositions
+- generated static voiceover audio plays from the Remotion composition without
+  route-media dependencies
+- all supplied match data and EV values remain accurate
+- the final screen explicitly states `理性分析，不构成投注建议`
+- if `public/assets/jingcai-odds.png` is absent, the video still works by
+  redrawing a simplified odds table in code
+- motion stays frame-driven; no CSS animation or transition rules are used for
+  render-critical timing
+
+### Phase 5.4: Standalone Finished-Video Runtime v1
+
+Status: implemented for the two current standalone samples.
+
+Goal: extract the repeatable finished-video production skeleton from the
+PixelRAG and WorldCup samples while preserving their different aspect ratios
+and visual languages.
+
+Deliver:
+
+- shared runtime source under `src/remotion/standalone-video/`
+- canvas profiles for `landscape-16x9` (`1280x720`) and `portrait-9x16`
+  (`1080x1920`)
+- content-family tags for `project-intro`, `data-analysis`, `tutorial`, and
+  `trend-briefing`
+- reusable scene start-frame helpers, optional overlap timing, duration
+  calculation, active-caption lookup, static-file voiceover rendering, bottom
+  captions, and generic Remotion `Sequence` timeline rendering
+- `PixelRAGChineseStandalonePreview` categorized as `landscape-16x9` /
+  `project-intro`
+- `WorldCupBettingAnalysis` categorized as `portrait-9x16` / `data-analysis`
+- smoke guard: `npm run smoke:standalone-video-runtime`
+
+Still deferred:
+
+- a universal visual template that attempts to render every content family
+- provider-visible generation for arbitrary standalone samples
+- converting WorldCup or PixelRAG visuals into registered product templates
+- media-library, persistence, or generated TSX expansion
+
+Acceptance:
+
+- profile and content-family choices are explicit data, not inferred from
+  dimensions alone
+- common timing/audio/caption behavior is shared
+- sample-specific visuals stay in their own composition folders
+- both standalone sample smokes continue to pass
+
+### Phase 5.5: Main-Site Sample-Derived Recipe Abstractions
+
+Status: implemented for the first two sample-derived main-site recipes.
+
+Goal: turn the useful visual language from finished standalone samples back
+into planner-visible registered templates so normal site generation produces
+better `VideoProject` output.
+
+Deliver:
+
+- `technical-explainer/screenshot-evidence-flow`, inspired by the PixelRAG
+  screenshot/evidence/process scenes
+- bounded section schema for controlled `public | route` screenshot material,
+  3-5 evidence cards, active evidence highlighting, callouts, and useful
+  fallback rendering
+- `stats-dashboard/odds-ev-ranking`, inspired by the WorldCup odds/EV/risk
+  analysis scenes
+- planner metadata and compiler guidance for odds, no-vig probability,
+  expected value, risk notes, and compact ranking stories using existing
+  dashboard blocks
+- deterministic fixture coverage and a focused smoke guard:
+  `npm run smoke:main-site-recipe-abstractions`
+
+Acceptance:
+
+- both recipes appear in `buildPlannerRecipeManifest()`
+- matching `StoryboardPlan.segments[].recipeHints[]` validate for their
+  owning templates and fail on the wrong template
+- the selected-template compiler prompt payload includes both `recipeHints` and
+  `plannerRecipes`
+- `TechnicalExplainerTemplatePreview` can visually inspect the evidence-flow
+  section
+- `StatsDashboardTemplatePreview` can render an EV/risk ranking style dashboard
+- preview/export still use the main `ProjectVideo` path for generated projects
+
 ## 6. First Implementation Slice
 
-Recommended next implementation after this roadmap:
+Recommended next implementation after the sample-derived main-site extraction:
 
 ```txt
-Recipe Runtime Primitives
+Main-Site Recipe Coverage v2
 ```
 
 Why:
 
-- the visual baseline now exists as `RecipeShowcasePreview`
-- the next useful work is extracting reusable motion, grouped blocks, and
-  duration-aware timing helpers from that showcase
-- live provider prompts should still wait until the recipe internals are
-  reusable inside real templates
+- the product goal is better generated videos from the main site, not repeated
+  standalone sample production
+- PixelRAG and WorldCup are now useful as reference artifacts whose visual
+  language can be promoted into planner-visible templates/recipes
+- aspect-ratio differences do not require one universal runtime; main-site
+  recipes should first improve the existing `VideoProject` flow
 
 Minimum scope:
 
-- keep the existing `RecipeShowcasePreview` behavior intact
-- extract one or two reusable blocks first, such as terminal session and metric
-  cards
-- add targeted tests or smoke coverage before moving those blocks into a real
-  template
-- preserve existing `scripted`, `spotlight`, and `stats-dashboard` preview
-  compositions
+- add one or two planner-visible recipes or template refinements at a time
+- keep `recipeHints` optional and template-owned
+- preserve existing `ProjectVideo` preview/export behavior
+- keep standalone sample compositions registered as reference/evidence only
 
 Do not include:
 
-- live provider changes
 - new API routes
 - visual scoring
 - automatic repair
 - persistent storage
 - media library
+- provider-visible arbitrary media ingestion
 
 ## 7. Validation
 

@@ -23,6 +23,7 @@ const requiredRecipeIds = [
   "before-after-compare",
   "decision-matrix",
   "architecture-layer-stack",
+  "screenshot-evidence-flow",
   "product-ui-zoom",
 ];
 

@@ -31,6 +31,28 @@ const basePlan = {
           recipeId: "product-ui-zoom",
           reason: "The segment can focus attention on a controlled product UI surface.",
         },
+        {
+          recipeId: "screenshot-evidence-flow",
+          reason: "The segment can explain a screenshot-backed evidence flow.",
+        },
+      ],
+    },
+    {
+      id: "segment-2",
+      order: 2,
+      title: "EV ranking",
+      purpose: "Rank market opportunities by expected value.",
+      templateId: "stats-dashboard",
+      templateReason: "The dashboard template supports compact data rankings.",
+      narration: {
+        text: "The strongest opportunity is the market with positive expected value after no-vig adjustment.",
+      },
+      visualBrief: "Show odds, no-vig probability, expected value, and risk ranking.",
+      recipeHints: [
+        {
+          recipeId: "odds-ev-ranking",
+          reason: "The segment compares odds, no-vig probability, EV, and risk.",
+        },
       ],
     },
   ],
@@ -40,8 +62,11 @@ const parse = (value) => parseStoryboardPlanToolCallArguments(JSON.stringify(val
 const clone = (value) => JSON.parse(JSON.stringify(value));
 
 const validPlan = parse(basePlan);
-if (validPlan.segments[0].recipeHints?.length !== 3) {
+if (validPlan.segments[0].recipeHints?.length !== 4) {
   throw new Error("Expected valid recipe hints to survive storyboard parsing.");
+}
+if (validPlan.segments[1].recipeHints?.[0]?.recipeId !== "odds-ev-ranking") {
+  throw new Error("Expected stats-dashboard recipe hint to survive storyboard parsing.");
 }
 
 const invalidRecipeId = clone(basePlan);

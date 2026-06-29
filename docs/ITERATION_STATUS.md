@@ -1,6 +1,163 @@
 # Iteration Status
 
-Last updated: Phase 5.1 Product Screenshot Upload Loop Complete
+Last updated: Main-Site Recipe Abstractions v1
+
+## Latest continuation — Main-Site Recipe Abstractions v1
+
+- Corrected the latest visual-quality direction back to the main site
+  generation path: `brief -> StoryboardPlan.recipeHints -> selected-template
+  compiler -> VideoProject -> ProjectVideo` preview/export.
+- Added `technical-explainer/screenshot-evidence-flow`, inspired by the
+  PixelRAG sample's screenshot/evidence/process language, as a planner-visible
+  recipe with controlled `public | route` screenshot input, 3-5 evidence cards,
+  active evidence highlighting, callouts, and missing-asset fallback rendering.
+- Added `stats-dashboard/odds-ev-ranking`, inspired by the WorldCup data
+  analysis sample, as a planner-visible recipe for odds, no-vig probability,
+  expected value, risk notes, and compact ranking stories using existing
+  dashboard KPI/chart/insight/timeline blocks.
+- Added `npm run smoke:main-site-recipe-abstractions` to guard the actual main
+  path: planner recipe manifest publication, storyboard `recipeHints`
+  validation, selected-template compiler prompt payloads, and runtime/source
+  hooks.
+- Updated deterministic fixtures so `TechnicalExplainerTemplatePreview` now
+  includes the screenshot evidence flow, while `StatsDashboardTemplatePreview`
+  renders an EV/risk ranking style data story.
+- The standalone sample runtime remains useful as sample infrastructure, but
+  it is not the product answer for main-site generation quality.
+
+Validation performed:
+- `docker compose run --rm web bash -lc 'npm run smoke:main-site-recipe-abstractions'`
+- `docker compose run --rm web bash -lc 'npm run smoke:main-site-recipe-abstractions && npm run smoke:planner-recipe-manifest && npm run smoke:storyboard-recipe-hints && npm run smoke:technical-explainer-template && npm run smoke:staged-fixtures'`
+
+## Latest continuation — Standalone Video Runtime v1
+
+- Extracted a shared `src/remotion/standalone-video/` runtime for
+  finished-video-first samples without turning the two samples into one visual
+  template.
+- The runtime now owns ratio-aware canvas profiles and content-family tags:
+  `landscape-16x9` / `project-intro` for
+  `PixelRAGChineseStandalonePreview`, and `portrait-9x16` / `data-analysis`
+  for `WorldCupBettingAnalysis`.
+- Shared code now covers scene start-frame calculation, optional scene overlap,
+  safe duration calculation, active caption lookup, Remotion `Sequence`
+  timeline rendering, static-file voiceover playback, and bottom subtitles.
+- PixelRAG keeps its project-intro-specific GitHub screenshots, foreground 3D
+  cards, sliced pages, vector/index visuals, and 8-frame scene overlap, but now
+  uses the shared standalone timeline, voiceover, and caption runtime.
+- WorldCup keeps its vertical data-analysis renderer, match/odds/EV data,
+  formula screens, pitch lines, rankings, and disclaimer, but now uses the
+  shared standalone timeline and voiceover runtime.
+- Added `npm run smoke:standalone-video-runtime` to guard the generic runtime
+  contract and updated the two sample smokes to assert their profile/family
+  categories.
+
+Validation performed:
+- `docker compose run --rm web bash -lc 'npm run smoke:standalone-video-runtime'`
+- `docker compose run --rm web bash -lc 'npm run smoke:standalone-video-runtime && npm run smoke:pixelrag-chinese-standalone'`
+- `docker compose run --rm web bash -lc 'npm run smoke:standalone-video-runtime && npm run smoke:world-cup-betting-analysis'`
+
+## Latest continuation — WorldCupBettingAnalysis Standalone Sample
+
+- Added `WorldCupBettingAnalysis` as a fully standalone 9:16 Remotion
+  composition for the finished-video-first workflow.
+- The video is 1080x1920, `2089` frames / about `69.63` seconds at 30fps, and
+  uses the requested 8-scene structure: title, source table, EV formula, three
+  match analyses, ranking, and disclaimer.
+- Generated 8 Chinese F5-TTS voiceover files through `POST /api/tts`, wrote
+  them into Remotion-readable static assets under
+  `public/generated/world-cup-betting-analysis/`, and plays them with a subtle
+  `1.1x` playback rate so all narration fits inside the 60-70 second target.
+- Kept the visual direction separate from existing templates: dark data
+  terminal, football tactics-board SVG lines, restrained risk colors, red EV
+  warnings, and fixed bottom subtitles.
+- Stored all match odds, no-vig probabilities, EV values, rankings, and
+  disclaimer copy in `src/remotion/WorldCupBettingAnalysis/data.ts` so future
+  reusable data-analysis templates can be extracted from a real sample.
+- No竞彩 screenshot asset was present under `public/assets/jingcai-odds.png` or
+  nearby public asset paths, so the source scene redraws a simplified odds
+  table in code.
+- Registered the composition in `src/remotion/Root.tsx` without changing
+  existing compositions.
+- Added `npm run smoke:world-cup-betting-analysis` to guard composition
+  metadata, generated static voiceover files, scene timing, key data values,
+  Root registration, frame-driven Remotion motion, SVG pitch lines, odds-table
+  redraw, and final disclaimer.
+
+Validation performed:
+- `docker compose exec -T web bash -lc 'NEXT_ORIGIN=http://127.0.0.1:3000 npm run generate:world-cup-betting-analysis'`
+- `docker compose run --rm web bash -lc 'npm run smoke:world-cup-betting-analysis'`
+- `docker compose run --rm web bash -lc 'npx tsc --noEmit --pretty false'`
+- `docker compose run --rm web bash -lc 'npm run lint'`
+- `docker compose run --rm web bash -lc 'mkdir -p /workspace/out && for frame in 30 170 360 570 900 1230 1580 1840; do npx remotion still src/remotion/index.ts WorldCupBettingAnalysis /workspace/out/world-cup-betting-analysis-frame-${frame}.png --frame=${frame} --scale=0.4; done'`
+
+Generated review artifacts:
+- stills: `out/world-cup-betting-analysis-frame-30.png`,
+  `out/world-cup-betting-analysis-frame-170.png`,
+  `out/world-cup-betting-analysis-frame-360.png`,
+  `out/world-cup-betting-analysis-frame-570.png`,
+  `out/world-cup-betting-analysis-frame-900.png`,
+  `out/world-cup-betting-analysis-frame-1230.png`,
+  `out/world-cup-betting-analysis-frame-1580.png`,
+  `out/world-cup-betting-analysis-frame-1840.png`
+
+## Latest continuation — PixelRAG Chinese Standalone V3 Foreground 3D
+
+- Superseded the earlier `PixelRAGOpenSourceIntroPreview` attempt because it
+  reused the existing `ProjectVideo` / `technical-explainer` template path.
+- Added `PixelRAGChineseStandalonePreview` as a fully standalone Remotion
+  composition. It does not use `VideoProject`, `ProjectVideo`, registered
+  templates, or `technical-explainer` recipes for rendering.
+- Rebuilt the sample as a quicker Chinese-first open-source project intro for
+  [StarTrail-org/PixelRAG](https://github.com/StarTrail-org/PixelRAG), with
+  real GitHub repo/README screenshots and frame-driven foreground 3D motion for
+  the main cards, screenshots, sliced pages, visual vectors, index stacks, and
+  answer panels.
+- Replaced the earlier long four-scene pacing with 12 short narration beats.
+  Each screen stays intentionally scannable, scenes overlap by 8 frames, and
+  the foreground content uses varied entry/exit styles instead of one repeated
+  motion or hard cuts.
+- Generated 12 Chinese F5-TTS narration files through `POST /api/tts`, then
+  wrote them into Remotion-readable static assets under
+  `public/generated/pixelrag-chinese-standalone/`.
+- The generated data lives in
+  `src/remotion/PixelRAGChineseStandalone/data.generated.ts`; the standalone
+  composition now lists as `1389` frames / `46.30` seconds at `30fps`.
+- Locked the new boundary with `npm run smoke:pixelrag-chinese-standalone`: it
+  asserts Chinese narration, at least 10 short scenes, static audio/screenshot
+  assets, captions, varied foreground 3D styles, real screenshots, primitives,
+  ThreeCanvas usage, overlapping scene fades, and no dependency on the previous
+  PixelRAG template-based composition.
+
+Validation performed:
+- `docker compose exec -T web bash -lc 'NEXT_ORIGIN=http://127.0.0.1:3000 npm run generate:pixelrag-chinese-standalone'`
+- `docker compose run --rm web bash -lc 'npm run smoke:pixelrag-chinese-standalone'`
+- `docker compose run --rm web bash -lc 'npm run smoke:staged-fixtures'`
+- `docker compose run --rm web bash -lc 'npx tsc --noEmit --pretty false'`
+- `docker compose run --rm web bash -lc 'npm run lint'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts PixelRAGChineseStandalonePreview /workspace/out/pixelrag-v3-frame-20.png --frame=20 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts PixelRAGChineseStandalonePreview /workspace/out/pixelrag-v3-frame-230.png --frame=230 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts PixelRAGChineseStandalonePreview /workspace/out/pixelrag-v3-frame-560.png --frame=560 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts PixelRAGChineseStandalonePreview /workspace/out/pixelrag-v3-frame-760.png --frame=760 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts PixelRAGChineseStandalonePreview /workspace/out/pixelrag-v3-frame-1040.png --frame=1040 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts PixelRAGChineseStandalonePreview /workspace/out/pixelrag-v3-frame-1320.png --frame=1320 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion render src/remotion/index.ts PixelRAGChineseStandalonePreview /workspace/out/pixelrag-chinese-standalone-v3.mp4'`
+- `docker compose run --rm web bash -lc 'ffprobe -v error -show_entries stream=codec_type,codec_name -show_entries format=duration,size -of default=noprint_wrappers=1 /workspace/out/pixelrag-chinese-standalone-v3.mp4'`
+- Playwright Studio check on `http://127.0.0.1:3001/PixelRAGChineseStandalonePreview`:
+  preview loads, play starts, console has no errors, static WAV assets load
+  through Remotion Studio range requests, and the visible scene shows the real
+  GitHub screenshot with Chinese captions and foreground 3D content motion.
+- `docker compose run --rm web bash -lc 'npm run build'`
+- `git diff --check`
+
+Generated review artifacts:
+- stills: `out/pixelrag-v3-frame-20.png`,
+  `out/pixelrag-v3-frame-230.png`, `out/pixelrag-v3-frame-560.png`,
+  `out/pixelrag-v3-frame-760.png`, `out/pixelrag-v3-frame-1040.png`,
+  `out/pixelrag-v3-frame-1320.png`
+- mp4: `out/pixelrag-chinese-standalone-v3.mp4`
+- Playwright screenshots:
+  `output/playwright/pixelrag-v3-desktop-visual-check.png`,
+  `output/playwright/pixelrag-v3-mobile-visual-check.png`
 
 ## Latest continuation — Phase 5.1 Product Screenshot Upload Loop Complete
 

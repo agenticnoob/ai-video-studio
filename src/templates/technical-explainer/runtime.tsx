@@ -17,6 +17,7 @@ import {
   HeroTitleRevealScene,
   MetricCountupScene,
   ProductUiZoomScene,
+  ScreenshotEvidenceFlowScene,
   TerminalBuildRunScene,
   TimelineProgressScene,
   WorkflowNodeMapScene,
@@ -56,7 +57,8 @@ const getMotionForSection = (section: TechnicalExplainerSection): RecipeSceneTra
   if (
     section.recipeId === "terminal-build-run" ||
     section.recipeId === "metric-countup" ||
-    section.recipeId === "code-diff-highlight"
+    section.recipeId === "code-diff-highlight" ||
+    section.recipeId === "screenshot-evidence-flow"
   ) {
     return "fly-through";
   }
@@ -136,6 +138,14 @@ const SectionScene: FC<{
     case "architecture-layer-stack":
       return (
         <ArchitectureLayerStackScene
+          durationInFrames={durationInFrames}
+          section={section}
+          theme={spec.theme}
+        />
+      );
+    case "screenshot-evidence-flow":
+      return (
+        <ScreenshotEvidenceFlowScene
           durationInFrames={durationInFrames}
           section={section}
           theme={spec.theme}

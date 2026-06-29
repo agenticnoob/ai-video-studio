@@ -58,6 +58,7 @@ const requiredRecipeIds = [
   "before-after-compare",
   "decision-matrix",
   "architecture-layer-stack",
+  "screenshot-evidence-flow",
   "product-ui-zoom",
 ];
 
@@ -95,6 +96,7 @@ assertIncludes(sceneSource, "CodeDiffHighlightScene", "technical explainer scene
 assertIncludes(sceneSource, "BeforeAfterCompareScene", "technical explainer scene renderers");
 assertIncludes(sceneSource, "DecisionMatrixScene", "technical explainer scene renderers");
 assertIncludes(sceneSource, "ArchitectureLayerStackScene", "technical explainer scene renderers");
+assertIncludes(sceneSource, "ScreenshotEvidenceFlowScene", "technical explainer scene renderers");
 assertIncludes(sceneSource, "ProductUiZoomScene", "technical explainer scene renderers");
 assertIncludes(sceneSource, "getRecipeBeatTiming", "technical explainer scene renderers");
 assertIncludes(rootSource, 'id="TechnicalExplainerTemplatePreview"', "Remotion root");
@@ -119,8 +121,10 @@ assertIncludes(fixtureSource, 'recipeId: "code-diff-highlight"', "staged smoke f
 assertIncludes(fixtureSource, 'recipeId: "before-after-compare"', "staged smoke fixtures");
 assertIncludes(fixtureSource, 'recipeId: "decision-matrix"', "staged smoke fixtures");
 assertIncludes(fixtureSource, 'recipeId: "architecture-layer-stack"', "staged smoke fixtures");
+assertIncludes(fixtureSource, 'recipeId: "screenshot-evidence-flow"', "staged smoke fixtures");
 assertIncludes(fixtureSource, 'recipeId: "product-ui-zoom"', "staged smoke fixtures");
 assertIncludes(fixtureSource, "phase5-ui-screenshot.svg", "staged smoke fixtures");
+assertIncludes(fixtureSource, "evidenceItems", "staged smoke fixtures");
 assertIncludes(fixtureSource, "fallbackSummary", "staged smoke fixtures");
 
 if (

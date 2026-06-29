@@ -14,6 +14,7 @@ export const technicalExplainerRecipeIds = [
   "before-after-compare",
   "decision-matrix",
   "architecture-layer-stack",
+  "screenshot-evidence-flow",
   "product-ui-zoom",
 ] as const;
 
@@ -163,6 +164,36 @@ const architectureLayerStackSectionSchema = sectionBaseSchema.extend({
   emphasis: z.string().trim().min(1).max(160).optional(),
 });
 
+const screenshotEvidenceAssetSchema = z
+  .object({
+    sourceType: z.enum(["public", "route"]),
+    src: z.string().trim().min(1).max(240).optional(),
+    alt: z.string().trim().min(1).max(160),
+    frameLabel: z.string().trim().min(1).max(80).optional(),
+  })
+  .strict();
+
+const screenshotEvidenceFlowSectionSchema = sectionBaseSchema.extend({
+  recipeId: z.literal("screenshot-evidence-flow"),
+  asset: screenshotEvidenceAssetSchema.optional(),
+  evidenceItems: z
+    .array(
+      z
+        .object({
+          id: z.string().trim().min(1).max(60),
+          label: z.string().trim().min(1).max(80),
+          detail: z.string().trim().min(1).max(120).optional(),
+          status: z.enum(["source", "extract", "index", "retrieve"]).optional(),
+        })
+        .strict(),
+    )
+    .min(3)
+    .max(5),
+  activeEvidenceId: z.string().trim().min(1).max(60).optional(),
+  callouts: z.array(z.string().trim().min(1).max(64)).min(1).max(3).optional(),
+  fallbackSummary: z.string().trim().min(1).max(220),
+});
+
 const productUiZoomAssetSchema = z
   .object({
     sourceType: z.enum(["public", "route"]),
@@ -199,6 +230,7 @@ export const technicalExplainerSectionSchema = z.discriminatedUnion("recipeId", 
   beforeAfterCompareSectionSchema,
   decisionMatrixSectionSchema,
   architectureLayerStackSectionSchema,
+  screenshotEvidenceFlowSectionSchema,
   productUiZoomSectionSchema,
 ]);
 

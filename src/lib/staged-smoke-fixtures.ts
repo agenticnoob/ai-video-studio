@@ -283,12 +283,12 @@ export const mixedTemplateSmokeFixtureSummary = {
 
 const statsDashboardSegment = videoSegmentSchema.parse({
   id: "segment-1",
-  title: "Dashboard recap",
-  intent: "Summarize a data-backed quarterly growth result.",
+  title: "Odds EV ranking",
+  intent: "Rank compact market opportunities by no-vig expected value and risk.",
   templateId: STATS_DASHBOARD_TEMPLATE_ID,
   implementation: {
     meta: {
-      title: "Dashboard recap",
+      title: "Odds EV ranking",
       fps: 30,
       width: 1280,
       height: 720,
@@ -303,77 +303,83 @@ const statsDashboardSegment = videoSegmentSchema.parse({
     },
     durationInFrames: 180,
     layout: "timeline",
-    kicker: "Quarterly KPI",
-    title: "Revenue momentum is compounding",
-    subtitle: "A sequenced dashboard can reveal KPI, trend, and share blocks inside one segment.",
+    kicker: "Market screen",
+    title: "Positive EV needs risk context",
+    subtitle: "The dashboard ranks markets by no-vig probability, expected value, and risk.",
     blocks: [
       {
-        id: "revenue-kpi",
+        id: "top-ev",
         type: "kpi",
-        title: "Primary signal",
-        value: "+42%",
-        label: "Revenue growth",
-        delta: "+11 pts vs last quarter",
+        title: "Top ranked market",
+        value: "+7.8%",
+        label: "Expected value",
+        delta: "No-vig edge: +4.1 pts",
         deltaDirection: "up",
       },
       {
-        id: "revenue-trend",
-        type: "line-chart",
-        title: "Revenue index",
+        id: "ev-ranking",
+        type: "bar-chart",
+        title: "EV ranking",
         chart: {
-          categories: ["Q1", "Q2", "Q3", "Q4"],
+          categories: ["Market A", "Market B", "Market C"],
           series: [
             {
-              name: "Revenue index",
-              values: [42, 58, 73, 96],
+              name: "Expected value",
+              values: [7.8, 2.4, 0.8],
               color: "#38bdf8",
             },
           ],
-          unit: "index",
-          maxValue: 100,
-          highlightIndex: 3,
+          unit: "%",
+          maxValue: 10,
+          highlightIndex: 0,
         },
       },
       {
-        id: "channel-mix",
-        type: "donut-chart",
-        title: "Channel mix",
-        centerValue: "52%",
-        centerLabel: "Paid search",
-        segments: [
-          { label: "Paid search", value: 52, color: "#38bdf8" },
-          { label: "Organic", value: 28, color: "#22c55e" },
-          { label: "Referral", value: 20, color: "#f59e0b" },
-        ],
+        id: "probability-gap",
+        type: "bar-chart",
+        title: "No-vig probability gap",
+        chart: {
+          categories: ["A", "B", "C"],
+          series: [
+            {
+              name: "No-vig minus implied",
+              values: [4.1, 1.5, -2.2],
+              color: "#f59e0b",
+            },
+          ],
+          unit: "pts",
+          maxValue: 5,
+          highlightIndex: 0,
+        },
       },
       {
-        id: "takeaway",
+        id: "risk-note",
         type: "insight",
-        title: "Takeaway",
-        text: "Mid-quarter campaign tuning lifted both revenue velocity and paid-search share.",
+        title: "Risk note",
+        text: "A small or negative EV market should be avoided; positive EV is still a signal, not a guarantee.",
       },
     ],
     timeline: [
       {
         from: 0,
         durationInFrames: 70,
-        blockIds: ["revenue-kpi"],
+        blockIds: ["top-ev"],
         layout: "single",
       },
       {
         from: 58,
         durationInFrames: 82,
-        blockIds: ["revenue-trend"],
+        blockIds: ["ev-ranking"],
         layout: "single",
       },
       {
         from: 132,
         durationInFrames: 48,
-        blockIds: ["revenue-kpi", "revenue-trend", "channel-mix", "takeaway"],
+        blockIds: ["top-ev", "ev-ranking", "probability-gap", "risk-note"],
         layout: "grid",
       },
     ],
-    footerNote: "Fixture data for deterministic template smoke.",
+    footerNote: "Fixture data for stats-dashboard/odds-ev-ranking; not betting advice.",
   },
 });
 
@@ -397,6 +403,34 @@ const assertStatsDashboardFixture = (): void => {
 };
 
 assertStatsDashboardFixture();
+
+export const statsDashboardStoryboardPlan: StoryboardPlan = storyboardPlanSchema.parse({
+  title: "Stats Dashboard EV Smoke",
+  brief: "Explain compact odds analysis with expected value and risk ranking.",
+  language: "en",
+  globalStyle: "Compact data analysis with clear risk language.",
+  segments: [
+    {
+      id: "segment-1",
+      order: 1,
+      title: "Odds EV ranking",
+      purpose: "Rank market opportunities by no-vig expected value and risk.",
+      templateId: STATS_DASHBOARD_TEMPLATE_ID,
+      templateReason: "The stats dashboard can show odds, probability, EV, and risk ranking.",
+      narration: {
+        text: "No-vig probability exposes the strongest expected value, but the ranking still needs a risk note.",
+      },
+      visualBrief: "Show top EV, no-vig probability gap, final ranking, and risk caveat.",
+      recipeHints: [
+        {
+          recipeId: "odds-ev-ranking",
+          reason: "The segment compares odds, no-vig probability, expected value, and risk.",
+        },
+      ],
+      expectedDurationSeconds: 6,
+    },
+  ],
+});
 
 const technicalExplainerImplementation = {
   meta: {
@@ -626,6 +660,48 @@ const technicalExplainerPreviewImplementation = {
       durationInFrames: TECHNICAL_EXPLAINER_PREVIEW_SECTION_DURATION,
     },
     {
+      id: "preview-evidence",
+      recipeId: "screenshot-evidence-flow",
+      title: "Screenshot becomes evidence",
+      subtitle: "A visual surface can be sliced into proof cards before retrieval.",
+      asset: {
+        sourceType: "public",
+        src: "fixtures/phase5-ui-screenshot.svg",
+        alt: "A deterministic screenshot fixture used as visual evidence.",
+        frameLabel: "Controlled screenshot",
+      },
+      evidenceItems: [
+        {
+          id: "source",
+          label: "Source screenshot",
+          detail: "Start from one visible project surface.",
+          status: "source",
+        },
+        {
+          id: "extract",
+          label: "Extract regions",
+          detail: "Pull out meaningful visual blocks.",
+          status: "extract",
+        },
+        {
+          id: "index",
+          label: "Index evidence",
+          detail: "Store visual chunks with compact labels.",
+          status: "index",
+        },
+        {
+          id: "retrieve",
+          label: "Retrieve answer proof",
+          detail: "Show the card that supports the narration.",
+          status: "retrieve",
+        },
+      ],
+      activeEvidenceId: "retrieve",
+      callouts: ["Screenshot", "Evidence", "Retrieval"],
+      fallbackSummary: "A screenshot-backed evidence flow would be highlighted here.",
+      durationInFrames: TECHNICAL_EXPLAINER_PREVIEW_SECTION_DURATION,
+    },
+    {
       id: "preview-ui-zoom",
       recipeId: "product-ui-zoom",
       title: "Zoom into the product surface",
@@ -674,22 +750,6 @@ const technicalExplainerPreviewImplementation = {
         },
       ],
       decision: "Start with one controlled template-owned asset recipe.",
-      durationInFrames: TECHNICAL_EXPLAINER_PREVIEW_SECTION_DURATION,
-    },
-    {
-      id: "preview-fallback",
-      recipeId: "product-ui-zoom",
-      title: "Fallback stays useful",
-      subtitle: "The recipe remains renderable when no screenshot is provided.",
-      focalPoint: {
-        xPercent: 50,
-        yPercent: 50,
-        zoomPercent: 120,
-        label: "Fallback mode",
-      },
-      callouts: ["No broken frame", "Clear summary", "Same schema"],
-      fallbackSummary:
-        "No screenshot was attached, so the recipe renders a structured fallback frame.",
       durationInFrames: TECHNICAL_EXPLAINER_PREVIEW_SECTION_DURATION,
     },
     {
@@ -839,7 +899,7 @@ const technicalExplainerCompiledSegments = [
           recipeId: "metric-countup",
           title: "Outcome",
           metrics: [
-            { label: "Recipe sections", value: "10", detail: "Bounded visual treatments" },
+            { label: "Recipe sections", value: "11", detail: "Bounded visual treatments" },
             { label: "Template instances", value: "1", detail: "One primary template per segment" },
             { label: "Generated TSX", value: "0", detail: "Structured params only" },
           ],
@@ -865,8 +925,8 @@ const technicalExplainerCompiledSegments = [
           },
           after: {
             label: "After",
-            headline: "Ten generated recipes",
-            points: ["Code diffs compile", "UI zoom renders", "Fallbacks stay useful"],
+            headline: "Eleven generated recipes",
+            points: ["Code diffs compile", "Evidence flows render", "Fallbacks stay useful"],
           },
           emphasis: "More visual range without media-library scope.",
           durationInFrames: 75,

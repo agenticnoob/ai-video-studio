@@ -101,6 +101,20 @@ const technicalExplainerPlannerRecipes = [
     durationFit: "Works well for medium architecture beats with clear ownership boundaries.",
   },
   {
+    recipeId: "screenshot-evidence-flow",
+    label: "Screenshot evidence flow",
+    bestFor: [
+      "visual retrieval",
+      "screenshot-backed explanation",
+      "document evidence flow",
+      "project demo with proof cards",
+    ],
+    avoidCases: ["no visual surface or evidence steps", "raw CLI logs", "pure metric recap"],
+    requiredInputsSummary:
+      "optional controlled public/route screenshot asset, 3-5 evidence items, fallback summary, and optional callouts",
+    durationFit: "Works best for a medium beat that turns one visual surface into evidence.",
+  },
+  {
     recipeId: "product-ui-zoom",
     label: "Product UI zoom",
     bestFor: ["product walkthrough", "UI state focus", "screenshot explanation", "feature demo"],
@@ -338,6 +352,44 @@ const technicalExplainerSectionJsonSchema = {
       ...sectionBaseJsonSchema,
       properties: {
         ...sectionBaseJsonSchema.properties,
+        recipeId: { type: "string", const: "screenshot-evidence-flow" },
+        asset: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            sourceType: { type: "string", enum: ["public", "route"] },
+            src: { type: "string" },
+            alt: { type: "string" },
+            frameLabel: { type: "string" },
+          },
+          required: ["sourceType", "alt"],
+        },
+        evidenceItems: {
+          type: "array",
+          minItems: 3,
+          maxItems: 5,
+          items: {
+            type: "object",
+            additionalProperties: false,
+            properties: {
+              id: { type: "string" },
+              label: { type: "string" },
+              detail: { type: "string" },
+              status: { type: "string", enum: ["source", "extract", "index", "retrieve"] },
+            },
+            required: ["id", "label"],
+          },
+        },
+        activeEvidenceId: { type: "string" },
+        callouts: { type: "array", minItems: 1, maxItems: 3, items: { type: "string" } },
+        fallbackSummary: { type: "string" },
+      },
+      required: ["id", "recipeId", "title", "evidenceItems", "fallbackSummary"],
+    },
+    {
+      ...sectionBaseJsonSchema,
+      properties: {
+        ...sectionBaseJsonSchema.properties,
         recipeId: { type: "string", const: "product-ui-zoom" },
         asset: {
           type: "object",
@@ -407,7 +459,7 @@ export const technicalExplainerTemplate = defineTemplate({
   },
   planner: {
     description:
-      "Recipe-rich technical explainer segment for product walkthroughs, software architecture, build/run flows, workflow maps, KPI summaries, and implementation timelines.",
+      "Recipe-rich technical explainer segment for product walkthroughs, software architecture, build/run flows, workflow maps, screenshot-backed evidence flows, KPI summaries, and implementation timelines.",
     avoidCases: [
       "pure emotional storytelling without technical steps",
       "dense financial dashboards that need several chart types",
@@ -416,12 +468,13 @@ export const technicalExplainerTemplate = defineTemplate({
     narrationFit:
       "Fits concise narration that introduces a technical idea and explains it through 1-10 visual recipe sections.",
     mediaExpectations:
-      "No broad external media is required; product-ui-zoom may use controlled public or route image references and otherwise renders fallback content. Other visual output is generated from bounded text, terminal lines, workflow nodes, metrics, timeline checkpoints, semantic diffs, comparison panels, decision matrices, architecture layers, theme colors, and duration.",
+      "No broad external media is required; product-ui-zoom and screenshot-evidence-flow may use controlled public or route image references and otherwise render fallback content. Other visual output is generated from bounded text, terminal lines, workflow nodes, metrics, timeline checkpoints, semantic diffs, comparison panels, decision matrices, architecture layers, evidence cards, theme colors, and duration.",
     examples: [
       "Open with a title, show a workflow map, then finish with implementation checkpoints",
       "Explain a CLI build flow with terminal output and a metric recap",
       "Describe a product architecture using node map, architecture layers, and timeline progress",
       "Compare an old workflow with a new implementation using a before/after panel or decision matrix",
+      "Explain a visual retrieval project by showing one screenshot surface and evidence cards",
     ],
     recipes: technicalExplainerPlannerRecipes,
   },
@@ -454,6 +507,7 @@ Allowed recipeId values:
   before-after-compare
   decision-matrix
   architecture-layer-stack
+  screenshot-evidence-flow
   product-ui-zoom
 
 Rules:
@@ -466,11 +520,15 @@ Rules:
   - Use before-after-compare for old/new workflows, problem/solution contrast, migrations, and quality improvements.
   - Use decision-matrix for technical tradeoffs, provider choices, roadmap prioritization, and framework selection.
   - Use architecture-layer-stack for module boundaries, platform layers, data ownership, and system architecture.
+  - Use screenshot-evidence-flow for screenshot-backed explanation, visual retrieval, visual evidence extraction, document evidence flow, or project demos that need proof cards.
   - Use product-ui-zoom for product walkthroughs, UI state focus, screenshot explanations, and feature demos.
   - For code-diff-highlight, generate 3-8 short lines with mode add/remove/neutral; use focus=true on at most 2 lines.
   - For before-after-compare, generate before and after panels with 2-4 short points each.
   - For decision-matrix, generate 2-4 criteria and 2-4 options; each option needs low/medium/high ratings for the listed criteria.
   - For architecture-layer-stack, generate 3-6 layers and optional dataFlow labels only when they clarify ownership.
+  - For screenshot-evidence-flow, generate 3-5 evidenceItems ordered from visual source to extraction/index/retrieval; set activeEvidenceId to the current key point when helpful.
+  - For screenshot-evidence-flow, never invent arbitrary remote URLs; asset.sourceType must be public or route when an asset is present.
+  - Always include fallbackSummary for screenshot-evidence-flow so missing screenshots still render useful content.
   - For product-ui-zoom, never invent arbitrary remote URLs.
   - For product-ui-zoom.asset, sourceType must be public or route; omit asset.src when no controlled asset exists.
   - Always include fallbackSummary for product-ui-zoom so missing assets still render useful content.
@@ -493,6 +551,7 @@ Rules:
   before-after-compare: before { label, headline, points[2-4] }, after { label, headline, points[2-4] }, emphasis?
   decision-matrix: criteria[2-4], options[2-4] with label, summary?, scores[2-4] { criterion, rating low|medium|high, note? }, recommended?, decision?
   architecture-layer-stack: layers[3-6] with label, detail?, tone foundation|runtime|interface|provider?, dataFlow?[2-5], emphasis?
+  screenshot-evidence-flow: asset? { sourceType public|route, src?, alt, frameLabel? }, evidenceItems[3-5] { id, label, detail?, status source|extract|index|retrieve? }, activeEvidenceId?, callouts?[1-3], fallbackSummary
   product-ui-zoom: asset? { sourceType public|route, src?, alt, frameLabel? }, focalPoint? { xPercent 0-100, yPercent 0-100, zoomPercent 100-180, label? }, callouts?[1-3], fallbackSummary`,
   preservationPrompt:
     "for technical-explainer segments, durationInFrames, title, subtitle, sections, and theme must match the input exactly",

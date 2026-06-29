@@ -1,0 +1,142 @@
+import {
+  WORLD_CUP_BETTING_ANALYSIS_CONTENT_FAMILY,
+  WORLD_CUP_BETTING_ANALYSIS_PROFILE_ID,
+  type WorldCupBettingAnalysisData,
+} from "./types";
+
+export const worldCupBettingData = {
+  contentFamily: WORLD_CUP_BETTING_ANALYSIS_CONTENT_FAMILY,
+  profileId: WORLD_CUP_BETTING_ANALYSIS_PROFILE_ID,
+  scenes: [
+    {
+      id: "title",
+      label: "镜头 1 / 开场",
+      durationInFrames: 219,
+      narration: "胜率最高，不等于数学期望最高。今天这三场，不能只看赢面。",
+      subtitle: "今天这三场世界杯竞彩，不能只看谁赢面大。",
+    },
+    {
+      id: "source",
+      label: "镜头 2 / 数据来源",
+      durationInFrames: 196,
+      narration: "看竞彩赔率、百家平均、模型预测，再加积分和情绪面。",
+      subtitle: "我们用赔率、百家平均、大模型预测，再叠加积分和情绪面。",
+    },
+    {
+      id: "formula",
+      label: "镜头 3 / EV 公式",
+      durationInFrames: 196,
+      narration: "EV 等于真实概率乘赔率，再减一。小于零，就是负期望。",
+      subtitle: "数学期望很简单：真实概率乘赔率，再减一。",
+    },
+    {
+      id: "brazil-japan",
+      label: "镜头 4 / 巴西 vs 日本",
+      durationInFrames: 320,
+      narration:
+        "巴西胜率更高，模型也看二比一。但一点四九已经被压低，日本胜概率低，EV 反而更接近零。",
+      subtitle: "巴西胜率更高，模型也多看巴西二比一。但 1.49 的赔率已经被压低。",
+    },
+    {
+      id: "germany-paraguay",
+      label: "镜头 5 / 德国 vs 巴拉圭",
+      durationInFrames: 320,
+      narration:
+        "德国是三场里胜率最高的，模型全看主胜。但一点二零太低，更像串关胆，不适合单关重压。",
+      subtitle: "德国是三场里胜率最高的，但 1.20 太低。它更像串关胆，不像单关价值。",
+    },
+    {
+      id: "netherlands-morocco",
+      label: "镜头 6 / 荷兰 vs 摩洛哥",
+      durationInFrames: 273,
+      narration: "荷兰略占优势，但摩洛哥情绪强、韧性强。模型也给出一比一，或者荷兰小胜。",
+      subtitle: "荷兰略占优势，但摩洛哥情绪面很强。大模型也给出一比一或荷兰小胜。",
+    },
+    {
+      id: "ranking",
+      label: "镜头 7 / 总排序",
+      durationInFrames: 320,
+      narration:
+        "只看胜率，是德国、巴西、荷兰。加上赔率，巴西更适合轻仓，德国做胆，荷兰这场要防平。",
+      subtitle: "如果只看胜率，德国、巴西、荷兰。如果看胜率加赔率，巴西更适合轻仓。",
+    },
+    {
+      id: "disclaimer",
+      label: "镜头 8 / 结尾",
+      durationInFrames: 245,
+      narration: "纯数学期望下，不下注 EV 等于零。以上是理性分析，不构成投注建议。",
+      subtitle: "纯数学期望下，不下注反而是最稳的 EV。冷门票只能小注娱乐。",
+    },
+  ],
+  matches: [
+    {
+      id: "brazil-japan",
+      homeTeam: "巴西",
+      awayTeam: "日本",
+      homeCode: "BRA",
+      awayCode: "JPN",
+      marketOdds: { win: 1.49, draw: 3.72, loss: 5.28 },
+      averageOdds: { win: 1.69, draw: 3.7, loss: 5.18 },
+      noVigProbabilities: { win: 56.1, draw: 25.6, loss: 18.3 },
+      expectedValues: { win: -16.4, draw: -4.7, loss: -3.4 },
+      modelVerify: "多数模型给巴西 2-1",
+      context: "巴西小组第一，状态回升；日本小组第二，韧性强，有冷门气质",
+      conclusion: "胜率方向是巴西，但 1.49 被压低；日本方向更接近冷门期望。",
+      valueDirection: "巴西胜率方向 / 日本冷门期望方向",
+      likelyScores: ["2-1"],
+    },
+    {
+      id: "germany-paraguay",
+      homeTeam: "德国",
+      awayTeam: "巴拉圭",
+      homeCode: "GER",
+      awayCode: "PAR",
+      marketOdds: { win: 1.2, draw: 5.18, loss: 9.7 },
+      averageOdds: { win: 1.32, draw: 5.23, loss: 9.57 },
+      noVigProbabilities: { win: 71.9, draw: 18.2, loss: 9.9 },
+      expectedValues: { win: -13.7, draw: -6, loss: -3.8 },
+      modelVerify: "五个模型全部看德国主胜",
+      context: "德国胜率最高，但上一场输球后需要反弹；巴拉圭低姿态防守反击，冷门空间来自拖入加时",
+      conclusion: "德国胜率最高，但 1.20 太低，更像串关胆，不适合单关重压。",
+      valueDirection: "德国胜率最高 / 巴拉圭冷门来自拖入加时",
+      likelyScores: ["主胜"],
+    },
+    {
+      id: "netherlands-morocco",
+      homeTeam: "荷兰",
+      awayTeam: "摩洛哥",
+      homeCode: "NED",
+      awayCode: "MAR",
+      marketOdds: { win: 1.97, draw: 2.95, loss: 3.53 },
+      averageOdds: { win: 2.22, draw: 3.12, loss: 3.53 },
+      noVigProbabilities: { win: 42.7, draw: 30.4, loss: 26.9 },
+      expectedValues: { win: -15.8, draw: -10.3, loss: -5.1 },
+      modelVerify: "多数模型给 1-1 或荷兰小胜",
+      context: "荷兰攻击强，但摩洛哥情绪面强、韧性强，不是普通下盘",
+      conclusion: "荷兰略占优势，但本场分歧最大，平局风险最高。",
+      valueDirection: "荷兰胜率略高 / 摩洛哥情绪强韧性强",
+      likelyScores: ["1-1", "2-1"],
+    },
+  ],
+  rankings: [
+    {
+      title: "胜率榜",
+      items: ["德国胜", "巴西胜", "荷兰胜"],
+    },
+    {
+      title: "综合榜",
+      items: ["巴西胜 轻仓", "德国胜 做胆", "荷兰摩洛哥 防平"],
+    },
+    {
+      title: "冷门期望榜",
+      items: ["日本胜", "巴拉圭胜", "摩洛哥胜"],
+    },
+  ],
+  summary: {
+    noBet: {
+      text: "不下注 EV = 0",
+      detail: "所有选项当前均为负期望区间",
+    },
+    disclaimer: "理性分析，不构成投注建议",
+  },
+} satisfies WorldCupBettingAnalysisData;

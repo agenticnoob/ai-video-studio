@@ -616,6 +616,234 @@ export const ArchitectureLayerStackScene: FC<
   );
 };
 
+const evidenceStatusColor = (
+  status: "source" | "extract" | "index" | "retrieve" | undefined,
+  theme: TechnicalExplainerSpec["theme"],
+) => {
+  if (status === "source") {
+    return theme.primary;
+  }
+  if (status === "extract") {
+    return theme.secondary;
+  }
+  if (status === "index") {
+    return "#22c55e";
+  }
+  if (status === "retrieve") {
+    return "#e879f9";
+  }
+  return theme.primary;
+};
+
+const resolveScreenshotEvidenceAssetSrc = (
+  asset: Extract<TechnicalExplainerSection, { recipeId: "screenshot-evidence-flow" }>["asset"],
+): string | null => {
+  if (!asset?.src) {
+    return null;
+  }
+
+  if (asset.sourceType === "public") {
+    return staticFile(asset.src.replace(/^\/+/, ""));
+  }
+
+  return asset.src;
+};
+
+export const ScreenshotEvidenceFlowScene: FC<
+  TechnicalExplainerSceneProps<
+    Extract<TechnicalExplainerSection, { recipeId: "screenshot-evidence-flow" }>
+  >
+> = ({ durationInFrames, section, theme }) => {
+  const frame = useCurrentFrame();
+  const assetSrc = resolveScreenshotEvidenceAssetSrc(section.asset);
+  const timing = getRecipeBeatTiming({ durationInFrames });
+  const reveal = interpolate(frame, [0, timing.revealEndFrame], [0, 1], clamp);
+  const scan = interpolate(frame, [timing.revealEndFrame, timing.holdEndFrame], [0, 1], clamp);
+  const activeEvidenceId =
+    section.activeEvidenceId ?? section.evidenceItems[section.evidenceItems.length - 1]?.id;
+
+  return (
+    <div style={panelStyle(theme)}>
+      <div style={{ display: "grid", gap: 34, gridTemplateColumns: "390px 1fr", height: "100%" }}>
+        <div style={{ paddingTop: 30 }}>
+          <div style={{ color: theme.primary, fontSize: 18, fontWeight: 900, marginBottom: 16 }}>
+            {section.asset?.frameLabel ?? "Visual evidence"}
+          </div>
+          <div style={{ fontSize: 46, fontWeight: 930, lineHeight: 1.04 }}>{section.title}</div>
+          {section.subtitle ? (
+            <div style={{ color: theme.muted, fontSize: 21, lineHeight: 1.32, marginTop: 18 }}>
+              {section.subtitle}
+            </div>
+          ) : null}
+          <div
+            style={{
+              borderLeft: `4px solid ${theme.secondary}`,
+              color: theme.muted,
+              fontSize: 18,
+              lineHeight: 1.35,
+              marginTop: 28,
+              paddingLeft: 16,
+            }}
+          >
+            {section.fallbackSummary}
+          </div>
+          {section.callouts?.length ? (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 26 }}>
+              {section.callouts.map((callout) => (
+                <div
+                  key={callout}
+                  style={{
+                    background: `${theme.primary}18`,
+                    border: `1px solid ${theme.primary}55`,
+                    borderRadius: 999,
+                    color: theme.text,
+                    fontSize: 15,
+                    fontWeight: 850,
+                    padding: "9px 12px",
+                  }}
+                >
+                  {callout}
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gap: 18,
+            gridTemplateRows: "330px 1fr",
+            opacity: reveal,
+            transform: `translateY(${(1 - reveal) * 28}px)`,
+          }}
+        >
+          <div
+            style={{
+              background: assetSrc ? "#020617" : theme.panel,
+              border: `1px solid ${theme.primary}66`,
+              borderRadius: 26,
+              boxShadow: "0 28px 88px rgba(0,0,0,0.34)",
+              overflow: "hidden",
+              position: "relative",
+            }}
+          >
+            {assetSrc ? (
+              <Img
+                alt={section.asset?.alt}
+                src={assetSrc}
+                style={{ height: "100%", objectFit: "cover", width: "100%" }}
+              />
+            ) : (
+              <div
+                style={{
+                  alignItems: "center",
+                  color: theme.text,
+                  display: "flex",
+                  fontSize: 27,
+                  fontWeight: 900,
+                  height: "100%",
+                  justifyContent: "center",
+                  lineHeight: 1.2,
+                  padding: 42,
+                  textAlign: "center",
+                }}
+              >
+                {section.fallbackSummary}
+              </div>
+            )}
+            <div
+              style={{
+                background: `linear-gradient(90deg, transparent 0%, ${theme.secondary}88 48%, transparent 100%)`,
+                bottom: 0,
+                left: `${interpolate(scan, [0, 1], [-20, 105], clamp)}%`,
+                opacity: 0.82,
+                position: "absolute",
+                top: 0,
+                width: 72,
+              }}
+            />
+            <div
+              style={{
+                border: `2px solid ${theme.secondary}`,
+                borderRadius: 18,
+                bottom: 44,
+                boxShadow: `0 0 0 999px ${theme.background}33`,
+                left: "49%",
+                position: "absolute",
+                top: 64,
+                transform: "translateX(-50%)",
+                width: "38%",
+              }}
+            />
+          </div>
+
+          <div style={{ display: "grid", gap: 12 }}>
+            {section.evidenceItems.map((item, index) => {
+              const itemIn = interpolate(frame, [30 + index * 14, 74 + index * 14], [0, 1], clamp);
+              const color = evidenceStatusColor(item.status, theme);
+              const active = item.id === activeEvidenceId;
+
+              return (
+                <div
+                  key={item.id}
+                  style={{
+                    alignItems: "center",
+                    background: active ? `${color}22` : theme.panel,
+                    border: `1px solid ${active ? color : `${theme.text}22`}`,
+                    borderRadius: 17,
+                    display: "grid",
+                    gap: 12,
+                    gridTemplateColumns: "42px 1fr",
+                    opacity: itemIn,
+                    padding: "13px 16px",
+                    transform: `translateX(${interpolate(itemIn, [0, 1], [30, 0], clamp)}px)`,
+                  }}
+                >
+                  <div
+                    style={{
+                      alignItems: "center",
+                      background: color,
+                      borderRadius: 14,
+                      color: "#020617",
+                      display: "flex",
+                      fontSize: 16,
+                      fontWeight: 950,
+                      height: 38,
+                      justifyContent: "center",
+                      width: 38,
+                    }}
+                  >
+                    {index + 1}
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ color: theme.text, fontSize: 18, fontWeight: 900 }}>
+                      {item.label}
+                    </div>
+                    {item.detail ? (
+                      <div
+                        style={{
+                          color: theme.muted,
+                          fontSize: 14,
+                          fontWeight: 720,
+                          lineHeight: 1.28,
+                          marginTop: 4,
+                        }}
+                      >
+                        {item.detail}
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const resolveProductUiZoomAssetSrc = (
   asset: Extract<TechnicalExplainerSection, { recipeId: "product-ui-zoom" }>["asset"],
 ): string | null => {
