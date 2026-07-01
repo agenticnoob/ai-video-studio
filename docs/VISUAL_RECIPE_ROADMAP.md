@@ -56,6 +56,22 @@ recipe = polished visual treatment inside a template
 A recipe is not a new top-level project object yet. It can start as a
 template-local field or internal compiler decision.
 
+Use this internal hierarchy when deciding where a visual idea belongs:
+
+```txt
+primitive -> block -> recipe -> template -> VideoProject
+```
+
+- `primitive`: small reusable Remotion component, usually under
+  `src/remotion/primitives/`.
+- `block`: a semantic composition of primitives inside a template or sample.
+- `recipe`: a reusable visual treatment inside a registered template.
+- `template`: the provider-visible segment implementation mechanism selected
+  by `templateId`.
+
+This keeps recipe work from becoming a parallel component system. Recipes
+should compose primitives and blocks; they should not replace them.
+
 Examples:
 
 - `hero-title-reveal`
@@ -575,29 +591,67 @@ Acceptance:
 - `StatsDashboardTemplatePreview` can render an EV/risk ranking style dashboard
 - preview/export still use the main `ProjectVideo` path for generated projects
 
+### Phase 5.6: Agent Producer Workflow v1
+
+Status: implemented for docs and repo-local skill; first real producer run is
+pending.
+
+Goal: define the local production workflow for topics that need agent research,
+current information, screenshots, TTS-first timing, primitive selection, and
+Remotion still review before they become a good generated video.
+
+Deliver:
+
+- repo-local skill:
+  `.agents/skills/ai-video-studio-agent-producer-workflow/SKILL.md`
+- design note:
+  `docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md`
+- explicit layer model:
+  `primitive -> block -> recipe -> template -> VideoProject`
+- decision that the workflow wraps the existing staged app path rather than
+  replacing the web UI
+- default preference for the main `VideoProject` path when the result should
+  remain editable/exportable through the app
+- standalone composition path only for finished-video-first samples whose
+  visuals are not yet expressible through registered templates
+
+Acceptance:
+
+- future agents can start from one skill instead of rediscovering the workflow
+- visual planning begins with the primitive catalog before new TSX is written
+- recipes remain template-owned reusable treatments, not a separate component
+  system
+- generated screenshots, audio, and renders stay local-only unless explicitly
+  requested
+- no runtime or product schema changes are introduced by the workflow document
+  itself
+
 ## 6. First Implementation Slice
 
-Recommended next implementation after the sample-derived main-site extraction:
+Recommended next implementation after this docs/skill slice:
 
 ```txt
-Main-Site Recipe Coverage v2
+Agent Producer First Real Run
 ```
 
 Why:
 
-- the product goal is better generated videos from the main site, not repeated
-  standalone sample production
-- PixelRAG and WorldCup are now useful as reference artifacts whose visual
-  language can be promoted into planner-visible templates/recipes
-- aspect-ratio differences do not require one universal runtime; main-site
-  recipes should first improve the existing `VideoProject` flow
+- the user's current need is higher-quality videos than the one-shot web prompt
+  can reliably produce
+- the repo already has useful primitives, templates, TTS, standalone runtime,
+  and Remotion verification surfaces
+- one real run will show which primitives/blocks are missing before more recipe
+  or template work is promoted
 
 Minimum scope:
 
-- add one or two planner-visible recipes or template refinements at a time
-- keep `recipeHints` optional and template-owned
-- preserve existing `ProjectVideo` preview/export behavior
-- keep standalone sample compositions registered as reference/evidence only
+- choose one real 45-60 second topic
+- gather source facts and screenshots when the topic needs proof
+- write narration beats before locking scene durations
+- list candidate primitives before adding new visuals
+- produce either a schema-valid `VideoProject` or a standalone composition
+- render at least three stills for visual inspection
+- promote only proven reusable pieces into blocks, recipes, or templates
 
 Do not include:
 

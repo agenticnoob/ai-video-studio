@@ -77,6 +77,10 @@ Current implementation status:
   source
 - visual-quality roadmap decisions for the clean main product line should use
   `docs/VISUAL_RECIPE_ROADMAP.md`
+- higher-quality local video-production work that needs research, screenshots,
+  TTS-first timing, primitive selection, and still review should use
+  `.agents/skills/ai-video-studio-agent-producer-workflow/` plus
+  `docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md`
 - current progress and next-step notes live in `docs/ITERATION_STATUS.md`
 - product requirements live in `docs/PRODUCT_REQUIREMENTS.md`
 - F5-TTS / aligned captions provider target lives in
@@ -158,6 +162,11 @@ Current visual-quality direction:
 - upgrade simple template output into high-quality scene recipes: polished,
   duration-aware treatments with stronger motion, transitions, grouped visual
   blocks, and Remotion Studio preview examples
+- use the primitive-first hierarchy for reusable visual work:
+  `primitive -> block -> recipe -> template -> VideoProject`. Recipes are
+  semantic template-owned treatments composed from primitives and blocks; they
+  are not a replacement for the primitive catalog under
+  `src/remotion/primitives/`.
 - `RecipeShowcasePreview` is the first static Remotion Studio quality baseline,
   with hero title, workflow map, terminal session, metric cards, timeline, and
   code-diff recipe scenes plus bounded subject-motion transitions: 2.5D
@@ -226,6 +235,11 @@ Current visual-quality direction:
   `src/remotion/standalone-samples/`, with checked-in sample audio under
   `public/standalone-samples/audio/`. They remain references, not registered
   product templates or planner-visible recipes.
+- The Agent Producer workflow is the local high-quality path around the app:
+  research a real topic, capture or prepare source assets, inspect candidate
+  primitives, write narration/TTS before timing, assemble either a
+  `VideoProject` or a standalone composition, and review Remotion stills before
+  claiming the draft is good.
 - keep AI output bounded to registered template / recipe parameters; do not use
   unrestricted generated TSX as the normal path
 - avoid broad visual-review scoring or automatic screenshot repair as the next
@@ -265,13 +279,17 @@ Current top-level boundaries:
     - render video from structured props instead of ad-hoc codegen
     - reusable video primitives live under `src/remotion/primitives/` and may
       be composed by template-local block renderers
-13. `/src/remotion/standalone-samples/*`
+13. `/.agents/skills/ai-video-studio-agent-producer-workflow/*`
+    - repo-local skill for the local Agent Producer workflow: research,
+      screenshots/assets, primitive inventory, TTS-first timing, still review,
+      and output-path choice
+14. `/src/remotion/standalone-samples/*`
     - reference-only standalone compositions kept out of template/runtime
       folders
-14. `/public/standalone-samples/audio/*`
+15. `/public/standalone-samples/audio/*`
     - checked-in sample audio required by reference-only standalone
       compositions
-15. `/scripts/f5-tts/*`
+16. `/scripts/f5-tts/*`
     - local F5/TTS helper scripts; private reference voices stay in ignored
       `voices/f5-tts/`
 
@@ -283,6 +301,11 @@ Start from:
 - `docs/STRUCTURE_REFACTOR_PLAN.md` when the task is structural cleanup
 - `docs/HANDOFF_STRUCTURE_REFACTOR.md` when handing structure cleanup to a new
   conversation or Subagent-Driven run
+- `docs/VISUAL_RECIPE_ROADMAP.md` when the task is visual quality, recipes,
+  primitives, templates, motion, transitions, or generated-video polish
+- `docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md` and
+  `.agents/skills/ai-video-studio-agent-producer-workflow/SKILL.md` when the
+  task is a local high-quality producer run rather than a quick web prompt
 - `docs/PRODUCT_REQUIREMENTS.md`
 - `docs/FUTURE_DIRECTION_NOTES.md`
 - `README.md`
@@ -342,6 +365,10 @@ Current bounded direction and guardrails:
 - the current visual-quality path is main-site recipe-first: use standalone
   samples as reference artifacts, then promote reusable visual language into
   planner-visible templates and `recipeHints`
+- the local high-quality producer path is now documented as an Agent Producer
+  workflow: start from primitive inventory, use research/screenshots/TTS-first
+  timing when the topic needs it, then choose `VideoProject` by default or a
+  standalone sample when current templates cannot express the visuals yet
 - avoid persistence/history, broad media-library UI, generic media-layer
   compositing, and multi-template-per-segment orchestration unless explicitly
   reopened
@@ -434,6 +461,13 @@ Preview the local Remotion primitive catalog in the app:
 Remotion Studio is kept for full-video and template-level compositions. The
 primitive catalog uses the app page above so small reusable components do not
 crowd the Studio composition list.
+
+For a higher-quality local producer run, use
+`.agents/skills/ai-video-studio-agent-producer-workflow/` before writing new
+Remotion visuals. That workflow starts with the primitive catalog, then uses
+research, screenshots, TTS-first timing, and still-frame review to decide
+whether the draft should stay in the main `VideoProject` path or become a
+standalone evidence sample.
 
 Render the default/sample composition to `out/ai-video.mp4`:
 ```bash

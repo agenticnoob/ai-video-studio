@@ -59,6 +59,7 @@ scripts for local F5/TTS probes live under `scripts/f5-tts/`.
 | TTS/F5 adapter | `src/lib/tts/`, `src/app/api/tts/` | Segment narration assets/captions. |
 | Template registration | `src/templates/` | Server-safe definitions + runtime bundles. |
 | Preview/export composition | `src/remotion/ProjectVideo/` | Shared Remotion render surface. |
+| Agent producer workflow | `.agents/skills/ai-video-studio-agent-producer-workflow/`, `docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md` | Local research/assets/TTS/primitives/stills loop for higher-quality videos. |
 | Standalone sample references | `src/remotion/standalone-samples/`, `public/standalone-samples/audio/` | Reference-only compositions and static audio. |
 | F5 runtime service | `services/f5-tts/` | Contract-smoke and real-GPU service. |
 
@@ -95,6 +96,9 @@ scripts for local F5/TTS probes live under `scripts/f5-tts/`.
   data, outside template-specific `implementation`.
 - Planner-facing recipe data is derived from registered template definitions.
   `recipeHints[]` are optional planner hints, not top-level project fields.
+- For higher-quality local video production, use the Agent Producer workflow:
+  start from primitives, compose blocks, promote recipes only after reuse is
+  proven, and keep `VideoProject` as the default output path.
 - Remotion animation must be frame-driven with Remotion APIs.
 
 ## ANTI-PATTERNS (THIS PROJECT)

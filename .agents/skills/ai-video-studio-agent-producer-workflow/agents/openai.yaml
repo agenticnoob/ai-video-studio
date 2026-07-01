@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Video Producer"
+  short_description: "Agent workflow for better videos"
+  default_prompt: "Use $ai-video-studio-agent-producer-workflow to make a researched video draft from a real topic."

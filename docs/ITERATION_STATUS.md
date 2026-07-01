@@ -1,6 +1,44 @@
 # Iteration Status
 
-Last updated: Standalone Sample File Organization
+Last updated: Agent Producer Workflow v1
+
+## Latest continuation — Agent Producer Workflow v1
+
+- Added a repo-local skill for the higher-quality local production path:
+  `.agents/skills/ai-video-studio-agent-producer-workflow/`.
+- Added the design note
+  `docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md` to
+  lock the decision that the Agent Producer workflow wraps the existing app
+  instead of replacing it.
+- Clarified the reusable visual hierarchy for future video work:
+  `primitive -> block -> recipe -> template -> VideoProject`.
+- The workflow starts from the existing primitive catalog and Remotion
+  component docs, then uses research, screenshots, TTS-first timing, Remotion
+  still review, and a handoff summary when a topic needs more than the one-shot
+  web prompt can provide.
+- Also included the updated repo-local Remotion best-practices skill content:
+  video-first layout guidance, canvas/WebGL effects guidance, Studio-editable
+  timing patterns, expanded SFX references, and the matching `skills-lock.json`
+  hash update.
+- Scope for this slice is documentation and skill scaffolding only. No
+  generation, template, Remotion runtime, preview, or export code changed.
+- Next practical slice: run one real topic through the Agent Producer workflow,
+  list candidate primitives before new visuals, generate or prepare narration
+  before locking timing, render at least three stills, and decide whether the
+  output belongs in the main `VideoProject` path or a standalone sample.
+
+Validation performed:
+- manual frontmatter validation equivalent to `quick_validate.py` passed for
+  `.agents/skills/ai-video-studio-agent-producer-workflow/SKILL.md` and
+  `.agents/skills/remotion-best-practices/SKILL.md`
+- `rg -n --glob '!docs/ITERATION_STATUS.md' "\[TODO|TODO:" .agents/skills/ai-video-studio-agent-producer-workflow docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md README.md docs/VISUAL_RECIPE_ROADMAP.md AGENTS.md`
+  returned no matches
+- `git diff --check`
+
+Validation note:
+- `python3 /home/zzzxc/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/ai-video-studio-agent-producer-workflow`
+  could not run in the host Python environment because `yaml` / PyYAML is not
+  installed.
 
 ## Latest continuation — Standalone Sample File Organization
 
