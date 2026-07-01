@@ -59,18 +59,23 @@ template-local field or internal compiler decision.
 Use this internal hierarchy when deciding where a visual idea belongs:
 
 ```txt
-primitive -> block -> recipe -> template -> VideoProject
+primitive -> block -> dedicated composition -> recipe -> template -> VideoProject
 ```
 
 - `primitive`: small reusable Remotion component, usually under
   `src/remotion/primitives/`.
 - `block`: a semantic composition of primitives inside a template or sample.
-- `recipe`: a reusable visual treatment inside a registered template.
+- `dedicated composition`: a finished-video-first Remotion video that composes
+  primitives, blocks, local data, TTS timing, and sample-specific scenes, such
+  as `WorldCupBettingAnalysis`.
+- `recipe`: a reusable visual treatment inside a registered template, promoted
+  only after a composition proves the arrangement is reusable.
 - `template`: the provider-visible segment implementation mechanism selected
   by `templateId`.
 
-This keeps recipe work from becoming a parallel component system. Recipes
-should compose primitives and blocks; they should not replace them.
+This keeps recipe work from becoming a parallel component system. Local agent
+producer runs should first make a good dedicated video, then extract reusable
+pieces into primitives, blocks, recipes, or templates.
 
 Examples:
 
@@ -597,8 +602,9 @@ Status: implemented for docs and repo-local skill; first real producer run is
 pending.
 
 Goal: define the local production workflow for topics that need agent research,
-current information, screenshots, TTS-first timing, primitive selection, and
-Remotion still review before they become a good generated video.
+current information, screenshots, TTS-first timing, primitive/block selection,
+purpose-built Remotion composition, and still/render review before they become
+a good finished video.
 
 Deliver:
 
@@ -607,20 +613,23 @@ Deliver:
 - design note:
   `docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md`
 - explicit layer model:
-  `primitive -> block -> recipe -> template -> VideoProject`
-- decision that the workflow wraps the existing staged app path rather than
-  replacing the web UI
-- default preference for the main `VideoProject` path when the result should
-  remain editable/exportable through the app
-- standalone composition path only for finished-video-first samples whose
-  visuals are not yet expressible through registered templates
+  `primitive -> block -> dedicated composition -> recipe -> template -> VideoProject`
+- decision that the workflow is not a wrapper around the web prompt
+- default preference for a component-composed standalone Remotion composition,
+  following the `WorldCupBettingAnalysis` style of explicit data, generated
+  narration, standalone-video runtime helpers, and sample-specific scenes
+- `VideoProject` path only when the user explicitly needs web editing,
+  selected-segment regeneration, or main-site productization
 
 Acceptance:
 
 - future agents can start from one skill instead of rediscovering the workflow
 - visual planning begins with the primitive catalog before new TSX is written
-- recipes remain template-owned reusable treatments, not a separate component
-  system
+- agent output is not just page generation plus screenshots; it composes
+  repo-owned primitives, blocks, runtime helpers, and data into a dedicated
+  video
+- recipes remain template-owned reusable treatments promoted from evidence,
+  not a separate component system
 - generated screenshots, audio, and renders stay local-only unless explicitly
   requested
 - no runtime or product schema changes are introduced by the workflow document
@@ -648,14 +657,17 @@ Minimum scope:
 - choose one real 45-60 second topic
 - gather source facts and screenshots when the topic needs proof
 - write narration beats before locking scene durations
-- list candidate primitives before adding new visuals
-- produce either a schema-valid `VideoProject` or a standalone composition
+- list candidate primitives, blocks, and standalone runtime helpers before
+  adding new visuals
+- produce a dedicated `src/remotion/<SampleName>/` composition by default
+- use `VideoProject` only with an explicit productization reason
 - render at least three stills for visual inspection
 - promote only proven reusable pieces into blocks, recipes, or templates
 
 Do not include:
 
 - new API routes
+- web prompt generation as the primary production method
 - visual scoring
 - automatic repair
 - persistent storage

@@ -1,4 +1,4 @@
 interface:
   display_name: "AI Video Producer"
-  short_description: "Agent workflow for better videos"
-  default_prompt: "Use $ai-video-studio-agent-producer-workflow to make a researched video draft from a real topic."
+  short_description: "Compose real videos from repo components"
+  default_prompt: "Use $ai-video-studio-agent-producer-workflow to compose a dedicated Remotion video from a real topic using existing primitives, blocks, runtime helpers, and TTS timing."

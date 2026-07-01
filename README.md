@@ -163,10 +163,11 @@ Current visual-quality direction:
   duration-aware treatments with stronger motion, transitions, grouped visual
   blocks, and Remotion Studio preview examples
 - use the primitive-first hierarchy for reusable visual work:
-  `primitive -> block -> recipe -> template -> VideoProject`. Recipes are
-  semantic template-owned treatments composed from primitives and blocks; they
-  are not a replacement for the primitive catalog under
-  `src/remotion/primitives/`.
+  `primitive -> block -> dedicated composition -> recipe -> template -> VideoProject`.
+  Local agent producer runs should first compose a purpose-built Remotion video
+  from primitives, blocks, data, TTS timing, and sample-specific scenes; recipes
+  are template-owned treatments promoted only after the composition proves a
+  reusable shape.
 - `RecipeShowcasePreview` is the first static Remotion Studio quality baseline,
   with hero title, workflow map, terminal session, metric cards, timeline, and
   code-diff recipe scenes plus bounded subject-motion transitions: 2.5D
@@ -235,11 +236,13 @@ Current visual-quality direction:
   `src/remotion/standalone-samples/`, with checked-in sample audio under
   `public/standalone-samples/audio/`. They remain references, not registered
   product templates or planner-visible recipes.
-- The Agent Producer workflow is the local high-quality path around the app:
-  research a real topic, capture or prepare source assets, inspect candidate
-  primitives, write narration/TTS before timing, assemble either a
-  `VideoProject` or a standalone composition, and review Remotion stills before
-  claiming the draft is good.
+- The Agent Producer workflow is the local high-quality path outside the
+  one-shot page prompt: research a real topic, capture or prepare source
+  assets, inspect candidate primitives/blocks/runtime helpers, write
+  narration/TTS before timing, assemble a dedicated Remotion composition in the
+  style of `WorldCupBettingAnalysis`, and review Remotion stills before
+  claiming the draft is good. `VideoProject` is reserved for explicit web
+  editing or productization needs.
 - keep AI output bounded to registered template / recipe parameters; do not use
   unrestricted generated TSX as the normal path
 - avoid broad visual-review scoring or automatic screenshot repair as the next
@@ -281,8 +284,8 @@ Current top-level boundaries:
       be composed by template-local block renderers
 13. `/.agents/skills/ai-video-studio-agent-producer-workflow/*`
     - repo-local skill for the local Agent Producer workflow: research,
-      screenshots/assets, primitive inventory, TTS-first timing, still review,
-      and output-path choice
+      screenshots/assets, primitive/block/runtime inventory, TTS-first timing,
+      dedicated composition assembly, still review, and later promotion
 14. `/src/remotion/standalone-samples/*`
     - reference-only standalone compositions kept out of template/runtime
       folders
@@ -366,9 +369,10 @@ Current bounded direction and guardrails:
   samples as reference artifacts, then promote reusable visual language into
   planner-visible templates and `recipeHints`
 - the local high-quality producer path is now documented as an Agent Producer
-  workflow: start from primitive inventory, use research/screenshots/TTS-first
-  timing when the topic needs it, then choose `VideoProject` by default or a
-  standalone sample when current templates cannot express the visuals yet
+  workflow: start from primitive/block/runtime inventory, use
+  research/screenshots/TTS-first timing when the topic needs it, then compose a
+  dedicated Remotion video by default; choose `VideoProject` only for explicit
+  web editing or productization needs
 - avoid persistence/history, broad media-library UI, generic media-layer
   compositing, and multi-template-per-segment orchestration unless explicitly
   reopened
@@ -465,9 +469,10 @@ crowd the Studio composition list.
 For a higher-quality local producer run, use
 `.agents/skills/ai-video-studio-agent-producer-workflow/` before writing new
 Remotion visuals. That workflow starts with the primitive catalog, then uses
-research, screenshots, TTS-first timing, and still-frame review to decide
-whether the draft should stay in the main `VideoProject` path or become a
-standalone evidence sample.
+research, screenshots, TTS-first timing, existing recipe blocks,
+`src/remotion/standalone-video/` helpers, and still-frame review to build a
+dedicated composition like `WorldCupBettingAnalysis`. Treat `VideoProject` as a
+later productization path, not the default local producer output.
 
 Render the default/sample composition to `out/ai-video.mp4`:
 ```bash

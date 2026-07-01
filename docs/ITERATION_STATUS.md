@@ -1,21 +1,26 @@
 # Iteration Status
 
-Last updated: Agent Producer Workflow v1
+Last updated: Agent Producer Workflow v1 Component-Composition Correction
 
-## Latest continuation — Agent Producer Workflow v1
+## Latest continuation — Agent Producer Workflow v1 Component-Composition Correction
 
 - Added a repo-local skill for the higher-quality local production path:
   `.agents/skills/ai-video-studio-agent-producer-workflow/`.
 - Added the design note
   `docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md` to
-  lock the decision that the Agent Producer workflow wraps the existing app
-  instead of replacing it.
+  lock the decision that the Agent Producer workflow is a component-composed
+  local video path, not a wrapper around the web prompt.
+- Corrected the previous wording that still made the workflow sound like an
+  enhanced page-generation path. The default local producer output is now a
+  dedicated Remotion composition assembled from repo components, in the style
+  of `WorldCupBettingAnalysis`.
 - Clarified the reusable visual hierarchy for future video work:
-  `primitive -> block -> recipe -> template -> VideoProject`.
-- The workflow starts from the existing primitive catalog and Remotion
-  component docs, then uses research, screenshots, TTS-first timing, Remotion
-  still review, and a handoff summary when a topic needs more than the one-shot
-  web prompt can provide.
+  `primitive -> block -> dedicated composition -> recipe -> template -> VideoProject`.
+- Corrected the workflow boundary: the local Agent Producer should not be a
+  stronger web prompt plus screenshots. It should compose a dedicated Remotion
+  video from existing primitives, recipe blocks, standalone-video runtime
+  helpers, explicit data modules, TTS-first timing, and sample-specific scenes,
+  following the `WorldCupBettingAnalysis` pattern.
 - Also included the updated repo-local Remotion best-practices skill content:
   video-first layout guidance, canvas/WebGL effects guidance, Studio-editable
   timing patterns, expanded SFX references, and the matching `skills-lock.json`
@@ -23,9 +28,10 @@ Last updated: Agent Producer Workflow v1
 - Scope for this slice is documentation and skill scaffolding only. No
   generation, template, Remotion runtime, preview, or export code changed.
 - Next practical slice: run one real topic through the Agent Producer workflow,
-  list candidate primitives before new visuals, generate or prepare narration
-  before locking timing, render at least three stills, and decide whether the
-  output belongs in the main `VideoProject` path or a standalone sample.
+  list candidate primitives/blocks/runtime helpers before new visuals,
+  generate or prepare narration before locking timing, build a dedicated
+  `src/remotion/<SampleName>/` composition by default, and render at least
+  three stills before deciding what reusable pieces should be promoted.
 
 Validation performed:
 - manual frontmatter validation equivalent to `quick_validate.py` passed for
