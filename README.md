@@ -222,6 +222,10 @@ Current visual-quality direction:
   `project-intro`, while WorldCup remains `portrait-9x16` / `data-analysis`.
   The product path for better generated videos is still planner-visible
   templates and recipes in the main `VideoProject` flow.
+- Lower-priority standalone reference compositions are grouped under
+  `src/remotion/standalone-samples/`, with checked-in sample audio under
+  `public/standalone-samples/audio/`. They remain references, not registered
+  product templates or planner-visible recipes.
 - keep AI output bounded to registered template / recipe parameters; do not use
   unrestricted generated TSX as the normal path
 - avoid broad visual-review scoring or automatic screenshot repair as the next
@@ -261,6 +265,15 @@ Current top-level boundaries:
     - render video from structured props instead of ad-hoc codegen
     - reusable video primitives live under `src/remotion/primitives/` and may
       be composed by template-local block renderers
+13. `/src/remotion/standalone-samples/*`
+    - reference-only standalone compositions kept out of template/runtime
+      folders
+14. `/public/standalone-samples/audio/*`
+    - checked-in sample audio required by reference-only standalone
+      compositions
+15. `/scripts/f5-tts/*`
+    - local F5/TTS helper scripts; private reference voices stay in ignored
+      `voices/f5-tts/`
 
 ## Handoff for the next iteration
 

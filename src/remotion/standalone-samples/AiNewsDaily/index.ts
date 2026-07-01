@@ -1,0 +1,10 @@
+import {
+  AiNewsVideo,
+  VIDEO_DURATION_IN_FRAMES,
+  VIDEO_FPS,
+  VIDEO_HEIGHT,
+  VIDEO_WIDTH,
+} from "./AiNewsDaily";
+
+export const AI_NEWS_COMPOSITION_ID = "AiNewsDaily-2026-06-30";
+export { AiNewsVideo, VIDEO_DURATION_IN_FRAMES, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH };

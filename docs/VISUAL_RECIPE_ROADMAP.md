@@ -527,6 +527,19 @@ Acceptance:
 - sample-specific visuals stay in their own composition folders
 - both standalone sample smokes continue to pass
 
+Current sample hygiene:
+
+- high-signal finished-video-first samples stay in dedicated folders such as
+  `src/remotion/PixelRAGChineseStandalone/` and
+  `src/remotion/WorldCupBettingAnalysis/`
+- lower-priority reference-only standalone compositions live under
+  `src/remotion/standalone-samples/`
+- reference-only sample audio lives under `public/standalone-samples/audio/`
+- local F5/TTS helper scripts live under `scripts/f5-tts/`, while private
+  reference voices stay in ignored `voices/f5-tts/`
+- abstract standalone samples without useful reference value should be removed
+  instead of staying registered in Remotion Studio
+
 ### Phase 5.5: Main-Site Sample-Derived Recipe Abstractions
 
 Status: implemented for the first two sample-derived main-site recipes.

@@ -20,6 +20,15 @@ import {
 import { ProjectVideo } from "./ProjectVideo/ProjectVideo";
 import { RecipeShowcasePreview } from "./RecipeShowcase/RecipeShowcasePreview";
 import {
+  WC_PREDICTION_COMPOSITION_ID,
+  WC_PREDICTION_DURATION_IN_FRAMES,
+  WC_PREDICTION_FPS,
+  WC_PREDICTION_HEIGHT,
+  WC_PREDICTION_WIDTH,
+  WorldCupPrediction,
+} from "./standalone-samples/WorldCupPrediction";
+
+import {
   WORLD_CUP_BETTING_ANALYSIS_COMPOSITION_ID,
   WORLD_CUP_BETTING_ANALYSIS_DURATION_IN_FRAMES,
   WORLD_CUP_BETTING_ANALYSIS_FPS,
@@ -27,6 +36,30 @@ import {
   WORLD_CUP_BETTING_ANALYSIS_WIDTH,
   WorldCupBettingAnalysisVideo,
 } from "./WorldCupBettingAnalysis";
+import {
+  AI_NEWS_COMPOSITION_ID,
+  AiNewsVideo,
+  VIDEO_DURATION_IN_FRAMES,
+  VIDEO_FPS,
+  VIDEO_HEIGHT,
+  VIDEO_WIDTH,
+} from "./standalone-samples/AiNewsDaily";
+import {
+  AI_NEWS_60S_ID,
+  AiNews60sVideo,
+  VIDEO_DURATION_IN_FRAMES as AINEWS60S_DURATION,
+  VIDEO_FPS as AINEWS60S_FPS,
+  VIDEO_WIDTH as AINEWS60S_WIDTH,
+  VIDEO_HEIGHT as AINEWS60S_HEIGHT,
+} from "./standalone-samples/AiNews60s";
+import {
+  PROG_THINKING_COMPOSITION_ID,
+  PROG_THINKING_DURATION,
+  PROG_THINKING_FPS,
+  PROG_THINKING_HEIGHT,
+  PROG_THINKING_WIDTH,
+  AiProgrammingThinking,
+} from "./standalone-samples/AiProgrammingThinking";
 
 const calculateVideoProjectMetadata = ({ props }: { props: VideoProject }) => {
   const parsedProject = videoProjectSchema.parse(props) as VideoProject;
@@ -121,6 +154,40 @@ export const RemotionRoot: FC = () => {
         fps={WORLD_CUP_BETTING_ANALYSIS_FPS}
         width={WORLD_CUP_BETTING_ANALYSIS_WIDTH}
         height={WORLD_CUP_BETTING_ANALYSIS_HEIGHT}
+      />
+      <Composition
+        id={AI_NEWS_COMPOSITION_ID}
+        component={AiNewsVideo}
+        durationInFrames={VIDEO_DURATION_IN_FRAMES}
+        fps={VIDEO_FPS}
+        width={VIDEO_WIDTH}
+        height={VIDEO_HEIGHT}
+      />
+      <Composition
+        id={AI_NEWS_60S_ID}
+        component={AiNews60sVideo}
+        durationInFrames={AINEWS60S_DURATION}
+        fps={AINEWS60S_FPS}
+        width={AINEWS60S_WIDTH}
+        height={AINEWS60S_HEIGHT}
+      />
+
+      <Composition
+        id={PROG_THINKING_COMPOSITION_ID}
+        component={AiProgrammingThinking}
+        durationInFrames={PROG_THINKING_DURATION}
+        fps={PROG_THINKING_FPS}
+        width={PROG_THINKING_WIDTH}
+        height={PROG_THINKING_HEIGHT}
+      />
+
+      <Composition
+        id={WC_PREDICTION_COMPOSITION_ID}
+        component={WorldCupPrediction}
+        durationInFrames={WC_PREDICTION_DURATION_IN_FRAMES}
+        fps={WC_PREDICTION_FPS}
+        width={WC_PREDICTION_WIDTH}
+        height={WC_PREDICTION_HEIGHT}
       />
     </>
   );

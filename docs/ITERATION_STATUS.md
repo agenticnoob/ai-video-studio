@@ -1,6 +1,53 @@
 # Iteration Status
 
-Last updated: Main-Site Recipe Abstractions v1
+Last updated: Standalone Sample File Organization
+
+## Latest continuation — Standalone Sample File Organization
+
+- Grouped remaining ad-hoc standalone Remotion samples under
+  `src/remotion/standalone-samples/`: `AiNews60s`, `AiNewsDaily`,
+  `AiProgrammingThinking`, and `WorldCupPrediction`.
+- Moved their Remotion-readable sample voiceover files from root-level
+  `public/audio/` into `public/standalone-samples/audio/`, and updated
+  `staticFile()` references accordingly.
+- Moved local F5/TTS helper scripts into `scripts/f5-tts/`. The private
+  reference audio/text now live in ignored `voices/f5-tts/noobli/`, and helper
+  scripts resolve that path from the repo root.
+- Removed the stale `src/remotion/Root.tsx.bak` backup and added an ignore rule
+  for the F5 clone-test WAV output.
+- Updated `Root.tsx` imports to point at the new standalone-sample directory.
+- Fixed the unused standalone-sample imports/variable that previously made
+  `npm run typecheck` fail.
+
+Validation performed:
+- `docker compose run --rm web bash -lc 'npm run lint'`
+- `docker compose run --rm web bash -lc 'npm run typecheck'`
+- `docker compose run --rm web bash -lc 'npm run smoke:staged-fixtures'`
+
+## Latest continuation — Abstract Standalone Sample Cleanup
+
+- Removed six abstract, reference-free standalone Remotion samples from the
+  active Studio registry: `AiFutureOutlook`, `DailyAINews`,
+  `NietzscheEternalReturn`, `ThingInItself`, `SelfReferentialParadox`, and
+  `AiFlywheel`.
+- Deleted the corresponding local sample directories under `src/remotion/` and
+  removed their `Root.tsx` imports/composition registrations.
+- Removed the matching standalone sample voiceover files from `public/audio/`.
+- Kept the remaining current standalone samples and the main product preview /
+  export path untouched.
+
+Validation performed:
+- `rg -n "AiFutureOutlook|DailyAINews|NietzscheEternalReturn|ThingInItself|SelfReferentialParadox|self-referential-paradox|AiFlywheel|AI_FUTURE_OUTLOOK|DAILY_AI_NEWS|ETERNAL_RETURN|THING_IN_ITSELF|SELF_REF_PARADOX|AI_FLYWHEEL" src package.json scripts public`
+  returned no matches.
+- `docker compose run --rm web bash -lc 'npm run smoke:staged-fixtures'`
+  passed and listed the remaining compositions without the six removed samples.
+
+Validation note:
+- `docker compose run --rm web bash -lc 'npm run typecheck'` currently fails
+  on unrelated remaining untracked samples:
+  `src/remotion/AiNews60s/AiNews60s.tsx`,
+  `src/remotion/AiNews60s/index.ts`, and
+  `src/remotion/AiNewsDaily/index.ts` have unused declarations/imports.
 
 ## Latest continuation — Main-Site Recipe Abstractions v1
 

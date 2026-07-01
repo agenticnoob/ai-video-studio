@@ -46,6 +46,7 @@ __pycache__/
 # Local F5-TTS runtime assets. Keep model checkpoints and private voices out of Git.
 models/f5-tts/
 voices/f5-tts/
+scripts/f5-tts/clone_test.wav
 
 # Locally generated Remotion static assets. Regenerate with the matching
 # `npm run generate:*` command while the web service is up.

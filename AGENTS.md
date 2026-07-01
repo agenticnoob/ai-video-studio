@@ -31,12 +31,16 @@ ai-video-studio/
 |-- src/helpers/           # client-side generation/render/progress hooks
 |-- src/lib/               # schemas, staged pipeline, TTS, render utilities
 |-- src/remotion/          # Remotion compositions, primitives, recipes
+|   `-- standalone-samples/# reference-only standalone compositions
 |-- src/templates/         # registered template definitions and runtimes
 `-- public/                # static assets addressable by Remotion/Next
+    `-- standalone-samples/audio/ # sample-only Remotion audio assets
 ```
 
 Generated/local artifact directories such as `out/`, `models/`, and `voices/`
 are part of the local workstation flow, not source-of-truth product modeling.
+Private F5 reference voices belong under ignored `voices/f5-tts/`; helper
+scripts for local F5/TTS probes live under `scripts/f5-tts/`.
 
 ## WHERE TO LOOK
 
@@ -55,6 +59,7 @@ are part of the local workstation flow, not source-of-truth product modeling.
 | TTS/F5 adapter | `src/lib/tts/`, `src/app/api/tts/` | Segment narration assets/captions. |
 | Template registration | `src/templates/` | Server-safe definitions + runtime bundles. |
 | Preview/export composition | `src/remotion/ProjectVideo/` | Shared Remotion render surface. |
+| Standalone sample references | `src/remotion/standalone-samples/`, `public/standalone-samples/audio/` | Reference-only compositions and static audio. |
 | F5 runtime service | `services/f5-tts/` | Contract-smoke and real-GPU service. |
 
 ## CODE MAP
