@@ -225,13 +225,20 @@ Current visual-quality direction:
   F5-TTS voiceover files from `public/generated/world-cup-betting-analysis/`,
   redraws the odds table when no screenshot asset is present, and is intended
   as a concrete source for later data-analysis template extraction.
+- The first real Agent Producer run adds `UvOpenSourceBrief`, a standalone
+  1920x1080 / about 59.9s / 30fps Chinese open-source project brief for
+  Astral `uv`. It uses current GitHub/docs/release facts, generated F5-TTS
+  narration metadata, full-frame screenshot evidence, compact translucent
+  overlays, and claim-aligned zoom-in / hold / return motion.
 - Finished-video-first samples share the categorized
   `src/remotion/standalone-video/` runtime for timing, static voiceover,
   captions, and canvas profiles. This is a reusable production skeleton, not a
   universal visual template: PixelRAG remains `landscape-16x9` /
-  `project-intro`, while WorldCup remains `portrait-9x16` / `data-analysis`.
-  The product path for better generated videos is still planner-visible
-  templates and recipes in the main `VideoProject` flow.
+  `project-intro`, WorldCup remains `portrait-9x16` / `data-analysis`, and
+  Uv remains `landscape-16x9` / `project-intro`. The product path for better
+  generated videos is still planner-visible templates and recipes in the main
+  `VideoProject` flow, while Agent Producer runs are the local
+  finished-video-first path.
 - Lower-priority standalone reference compositions are grouped under
   `src/remotion/standalone-samples/`, with checked-in sample audio under
   `public/standalone-samples/audio/`. They remain references, not registered
@@ -459,6 +466,13 @@ match data, generated Chinese F5-TTS voiceover, and code-drawn visuals. It
 does not require screenshot assets; when `public/assets/jingcai-odds.png` is
 absent, the source scene redraws a compact odds table.
 
+For the first real Agent Producer run, open `UvOpenSourceBrief`. It is a
+standalone 16:9 Chinese open-source project brief for Astral `uv`, built from
+local data, generated F5-TTS narration metadata, live evidence screenshots, and
+sample-local visuals composed with `src/remotion/standalone-video/` plus
+recipe blocks. Generated screenshots and audio live under ignored
+`public/generated/uv-open-source-brief/`.
+
 Preview the local Remotion primitive catalog in the app:
 - http://localhost:3000/primitives
 
@@ -515,6 +529,26 @@ Validate the shared standalone finished-video runtime:
 ```bash
 cd /data/projects/labs/ai-video-studio
 docker compose run --rm web npm run smoke:standalone-video-runtime
+```
+
+Regenerate the standalone uv open-source brief voiceover from local TTS. This
+command needs the Next `web` service running because it calls `POST /api/tts`:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose exec -T web bash -lc 'NEXT_ORIGIN=http://127.0.0.1:3000 npm run generate:uv-open-source-brief'
+```
+
+Validate the standalone uv open-source brief contract without regenerating
+audio:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose run --rm web npm run smoke:uv-open-source-brief
+```
+
+Render the standalone uv open-source brief sample:
+```bash
+cd /data/projects/labs/ai-video-studio
+docker compose run --rm web bash -lc 'npx remotion render src/remotion/index.ts UvOpenSourceBrief /workspace/out/uv-open-source-brief.mp4'
 ```
 
 Regenerate the standalone WorldCup betting analysis voiceover from local TTS.

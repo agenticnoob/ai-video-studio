@@ -37,6 +37,15 @@ import {
   WorldCupBettingAnalysisVideo,
 } from "./WorldCupBettingAnalysis";
 import {
+  getUvOpenSourceBriefDuration,
+  UV_OPEN_SOURCE_BRIEF_COMPOSITION_ID,
+  UV_OPEN_SOURCE_BRIEF_FPS,
+  UV_OPEN_SOURCE_BRIEF_HEIGHT,
+  UV_OPEN_SOURCE_BRIEF_WIDTH,
+  uvOpenSourceBriefData,
+  UvOpenSourceBriefVideo,
+} from "./UvOpenSourceBrief";
+import {
   AI_NEWS_COMPOSITION_ID,
   AiNewsVideo,
   VIDEO_DURATION_IN_FRAMES,
@@ -154,6 +163,14 @@ export const RemotionRoot: FC = () => {
         fps={WORLD_CUP_BETTING_ANALYSIS_FPS}
         width={WORLD_CUP_BETTING_ANALYSIS_WIDTH}
         height={WORLD_CUP_BETTING_ANALYSIS_HEIGHT}
+      />
+      <Composition
+        id={UV_OPEN_SOURCE_BRIEF_COMPOSITION_ID}
+        component={UvOpenSourceBriefVideo}
+        durationInFrames={getUvOpenSourceBriefDuration(uvOpenSourceBriefData)}
+        fps={UV_OPEN_SOURCE_BRIEF_FPS}
+        width={UV_OPEN_SOURCE_BRIEF_WIDTH}
+        height={UV_OPEN_SOURCE_BRIEF_HEIGHT}
       />
       <Composition
         id={AI_NEWS_COMPOSITION_ID}

@@ -1,6 +1,95 @@
 # Iteration Status
 
-Last updated: Agent Producer Workflow v1 Component-Composition Correction
+Last updated: Agent Producer First Real Run — uv Open Source Brief
+
+## Latest continuation — Agent Producer First Real Run: uv Open Source Brief
+
+- Ran the first real Agent Producer workflow as a component-composed standalone
+  Remotion video, not through the web prompt / `VideoProject` path.
+- Follow-up visual feedback was applied to the same composition: screenshot
+  evidence scenes now use full-frame screenshots as the dominant visual, with
+  semi-transparent overlay panels and frame-driven zoom/pan toward the relevant
+  GitHub/docs/release regions. TTS, narration, and composition id were kept
+  unchanged.
+- A second visual correction reduced the full-frame foreground mask so
+  screenshots stay readable, changed screenshot focus motion to quick zoom-in /
+  hold / return-to-context, and re-aligned zoom targets with the narrated
+  claims: GitHub stars/forks, uv docs definition text, and release title/date.
+- Recorded this screenshot-evidence direction back into
+  `.agents/skills/ai-video-studio-agent-producer-workflow/SKILL.md` for future
+  Agent Producer runs.
+- The readable result is now captured as the `Readable screenshot evidence
+  lens` micro-workflow: name the claim, choose a screenshot where the claim is
+  visible, store claim-aligned focus metadata, keep the screenshot readable,
+  use local compact overlays, animate quick zoom-in / hold / return, then
+  review context/zoom/return stills.
+- Topic: Astral `uv`, a current open-source Python package/project manager.
+  Verified current source facts from GitHub API and live pages on 2026-07-01:
+  `astral-sh/uv`, `86956` stars, `3262` forks, Rust implementation, latest
+  release `0.11.26` published `2026-06-30T14:53:17Z`.
+- Captured live evidence screenshots for the repo, official docs, and latest
+  release under ignored local artifacts:
+  `public/generated/uv-open-source-brief/`.
+- Added `src/remotion/UvOpenSourceBrief/` as a dedicated 16:9 Chinese
+  open-source project-intro composition with explicit `types.ts`, `script.ts`,
+  `data.ts`, generated audio metadata, and a sample-local renderer composed
+  from existing standalone-video runtime helpers plus recipe blocks.
+- Reused `StandaloneTimeline`, `StandaloneVoiceover`,
+  `StandaloneBottomCaption`, `WorkflowMapBlock`, `MetricCardGrid`,
+  `TerminalSessionBlock`, and `TimelineProgressBlock`; sample-local visuals
+  cover the hero, benchmark bars, tool-chip grid, full-frame screenshot
+  evidence backdrops, local semi-transparent overlays, readable screenshot
+  treatment, frame-driven screenshot zoom-in / hold / return motion, and
+  closing synthesis.
+- Added `npm run generate:uv-open-source-brief` and
+  `npm run smoke:uv-open-source-brief`. The smoke guards the composition id,
+  45-60 second dynamic duration, landscape profile, project-intro family,
+  verified uv facts, local static audio/screenshot assets, Root registration,
+  standalone runtime reuse, recipe block reuse, and no CSS animation/transition
+  styles.
+- TTS status: fixed the first-run silent fallback. The generator now defaults
+  to the Compose service origin `http://web:3000`, the storyboard TTS probe uses
+  one-based segment order, and regenerated audio reports provider `f5-tts` with
+  `usedFallback: false`. The renderer plays the regenerated narration at `1.08x`
+  so the draft stays within the 45-60 second target.
+- Rendered review stills:
+  `out/uv-open-source-brief-frame-45.png`,
+  `out/uv-open-source-brief-frame-260.png`,
+  `out/uv-open-source-brief-frame-650.png`, and
+  `out/uv-open-source-brief-frame-1390.png`. Checked full-frame screenshot
+  dominance, screenshot readability without heavy masks, overlay readability,
+  zoom/pan focal-point alignment, safe margins, caption separation, and
+  screenshot/media presence.
+- Rendered mp4:
+  `out/uv-open-source-brief.mp4`; `ffprobe` reported `h264` video, `aac`
+  audio, duration `59.883000`, size `16517440`. `ffmpeg volumedetect` reported
+  `mean_volume: -20.1 dB` and `max_volume: -3.0 dB`, confirming the output is
+  no longer silent.
+- No reusable primitive/block/recipe was promoted in this slice; the useful
+  future candidates are source-evidence screenshot backdrops, semi-transparent
+  evidence overlays, readable evidence zoom-in / hold / return motion,
+  claim-aligned screenshot focus metadata, open-source adoption metric beat,
+  and toolchain-coverage chip grid.
+- Roadmap status was updated so Phase 5.6 no longer says the first real
+  producer run is pending; it now records `UvOpenSourceBrief` as the completed
+  first run and names the reusable evidence-lens candidates.
+
+Validation performed:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:uv-open-source-brief'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run generate:uv-open-source-brief'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit --pretty false'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+  passed with 0 errors and 2 warnings from pre-existing ignored generated
+  files under `public/generated/agent-producer-uv/`.
+- `git diff --check`
+- `docker compose run --rm web bash -lc 'npx remotion render src/remotion/index.ts UvOpenSourceBrief /workspace/out/uv-open-source-brief.mp4 && ffprobe -v error -show_entries stream=codec_type,codec_name -show_entries format=duration,size -of default=noprint_wrappers=1 /workspace/out/uv-open-source-brief.mp4'`
+- `ffmpeg -hide_banner -i out/uv-open-source-brief.mp4 -af volumedetect -f null /dev/null`
+
+Validation note:
+- Before implementation, the root filesystem was full. With user approval,
+  cleaned unused Docker build cache and dangling image layers, reclaiming about
+  `40.85GB`; root filesystem then had about `39GB` available. This was an
+  environment cleanup, not a source change.
 
 ## Latest continuation — Agent Producer Workflow v1 Component-Composition Correction
 

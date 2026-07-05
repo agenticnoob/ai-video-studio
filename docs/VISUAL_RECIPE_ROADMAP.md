@@ -598,8 +598,8 @@ Acceptance:
 
 ### Phase 5.6: Agent Producer Workflow v1
 
-Status: implemented for docs and repo-local skill; first real producer run is
-pending.
+Status: implemented for docs and repo-local skill; first real producer run
+completed with `UvOpenSourceBrief`.
 
 Goal: define the local production workflow for topics that need agent research,
 current information, screenshots, TTS-first timing, primitive/block selection,
@@ -634,10 +634,14 @@ Acceptance:
   requested
 - no runtime or product schema changes are introduced by the workflow document
   itself
+- first real run validates the readable screenshot evidence lens: full-frame
+  screenshots as proof, compact translucent local overlays, claim-aligned
+  screenshot focus metadata, and frame-driven quick zoom-in / hold /
+  return-to-context motion
 
 ## 6. First Implementation Slice
 
-Recommended next implementation after this docs/skill slice:
+Completed first implementation after this docs/skill slice:
 
 ```txt
 Agent Producer First Real Run
@@ -654,15 +658,17 @@ Why:
 
 Minimum scope:
 
-- choose one real 45-60 second topic
-- gather source facts and screenshots when the topic needs proof
-- write narration beats before locking scene durations
-- list candidate primitives, blocks, and standalone runtime helpers before
+- chose one real 45-60 second topic: Astral `uv`
+- gathered source facts and screenshots when the topic needed proof
+- wrote narration beats before locking scene durations
+- listed candidate primitives, blocks, and standalone runtime helpers before
   adding new visuals
-- produce a dedicated `src/remotion/<SampleName>/` composition by default
-- use `VideoProject` only with an explicit productization reason
-- render at least three stills for visual inspection
-- promote only proven reusable pieces into blocks, recipes, or templates
+- produced a dedicated `src/remotion/UvOpenSourceBrief/` composition
+- used standalone-video runtime helpers instead of `VideoProject`
+- rendered representative stills for visual inspection
+- kept screenshots/audio/renders local-only under ignored artifact paths
+- promoted no primitive/block yet, but identified reusable candidates:
+  `EvidenceScreenshotBackdrop`, `EvidenceOverlayPanel`, and `ScreenshotFocus`
 
 Do not include:
 

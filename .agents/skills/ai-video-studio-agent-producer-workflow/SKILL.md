@@ -164,6 +164,61 @@ Default assembly path:
   reusable visual language back into primitives, blocks, recipes, or templates
   later.
 
+Screenshot evidence direction:
+
+- When a beat uses a website, GitHub, product page, docs page, or dashboard
+  screenshot as visual evidence, prefer making the screenshot the dominant
+  full-frame visual instead of a small side card.
+- Layer the narration headline, metrics, labels, and callouts as
+  semi-transparent overlays on top of the screenshot, keeping safe margins and
+  caption space clear.
+- Use frame-driven Remotion `interpolate()` zoom/pan to push into the important
+  part of the screenshot, such as stars, release title, docs navigation, chart
+  value, or product state. Do not use CSS animation or transition.
+- Keep the screenshot itself readable. Avoid heavy full-frame masks that turn
+  the evidence into an indistinct dark background; prefer local translucent
+  panels behind text and only light edge vignettes over the screenshot.
+- Match zoom targets to the exact claim being narrated. If the narration says
+  stars, zoom toward the star/fork counters; if it says release date, zoom
+  toward the release title/date; if it says official definition, zoom toward
+  the definition text; if it says speed, zoom toward the benchmark or
+  performance area.
+- For evidence zooms, use a quick push-in, a short hold, then return toward the
+  original screenshot scale so the viewer sees both context and detail.
+- Use screenshot cards only when the screenshot is secondary context; if the
+  screenshot is proof for the beat, it should usually own the frame.
+
+Readable screenshot evidence lens:
+
+Use this micro-workflow when the screenshot must prove a real claim:
+
+1. Name the claim first, such as `stars/forks`, `official definition`,
+   `release title/date`, `benchmark`, `pricing`, or `product state`.
+2. Capture or select a screenshot where that claim is visible without relying
+   on tiny text after scaling.
+3. Record a scene-local focus target that matches the claim. Do not zoom into a
+   visually interesting area if it is not the area being narrated.
+4. Make the screenshot the main layer at full-frame scale. Keep the screenshot
+   readable with normal brightness/contrast and only light edge vignettes.
+5. Put narration text, metrics, and labels in a compact translucent panel.
+   The panel may blur or darken only its own background; it should not mask the
+   whole screenshot.
+6. Animate the screenshot with a quick push-in, a short hold, and a return
+   toward the original scale. This gives both context and detail in one shot.
+7. Render stills at the start/context frame, the zoom/hold frame, and the
+   return frame. Check that the screenshot evidence remains legible, the panel
+   does not cover the claim, captions do not collide, and the focal point
+   matches the narration.
+
+Promotion candidates from the uv first run:
+
+- `EvidenceScreenshotBackdrop`: full-frame screenshot layer with readable
+  filter, light vignette, and frame-driven focus motion.
+- `EvidenceOverlayPanel`: compact translucent local panel for headline,
+  labels, and claim metrics.
+- `ScreenshotFocus`: data model for `assetId`, claim/focus description,
+  zoom-in frame, hold frame, return frame, target scale, and pan offsets.
+
 Optional productization path:
 
 - Build or edit a `VideoProject` only when the user asks for web editing,
