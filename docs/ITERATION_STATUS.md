@@ -1,6 +1,32 @@
 # Iteration Status
 
-Last updated: Agent Producer First Real Run — uv Open Source Brief
+Last updated: Agent Producer Roadmap Alignment
+
+## Latest continuation — Agent Producer Roadmap Alignment
+
+- Direction decision: Agent Producer is now the default personal
+  video-production path for real topics; `VideoProject` / web editor remains
+  the productized generation, preview, editing, regeneration, and export path.
+- The intended default production loop is:
+  topic -> research/assets -> narration/TTS -> primitive/block/runtime
+  inventory -> dedicated Remotion composition -> still/mp4 review -> promotion
+  notes.
+- Do not route personal finished-video work back through the web prompt unless
+  the user explicitly asks for page editing, selected-segment regeneration,
+  app export, or main-site productization.
+- The next recommended implementation plan should target Producer Sample OS
+  v1 first: sample manifest, scaffold, sample directory convention, local-only
+  artifact boundary, and a manifest/smoke guard.
+- Follow-up phases should extract the uv screenshot evidence lens into a
+  shared block, then add a promotion gate that decides when sample-local visual
+  language becomes primitive, block, recipe, or template.
+- No code, generated screenshots, generated audio, or rendered mp4 artifacts
+  are part of this alignment slice.
+
+Validation target:
+- `git diff --check`
+- text consistency checks across active docs for Agent Producer / VideoProject
+  default-path wording
 
 ## Latest continuation — Agent Producer First Real Run: uv Open Source Brief
 

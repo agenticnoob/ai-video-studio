@@ -6,12 +6,15 @@
 
 ## OVERVIEW
 
-`ai-video-studio` is a Docker-first Next 16 + React 19 + Remotion 4 app for
-turning a brief into an editable/exportable `VideoProject`. It is past the
-starter-demo stage: the active product loop is staged generation, in-project
-TTS/captions, selected-template compilation, Remotion preview, and local export.
+`ai-video-studio` is a Docker-first Next 16 + React 19 + Remotion 4 workspace
+with two deliberate paths. Agent Producer is the default personal production
+path for high-quality videos from real topics. `VideoProject` / web editor is
+the productized prompt-to-video path for editable/exportable projects. The app
+is past the starter-demo stage: the active productized loop is staged
+generation, in-project TTS/captions, selected-template compilation, Remotion
+preview, and local export.
 
-Current target pipeline:
+Current productized web pipeline:
 
 ```txt
 brief -> StoryboardPlan -> per-segment narration synthesis
@@ -47,7 +50,7 @@ scripts for local F5/TTS probes live under `scripts/f5-tts/`.
 | Task | Location | Notes |
 | --- | --- | --- |
 | Current status / next slice | `docs/ITERATION_STATUS.md` | Fastest routing doc. |
-| Product direction | `docs/FINAL_PRODUCT_GOAL.md` | Highest-level authority. |
+| Productization direction | `docs/FINAL_PRODUCT_GOAL.md` | Highest-level web/editor authority. |
 | Visual quality / recipes | `docs/VISUAL_RECIPE_ROADMAP.md` | Clean-main recipe roadmap. |
 | Product scope | `docs/PRODUCT_REQUIREMENTS.md` | Segment/template/media boundaries. |
 | Page workflow | `src/app/page.tsx`, `src/helpers/project-generation/` | Client state and actions. |
@@ -89,7 +92,8 @@ scripts for local F5/TTS probes live under `scripts/f5-tts/`.
   `node_modules` may be absent or irrelevant.
 - `.env.example` is the tracked config template; `.env` is the local Docker/Next
   config. Treat `.env.local` as legacy compatibility only.
-- Keep `VideoProject` as the top-level generation/preview/edit/export boundary.
+- Keep `VideoProject` as the top-level generation/preview/edit/export boundary
+  for the productized web path.
 - Keep one primary `templateId` per `VideoSegment`; grow template internals
   before introducing multi-template-per-segment orchestration.
 - Keep generated narration audio and captions under segment-owned narration
@@ -99,7 +103,7 @@ scripts for local F5/TTS probes live under `scripts/f5-tts/`.
 - For higher-quality local video production, use the Agent Producer workflow:
   start from primitives/blocks/standalone-video runtime helpers, compose a
   dedicated Remotion video by default, and promote recipes/templates only after
-  reuse is proven.
+  reuse is proven. Do not route this default back through the web prompt.
 - Remotion animation must be frame-driven with Remotion APIs.
 
 ## ANTI-PATTERNS (THIS PROJECT)

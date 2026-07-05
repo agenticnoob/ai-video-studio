@@ -1,13 +1,20 @@
 # Final Product Goal
 
-Status: authoritative product target and roadmap source.
+Status: authoritative productization target and roadmap source.
 
-This document defines the long-term generation target for `ai-video-studio`.
+This document defines the long-term productized generation target for
+`ai-video-studio`: the web/editor path that turns prompts into editable and
+exportable `VideoProject` payloads. It is not the default personal production
+path for high-quality one-off videos. For that, use the Agent Producer workflow
+documented in `.agents/skills/ai-video-studio-agent-producer-workflow/` and
+`docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md`.
+
 When roadmap, architecture, provider, template, TTS, or media-layer work needs
-direction, use this document as the highest-level product goal. More specific
-documents such as `VISUAL_RECIPE_ROADMAP.md`, `PRODUCT_REQUIREMENTS.md`,
-`PRODUCT_ARCHITECTURE.md`, `TEMPLATE_ARCHITECTURE.md`, `MEDIA_LAYERS.md`, and
-provider notes should align with this target.
+direction, use this document as the highest-level productization goal. More
+specific documents such as `VISUAL_RECIPE_ROADMAP.md`,
+`PRODUCT_REQUIREMENTS.md`, `PRODUCT_ARCHITECTURE.md`,
+`TEMPLATE_ARCHITECTURE.md`, `MEDIA_LAYERS.md`, and provider notes should align
+with this target.
 
 ## 0. Product Statement
 
@@ -39,10 +46,22 @@ provider notes should align with this target.
 The English sections below turn this product statement into engineering
 contracts, roadmap order, and scope boundaries.
 
+当前方向（2026-07-06）是双轨：
+
+- **Agent Producer**：个人默认做片方式。用户给主题，Agent 负责调研、
+  脚本、TTS、素材截图、Remotion component composition、still/mp4 review，
+  并把可复用视觉语言逐步沉淀到 primitives / blocks / recipes / templates。
+- **`VideoProject` / web editor**：产品化辅助路径。保留 staged generation、
+  页面预览、编辑、选中分段重生成、本地导出和未来产品化能力。
+
+不要把 Agent Producer 重新绕回网页 prompt；也不要把本文件的
+`VideoProject` 产品化目标误读成个人做片的默认入口。
+
 ## 1. Final Goal
 
-`ai-video-studio` should turn a user's loose creative prompt into a complete,
-watchable, audible, editable, and locally exportable video.
+The productized `ai-video-studio` web path should turn a user's loose creative
+prompt into a complete, watchable, audible, editable, and locally exportable
+video.
 
 The final generation model is not a single LLM call that directly emits a full
 `VideoProject`. The final model is an orchestrated pipeline:
@@ -71,14 +90,33 @@ The system should:
 8. Assemble all compiled segments into one `VideoProject`.
 9. Let the user preview, edit, regenerate, and export the full video.
 
-This keeps the product segment-first, template-driven, voice-aware, and
-scalable as the template library grows.
+This keeps the productized web path segment-first, template-driven,
+voice-aware, and scalable as the template library grows.
+
+For personal finished-video production, the preferred route is different:
+
+```txt
+topic
+  -> research / source capture
+  -> narration and TTS
+  -> primitive / block / runtime inventory
+  -> dedicated Remotion composition
+  -> still / mp4 review
+  -> promotion notes
+```
+
+That Agent Producer route should use `VideoProject` only when the user
+explicitly needs web editing, selected-segment regeneration, app export, or
+main-site productization.
 
 Current visual-quality direction:
 
 - Continue from the clean `main` product line.
 - Keep the staged generation / F5 narration / caption / `VideoProject`
-  preview-export loop as the product base.
+  preview-export loop as the productized web base.
+- Treat Agent Producer as the default personal production path for
+  high-quality videos that need research, screenshots, TTS-first timing,
+  component composition, and visual review.
 - Improve generated-video quality by upgrading templates into high-quality
   scene recipes: polished, duration-aware visual treatments with stronger
   motion, transitions, grouped visual blocks, and Remotion Studio preview
@@ -510,7 +548,7 @@ audio duration, and visual timing.
 
 ## 6. Relationship To Current Implementation
 
-The current implementation has moved past the original one-call provider
+The current web implementation has moved past the original one-call provider
 shortcut into the staged authoring path:
 
 ```txt
@@ -534,13 +572,20 @@ brief
   -> preview/edit/export
 ```
 
-Do not collapse the product back into a one-call prompt -> `VideoProject`
-generation architecture. The active system is the staged authoring loop that
-proves preview, editing, template rendering, validation, and export.
+Do not collapse the productized web path back into a one-call prompt ->
+`VideoProject` generation architecture. The active web system is the staged
+authoring loop that proves preview, editing, template rendering, validation,
+and export.
+
+Do not use this productization roadmap to override the Agent Producer
+decision. When the goal is a high-quality personal finished video from a real
+topic, start with a dedicated Remotion composition assembled from
+primitives/blocks/standalone-video helpers, then promote reusable pieces back
+into the productized recipe/template layer only after evidence.
 
 Current compatibility notes:
 
-- `VideoProject` remains the top-level contract.
+- `VideoProject` remains the top-level contract for the productized web path.
 - `VideoSegment` remains the editing unit.
 - New narration-provider work must not use scripted scene fields as the audio
   carrier.
@@ -577,8 +622,10 @@ Current compatibility notes:
 
 ## 7. Roadmap
 
-Roadmap work should follow this target unless a later product decision updates
-this document.
+Productized web roadmap work should follow this target unless a later product
+decision updates this document. Agent Producer roadmap work should follow the
+repo-local workflow skill and use this document only when promoting proven
+visual language back into the web/editor product layer.
 
 ### Milestone 0: Shipped V1 Authoring Loop
 

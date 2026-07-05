@@ -143,7 +143,10 @@ Do not promote a primitive into `src/templates/` just because it is visually
 interesting.
 
 Promotion is only appropriate when the component set can implement a complete
-segment intent and deserves an AI-visible schema contract.
+segment intent and deserves an AI-visible schema contract. The preferred
+evidence source is a finished Agent Producer sample: first prove the visual
+language in a dedicated Remotion composition, then extract reusable pieces into
+primitives or blocks, and only then consider productized recipes/templates.
 
 ```txt
 primitive candidate
@@ -159,6 +162,10 @@ registered template
   segment-level implementation mechanism with schema, definition, editor,
   runtime adapter, and registration
 ```
+
+Agent Producer samples are not product templates by default. They may contain
+sample-local scenes, data, screenshots, and narration timing that should stay
+local to that sample until multiple runs prove a reusable shape.
 
 Examples:
 

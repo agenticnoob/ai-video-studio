@@ -1,8 +1,24 @@
 # AI Video Studio
 
-AI-first web app scaffold evolving into a prompt-to-video studio.
+AI-first Remotion video workspace with two deliberate paths:
 
-Goal:
+- Agent Producer is the default personal production path for high-quality
+  videos from a real topic.
+- `VideoProject` / web editor remains the productized generation, preview,
+  editing, and export path.
+
+Agent Producer goal:
+- user gives a topic or brief
+- agent researches sources and captures evidence assets when needed
+- agent writes narration beats and generates or prepares TTS before locking
+  timing
+- agent inventories primitives, recipe blocks, and standalone-video helpers
+- agent composes a dedicated Remotion video from repo-owned components
+- agent renders stills / mp4 for review
+- reusable visual language is promoted gradually into primitives, blocks,
+  recipes, or templates after real samples prove it
+
+Productized web goal:
 - user enters a natural-language brief
 - AI plans storyboard segments from the brief and registered template
   capabilities
@@ -80,7 +96,9 @@ Current implementation status:
 - higher-quality local video-production work that needs research, screenshots,
   TTS-first timing, primitive selection, and still review should use
   `.agents/skills/ai-video-studio-agent-producer-workflow/` plus
-  `docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md`
+  `docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md`; this
+  is the default path for personal finished-video production, not a wrapper
+  around the web prompt
 - current progress and next-step notes live in `docs/ITERATION_STATUS.md`
 - product requirements live in `docs/PRODUCT_REQUIREMENTS.md`
 - F5-TTS / aligned captions provider target lives in
@@ -95,7 +113,7 @@ Current implementation status:
   `docs/HANDOFF_STRUCTURE_REFACTOR.md`
 - agent/new-task startup notes live in `AGENTS.md`
 
-## Current product flow
+## Current productized web flow
 
 1. user writes a brief
 2. page calls `POST /api/generate/staged`
@@ -113,8 +131,16 @@ Current implementation status:
 
 ## Product direction
 
-Current modeling direction:
-- `VideoProject` is the top-level generation / preview / render boundary
+Current direction is dual-track:
+- Agent Producer is the primary local production route for real finished
+  videos. It starts from a topic, uses research/assets/TTS/component
+  composition, and outputs a dedicated Remotion composition.
+- `VideoProject` is the productized web route for generated projects that need
+  page preview, editing, selected-segment regeneration, or app export.
+
+Current web/product modeling direction:
+- `VideoProject` is the top-level generation / preview / render boundary for
+  the productized web path
 - `VideoSegment` is the user-facing editing and regeneration unit
 - one segment should have one primary template
 - `templateId` determines the schema of `implementation`
@@ -157,8 +183,11 @@ Current modeling direction:
   media-layer role, not a separate project field
 
 Current visual-quality direction:
-- keep `main` as the product base instead of merging the heavier scene-graph
-  exploration branch wholesale
+- keep `main` as the productized web base instead of merging the heavier
+  scene-graph exploration branch wholesale
+- make Agent Producer the default path for personal high-quality video
+  production; use purpose-built Remotion compositions before promoting
+  reusable pieces back into recipes/templates
 - upgrade simple template output into high-quality scene recipes: polished,
   duration-aware treatments with stronger motion, transitions, grouped visual
   blocks, and Remotion Studio preview examples
@@ -359,7 +388,8 @@ Current code checkpoint:
 - not implemented yet: persistence/history and broad media-layer editing
 
 Current bounded direction and guardrails:
-- keep `VideoProject` as the preview/edit/export boundary
+- keep `VideoProject` as the preview/edit/export boundary for the productized
+  web route
 - use `StoryboardPlan` as the planner-stage contract
 - continue from `VideoSegment.narration` as the target home for generated
   narration text, audio metadata, and segment-local caption cues
@@ -372,14 +402,15 @@ Current bounded direction and guardrails:
 - Phase 5.1 is complete for the bounded recipe-owned loop: upload one product screenshot before
   generation or inside a `product-ui-zoom` section, bind it to that recipe, and
   keep preview/export on the same controlled reference
-- the current visual-quality path is main-site recipe-first: use standalone
-  samples as reference artifacts, then promote reusable visual language into
+- the current personal video-production path is Agent Producer first: start
+  from primitive/block/runtime inventory, use research/screenshots/TTS-first
+  timing when the topic needs it, then compose a dedicated Remotion video by
+  default
+- the current productization path is main-site recipe-first: use finished
+  standalone samples as evidence, then promote reusable visual language into
   planner-visible templates and `recipeHints`
-- the local high-quality producer path is now documented as an Agent Producer
-  workflow: start from primitive/block/runtime inventory, use
-  research/screenshots/TTS-first timing when the topic needs it, then compose a
-  dedicated Remotion video by default; choose `VideoProject` only for explicit
-  web editing or productization needs
+- choose `VideoProject` only for explicit web editing, selected-segment
+  regeneration, app export, or productization needs
 - avoid persistence/history, broad media-library UI, generic media-layer
   compositing, and multi-template-per-segment orchestration unless explicitly
   reopened
@@ -486,7 +517,8 @@ Remotion visuals. That workflow starts with the primitive catalog, then uses
 research, screenshots, TTS-first timing, existing recipe blocks,
 `src/remotion/standalone-video/` helpers, and still-frame review to build a
 dedicated composition like `WorldCupBettingAnalysis`. Treat `VideoProject` as a
-later productization path, not the default local producer output.
+productization, editing, regeneration, or app export target, not the default
+local producer output.
 
 Render the default/sample composition to `out/ai-video.mp4`:
 ```bash

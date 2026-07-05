@@ -8,9 +8,10 @@ description: Use when working in /data/projects/labs/ai-video-studio and Codex s
 ## Purpose
 
 Use this skill when the user wants a higher-quality video produced by a local
-agent workflow instead of the one-shot web prompt. The agent acts as producer,
-researcher, data modeler, script editor, component composer, and render
-reviewer.
+agent workflow instead of the one-shot web prompt. In this repo, this is the
+default personal production path for real finished videos. The agent acts as
+producer, researcher, data modeler, script editor, component composer, and
+render reviewer.
 
 The default producer path is a component-composed Remotion video:
 
@@ -19,8 +20,8 @@ topic -> research/data -> narration/TTS -> component inventory
 -> dedicated Remotion composition -> still/mp4 review -> promotion notes
 ```
 
-The web `VideoProject` path is a later productization target, not the default
-execution path for this workflow.
+The web `VideoProject` path is a productization, editing, regeneration, or app
+export target, not the default execution path for this workflow.
 
 ## Core Rule
 
@@ -222,7 +223,7 @@ Promotion candidates from the uv first run:
 Optional productization path:
 
 - Build or edit a `VideoProject` only when the user asks for web editing,
-  selected-segment regeneration, or main-site generation quality.
+  selected-segment regeneration, app export, or main-site generation quality.
 - Keep one primary `templateId` per `VideoSegment`.
 - Use template implementation fields as the only LLM-visible contract.
 - Let template runtimes map implementation fields to primitives.

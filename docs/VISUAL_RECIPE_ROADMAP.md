@@ -1,15 +1,23 @@
 # Visual Recipe Roadmap
 
-Status: active roadmap for the clean `main` product line.
+Status: active roadmap for the productized visual layer and Agent Producer
+promotion path.
 
-Use this document when the next task is about making generated videos look
-better while preserving the current staged generation product model. The goal
-is not to restart the product, not to merge the heavier scene-graph exploration
-branch wholesale, and not to build a broad visual-review scoring system.
+Use this document when the next task is about either:
+
+- making generated web/editor videos look better while preserving the current
+  staged generation product model
+- improving the Agent Producer path that makes dedicated Remotion videos first
+  and promotes reusable visual language only after samples prove it
+
+The goal is not to restart the product, not to merge the heavier scene-graph
+exploration branch wholesale, not to build a broad visual-review scoring
+system, and not to route personal video production back through the one-shot
+web prompt.
 
 ## 1. Thesis
 
-The current `main` branch already has the right product skeleton:
+The current `main` branch already has the right productized web skeleton:
 
 ```txt
 brief
@@ -21,22 +29,30 @@ brief
   -> preview / edit / export
 ```
 
-The weak point is visual quality, not the end-to-end pipeline.
+The weak point for the web path is visual quality, not the end-to-end
+pipeline.
 
-The next product direction should upgrade simple templates into high-quality
-scene recipes: reusable, polished, duration-aware visual treatments that the
-planner can choose and the compiler can fill with schema-valid data.
+The next productized direction should upgrade simple templates into
+high-quality scene recipes: reusable, polished, duration-aware visual
+treatments that the planner can choose and the compiler can fill with
+schema-valid data.
+
+The default personal production direction is Agent Producer: start from a real
+topic, research and capture evidence, write narration and TTS first, inventory
+existing primitives/blocks/runtime helpers, compose a dedicated Remotion video,
+review stills/mp4, then promote only proven reusable pieces.
 
 In plain terms:
 
 ```txt
 Do not widen the product.
-Make the generated segments look more like finished videos.
+Do not send personal production back through the web prompt.
+Make real videos first, then promote the reusable parts.
 ```
 
-## 2. Product Model
+## 2. Product And Producer Model
 
-Keep the existing user-facing model:
+Keep the existing user-facing model for the productized web path:
 
 - one `VideoProject` per generated video
 - one or more `VideoSegment` entries per project
@@ -599,7 +615,8 @@ Acceptance:
 ### Phase 5.6: Agent Producer Workflow v1
 
 Status: implemented for docs and repo-local skill; first real producer run
-completed with `UvOpenSourceBrief`.
+completed with `UvOpenSourceBrief`; now accepted as the default personal
+video-production path.
 
 Goal: define the local production workflow for topics that need agent research,
 current information, screenshots, TTS-first timing, primitive/block selection,
@@ -619,7 +636,7 @@ Deliver:
   following the `WorldCupBettingAnalysis` style of explicit data, generated
   narration, standalone-video runtime helpers, and sample-specific scenes
 - `VideoProject` path only when the user explicitly needs web editing,
-  selected-segment regeneration, or main-site productization
+  selected-segment regeneration, app export, or main-site productization
 
 Acceptance:
 
@@ -680,6 +697,104 @@ Do not include:
 - media library
 - provider-visible arbitrary media ingestion
 
+## 6.1 Next Roadmap Slices
+
+### Phase 5.7: Producer Sample OS v1
+
+Status: next recommended bounded slice.
+
+Goal: make Agent Producer runs easier to start, review, and hand off without
+turning them into a generic web prompt or universal template.
+
+Deliver:
+
+- a committed producer sample manifest shape for composition id, content
+  family, canvas profile, local artifact root, review frames, TTS status, and
+  promotion candidates
+- a scaffold for new `src/remotion/<SampleName>/` folders with `types.ts`,
+  `script.ts`, `data.ts`, generated audio metadata placeholder, renderer entry,
+  and smoke skeleton
+- a documented sample directory convention that separates committed source
+  files from local-only screenshots, audio, and mp4 files
+- a focused manifest/smoke command that validates committed sample metadata
+  without requiring generated artifacts to be in Git
+
+Non-goals:
+
+- no broad media library
+- no persistence/history
+- no one-shot arbitrary video generator
+- no generated screenshots/audio/mp4 committed to Git
+
+Acceptance:
+
+- `PixelRAGChineseStandalonePreview`, `WorldCupBettingAnalysis`, and
+  `UvOpenSourceBrief` can be described by the same manifest model
+- a new producer sample has a predictable folder and smoke shape before visual
+  implementation begins
+- docs make clear that local artifacts stay ignored
+
+### Phase 5.8: Evidence Lens Block v1
+
+Status: planned after Producer Sample OS v1.
+
+Goal: promote the reusable screenshot-proof language from `UvOpenSourceBrief`
+into a shared block while keeping topic-specific facts sample-local.
+
+Deliver:
+
+- shared `ScreenshotFocus` data model for claim, asset id, zoom-in / hold /
+  return frames, scale, pan, and overlay placement
+- shared full-frame evidence screenshot backdrop with readable filters, light
+  vignette, and frame-driven focus motion
+- shared compact translucent evidence overlay panel
+- uv sample updated to consume the shared block without changing its source
+  facts, narration, or generated assets
+- still-review guidance for context / zoom / return frames
+
+Non-goals:
+
+- no automatic screenshot repair
+- no visual scoring system
+- no planner-visible recipe/template exposure in this phase
+- no broad arbitrary asset ingestion
+
+Acceptance:
+
+- uv evidence scenes remain readable and claim-aligned through the shared block
+- the shared block uses Remotion frame-driven motion only
+- review stills catch overlay collision, unreadable evidence, and wrong focus
+  target before a sample is called good
+
+### Phase 5.9: Promotion Gate v1
+
+Status: planned after at least one shared block is extracted.
+
+Goal: make promotion decisions explicit so sample-local ideas do not become
+universal templates too early.
+
+Deliver:
+
+- checklist for keeping a visual idea sample-local, promoting it to primitive,
+  promoting it to recipe block, or exposing it as a recipe/template
+- rule that recipes/templates are productization layers, not the default Agent
+  Producer entrypoint
+- documentation hooks for updating `REMOTION_PRIMITIVES`,
+  `REMOTION_COMPONENT_LIBRARY`, `VISUAL_RECIPE_ROADMAP`, and README when a
+  visual language is promoted
+
+Non-goals:
+
+- no universal data-story or project-intro template by default
+- no multi-template-per-segment orchestration
+- no primitive prop exposure to LLM providers
+
+Acceptance:
+
+- new samples can list promotion candidates without promoting them immediately
+- productized recipes/templates require evidence from finished samples
+- web/editor recipe work remains bounded to registered template contracts
+
 ## 7. Validation
 
 Use Docker-first validation on this workstation.
@@ -707,10 +822,12 @@ Current decision:
 
 - Continue from `main`, not from the heavier scene-graph roadmap branch.
 - Treat the scene-graph roadmap branch as research.
-- Preserve the staged generation / F5 / caption / preview / export product
-  loop.
-- Invest next in high-quality recipe visuals, motion grammar, and previewable
-  examples.
+- Treat Agent Producer as the default personal production path for real
+  finished videos.
+- Preserve the staged generation / F5 / caption / preview / export web product
+  loop as the productization path.
+- Invest next in Producer Sample OS, evidence-lens extraction, high-quality
+  recipe visuals, motion grammar, and previewable examples.
 
 This keeps the product moving toward better generated videos without adding
 another layer of review infrastructure before the visuals themselves are good.

@@ -8,6 +8,11 @@ page UI components and they are not top-level product concepts. A template may
 compose several primitives to produce its final visual style while still
 remaining one primary template for a `VideoSegment`.
 
+Agent Producer runs may also compose these primitives directly inside a
+dedicated Remotion video. That does not make the dedicated video a product
+template. Promote only the reusable visual language that survives still/mp4
+review and proves useful beyond one sample.
+
 External Remotion libraries may call similar assets "templates". In this repo,
 those assets should be treated as reusable component or primitive candidates
 first. See `docs/REMOTION_COMPONENT_LIBRARY.md` for the intake and promotion
@@ -159,13 +164,15 @@ prop in the template runtime.
 
 When asking AI to add a new template capability, prefer this order:
 
-1. Add or reuse Remotion primitives under `src/remotion/primitives/`.
-2. Add a template-local block contract under
+1. Prove the visual idea in an Agent Producer sample or a focused preview when
+   possible.
+2. Add or reuse Remotion primitives under `src/remotion/primitives/`.
+3. Add a template-local block contract under
    `src/templates/<template>/blocks.ts`.
-3. Add runtime mapping under `src/templates/<template>/block-renderers.tsx`.
-4. Keep the template implementation schema as the only LLM-visible parameter
+4. Add runtime mapping under `src/templates/<template>/block-renderers.tsx`.
+5. Keep the template implementation schema as the only LLM-visible parameter
    contract.
-5. Update this document with the primitive effect and mapping.
+6. Update this document with the primitive effect and mapping.
 
 This prevents AI-generated changes from merging rendering props, block
 semantics, and template schemas into one hard-to-maintain blob.

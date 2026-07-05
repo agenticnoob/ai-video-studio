@@ -1,6 +1,6 @@
 # Agent Producer Workflow Design
 
-Status: accepted direction for the next bounded workflow slice.
+Status: accepted direction for the default personal production workflow.
 
 ## Problem
 
@@ -42,10 +42,10 @@ The workflow is documented in:
 - `.agents/skills/ai-video-studio-agent-producer-workflow/SKILL.md`
 
 The workflow is not a wrapper around the page prompt. The web app remains the
-main product surface for prompt entry, editing, and export, but the producer
-workflow's default output is a dedicated Remotion composition assembled from
-repo-owned components. `VideoProject` is a later productization target, not the
-default local producer output.
+productized surface for prompt entry, editing, selected-segment regeneration,
+and export, but the producer workflow's default output is a dedicated Remotion
+composition assembled from repo-owned components. `VideoProject` is a
+productization target, not the default local producer output.
 
 ## Layer Model
 
@@ -70,7 +70,7 @@ Definitions:
 - `recipe`: a reusable visual treatment inside a registered template.
 - `template`: the provider-visible segment implementation mechanism selected by
   `templateId`.
-- `VideoProject`: the web product preview/edit/export boundary.
+- `VideoProject`: the web productization preview/edit/export boundary.
 
 This keeps recipe work from becoming a parallel component system. The local
 producer first proves the video as a dedicated composition, then promotes only
@@ -106,7 +106,8 @@ Output:
 - preview/export through `ProjectVideo`
 
 Use this mode only when the user explicitly needs the page editor,
-selected-segment regeneration, or the normal staged generation path.
+selected-segment regeneration, app export, or the normal staged generation
+path.
 
 ## First Validation Slice
 
@@ -147,6 +148,7 @@ Keep these files aligned when the workflow changes:
 
 - `.agents/skills/ai-video-studio-agent-producer-workflow/SKILL.md`
 - `README.md`
+- `docs/FINAL_PRODUCT_GOAL.md`
 - `docs/ITERATION_STATUS.md`
 - `docs/VISUAL_RECIPE_ROADMAP.md`
 - `docs/REMOTION_PRIMITIVES.md`
