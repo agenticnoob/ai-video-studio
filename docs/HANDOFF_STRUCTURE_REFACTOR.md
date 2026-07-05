@@ -1,9 +1,15 @@
 # Handoff: Structure Refactor
 
-Status: all planned structure refactor phases implemented.
+Status: all planned structure refactor phases implemented; parked
+web/editor productization handoff.
 
 Use this handoff when the next implementation task is "make the code more
-elegant, decoupled, cohesive, and modular" without changing product behavior.
+elegant, decoupled, cohesive, and modular" without changing product behavior
+inside the parked prompt-to-`VideoProject` web/editor path.
+
+For current Agent Producer work, start from `docs/FINAL_PRODUCT_GOAL.md`,
+`docs/VISUAL_RECIPE_ROADMAP.md`, and
+`.agents/skills/ai-video-studio-agent-producer-workflow/SKILL.md` instead.
 
 ## One-Sentence Context
 

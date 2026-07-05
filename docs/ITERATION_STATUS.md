@@ -1,12 +1,35 @@
 # Iteration Status
 
-Last updated: Agent Producer Roadmap Alignment
+Last updated: Final Goal Authority Reset
 
-## Latest continuation — Agent Producer Roadmap Alignment
+## Latest continuation — Final Goal Authority Reset
+
+- Direction decision: the previous prompt-to-`VideoProject` final goal is
+  parked indefinitely. It is no longer the top-level project goal.
+- `docs/FINAL_PRODUCT_GOAL.md` now defines the Agent Producer goal: topic ->
+  research/assets -> narration/TTS -> component inventory -> dedicated
+  Remotion composition -> still/mp4 review -> promotion notes.
+- `VideoProject` / web editor work remains a secondary productization track
+  only for explicit page editing, selected-segment regeneration, app export, or
+  productized generation requests.
+- The next roadmap sequence is now Phase A/B/C/D rather than continuing the old
+  5.x productization numbering:
+  Authority Reset -> Producer Sample OS v1 -> Evidence Lens Block v1 ->
+  Promotion Gate v1.
+- No code, generated screenshots, generated audio, or rendered mp4 artifacts
+  are part of this docs slice.
+
+Validation target:
+- `git diff --check`
+- text consistency checks that active docs no longer present the old
+  `VideoProject` final goal as authoritative
+
+## Previous continuation — Agent Producer Roadmap Alignment
 
 - Direction decision: Agent Producer is now the default personal
   video-production path for real topics; `VideoProject` / web editor remains
-  the productized generation, preview, editing, regeneration, and export path.
+  a secondary productized generation, preview, editing, regeneration, and
+  export path.
 - The intended default production loop is:
   topic -> research/assets -> narration/TTS -> primitive/block/runtime
   inventory -> dedicated Remotion composition -> still/mp4 review -> promotion

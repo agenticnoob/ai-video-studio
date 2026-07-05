@@ -1,12 +1,17 @@
 # Product Architecture
 
-`ai-video-studio` is a local-first AI + Remotion video studio. The current
-product boundary is `VideoProject`: generation, page preview, segment editing,
-and local export all operate on schema-validated project data.
+Status: parked web/editor productization architecture.
 
-The authoritative final generation target is documented in
-`docs/FINAL_PRODUCT_GOAL.md`. This architecture document summarizes how that
-target maps onto the codebase.
+The current top-level goal is now Agent Producer, documented in
+`docs/FINAL_PRODUCT_GOAL.md`. The previous prompt-to-`VideoProject` goal is
+parked indefinitely. This architecture document remains useful only for work
+that explicitly targets the secondary web/editor productization path.
+
+For this parked path, the product boundary is `VideoProject`: generation, page
+preview, segment editing, and local export all operate on schema-validated
+project data.
+
+The parked web/editor generation target maps onto the codebase as follows.
 
 ## Core Loop
 

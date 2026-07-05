@@ -1,70 +1,56 @@
 # Final Product Goal
 
-Status: authoritative productization target and roadmap source.
+Status: authoritative goal for the current project direction.
 
-This document defines the long-term productized generation target for
-`ai-video-studio`: the web/editor path that turns prompts into editable and
-exportable `VideoProject` payloads. It is not the default personal production
-path for high-quality one-off videos. For that, use the Agent Producer workflow
-documented in `.agents/skills/ai-video-studio-agent-producer-workflow/` and
-`docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md`.
+Decision date: 2026-07-06.
 
-When roadmap, architecture, provider, template, TTS, or media-layer work needs
-direction, use this document as the highest-level productization goal. More
-specific documents such as `VISUAL_RECIPE_ROADMAP.md`,
-`PRODUCT_REQUIREMENTS.md`, `PRODUCT_ARCHITECTURE.md`,
-`TEMPLATE_ARCHITECTURE.md`, `MEDIA_LAYERS.md`, and provider notes should align
-with this target.
+The previous prompt-to-`VideoProject` final goal is **parked indefinitely**.
+It remains useful historical context for a future web/editor productization
+track, but it is no longer the top-level goal for this repository.
 
-## 0. Product Statement
+The current top-level goal is the Agent Producer workflow: given a real topic,
+Codex acts as producer, researcher, script editor, TTS coordinator, asset
+collector, Remotion component composer, and render reviewer. The output should
+be a dedicated Remotion video assembled from repo-owned primitives, blocks,
+standalone-video runtime helpers, local data, screenshots, TTS timing, and
+sample-specific scenes.
 
-最终目标：
+In one line:
 
-用户输入提示词后，系统把用户提示词、系统提示词、当前项目已注册的模版、
-每个模版的能力和使用场景交给 LLM。LLM 先分析这个视频应该有几个分镜，
-并为每个分镜返回：
+```txt
+topic -> research/assets -> narration/TTS -> component inventory
+-> dedicated Remotion composition -> still/mp4 review -> promotion notes
+```
 
-- 当前分镜的大概内容
-- 当前分镜选择的一个主模版
-- 当前分镜的台词 / narration
-- 当前分镜大概展示什么画面
+## 1. Current Goal
 
-然后系统按分镜循环生成：
+The project should help produce high-quality, finished videos from real topics
+through an agent-led local production workflow.
 
-1. 用当前分镜台词调用项目内 narration provider，优先使用项目内 F5-TTS
-   provider 生成当前分镜语音和对齐字幕。
-2. 读取或归一化当前语音的真实时长。
-3. 基于 provider 返回的 alignment 生成字幕数据；如果 provider 暂时不返回
-   alignment，再使用 narration、标点切分规则和语音时长生成 fallback 字幕。
-4. 把真实时长、当前分镜选择的模版信息、当前分镜大致内容、台词、
-   全局风格上下文交给 LLM。
-5. LLM 只返回该模版需要的 schema-valid 参数。
-6. 系统把 `templateId`、生成语音、真实时长、字幕数据、模版参数组合成当前分镜。
-7. 全部分镜生成后，系统把它们组装成一个完整 `VideoProject`，用于预览、
-   编辑、重新生成和本地导出。
+The default output is not a generated `VideoProject` from the website prompt.
+The default output is a purpose-built Remotion composition under a dedicated
+`src/remotion/<SampleName>/` folder.
 
-The English sections below turn this product statement into engineering
-contracts, roadmap order, and scope boundaries.
+A successful Agent Producer run should:
 
-当前方向（2026-07-06）是双轨：
+1. Start from a topic, brief, source, repo, page, dataset, product, or story.
+2. Research or inspect the source material when the facts matter.
+3. Capture screenshots or other evidence assets when visuals need proof.
+4. Write narration beats before locking scene timing.
+5. Generate or prepare TTS and let narration duration own the timeline.
+6. Inventory existing primitives, recipe blocks, standalone-video helpers, and
+   sample references before adding new TSX.
+7. Compose a dedicated Remotion video from repo-owned components.
+8. Render representative stills and, when practical, an mp4 for review.
+9. Keep generated screenshots, audio, and rendered videos local-only unless the
+   user explicitly asks to commit them.
+10. Record promotion notes for reusable visual language after the sample works.
 
-- **Agent Producer**：个人默认做片方式。用户给主题，Agent 负责调研、
-  脚本、TTS、素材截图、Remotion component composition、still/mp4 review，
-  并把可复用视觉语言逐步沉淀到 primitives / blocks / recipes / templates。
-- **`VideoProject` / web editor**：产品化辅助路径。保留 staged generation、
-  页面预览、编辑、选中分段重生成、本地导出和未来产品化能力。
+This is the direction to optimize first.
 
-不要把 Agent Producer 重新绕回网页 prompt；也不要把本文件的
-`VideoProject` 产品化目标误读成个人做片的默认入口。
+## 2. Parked Web Editor Goal
 
-## 1. Final Goal
-
-The productized `ai-video-studio` web path should turn a user's loose creative
-prompt into a complete, watchable, audible, editable, and locally exportable
-video.
-
-The final generation model is not a single LLM call that directly emits a full
-`VideoProject`. The final model is an orchestrated pipeline:
+The previous final goal was:
 
 ```txt
 user prompt
@@ -76,851 +62,272 @@ user prompt
   -> preview, edit, regenerate, export
 ```
 
-The system should:
+That path is now parked indefinitely as a productization track.
 
-1. Understand the user's creative intent.
-2. Choose how many segments / shots the video needs.
-3. Select one primary registered template for each segment.
-4. Write or refine narration for each segment.
-5. Generate narration audio and aligned captions for each segment before final
-   template parameters are compiled.
-6. Prefer the in-project F5-TTS provider for local narration synthesis and
-   caption alignment.
-7. Use the real audio duration to generate schema-valid template parameters.
-8. Assemble all compiled segments into one `VideoProject`.
-9. Let the user preview, edit, regenerate, and export the full video.
+It should not guide day-to-day video-production work unless the user explicitly
+asks for one of these productized capabilities:
 
-This keeps the productized web path segment-first, template-driven,
-voice-aware, and scalable as the template library grows.
-
-For personal finished-video production, the preferred route is different:
-
-```txt
-topic
-  -> research / source capture
-  -> narration and TTS
-  -> primitive / block / runtime inventory
-  -> dedicated Remotion composition
-  -> still / mp4 review
-  -> promotion notes
-```
-
-That Agent Producer route should use `VideoProject` only when the user
-explicitly needs web editing, selected-segment regeneration, app export, or
-main-site productization.
-
-Current visual-quality direction:
-
-- Continue from the clean `main` product line.
-- Keep the staged generation / F5 narration / caption / `VideoProject`
-  preview-export loop as the productized web base.
-- Treat Agent Producer as the default personal production path for
-  high-quality videos that need research, screenshots, TTS-first timing,
-  component composition, and visual review.
-- Improve generated-video quality by upgrading templates into high-quality
-  scene recipes: polished, duration-aware visual treatments with stronger
-  motion, transitions, grouped visual blocks, and Remotion Studio preview
-  examples.
-- Use `docs/VISUAL_RECIPE_ROADMAP.md` as the active roadmap for this visual
-  recipe direction.
-- Treat heavier scene-graph / visual-review scoring exploration as research,
-  not as the branch to merge wholesale into the product line.
-
-## 2. Authoritative Terminology
-
-Use these terms consistently.
-
-| Product idea | Current / target model | Meaning |
-| --- | --- | --- |
-| User prompt | `brief` / creative intent | The user's initial topic, story, requirement, or instruction. |
-| Shot / storyboard segment / 分镜 | `VideoSegment` | The user-facing editable unit in the final video. |
-| Template | `templateId` + template module | A registered implementation mechanism for one segment. |
-| Template choice | `templateId` | The primary template selected for a segment. |
-| Narration / 台词 | `VideoSegment.narration.text` target model | The spoken script for one segment. |
-| Narration synthesis result | `VideoSegment.narration.audio` target model | Generated audio file plus duration, provider, voice, and related metadata owned by the segment. |
-| Captions / subtitles | `VideoSegment.narration.captions` target model | Segment-local timed readable text returned or normalized from narration synthesis and kept outside template-specific implementation data. |
-| Template parameters | `implementation` | The template-specific data needed by the selected renderer. |
-| Compiled segment | `VideoSegment` | Template choice + narration/audio metadata + validated implementation. |
-| Full video | `VideoProject` | The assembled project used by preview, editing, and export. |
-
-Important modeling rules:
-
-- A `VideoSegment` has one primary `templateId`.
-- `templateId` determines the schema of `implementation`.
-- `implementation` is template-specific, not a universal project field.
-- Narration text and generated audio should stay outside template-specific
-  `implementation` fields and should not be hidden inside one template's
-  private scene model. The target home is `VideoSegment.narration`.
-- Caption/subtitle data should be returned by the narration provider when
-  possible, normalized from provider alignment, remain editable, and stay
-  outside template-specific `implementation` fields. Caption timing should be
-  segment-local under `VideoSegment.narration.captions`; shared preview/export
-  code can flatten those cues to the global project timeline.
-- The preferred narration provider is an in-project F5-TTS provider boundary,
-  not a separate external product. It may run as a local service/process, but
-  its adapter, request contract, artifact handling, and fallback behavior
-  belong in this repository.
-- The old scripted scene audio hook must not be treated as the narration/TTS
-  model. New generation paths should use segment-level narration metadata.
-  The current staged path stores generated narration audio in segment-level
-  narration metadata; project-level narration media layers are compatibility
-  carriers, not the target ownership model.
-- `VideoSpec.scenes` is specific to the `scripted` template.
-- Future templates should define their own implementation fields.
-- Do not model one segment as multiple template instances unless a concrete
-  future workflow proves that template-internal composition is insufficient.
-
-## 3. Target Generation Pipeline
-
-### 3.1 Stage A: Storyboard Planning
-
-The first LLM call is a planner call. It should not receive every template's
-complete schema, and it should not generate final render parameters.
-
-Planner input:
-
-- user prompt
-- system planning prompt
-- project-level constraints such as tone, aspect ratio, target length, language,
-  audience, and style hints when available
-- registered template manifest, not full renderer code
-- template descriptions, use cases, capabilities, constraints, and recommended
-  duration ranges
-
-Planner output:
-
-```ts
-type StoryboardPlan = {
-  title: string;
-  brief: string;
-  language?: string;
-  globalStyle?: string;
-  segments: StoryboardSegmentPlan[];
-};
-
-type StoryboardSegmentPlan = {
-  id: string;
-  order: number;
-  title?: string;
-  purpose: string;
-  templateId: TemplateId;
-  templateReason: string;
-  narration: {
-    text: string;
-    tone?: string;
-  };
-  visualBrief: string;
-  pacingHint?: string;
-  expectedDurationSeconds?: number;
-};
-```
-
-Implementation note:
-
-Provider-facing planner output may use a smaller `StoryboardPlanDraft` contract
-so AI is responsible for semantic choices and narration text, while repo-owned
-code deterministically compiles the draft into the strict internal
-`StoryboardPlan`. The internal pipeline still consumes `StoryboardPlan`.
-
-Planner responsibilities:
-
-- decide how many segments the video needs
-- decide each segment's communication purpose
-- choose the best `templateId` from the template manifest
-- write a narration draft for each segment
-- describe the visual content each segment should roughly show
-- preserve global continuity across all segments
-
-Planner non-responsibilities:
-
-- do not generate final `implementation`
-- do not invent template ids
-- do not write Remotion source code
-- do not receive runtime renderer internals
-- do not create arbitrary media URLs
-
-Why this stage exists:
-
-- It keeps template selection separate from low-level parameter filling.
-- It avoids sending every template's full schema as the template library grows.
-- It creates a stable intermediate artifact that can be edited, audited, and
-  partially regenerated.
-
-### 3.2 Stage B: Segment Narration Synthesis And Alignment
-
-For each planned segment, the system generates voice audio before compiling the
-template implementation. The preferred target is an in-project F5-TTS provider
-that returns both audio and caption/alignment data from the same narration
-request.
-
-Narration synthesis input:
-
-- segment narration text
-- language
-- desired voice / voice profile when selected
-- tone or delivery hint
-- segment id and project id for deterministic artifact naming
-- optional reference audio / speaker profile for local F5-TTS voice control
-
-Narration synthesis output:
-
-```ts
-type SegmentNarrationAsset = {
-  text: string;
-  audio?: {
-    src: string;
-    durationInFrames: number;
-    durationInSeconds: number;
-    voiceId?: string;
-    provider?: "f5-tts" | string;
-    format?: "mp3" | "wav" | "aac" | "m4a";
-  };
-  captions?: SegmentCaptions;
-};
-```
-
-Narration provider responsibilities:
-
-- produce a local or serveable audio asset
-- report the real duration
-- return aligned caption/subtitle cues when the provider can produce alignment
-- keep enough metadata to support regeneration and debugging
-- make preview and export use the same audio asset
-- keep the provider adapter and artifact handling inside this project, even if
-  the F5-TTS runtime itself is served by a local process or container
-
-Narration provider non-responsibilities:
-
-- do not decide the final visual implementation
-- do not mutate unrelated segments
-- do not become a full audio workstation
-- do not require waveform editing, ducking, beat sync, or timeline UI for the
-  first implementation
-
-Why narration synthesis happens before template compilation:
-
-- Real spoken duration controls segment duration.
-- Visual pacing should fit the narration audio, not the other way around.
-- Template parameter generation can use the real number of frames.
-- Caption and subtitle timing should come from the same narration provider
-  result when available, so audio and readable text share one timing source.
-
-Duration guard:
-
-- Each template should expose recommended duration constraints.
-- If generated narration is too long or too short for the selected template,
-  the system should choose a bounded repair path:
-  - shorten or expand narration
-  - split the segment
-  - choose a better template
-  - ask the user only if automatic repair would change intent too much
-
-### 3.3 Stage C: Caption Cue Normalization
-
-After narration synthesis returns audio and alignment, the system should
-normalize caption cues before final project assembly. In the preferred F5-TTS
-path, this stage consumes provider-returned alignment instead of acting as a
-separate subtitle generation pass.
-
-Caption input:
-
-- segment narration text
-- generated narration audio metadata
-- provider-returned alignment / caption cues when available
-- real `durationInFrames` and `durationInSeconds`
-- language
-- optional caption style preferences when present
-
-Caption output:
-
-```ts
-type SegmentCaptionCue = {
-  id: string;
-  text: string;
-  startFrame: number; // segment-local
-  durationInFrames: number;
-};
-
-type SegmentCaptions = {
-  language?: string;
-  cues: SegmentCaptionCue[];
-  style?: {
-    preset?: string;
-    position?: "bottom" | "center" | "top";
-  };
-};
-```
-
-Caption responsibilities:
-
-- normalize readable subtitles from provider-returned alignment/caption data
-- align cue timing with the generated narration audio using provider-returned
-  alignment whenever available
-- keep caption data editable and regeneratable per segment
-- make preview and export render the same caption data
-- keep caption content separate from template-specific `implementation`
-- keep cue timing segment-local; preview/export can add each segment's global
-  start frame at render time
-
-Caption non-responsibilities:
-
-- do not become a professional subtitle editor in the first implementation
-- do not require word-perfect forced alignment before the basic caption loop is
-  useful, but prefer F5-TTS alignment whenever available
-- do not make each template own its own private subtitle data model
-- do not treat captions as an independent LLM subtitle-generation stage when
-  the narration provider already returned alignment
-
-Why caption normalization is a separate step:
-
-- Caption cues depend on narration-provider output and audio timing, not on a
-  single template's internal schema.
-- F5-TTS can make captions substantially better by returning timing data from
-  the same local provider request that produced the audio.
-- The user should be able to edit or regenerate subtitles without changing the
-  selected template's visual parameters.
-- Caption rendering can later be styled globally or per segment while the
-  caption cues remain stable data.
-
-### 3.4 Stage D: Segment Template Compilation
-
-After narration synthesis and caption normalization, the system compiles each
-segment into template-specific render data.
-
-Compiler input:
-
-- one `StoryboardSegmentPlan`
-- its `SegmentNarrationAsset`
-- its `SegmentCaptions`, when captions are enabled or generated
-- real `durationInFrames`
-- selected template's complete schema
-- selected template's implementation rules
-- selected template examples, if needed
-- limited global project context
-
-Compiler output:
-
-```ts
-type CompiledVideoSegment = {
-  id: string;
-  title: string;
-  templateId: TemplateId;
-  narration?: SegmentNarrationAsset;
-  visualBrief?: string;
-  implementation: TemplateImplementation;
-  durationInFrames: number;
-};
-```
-
-Compiler responsibilities:
-
-- fill only the selected template's schema
-- use the real narration audio duration as the timing anchor
-- respect caption-safe layout constraints when the template renders text near
-  the caption area
-- keep visual content aligned with `visualBrief` and narration
-- produce data that passes Zod validation
-- preserve the selected template unless repair requires a template change
-
-Compiler non-responsibilities:
-
-- do not re-plan the whole video by default
-- do not choose among all templates again unless duration or validation repair
-  requires it
-- do not write Remotion source code
-- do not invent fields outside the selected template schema
-
-Validation and repair:
-
-- Every compiled segment must pass the selected template's Zod schema.
-- Repair prompts should be bounded and template-specific.
-- Repair should include validation errors, selected template schema, narration
-  duration, and the previous invalid output.
-- After a small number of failed repairs, the system should return a clear
-  error instead of silently falling back to unrelated content.
-
-### 3.5 Stage E: Project Assembly
-
-The system assembles compiled segments into a `VideoProject`.
-
-Assembly responsibilities:
-
-- preserve the original brief
-- preserve ordered compiled segments
-- preserve generated caption/subtitle cues
-- compute or normalize durations
-- ensure preview and export consume the same project payload
-- keep generated assets reachable by Remotion
-
-The assembled `VideoProject` remains the top-level boundary for:
-
-- page state
-- preview input props
-- selected-segment editing
-- segment regeneration
-- render/export request body
-- downloaded render artifacts
-
-## 4. Context Strategy For Many Templates
-
-The final architecture should use two levels of template context.
-
-### 4.1 Planner Template Manifest
-
-The planner receives a compact manifest for all registered templates.
-
-Manifest fields should include:
-
-- `templateId`
-- label
-- short description
-- best use cases
-- avoid cases
-- text density
-- recommended duration range
-- narration fit
-- media or asset expectations
-- examples of segment intents the template handles well
-
-The planner should use this manifest to choose templates. It should not need
-complete JSON schemas for every template.
-
-### 4.2 Template Compiler Context
-
-The compiler receives the full context for only the selected template.
-
-Compiler context may include:
-
-- complete JSON schema / Zod-derived schema
-- implementation prompt
-- renderer constraints
-- duration rules
-- field-level guidance
-- examples
-- repair instructions
-
-Runtime adapters and React/Remotion renderer code stay internal. The LLM only
-sees the template contract, not the implementation source code.
-
-Why this matters:
-
-- Template count can grow without exploding planner context.
-- Each compiler call stays focused and easier to validate.
-- Template-local ownership remains clean.
-- New templates can be added by registering metadata, schema, compiler context,
-  editor fields, and runtime adapter.
-
-## 5. Editing And Regeneration Model
-
-The final product should support regeneration at the smallest useful scope.
-
-Recommended edit scopes:
-
-- full project re-plan: user changes the whole brief or story direction
-- segment re-plan: user changes what one segment should say or do
-- narration regenerate: user changes the spoken script or voice
-- narration synthesis regenerate: user keeps narration text but changes
-  voice/delivery/provider
-- captions regenerate: user keeps narration/audio but changes subtitle wording,
-  timing, language, or display style
-- implementation regenerate: user keeps narration/audio but changes visuals
-- field edit: user directly edits template parameters
-
-Regeneration rules:
-
-- If narration text changes, rerun narration synthesis, caption normalization,
-  and segment compilation.
-- If narration text changes and captions are enabled, regenerate or realign
-  captions for the affected segment.
-- If only the voice or narration provider changes, rerun narration synthesis
-  and segment compilation only when timing changes enough to affect visuals.
-- If only caption text or caption style changes, preserve narration audio and
-  template implementation unless layout constraints require visual repair.
-- If only visual direction changes, reuse existing narration audio and rerun
-  template compilation.
-- If template changes, rerun template compilation and validate against the new
-  template schema.
-- Non-target segments should be preserved unless the user asks for broader
-  re-planning.
-
-This keeps editing fast while respecting the dependencies between narration,
-audio duration, and visual timing.
-
-## 6. Relationship To Current Implementation
-
-The current web implementation has moved past the original one-call provider
-shortcut into the staged authoring path:
-
-```txt
-brief
-  -> DeepSeek storyboard planning
-  -> F5-TTS segment narration synthesis
-  -> DeepSeek per-segment template compilation
-  -> assembled schema-valid VideoProject
-  -> preview/edit/export
-```
-
-The final target remains:
-
-```txt
-brief
-  -> StoryboardPlan
-  -> per-segment narration synthesis
-  -> audio + aligned captions
-  -> per-segment template compiler
-  -> assembled VideoProject
-  -> preview/edit/export
-```
-
-Do not collapse the productized web path back into a one-call prompt ->
-`VideoProject` generation architecture. The active web system is the staged
-authoring loop that proves preview, editing, template rendering, validation,
-and export.
-
-Do not use this productization roadmap to override the Agent Producer
-decision. When the goal is a high-quality personal finished video from a real
-topic, start with a dedicated Remotion composition assembled from
-primitives/blocks/standalone-video helpers, then promote reusable pieces back
-into the productized recipe/template layer only after evidence.
-
-Current compatibility notes:
-
-- `VideoProject` remains the top-level contract for the productized web path.
-- `VideoSegment` remains the editing unit.
-- New narration-provider work must not use scripted scene fields as the audio
-  carrier.
-- The staged path now carries generated narration audio in segment-owned
-  `VideoSegment.narration.audio` and flattens it to the project timeline for
-  preview and export.
-- `VideoProject.media.layers[]` still supports project-level audio layers,
-  including old narration layers as a transitional compatibility path, but it
-  is no longer the primary generated narration ownership model.
-- Segment-owned `VideoSegment.narration.captions` now carries generated or
-  fallback caption cues, with caption cues flattened to the project timeline
-  for preview and export.
-- Page-level F5 voice cloning is now exposed for staged generation: uploaded
-  reference audio is stored under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/voice-references`, then paired with
-  user supplied reference text at generation time and reused for full-project
-  generation plus selected-segment regeneration when cloning is enabled.
-- The current fallback caption path uses sentence punctuation as a hard split,
-  comma punctuation as a soft split, merges short comma chunks forward for
-  readability, and saves the normalized caption payload beside generated audio
-  under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts` as `<audio-name>.captions.json`.
-- Generated narration audio is served as seekable streamed byte ranges with
-  immutable artifact caching, and Remotion preview pauses timeline advancement
-  while narration audio is buffering.
-- Narration metadata should stay separated from template implementation data so
-  the system can distinguish spoken text, generated audio, voice, timing, and
-  provider.
-- Caption/subtitle metadata should also stay separated from template
-  implementation data so subtitle editing, timing, styling, preview, and export
-  can evolve independently from any one template schema.
-- The F5-TTS provider should be implemented as part of this project. It can
-  call a local service/process/container, but the repo owns the provider
-  contract, config, artifact writing, and caption normalization. MiniMax is no
-  longer an active fallback path.
-
-## 7. Roadmap
-
-Productized web roadmap work should follow this target unless a later product
-decision updates this document. Agent Producer roadmap work should follow the
-repo-local workflow skill and use this document only when promoting proven
-visual language back into the web/editor product layer.
-
-### Milestone 0: Shipped V1 Authoring Loop
-
-Status: implemented.
-
-Implemented capability:
-
-- prompt input
-- DeepSeek-backed staged generation
-- schema-validated `VideoProject`
-- registered `scripted`, `spotlight`, `stats-dashboard`, and
-  `technical-explainer` templates
-- full-video preview
-- selected-segment editing
+- web/page generation
+- editable `VideoProject` output
 - selected-segment regeneration
-- local Remotion export
+- app-based preview/export
+- productized template/recipe behavior
+- future product UI or editor work
 
-Known limitation:
+When those needs are explicit, the old pipeline remains a valid reference
+model. Otherwise, start from Agent Producer.
 
-- the active staged page path now uses planner -> TTS -> compiler -> assembly,
-  with bounded planner repair and deterministic mixed-template smoke fixtures;
-  segment-owned narration audio/captions and the Next-side F5 adapter are in
-  place; the optional F5 runtime service has passed GPU real-mode direct,
-  Next-adapter, deterministic staged, and staged-export smoke coverage;
-  Phase 4 planner recipe selection has deterministic and contract-smoke
-  provider-backed staged-route coverage. Real-GPU staged-route smoke should be
-  rerun only in an environment where Docker can see an NVIDIA driver.
+## 3. Authoritative Workflow
 
-### Milestone 1: Authoritative Goal And Contracts
+Use this production order:
 
-Status: implemented.
+```txt
+1. define the video job
+2. research facts and collect evidence
+3. write narration beats
+4. generate or prepare TTS/captions
+5. inventory reusable components
+6. model local data explicitly
+7. compose dedicated Remotion scenes
+8. render stills for review
+9. render mp4 when practical
+10. decide what, if anything, should be promoted
+```
 
-Deliverables:
+### 3.1 Define The Video Job
 
-- this document
-- updated PRD / README / agent notes that point to this target
-- explicit statement that the final path is planner -> narration synthesis ->
-  audio + aligned captions -> compiler -> assembly
-- explicit statement that captions/subtitles are produced or normalized from
-  the narration provider result
-- explicit statement that the staged pipeline is the active generation path
+A video job should state:
 
-### Milestone 2: Storyboard Plan Contract
+- audience
+- duration target
+- aspect ratio
+- language
+- content family, such as `project-intro`, `data-analysis`, `tutorial`,
+  or `trend-briefing`
+- expected source material, such as websites, GitHub repos, screenshots,
+  product UI, local data, documents, or user-provided assets
 
-Status: implemented for the active staged route, including bounded planner
-repair.
+### 3.2 Research And Assets
 
-Goal:
+For factual topics, use current source material. Capture or prepare evidence
+screenshots when a visual claim needs proof.
 
-- introduce a planner output contract before changing the full runtime path
+Generated or captured artifacts should stay under ignored local paths, usually:
 
-Implemented:
+- `public/generated/<slug>/`
+- `out/`
 
-- `StoryboardPlan` schema
-- `StoryboardSegmentPlan` schema
-- planner template manifest derived from registered templates
-- planner prompt that receives compact template metadata
-- internal DeepSeek function that can produce and validate a plan through the
-  AI SDK DeepSeek provider
-- one bounded planner repair attempt for invalid JSON or schema-invalid
-  `StoryboardPlan` output
-- selected-segment planner repair that still requires exactly one planned
-  segment before target id/order reassignment
+Do not commit generated screenshots, generated audio, or rendered mp4 files by
+default.
+
+### 3.3 Narration And TTS First
+
+Write concise narration beats before final visual timing. Generate or prepare
+TTS before locking durations.
+
+Rules:
+
+- real narration duration owns scene timing
+- captions belong with narration data, not template-specific implementation
+- F5-TTS is preferred when configured and appropriate
+- static voiceover assets for dedicated samples should be Remotion-readable via
+  `staticFile()` from ignored generated artifact paths
+
+### 3.4 Component Inventory Before New TSX
+
+Before writing new visuals, map each beat to available building blocks:
+
+- primitives under `src/remotion/primitives/`
+- recipe blocks under `src/remotion/recipes/blocks/`
+- timing/audio/caption helpers under `src/remotion/standalone-video/`
+- existing high-signal samples such as `UvOpenSourceBrief`,
+  `WorldCupBettingAnalysis`, and `PixelRAGChineseStandalone`
+- sample-local scene/block code only when existing components cannot express
+  the beat well
+
+Use this hierarchy:
+
+```txt
+primitive -> block -> dedicated composition -> recipe -> template -> VideoProject
+```
+
+The hierarchy means: make a good dedicated video first, then promote reusable
+pieces later. It does not mean every video must become a template.
+
+### 3.5 Dedicated Composition As The Default Output
+
+A committed high-signal sample should normally have:
+
+```txt
+src/remotion/<SampleName>/
+  index.ts
+  <SampleName>.tsx
+  types.ts
+  script.ts
+  data.ts
+  audio.generated.ts or generated narration metadata when needed
+```
+
+It should be registered in `src/remotion/Root.tsx` only when it is meant to be
+a maintained Studio/renderable sample.
+
+## 4. Reusable Layers
+
+### Primitives
+
+Primitives are small reusable Remotion components, usually under
+`src/remotion/primitives/`. They should stay runtime-focused and not become
+LLM-visible contracts by themselves.
+
+### Blocks
+
+Blocks are semantic compositions of primitives. They may live under
+`src/remotion/recipes/blocks/`, `src/remotion/standalone-video/`, or a
+sample folder while still being proven.
+
+Promote a sample-local block only when it is useful beyond one video.
+
+### Dedicated Compositions
+
+Dedicated compositions are finished-video-first outputs. They are the default
+Agent Producer deliverable.
+
+Current references:
+
+- `src/remotion/UvOpenSourceBrief/`
+- `src/remotion/WorldCupBettingAnalysis/`
+- `src/remotion/PixelRAGChineseStandalone/`
+
+### Recipes And Templates
+
+Recipes and templates are productization layers.
+
+Use them when proven visual language should become available through the
+web/editor generation path. Do not start personal video production by forcing a
+new topic into a generic recipe or template.
+
+### VideoProject
+
+`VideoProject` is now a productization/editing/export boundary, not the
+default creative production boundary.
+
+Use it only when the user asks for page editing, selected-segment regeneration,
+app export, or productized web generation.
+
+## 5. Current Roadmap
+
+### Phase A: Authority Reset
+
+Status: current docs slice.
+
+Goal: make this document the top-level goal and mark the previous
+`VideoProject` final goal as parked indefinitely.
+
+Acceptance:
+
+- new agents start from Agent Producer by default
+- README, AGENTS, iteration status, visual roadmap, and workflow skill agree on
+  the authority order
+- old web/editor pipeline is described as a productization track only
+
+### Phase B: Producer Sample OS v1
+
+Goal: make Agent Producer samples easier to start, review, and hand off.
+
+Deliver:
+
+- producer sample manifest model
+- sample scaffold convention
+- local-only artifact boundary
+- manifest/smoke guard
+- review-frame convention
 
 Non-goals:
 
-- no TTS requirement yet
-- no media layers
-- no new template orchestration model
+- no broad media library
+- no persistence/history
+- no universal template
+- no generated screenshots/audio/mp4 committed to Git
 
-### Milestone 3: TTS Asset MVP
+### Phase C: Evidence Lens Block v1
 
-Status: implemented for the active staged route and selected-segment
-regeneration path.
+Goal: promote the reusable screenshot-proof language from `UvOpenSourceBrief`
+into a shared block while keeping topic-specific facts sample-local.
 
-Goal:
+Deliver:
 
-- generate audio from planned segment narration and measure real duration
+- shared screenshot focus data model
+- full-frame readable screenshot backdrop
+- compact translucent evidence overlay
+- frame-driven zoom-in / hold / return motion
+- still-review guidance for context / zoom / return frames
 
-Implemented:
+Non-goals:
 
-- `SegmentNarrationAsset` validation
-- F5-TTS-only internal `POST /api/tts` for one planned segment
-- local artifact writing under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts`
-- `/api/tts/assets/...` serving for Remotion-consumable audio URLs
-- ffprobe duration measurement and frame normalization
+- no automatic screenshot repair
+- no visual scoring system
+- no planner-visible recipe/template exposure in this phase
 
-Deliverables:
+### Phase D: Promotion Gate v1
 
-- TTS provider module
-- local audio artifact path such as `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts`
-- audio serving path that Remotion can consume
-- duration probing or provider-returned duration normalization
-- `SegmentNarrationAsset` metadata
-- first UI or API action that generates narration audio for a planned segment
-- optional local F5-TTS runtime service described in
-  `docs/providers/f5-tts-service-plan.md`
-- GPU real-mode smoke coverage for the F5 runtime, Next adapter,
-  deterministic staged assembly, and staged export
-- page-uploaded F5 voice clone references for staged generation
+Goal: make promotion decisions explicit so sample-local ideas do not become
+universal templates too early.
 
-Remaining:
+Deliver:
 
-- harden provider-specific failure handling and retry behavior across full
-  `POST /api/generate/staged` live requests
-- add richer voice selection/profile management when the basic loop is stable
+- checklist for sample-local vs primitive vs block vs recipe/template
+- rule that recipes/templates are productization layers
+- documentation hooks for promoted visual language
 
-Initial scope:
+Non-goals:
 
-- one voice or simple voice selection
-- one provider
-- `scripted` template first
-- no waveform editor
-- no background music
-- no global media timeline
+- no universal data-story or project-intro template by default
+- no multi-template-per-segment orchestration
+- no primitive prop exposure to providers
 
-### Milestone 4: Audio-Duration-Driven Segment Compiler
+## 6. Validation Expectations
 
-Status: implemented for full-project staged generation and selected-segment
-staged regeneration; live hardening remains active.
+For documentation-only direction changes:
 
-Goal:
+```bash
+git diff --check
+```
 
-- use real TTS duration to compile one segment's template parameters
+For sample/runtime implementation slices, use the smallest Docker-first checks
+that cover the changed boundary. Common checks include:
 
-Implemented:
+```bash
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:standalone-video-runtime'
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit --pretty false'
+```
 
-- selected-template compiler prompt and schema validation
-- selected-template schema-only context for compiler calls
-- compile function that accepts plan + narration asset + duration
-- strict Zod validation against the selected template schema
-- one bounded compiler repair attempt
-- segment-owned narration audio assembly through
-  `VideoSegment.narration.audio`
-- render-time flattening for segment-owned narration audio
-- `POST /api/generate/staged` route for brief or existing plan input
-- `POST /api/generate/staged` segment mode replans one target segment,
-  regenerates its TTS audio, recompiles its selected-template implementation,
-  replaces that segment's owned narration data, and preserves non-target
-  segments
-- TTS asset route supports byte ranges for Remotion Player seek behavior
-- local `/api/render` resolves route media such as `/api/tts/assets/...` to a
-  Next app origin before Remotion export
-- the page can show process-local backend progress nodes for staged
-  generation, selected-segment regeneration, and local render export through a
-  client `progressId` and `/api/progress/[progressId]`
-- page generation state, staged API request/error boundaries, and staged
-  project assembly helpers are split into focused modules so further staged
-  hardening can happen without concentrating logic in the page or route entry
+For visual work, render representative stills before claiming quality.
 
-Remaining:
+## 7. Non-Goals Until Explicitly Reopened
 
-- provider-backed live multi-segment staged smoke through
-  `POST /api/generate/staged`
-- richer persistent progress history, cancellation, or multi-process job
-  progress remains out of scope for the current private single-process stage
+Do not use this goal to expand scope into:
 
-Success criteria:
-
-- a generated segment plays with TTS audio
-- the preferred F5-TTS path returns or enables aligned caption cues for the
-  segment narration
-- segment duration matches or safely contains the audio duration
-- template visual timing is generated from audio duration, not arbitrary
-  guessed timing
-
-### Milestone 5: Full Pipeline Integration
-
-Goal:
-
-- replace or wrap one-shot project generation with the target staged pipeline
-
-Deliverables:
-
-- full generate action runs planner -> narration synthesis loop -> audio +
-  aligned captions -> compiler loop -> assembly
-- generated audio and captions are attached to their owning `VideoSegment`
-- page can display generation progress by stage
-- segment regeneration chooses the smallest needed stage
-- generated project remains editable and exportable through existing paths
-- non-target segments are preserved during segment-level edits
-
-### Milestone 6: Multi-Template Scaling
-
-Goal:
-
-- make the staged pipeline scale as templates increase
-
-Deliverables:
-
-- richer planner manifest per template
-- template-specific compiler contexts
-- examples and constraints per template
-- duration guard per template
-- template-specific repair prompts
-- deterministic smoke fixtures for registered template mixes
-- provider-backed live smoke coverage as template count grows
-
-### Milestone 7: Captions, Narration, And Audio Polish
-
-Goal:
-
-- improve the audible and readable video experience after the basic TTS loop
-  works
-
-Deliverables:
-
-- caption/subtitle data returned by F5-TTS when available, otherwise
-  normalized from narration and generated audio duration as a fallback
-- in-project F5-TTS provider integration for audio plus aligned captions
-- segment-owned narration/caption contracts and render-time flattening
-- preview/export rendering for captions
-- optional local F5-TTS runtime service with health and synthesize endpoints
-- GPU real-mode F5 smoke coverage through direct service, Next adapter,
-  deterministic staged assembly, and staged export
-- segment-level caption editing and regeneration
-- per-segment voice selection
-- optional project-level narration consistency
-- volume normalization
-- optional background music support
-- simple audio mix rules
-
-### Milestone 8: Media Layers And Existing Assets
-
-Goal:
-
-- add external image/video/audio/color material after generated narration is
-  stable
-
-Deliverables:
-
-- project-level `media.layers[]`
-- segment-level `media.layers[]` for media that belongs to one segment
-- shared Remotion media renderer
-- compact structured media editor
-
-Important ordering:
-
-- media layers are important, but they should not block the
-  narration-provider-first generation pipeline
-- generated narration audio should use template-external segment-owned data;
-  the current minimal project audio media layer path is only the first
-  cross-template runtime carrier
-
-### Milestone 9: Persistence And Generation History
-
-Goal:
-
-- preserve intermediate artifacts so the user can iterate without losing
-  context
-
-Deliverables:
-
-- saved `StoryboardPlan`
-- saved TTS metadata
-- saved compiler prompts/results
-- validation/repair history
-- project draft persistence
-- render history
-
-## 8. Non-Goals Until Explicitly Reopened
-
-Do not use this roadmap to accidentally expand scope into:
-
-- multi-template-per-segment orchestration
-- full professional timeline editing
-- AI-generated Remotion source code as the default path
-- uploaded media management before narration-provider generation works
-- generated images/videos before narration audio works
-- waveform editing, ducking, beat sync, or DAW-style audio controls in the
-  narration-provider MVP
-- broad provider abstraction before one concrete provider path proves the
-  staged pipeline
-
-## 9. Decision Rules
-
-When choosing between possible next steps, prefer work that moves the product
-toward:
-
-1. a better `StoryboardPlan`
-2. generated narration audio through the in-project provider boundary
-3. caption/subtitle data returned or normalized from provider alignment
-4. real audio duration driving template parameters
-5. one selected template's schema-valid implementation
-6. reliable assembly into `VideoProject`
-7. preview/export parity
-8. segment-level regeneration with minimal blast radius
-
-Prefer deferring work that mainly improves:
-
-- generic media editing
-- broad timeline editing
+- one-shot web prompt as the default production method
+- a universal video template
+- generated arbitrary TSX from providers
+- broad media library UI
 - persistence/history
-- template marketplace behavior
-- generated source-code workflows
+- production queues
+- automatic visual scoring or repair loops
+- multi-template-per-segment orchestration
+- committing generated screenshots/audio/mp4 files by default
 
-Those may become important later, but they are not the main bridge from prompt
-to complete generated video.
+## 8. Decision Rule
+
+When choosing the next step, ask:
+
+```txt
+Does this help an agent make a better dedicated Remotion video from a real topic?
+```
+
+If yes, it belongs on the current main path.
+
+If it mainly improves web editing, `VideoProject` generation, selected-segment
+regeneration, or app export, treat it as productization work and keep it
+secondary unless the user explicitly asks for it.

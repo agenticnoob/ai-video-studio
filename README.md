@@ -4,8 +4,8 @@ AI-first Remotion video workspace with two deliberate paths:
 
 - Agent Producer is the default personal production path for high-quality
   videos from a real topic.
-- `VideoProject` / web editor remains the productized generation, preview,
-  editing, and export path.
+- The previous `VideoProject` / web editor final goal is parked indefinitely
+  and remains only a productization reference path.
 
 Agent Producer goal:
 - user gives a topic or brief
@@ -18,7 +18,7 @@ Agent Producer goal:
 - reusable visual language is promoted gradually into primitives, blocks,
   recipes, or templates after real samples prove it
 
-Productized web goal:
+Parked productized web goal:
 - user enters a natural-language brief
 - AI plans storyboard segments from the brief and registered template
   capabilities
@@ -43,9 +43,9 @@ Current implementation status:
 - generation and rendering support registered segment templates (`scripted`,
   `spotlight`, `stats-dashboard`, and `technical-explainer`) while preserving
   one primary template per segment
-- the active generation path is the staged planner -> narration synthesis ->
-  audio + aligned captions -> template compiler pipeline documented in
-  `docs/FINAL_PRODUCT_GOAL.md`
+- the parked web/editor generation path is the staged planner -> narration
+  synthesis -> audio + aligned captions -> template compiler pipeline; keep it
+  as productization context, not the current top-level goal
 - the storyboard-planning contract is in place as a server-safe schema,
   compact registered-template manifest, and DeepSeek planner/compiler facade
 - DeepSeek planner output is normalized through a provider-facing
@@ -90,8 +90,8 @@ Current implementation status:
   workspace shells, panels, nested editor groups, and segment-strip items all
   share the same border and shadow system
 - roadmap decisions should use `docs/FINAL_PRODUCT_GOAL.md` as the top-level
-  source
-- visual-quality roadmap decisions for the clean main product line should use
+  Agent Producer source
+- visual-quality and production-roadmap decisions should use
   `docs/VISUAL_RECIPE_ROADMAP.md`
 - higher-quality local video-production work that needs research, screenshots,
   TTS-first timing, primitive selection, and still review should use
@@ -113,7 +113,7 @@ Current implementation status:
   `docs/HANDOFF_STRUCTURE_REFACTOR.md`
 - agent/new-task startup notes live in `AGENTS.md`
 
-## Current productized web flow
+## Parked productized web flow
 
 1. user writes a brief
 2. page calls `POST /api/generate/staged`
@@ -129,16 +129,17 @@ Current implementation status:
 9. download routes:
    - unique artifact: `/api/render/[renderId]`
 
-## Product direction
+## Current Direction
 
-Current direction is dual-track:
+Current top-level direction:
 - Agent Producer is the primary local production route for real finished
   videos. It starts from a topic, uses research/assets/TTS/component
   composition, and outputs a dedicated Remotion composition.
-- `VideoProject` is the productized web route for generated projects that need
-  page preview, editing, selected-segment regeneration, or app export.
+- The old `VideoProject` final goal is parked indefinitely. Keep it as a
+  productization route only for generated projects that explicitly need page
+  preview, editing, selected-segment regeneration, or app export.
 
-Current web/product modeling direction:
+Parked web/product modeling direction:
 - `VideoProject` is the top-level generation / preview / render boundary for
   the productized web path
 - `VideoSegment` is the user-facing editing and regeneration unit
@@ -183,11 +184,11 @@ Current web/product modeling direction:
   media-layer role, not a separate project field
 
 Current visual-quality direction:
-- keep `main` as the productized web base instead of merging the heavier
-  scene-graph exploration branch wholesale
 - make Agent Producer the default path for personal high-quality video
   production; use purpose-built Remotion compositions before promoting
   reusable pieces back into recipes/templates
+- keep the productized web path available as a secondary track instead of
+  treating it as the final goal
 - upgrade simple template output into high-quality scene recipes: polished,
   duration-aware treatments with stronger motion, transitions, grouped visual
   blocks, and Remotion Studio preview examples
@@ -240,7 +241,7 @@ Current visual-quality direction:
   no-vig probability, expected value, and risk-ranking data story. These recipes
   are exposed through the planner manifest and `recipeHints`, so they affect
   normal `/api/generate/staged` generation rather than duplicate standalone
-  videos.
+  videos. This is now productization context, not the default production route.
 - The current sample-first checkpoint adds
   `PixelRAGChineseStandalonePreview`, a Chinese standalone Remotion video for
   [StarTrail-org/PixelRAG](https://github.com/StarTrail-org/PixelRAG). It
@@ -264,10 +265,9 @@ Current visual-quality direction:
   captions, and canvas profiles. This is a reusable production skeleton, not a
   universal visual template: PixelRAG remains `landscape-16x9` /
   `project-intro`, WorldCup remains `portrait-9x16` / `data-analysis`, and
-  Uv remains `landscape-16x9` / `project-intro`. The product path for better
-  generated videos is still planner-visible templates and recipes in the main
-  `VideoProject` flow, while Agent Producer runs are the local
-  finished-video-first path.
+  Uv remains `landscape-16x9` / `project-intro`. The default path for better
+  real videos is Agent Producer; planner-visible templates and recipes remain
+  the secondary productization path.
 - Lower-priority standalone reference compositions are grouped under
   `src/remotion/standalone-samples/`, with checked-in sample audio under
   `public/standalone-samples/audio/`. They remain references, not registered
@@ -283,7 +283,8 @@ Current visual-quality direction:
   unrestricted generated TSX as the normal path
 - avoid broad visual-review scoring or automatic screenshot repair as the next
   quality strategy; first make the generated segments look better
-- use `docs/VISUAL_RECIPE_ROADMAP.md` for the phased recipe roadmap
+- use `docs/VISUAL_RECIPE_ROADMAP.md` for the Agent Producer and visual
+  promotion roadmap
 
 Current top-level boundaries:
 1. `/src/app/page.tsx`
@@ -388,8 +389,9 @@ Current code checkpoint:
 - not implemented yet: persistence/history and broad media-layer editing
 
 Current bounded direction and guardrails:
-- keep `VideoProject` as the preview/edit/export boundary for the productized
-  web route
+- treat `docs/FINAL_PRODUCT_GOAL.md` as the Agent Producer authority
+- keep `VideoProject` as the preview/edit/export boundary only for the parked
+  productized web route
 - use `StoryboardPlan` as the planner-stage contract
 - continue from `VideoSegment.narration` as the target home for generated
   narration text, audio metadata, and segment-local caption cues
@@ -406,7 +408,7 @@ Current bounded direction and guardrails:
   from primitive/block/runtime inventory, use research/screenshots/TTS-first
   timing when the topic needs it, then compose a dedicated Remotion video by
   default
-- the current productization path is main-site recipe-first: use finished
+- the secondary productization path is main-site recipe-first: use finished
   standalone samples as evidence, then promote reusable visual language into
   planner-visible templates and `recipeHints`
 - choose `VideoProject` only for explicit web editing, selected-segment

@@ -1,14 +1,10 @@
 # Visual Recipe Roadmap
 
-Status: active roadmap for the productized visual layer and Agent Producer
-promotion path.
+Status: active roadmap for Agent Producer and reusable visual promotion.
 
-Use this document when the next task is about either:
-
-- making generated web/editor videos look better while preserving the current
-  staged generation product model
-- improving the Agent Producer path that makes dedicated Remotion videos first
-  and promotes reusable visual language only after samples prove it
+Use this document when the next task is about improving the Agent Producer path:
+make dedicated Remotion videos first, then promote reusable visual language
+only after samples prove it.
 
 The goal is not to restart the product, not to merge the heavier scene-graph
 exploration branch wholesale, not to build a broad visual-review scoring
@@ -17,25 +13,22 @@ web prompt.
 
 ## 1. Thesis
 
-The current `main` branch already has the right productized web skeleton:
+The current top-level production goal is:
 
 ```txt
-brief
-  -> StoryboardPlan
-  -> per-segment narration synthesis
-  -> audio + aligned captions
-  -> selected template implementation
-  -> VideoProject
-  -> preview / edit / export
+topic
+  -> research / assets
+  -> narration / TTS
+  -> component inventory
+  -> dedicated Remotion composition
+  -> still / mp4 review
+  -> promotion notes
 ```
 
-The weak point for the web path is visual quality, not the end-to-end
-pipeline.
-
-The next productized direction should upgrade simple templates into
-high-quality scene recipes: reusable, polished, duration-aware visual
-treatments that the planner can choose and the compiler can fill with
-schema-valid data.
+The previous prompt-to-`VideoProject` final goal is parked indefinitely. It
+remains a productization reference only when the user explicitly asks for web
+editing, selected-segment regeneration, app export, or generated
+`VideoProject` behavior.
 
 The default personal production direction is Agent Producer: start from a real
 topic, research and capture evidence, write narration and TTS first, inventory
@@ -50,9 +43,18 @@ Do not send personal production back through the web prompt.
 Make real videos first, then promote the reusable parts.
 ```
 
-## 2. Product And Producer Model
+## 2. Producer And Promotion Model
 
-Keep the existing user-facing model for the productized web path:
+Keep the Agent Producer model first:
+
+- one dedicated Remotion composition per finished sample
+- sample-owned source data, narration beats, and generated audio metadata
+- local-only screenshots, audio, and renders unless explicitly requested
+- shared `src/remotion/standalone-video/` helpers for timing/audio/captions
+- reuse primitives and blocks before writing sample-local scene code
+- promote only reusable visual language after still/mp4 review
+
+The parked productized web path still has this model when explicitly needed:
 
 - one `VideoProject` per generated video
 - one or more `VideoSegment` entries per project
@@ -697,9 +699,28 @@ Do not include:
 - media library
 - provider-visible arbitrary media ingestion
 
-## 6.1 Next Roadmap Slices
+## 6.1 Current Roadmap Slices
 
-### Phase 5.7: Producer Sample OS v1
+### Phase A: Authority Reset
+
+Status: current docs slice.
+
+Goal: make `docs/FINAL_PRODUCT_GOAL.md` the Agent Producer authority and park
+the previous prompt-to-`VideoProject` final goal indefinitely.
+
+Deliver:
+
+- `FINAL_PRODUCT_GOAL` rewritten around Agent Producer
+- README / AGENTS / ITERATION_STATUS aligned to the new authority order
+- old web/editor pipeline described as secondary productization context only
+
+Acceptance:
+
+- new agents start from Agent Producer by default
+- active docs do not present the old `VideoProject` final goal as authoritative
+- no code or generated media changes are introduced
+
+### Phase B: Producer Sample OS v1
 
 Status: next recommended bounded slice.
 
@@ -734,7 +755,7 @@ Acceptance:
   implementation begins
 - docs make clear that local artifacts stay ignored
 
-### Phase 5.8: Evidence Lens Block v1
+### Phase C: Evidence Lens Block v1
 
 Status: planned after Producer Sample OS v1.
 
@@ -766,7 +787,7 @@ Acceptance:
 - review stills catch overlay collision, unreadable evidence, and wrong focus
   target before a sample is called good
 
-### Phase 5.9: Promotion Gate v1
+### Phase D: Promotion Gate v1
 
 Status: planned after at least one shared block is extracted.
 
@@ -824,10 +845,10 @@ Current decision:
 - Treat the scene-graph roadmap branch as research.
 - Treat Agent Producer as the default personal production path for real
   finished videos.
-- Preserve the staged generation / F5 / caption / preview / export web product
-  loop as the productization path.
-- Invest next in Producer Sample OS, evidence-lens extraction, high-quality
-  recipe visuals, motion grammar, and previewable examples.
+- Park the staged generation / F5 / caption / preview / export web product
+  loop indefinitely as a secondary productization path.
+- Invest next in Producer Sample OS, evidence-lens extraction, motion grammar,
+  and previewable examples that improve dedicated Remotion production first.
 
 This keeps the product moving toward better generated videos without adding
 another layer of review infrastructure before the visuals themselves are good.

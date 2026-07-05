@@ -7,19 +7,16 @@
 ## OVERVIEW
 
 `ai-video-studio` is a Docker-first Next 16 + React 19 + Remotion 4 workspace
-with two deliberate paths. Agent Producer is the default personal production
-path for high-quality videos from real topics. `VideoProject` / web editor is
-the productized prompt-to-video path for editable/exportable projects. The app
-is past the starter-demo stage: the active productized loop is staged
-generation, in-project TTS/captions, selected-template compilation, Remotion
-preview, and local export.
+with a new top-level direction. Agent Producer is the default personal
+production path for high-quality videos from real topics. The old
+`VideoProject` / web editor final goal is parked indefinitely and remains only
+as a secondary productization reference path.
 
-Current productized web pipeline:
+Current Agent Producer pipeline:
 
 ```txt
-brief -> StoryboardPlan -> per-segment narration synthesis
--> audio + aligned captions -> per-segment template compile
--> assembled VideoProject -> preview / edit / export
+topic -> research/assets -> narration/TTS -> component inventory
+-> dedicated Remotion composition -> still/mp4 review -> promotion notes
 ```
 
 ## STRUCTURE
@@ -50,8 +47,8 @@ scripts for local F5/TTS probes live under `scripts/f5-tts/`.
 | Task | Location | Notes |
 | --- | --- | --- |
 | Current status / next slice | `docs/ITERATION_STATUS.md` | Fastest routing doc. |
-| Productization direction | `docs/FINAL_PRODUCT_GOAL.md` | Highest-level web/editor authority. |
-| Visual quality / recipes | `docs/VISUAL_RECIPE_ROADMAP.md` | Clean-main recipe roadmap. |
+| Current goal | `docs/FINAL_PRODUCT_GOAL.md` | Highest-level Agent Producer authority. |
+| Producer roadmap / visual promotion | `docs/VISUAL_RECIPE_ROADMAP.md` | Agent Producer and reusable-visual roadmap. |
 | Product scope | `docs/PRODUCT_REQUIREMENTS.md` | Segment/template/media boundaries. |
 | Page workflow | `src/app/page.tsx`, `src/helpers/project-generation/` | Client state and actions. |
 | Staged generation route | `src/app/api/generate/staged/route.ts` | Brief/plan/segment entrypoint. |
@@ -92,8 +89,8 @@ scripts for local F5/TTS probes live under `scripts/f5-tts/`.
   `node_modules` may be absent or irrelevant.
 - `.env.example` is the tracked config template; `.env` is the local Docker/Next
   config. Treat `.env.local` as legacy compatibility only.
-- Keep `VideoProject` as the top-level generation/preview/edit/export boundary
-  for the productized web path.
+- Treat `VideoProject` as a productization/editing/export boundary only, not
+  the default production target.
 - Keep one primary `templateId` per `VideoSegment`; grow template internals
   before introducing multi-template-per-segment orchestration.
 - Keep generated narration audio and captions under segment-owned narration

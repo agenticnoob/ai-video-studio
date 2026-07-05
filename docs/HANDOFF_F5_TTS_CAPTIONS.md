@@ -1,11 +1,12 @@
 # Handoff: Segment-Owned Narration, F5-TTS, And Captions
 
-Status: implementation handoff; captions/provider adapter implemented,
-F5 runtime service implemented, and GPU real-mode validation passed.
+Status: implementation handoff for the parked web/editor productization path;
+captions/provider adapter implemented, F5 runtime service implemented, and GPU
+real-mode validation passed.
 
-Use this document when starting the next implementation slice. It supersedes
-the earlier idea of adding top-level `VideoProject.captions` first. The updated
-model is:
+Use this document when starting the next implementation slice for the parked
+prompt-to-`VideoProject` path. It supersedes the earlier idea of adding
+top-level `VideoProject.captions` first. The updated model is:
 
 ```txt
 segment owns narration assets and captions
@@ -14,7 +15,7 @@ project owns segment ordering and global timeline assembly
 
 ## Product Decision
 
-The next generation target is still:
+For the parked web/editor path, the generation target is:
 
 ```txt
 brief

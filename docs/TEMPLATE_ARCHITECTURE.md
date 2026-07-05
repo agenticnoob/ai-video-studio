@@ -1,5 +1,12 @@
 # Template Architecture
 
+Status: productization reference for the parked web/editor path.
+
+The current top-level goal is Agent Producer. Templates remain important as a
+secondary productization layer when proven visual language should become
+available through web/editor generation. Do not treat template architecture as
+the default entrypoint for personal finished-video production.
+
 The project uses one primary template per `VideoSegment`. A template is split
 into server-safe metadata and client/video runtime code so API routes can build
 schemas and prompts without importing React or Remotion components.
@@ -9,8 +16,8 @@ generate new Remotion source code during normal project generation; it should
 choose a registered template from the template descriptions and fill that
 template's structured parameters.
 
-The final generation target is documented in `docs/FINAL_PRODUCT_GOAL.md`.
-Template metadata should support two provider contexts:
+For the parked web/editor path, template metadata should support two provider
+contexts:
 
 - planner manifest: compact descriptions and capabilities for all templates
 - compiler context: complete schema and implementation rules for one selected

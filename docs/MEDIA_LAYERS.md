@@ -3,7 +3,9 @@
 Status: implementation-boundary note plus segment-owned narration alignment.
 
 Roadmap relationship:
-- `docs/FINAL_PRODUCT_GOAL.md` is the authoritative final generation target.
+- `docs/FINAL_PRODUCT_GOAL.md` is now the Agent Producer authority.
+- This media-layer document is productization context for the parked
+  web/editor path. It should not drive the default Agent Producer workflow.
 - TTS narration audio belongs to the main generation pipeline. Generated
   narration audio should be represented outside template-specific
   `implementation` fields.

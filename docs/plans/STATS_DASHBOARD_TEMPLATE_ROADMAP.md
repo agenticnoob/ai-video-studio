@@ -1,14 +1,16 @@
 # Stats Dashboard Template Roadmap
 
-Status: first implementation shipped; continue with validation hardening and
-template-quality iteration.
+Status: first implementation shipped; parked web/editor productization
+reference.
 
 This document defines the next bounded template addition for
 `ai-video-studio`: a data-statistics segment template built by reusing the
 existing Remotion primitive library instead of introducing a new open-ended
 chart system.
 
-Authoritative product direction remains `docs/FINAL_PRODUCT_GOAL.md`.
+Authoritative current direction remains `docs/FINAL_PRODUCT_GOAL.md`; it now
+points to Agent Producer. This template roadmap is relevant only when
+resuming productized web/editor template work.
 Current template wiring rules remain `docs/TEMPLATE_ARCHITECTURE.md`.
 
 ## Goal

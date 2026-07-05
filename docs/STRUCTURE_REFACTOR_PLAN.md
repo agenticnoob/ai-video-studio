@@ -1,12 +1,17 @@
 # Structure Refactor Plan
 
-Status: planned; behavior-preserving structural cleanup only.
+Status: parked web/editor productization cleanup reference.
+
+The current top-level goal is Agent Producer. This plan applies only when work
+explicitly resumes the parked prompt-to-`VideoProject` web/editor
+productization path.
 
 This document defines the next cleanup pass for `ai-video-studio`. The goal is
 to make the already-working staged generation path easier to reason about,
 test, and extend without changing the product model or adding new features.
 
-Authoritative product direction remains `docs/FINAL_PRODUCT_GOAL.md`.
+Authoritative current direction remains `docs/FINAL_PRODUCT_GOAL.md`; it now
+points to Agent Producer, not this staged web/editor cleanup plan.
 Current runtime status remains `docs/ITERATION_STATUS.md`.
 
 ## Goal

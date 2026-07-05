@@ -89,8 +89,9 @@ Choose a default output:
 
 - Default to a component-composed standalone Remotion composition when the user
   asks for a good finished video.
-- Use `VideoProject` only when the user explicitly needs the existing web
-  editor, selected-segment regeneration, or `/api/render` export path.
+- Use `VideoProject` only when the user explicitly needs the parked web/editor
+  productization path: existing web editor, selected-segment regeneration, or
+  `/api/render` export.
 - If using `VideoProject`, explain why the page product path is the right
   output for this specific request.
 

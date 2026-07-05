@@ -1,9 +1,11 @@
 # Handoff: Stats Dashboard Template
 
-Status: first implementation shipped.
+Status: first implementation shipped; parked web/editor productization
+handoff.
 
 Use this handoff when the next task is to add a data-statistics Remotion
-template by reusing the existing primitive library.
+template by reusing the existing primitive library. For current Agent Producer
+work, treat this as reference material only.
 
 ## One-Sentence Context
 

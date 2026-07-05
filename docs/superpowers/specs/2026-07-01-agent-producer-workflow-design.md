@@ -41,11 +41,12 @@ The workflow is documented in:
 
 - `.agents/skills/ai-video-studio-agent-producer-workflow/SKILL.md`
 
-The workflow is not a wrapper around the page prompt. The web app remains the
-productized surface for prompt entry, editing, selected-segment regeneration,
-and export, but the producer workflow's default output is a dedicated Remotion
-composition assembled from repo-owned components. `VideoProject` is a
-productization target, not the default local producer output.
+The workflow is not a wrapper around the page prompt. The old web/editor final
+goal is parked indefinitely and remains a secondary productization surface for
+prompt entry, editing, selected-segment regeneration, and export. The producer
+workflow's default output is a dedicated Remotion composition assembled from
+repo-owned components. `VideoProject` is a productization target, not the
+default local producer output.
 
 ## Layer Model
 
@@ -94,7 +95,7 @@ Output:
 
 This is the default mode.
 
-### Main Product Mode
+### Parked Web Productization Mode
 
 Use this when the result should be editable in the current app.
 

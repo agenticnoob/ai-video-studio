@@ -1,13 +1,14 @@
 # Product Requirements
 
-Status: draft, refined from product-direction discussion.
+Status: parked web/editor productization reference.
 
-Authoritative generation target:
-- `docs/FINAL_PRODUCT_GOAL.md` defines the final prompt-to-video generation
-  pipeline and should drive roadmap iteration.
-- This PRD defines the product model and scope, while the final-goal document
-  defines the detailed planner -> narration synthesis -> audio + aligned
-  captions -> template-compiler architecture.
+Current authority:
+- `docs/FINAL_PRODUCT_GOAL.md` now defines the Agent Producer goal.
+- The previous prompt-to-`VideoProject` generation goal is parked
+  indefinitely. This PRD remains useful only when work explicitly targets the
+  web/editor productization path.
+- For day-to-day finished-video production, start from Agent Producer instead
+  of the web prompt / `VideoProject` pipeline.
 
 ## 1. Product definition
 
@@ -16,9 +17,9 @@ Authoritative generation target:
 The product goal is not a single-template editor.
 The product goal is to turn loose creative input into a full video draft composed from one or more video segments, then let the user refine and export it.
 
-## 2. Product vision
+## 2. Parked Web/Editor Product Vision
 
-Target workflow:
+Target workflow for the parked productization path:
 - user provides a creative brief, story, experience, or video requirements
 - AI interprets the input and plans the video as one or more segments
 - for each segment, the system selects one registered template and writes the
@@ -32,7 +33,7 @@ Target workflow:
 - the user reviews the whole video, adjusts segment intent or details, and re-generates as needed
 - the user exports the final video
 
-Product direction:
+Productization direction:
 - one segment should be implemented by one primary template
 - one template may contain multiple internal Remotion scenes / components /
   transitions / layout primitives
