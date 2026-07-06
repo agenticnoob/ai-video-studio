@@ -44,18 +44,28 @@ export const producerSampleManifests = [
       {
         id: "evidence-screenshot-backdrop",
         targetLayer: "block",
+        gateState: "promote-to-block",
+        status: "promoted",
+        productizationExposure: "agent-producer-internal",
         reason:
           "Shared in Producer Sample OS as the Evidence Lens full-frame screenshot backdrop.",
       },
       {
         id: "evidence-overlay-panel",
         targetLayer: "block",
+        gateState: "promote-to-block",
+        status: "promoted",
+        productizationExposure: "agent-producer-internal",
         reason: "Shared in Producer Sample OS as the Evidence Lens translucent proof overlay.",
       },
       {
         id: "screenshot-focus",
-        targetLayer: "primitive",
-        reason: "Shared in Producer Sample OS as claim-aligned zoom-in, hold, and return metadata.",
+        targetLayer: "block",
+        gateState: "promote-to-block",
+        status: "promoted",
+        productizationExposure: "agent-producer-internal",
+        reason:
+          "Shared through the Evidence Lens block as claim-aligned zoom-in, hold, and return metadata.",
       },
     ],
     notes: [
@@ -110,12 +120,18 @@ export const producerSampleManifests = [
       {
         id: "odds-ev-ranking",
         targetLayer: "recipe",
+        gateState: "promote-to-recipe",
+        status: "productized",
+        productizationExposure: "productization-existing",
         reason:
           "The odds, no-vig probability, EV, and risk ranking story already informed a productized stats recipe.",
       },
       {
         id: "risk-disclaimer-frame",
         targetLayer: "block",
+        gateState: "promote-to-block",
+        status: "candidate",
+        productizationExposure: "none",
         reason: "Explicit risk-note treatment is reusable for data-analysis shorts.",
       },
     ],
@@ -170,12 +186,18 @@ export const producerSampleManifests = [
       {
         id: "screenshot-evidence-flow",
         targetLayer: "recipe",
+        gateState: "promote-to-recipe",
+        status: "productized",
+        productizationExposure: "productization-existing",
         reason:
           "Screenshot/process language already informed the technical-explainer evidence flow.",
       },
       {
         id: "foreground-3d-evidence-cards",
         targetLayer: "block",
+        gateState: "promote-to-block",
+        status: "candidate",
+        productizationExposure: "none",
         reason:
           "The foreground 3D card/page/index treatment may be reusable after another project-intro sample proves it.",
       },

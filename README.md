@@ -25,6 +25,12 @@ Maintained Agent Producer samples are described by
 family, canvas profile, local artifact root, review frames, TTS status,
 committed source files, and promotion candidates.
 
+Promotion candidates now use the Phase D gate in
+`docs/PRODUCER_PROMOTION_GATE.md`: stay sample-local, promote to primitive,
+promote to block, promote to recipe, or promote to template. Evidence Lens is
+the first block-level reusable producer sample block; it remains Agent Producer
+sample infrastructure rather than planner/editor product exposure.
+
 New maintained samples should still live under `src/remotion/<SampleName>/`.
 Use `src/remotion/producer-samples/scaffold/` as the starting convention, then
 compose the real video from existing primitives, recipe blocks,
@@ -215,6 +221,11 @@ Current visual-quality direction:
   from primitives, blocks, data, TTS timing, and sample-specific scenes; recipes
   are template-owned treatments promoted only after the composition proves a
   reusable shape.
+- Phase D Promotion Gate v1 makes promotion decisions explicit:
+  stay sample-local, promote to primitive, promote to block, promote to recipe,
+  or promote to template. Evidence Lens is recorded as the first block-level
+  reusable producer sample block, while generated artifacts remain local-only
+  and planner/editor exposure remains out of scope for this slice.
 - `RecipeShowcasePreview` is the first static Remotion Studio quality baseline,
   with hero title, workflow map, terminal session, metric cards, timeline, and
   code-diff recipe scenes plus bounded subject-motion transitions: 2.5D

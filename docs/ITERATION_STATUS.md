@@ -1,6 +1,33 @@
 # Iteration Status
 
-Last updated: Phase C Evidence Lens Block v1
+Last updated: Phase D Promotion Gate v1
+
+## Latest continuation — Phase D Promotion Gate v1
+
+- Phase D adds a Promotion Gate v1 model for Agent Producer sample reuse:
+  stay sample-local, promote to primitive, promote to block, promote to recipe,
+  or promote to template.
+- Producer sample promotion candidates now carry structured `gateState`,
+  `status`, and `productizationExposure` fields instead of being only free-text
+  notes.
+- `docs/PRODUCER_PROMOTION_GATE.md` records the gate semantics and doc hooks.
+- Evidence Lens is the first block-level reusable producer sample block:
+  `EvidenceScreenshotBackdrop`, `EvidenceOverlayPanel`, and `ScreenshotFocus`
+  are recorded as `promote-to-block`, `promoted`, and
+  `agent-producer-internal`.
+- This slice stays bounded: no universal template, no productized editor
+  expansion, no planner-visible Evidence Lens exposure, and no generated
+  screenshots/audio/mp4 committed.
+
+Validation target:
+- `npm run smoke:producer-sample-manifest`
+- `npm run smoke:producer-promotion-gate`
+- `npm run smoke:evidence-lens`
+- `npm run smoke:uv-open-source-brief`
+- `npx tsc --noEmit --pretty false`
+- `npm run lint`
+- `git diff --check`
+- `git status --short`
 
 ## Latest continuation — Phase C Evidence Lens Block v1
 

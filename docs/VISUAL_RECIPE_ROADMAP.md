@@ -805,7 +805,7 @@ Acceptance:
 
 ### Phase D: Promotion Gate v1
 
-Status: planned after at least one shared block is extracted.
+Status: implemented for v1 after the Evidence Lens shared block extraction.
 
 Goal: make promotion decisions explicit so sample-local ideas do not become
 universal templates too early.
@@ -813,12 +813,26 @@ universal templates too early.
 Deliver:
 
 - checklist for keeping a visual idea sample-local, promoting it to primitive,
-  promoting it to recipe block, or exposing it as a recipe/template
+  promoting it to block, promoting it to recipe, or promoting it to template
 - rule that recipes/templates are productization layers, not the default Agent
   Producer entrypoint
 - documentation hooks for updating `REMOTION_PRIMITIVES`,
   `REMOTION_COMPONENT_LIBRARY`, `VISUAL_RECIPE_ROADMAP`, and README when a
   visual language is promoted
+- structured producer sample manifest semantics for `gateState`, `status`, and
+  `productizationExposure`
+- focused smoke coverage through `npm run smoke:producer-promotion-gate`, also
+  included in `npm run smoke:producer-sample-manifest`
+
+Implementation:
+
+- Gate documentation lives in `docs/PRODUCER_PROMOTION_GATE.md`.
+- Allowed promotion targets are exactly `primitive`, `block`, `recipe`, and
+  `template`.
+- Evidence Lens is the first block-level reusable producer sample block:
+  `EvidenceScreenshotBackdrop`, `EvidenceOverlayPanel`, and `ScreenshotFocus`
+  are recorded as `promote-to-block`, `promoted`, and
+  `agent-producer-internal`.
 
 Non-goals:
 

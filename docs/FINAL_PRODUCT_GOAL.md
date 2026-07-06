@@ -283,14 +283,32 @@ Non-goals:
 
 ### Phase D: Promotion Gate v1
 
+Status: implemented for the first sample-local promotion gate slice.
+
 Goal: make promotion decisions explicit so sample-local ideas do not become
 universal templates too early.
 
 Deliver:
 
-- checklist for sample-local vs primitive vs block vs recipe/template
+- checklist for stay sample-local, promote to primitive, promote to block,
+  promote to recipe, and promote to template
 - rule that recipes/templates are productization layers
 - documentation hooks for promoted visual language
+- structured producer sample manifest fields for promotion gate state, status,
+  and productization exposure
+
+Implementation note:
+
+- The gate is documented in `docs/PRODUCER_PROMOTION_GATE.md`.
+- The only allowed promotion targets are `primitive`, `block`, `recipe`, and
+  `template`.
+- Evidence Lens is the first block-level reusable producer sample block:
+  `EvidenceScreenshotBackdrop`, `EvidenceOverlayPanel`, and `ScreenshotFocus`
+  are recorded as `promote-to-block`, `promoted`, and
+  `agent-producer-internal`.
+- `npm run smoke:producer-sample-manifest` now also runs the focused
+  Promotion Gate smoke. `npm run smoke:producer-promotion-gate` can be run
+  directly for this boundary.
 
 Non-goals:
 
