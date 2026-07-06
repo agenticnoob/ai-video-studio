@@ -17,8 +17,9 @@ the vocab file, and the Vocos vocoder under `models/f5-tts/`.
 
 ## Product Role
 
-The F5-TTS provider is the preferred local narration synthesis path for staged
-generation once `F5_TTS_BASE_URL` points at a running service:
+The F5-TTS provider is the preferred local narration synthesis path for voice
+cloning and for the in-repo local runtime flow once `F5_TTS_BASE_URL` points at
+a running service:
 
 ```txt
 StoryboardSegmentPlan.narration.text
@@ -28,9 +29,10 @@ StoryboardSegmentPlan.narration.text
   -> assembled VideoProject
 ```
 
-F5-TTS is the only active narration provider. If the local F5-TTS runtime is
-not configured or not running, narration generation fails explicitly instead
-of falling back to MiniMax.
+F5-TTS and VoxCPM are the active local narration providers. F5-TTS owns
+voice-clone requests; VoxCPM owns ordinary text synthesis when explicitly
+selected. If the selected local runtime is not configured or not running,
+narration generation fails explicitly instead of falling back to MiniMax.
 
 ## Provider Boundary
 
@@ -80,6 +82,8 @@ segment regeneration, and export.
   - `TTS_PROVIDER=f5-tts` or `AI_VIDEO_STUDIO_TTS_PROVIDER=f5-tts` selects F5
     explicitly.
   - If no provider is set, F5 is used automatically.
+  - `TTS_PROVIDER=voxcpm` selects VoxCPM for ordinary text-to-speech only.
+    `voiceClone.enabled` still forces F5-TTS.
   - `F5_TTS_BASE_URL` points at the local/container F5 runtime.
   - `F5_TTS_ENDPOINT` optionally overrides the default
     `${F5_TTS_BASE_URL}/synthesize` endpoint. It may be absolute or relative.
@@ -148,6 +152,11 @@ Page-level voice cloning uses this runtime contract:
 Voice clone and normal narration requests do not silently fall back to MiniMax.
 If F5 cannot synthesize audio, the request fails so the UI can surface the real
 provider problem.
+
+F5-TTS remains the preferred provider for voice cloning and the in-repo local
+runtime path. VoxCPM can be selected for ordinary text-to-speech with
+`TTS_PROVIDER=voxcpm`, but this slice does not route `voiceClone.enabled`
+requests to VoxCPM.
 
 ## Non-Goals For The First Slice
 

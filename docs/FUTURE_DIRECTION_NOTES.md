@@ -155,8 +155,8 @@ Current likely sequence:
   adapter
 - normalize provider-returned alignment into segment-local caption/subtitle
   cues
-- keep F5-TTS as the only active narration provider; MiniMax fallback has been
-  removed
+- keep F5-TTS as the voice-clone provider and VoxCPM as an explicitly
+  selectable ordinary `/tts` provider; MiniMax fallback has been removed
 - render caption cues consistently in preview and export
 - status: implemented for the Next-side adapter, shared caption path, optional
   local runtime service, GPU real-mode synthesis, deterministic staged smoke,

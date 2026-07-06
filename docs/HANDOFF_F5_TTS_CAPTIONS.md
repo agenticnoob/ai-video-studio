@@ -55,7 +55,7 @@ type SegmentNarrationAudio = {
   durationInFrames: number;
   durationInSeconds: number;
   voiceId?: string;
-  provider?: "f5-tts" | "minimax" | string;
+  provider?: "f5-tts" | "voxcpm" | string;
   format?: "mp3" | "wav" | "aac" | "m4a";
 };
 
@@ -91,8 +91,9 @@ Rules:
 - Remotion preview/export should flatten segment-owned narration and captions
   into the project timeline at render time.
 
-F5-TTS should be integrated as an in-project provider boundary, not as a
-separate product. The F5-TTS runtime may run as a local process or Docker
+F5-TTS and VoxCPM should be integrated as in-project provider boundaries, not
+as separate products. The F5-TTS runtime may run as a local process or Docker
+service, and the VoxCPM runtime is the existing `/data/projects/labs/voxcpm-api`
 service, but this repo owns:
 
 - provider adapter
@@ -103,8 +104,9 @@ service, but this repo owns:
 - fallback behavior when provider captions are missing
 - preview/export rendering of shared segment caption data
 
-MiniMax TTS remains the current working provider/fallback while the local
-F5-TTS runtime service lands.
+F5-TTS remains the voice-clone provider. VoxCPM can be selected for ordinary
+text-to-speech through the same `POST /api/tts` boundary. Neither path silently
+falls back to MiniMax.
 
 ## Current Implementation State
 
@@ -145,7 +147,9 @@ Implemented in the F5/captions/runtime slices:
 
 - caption normalization helpers and fallback caption splitter.
 - F5-TTS provider module behind the existing TTS boundary.
-- provider selection/config for F5-TTS.
+- VoxCPM provider module behind the same TTS boundary for ordinary `/tts`
+  synthesis.
+- provider selection/config for F5-TTS and VoxCPM.
 - caption normalization from provider alignment into segment-local cues.
 - punctuation-aware F5 fallback cues when real alignment is unavailable:
   sentence punctuation is a hard split, comma punctuation is a soft split, and
@@ -161,14 +165,17 @@ Implemented in the F5/captions/runtime slices:
   stored under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/voice-references`, then paired with generation-time
   `voiceClone: { enabled, referenceId, referenceText }`, and used as
   `referenceAudio` / `referenceText` by the F5 runtime.
+- VoxCPM can be selected for ordinary TTS through the same `POST /api/tts`
+  boundary. It writes segment-owned WAV narration assets and uses deterministic
+  caption fallback. Voice-clone requests continue to force F5-TTS.
 - Docker overlays for the F5 service and explicit GPU runtime.
 - direct service smoke, Next `/api/tts` provider smoke, deterministic staged
   smoke, and deterministic staged export smoke.
 
 Still not implemented yet:
 
-- a full `POST /api/generate/staged` live smoke that exercises MiniMax
-  planner/compiler plus the real F5 service in one request.
+- a full `POST /api/generate/staged` live smoke that exercises DeepSeek
+  planner/compiler plus the selected local TTS provider in one request.
 - caption editing UI beyond rendering generated cues.
 
 ## Recommended Implementation Order

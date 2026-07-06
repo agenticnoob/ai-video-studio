@@ -4,8 +4,10 @@ Status: active staged generation LLM provider path.
 
 The staged generation path uses DeepSeek through the Vercel AI SDK provider
 for storyboard planning, selected-segment replanning, and selected-template
-implementation compilation. F5-TTS is the only active narration/TTS provider.
-MiniMax is no longer used by the active LLM or TTS pipeline.
+implementation compilation. F5-TTS and VoxCPM are the active local
+narration/TTS providers. F5-TTS owns voice-clone requests; VoxCPM can be
+selected for ordinary `/tts` synthesis. MiniMax is no longer used by the
+active LLM or TTS pipeline.
 
 ## Scope
 
@@ -35,25 +37,27 @@ Out of scope:
 | `DEEPSEEK_MODEL` | no | `deepseek-chat` | Model used for planner and compiler calls. |
 | `DEEPSEEK_BASE_URL` | no | provider default | Optional base URL override for a gateway or compatible deployment. |
 
-Narration uses the F5-TTS variables documented in
-[`docs/providers/f5-tts.md`](f5-tts.md). `TTS_PROVIDER` is now F5-only:
-leave it empty or set it to `f5-tts`.
+Narration uses the local TTS variables documented in
+[`docs/providers/f5-tts.md`](f5-tts.md) and
+[`docs/providers/voxcpm.md`](voxcpm.md). Leave `TTS_PROVIDER` empty or set it
+to `f5-tts` for F5-TTS; set it to `voxcpm` for ordinary VoxCPM `/tts`
+synthesis. `voiceClone.enabled` still forces F5-TTS.
 
 ## Generation Flow
 
 1. `generateStagedProjectFromBrief()` calls `deepseekGenerateStoryboardPlan()`.
 2. The planner returns a schema-validated `StoryboardPlan`.
-3. For each segment, `generateSegmentNarrationAsset()` calls F5-TTS and writes
-   segment-owned audio/caption artifacts.
+3. For each segment, `generateSegmentNarrationAsset()` calls the selected local
+   TTS provider and writes segment-owned audio/caption artifacts.
 4. `deepseekCompileTemplateImplementation()` receives the selected template
    schema, visual brief, narration text, and measured audio duration.
 5. The compiler returns only the selected template `implementation` object.
 6. The staged assembly path returns a validated `VideoProject`.
 
 Selected-segment regeneration uses the same boundary: DeepSeek replans only the
-target segment, F5-TTS regenerates its narration, DeepSeek recompiles its
-visual implementation, and non-target segments are preserved by the staged
-replacement helper.
+target segment, the selected local TTS provider regenerates its narration,
+DeepSeek recompiles its visual implementation, and non-target segments are
+preserved by the staged replacement helper.
 
 ## Error Mapping
 
@@ -66,5 +70,7 @@ replacement helper.
 | JSON parses but fails planner/template validation | 502 |
 | Missing or invalid F5-TTS config | 500 |
 | F5-TTS runtime/network/audio failure | 502 |
+| Missing or invalid VoxCPM config | 500 |
+| VoxCPM runtime/network/audio failure | 502 |
 
 The route does not fall back to mock generation or MiniMax.

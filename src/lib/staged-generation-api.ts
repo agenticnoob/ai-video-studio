@@ -4,9 +4,10 @@ import { TemplateImplementationParseError } from "./deepseek/parse-template-impl
 import { StoryboardPlanParseError } from "./deepseek/parse-storyboard-plan";
 import { videoProjectSchema } from "./project-schema";
 import { storyboardPlanSchema } from "./storyboard-plan-schema";
+import { ttsProviderIds } from "./tts/config";
 import { voiceCloneRequestSchema } from "./tts/voice-references";
 
-const ttsProviderSchema = z.enum(["f5-tts"]);
+const ttsProviderSchema = z.enum(ttsProviderIds);
 const progressIdSchema = z.string().trim().min(1).max(160).optional();
 
 const stagedBriefRequestSchema = z.object({

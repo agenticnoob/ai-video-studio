@@ -1,6 +1,36 @@
 # Iteration Status
 
-Last updated: Agent Producer evidence capture workflow alignment
+Last updated: VoxCPM TTS provider integration
+
+## Latest continuation — VoxCPM TTS provider integration
+
+- Added VoxCPM as a selectable ordinary TTS provider beside F5-TTS.
+- The provider calls the existing `/data/projects/labs/voxcpm-api` service at
+  `POST /tts`, stores local WAV narration artifacts under
+  `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts`, probes real duration with `ffprobe`, and
+  reuses segment-owned fallback captions.
+- F5-TTS remains the voice-clone provider; `voiceClone.enabled` still forces
+  F5 even when `provider: "voxcpm"` is requested.
+- Added `scripts/voxcpm-tts-next-smoke.sh` / `npm run smoke:voxcpm-next` for
+  Next-side live adapter validation and byte-range asset serving.
+- Docker config now passes VoxCPM env vars into `web`, `studio`, and `render`
+  and maps `host.docker.internal` to the Docker host gateway, but live Docker
+  reachability still must be verified because the personal VoxCPM service binds
+  host `127.0.0.1:8810`.
+- Live VoxCPM validation was attempted in this environment: host
+  `curl -fsS http://127.0.0.1:8810/ready` failed to connect, and container
+  `curl --connect-timeout 3 --max-time 5 -fsS http://host.docker.internal:8810/ready`
+  timed out. Do not mark Docker live VoxCPM validation complete until the
+  VoxCPM service is running and a container-reachable URL is confirmed.
+
+Validation target:
+- `npm run smoke:provider-boundary`
+- `VOXCPM_TTS_BASE_URL= npm run smoke:voxcpm-next`
+- `npx tsc --noEmit --pretty false`
+- `npm run lint`
+- `git diff --check`
+- live VoxCPM smoke only after confirming a URL reachable from the running Next
+  topology.
 
 ## Latest continuation — Agent Producer OpenAI Hardware News Brief + Evidence Capture Workflow
 

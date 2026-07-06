@@ -195,7 +195,11 @@ Parked web/product modeling direction:
   `VideoSegment.narration`, and the scripted scene schema no longer exposes an
   audio field to generation providers
 - the in-project F5-TTS provider adapter is the preferred local narration path
-  when `F5_TTS_BASE_URL` points at a running service
+  for voice cloning and the in-repo local runtime path when `F5_TTS_BASE_URL`
+  points at a running service
+- VoxCPM can be selected with `TTS_PROVIDER=voxcpm` for ordinary `/tts` text
+  synthesis through the existing `/data/projects/labs/voxcpm-api` service;
+  `voiceClone.enabled` still forces F5-TTS
 - the optional `f5-tts` Docker overlay provides a contract-smoke runtime and a
   real `F5_TTS_SERVICE_MODE=f5` runtime; the GPU overlay has been validated
   with the local checkpoint, vocab, and Vocos vocoder
@@ -210,6 +214,8 @@ Parked web/product modeling direction:
   voice is used for full-project generation and selected-segment regeneration
 - F5 runtime setup and validation details live in
   `docs/providers/f5-tts-service-plan.md`
+- VoxCPM provider setup and validation details live in
+  `docs/providers/voxcpm.md`
 - future existing video, image, audio, or color inputs should be modeled as
   project-level or segment-level `media.layers[]` data; `baseLayer` is now a
   media-layer role, not a separate project field
@@ -679,6 +685,20 @@ This smoke calls `POST /api/tts`, writes a local artifact under
 `/api/tts/assets/...` byte-range serving.
 It still uses contract-smoke audio, not a downloaded F5 model.
 
+Validate the Next-side VoxCPM adapter and generated TTS asset route:
+```bash
+cd /data/projects/labs/ai-video-studio
+VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810 NEXT_ORIGIN=http://127.0.0.1:3000 npm run smoke:voxcpm-next
+```
+
+Use `TTS_PROVIDER=voxcpm` for ordinary text-to-speech through the existing
+VoxCPM `/tts` service. `voiceClone.enabled` still forces F5-TTS because VoxCPM
+clone support is not part of this provider slice. For Docker-based `web`,
+verify that `VOXCPM_TTS_BASE_URL` is reachable from inside the container. The
+personal VoxCPM service currently binds to host `127.0.0.1:8810`, so host-run
+Next can use that URL directly while Docker may need a verified host gateway or
+host-network override.
+
 Validate a deterministic staged project using F5 narration assets:
 ```bash
 cd /data/projects/labs/ai-video-studio
@@ -841,8 +861,11 @@ Recommended prod-specific overrides in `.env.prod`:
 - `F5_TTS_HOST_BIND=127.0.0.1`
 - `AI_VIDEO_STUDIO_ARTIFACT_ROOT="/workspace/out"`
 - `AI_VIDEO_STUDIO_RENDER_ASSET_ORIGIN="http://127.0.0.1:3000"` for container-internal export fetches
-- `TTS_PROVIDER="f5-tts"`
+- `TTS_PROVIDER="f5-tts"` for F5 default/voice-clone work, or
+  `TTS_PROVIDER="voxcpm"` for ordinary VoxCPM `/tts` synthesis after
+  reachability is verified
 - `F5_TTS_BASE_URL="http://f5-tts:7865"`
+- `VOXCPM_TTS_BASE_URL="<verified VoxCPM URL>"` only when VoxCPM is selected
 - keep `AI_VIDEO_STUDIO_RENDER_CONCURRENCY`,
   `AI_VIDEO_STUDIO_GENERATION_CONCURRENCY`, `AI_VIDEO_STUDIO_TTS_CONCURRENCY`,
   and `F5_TTS_RUNTIME_CONCURRENCY` at `1`
@@ -888,8 +911,10 @@ job system before treating these limits as global.
 
 The staged generation path is backed by DeepSeek through the Vercel AI SDK
 provider. DeepSeek handles storyboard planning, selected-segment replanning,
-and selected-template implementation compilation. F5-TTS is the only active
-narration/TTS provider. The assembled `VideoProject` contract is unchanged:
+and selected-template implementation compilation. F5-TTS and VoxCPM are the
+active local narration/TTS providers: F5-TTS owns voice-clone requests, and
+VoxCPM can be explicitly selected for ordinary `/tts` synthesis. The assembled
+`VideoProject` contract is unchanged:
 provider output must still validate against the selected planner/template
 schemas and final project schema.
 
@@ -923,6 +948,8 @@ The provider throws `DeepSeekConfigError("DEEPSEEK_API_KEY is not configured. Se
 | Response fails planner/template validation | 502 |
 | F5-TTS config missing or invalid | 500 |
 | F5-TTS runtime/network/audio failure | 502 |
+| VoxCPM config missing or invalid | 500 |
+| VoxCPM runtime/network/audio failure | 502 |
 | Invalid request body / unknown mode | 400 |
 
 ### Docker-first verification
