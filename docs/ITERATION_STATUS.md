@@ -1,6 +1,27 @@
 # Iteration Status
 
-Last updated: Final Goal Authority Reset
+Last updated: Producer Sample OS v1
+
+## Latest continuation — Producer Sample OS v1 Implementation
+
+- Phase B Producer Sample OS v1 adds a committed sample manifest model,
+  scaffold convention, local-only artifact boundary, and manifest smoke guard.
+- The first compatibility target is the maintained standalone sample set:
+  `UvOpenSourceBrief`, `WorldCupBettingAnalysis`, and
+  `PixelRAGChineseStandalonePreview`.
+- The manifest describes committed source and review metadata only; generated
+  screenshots, generated audio, and rendered mp4 files remain local-only under
+  ignored artifact paths.
+- This phase does not route Agent Producer work through the web prompt, does
+  not create a universal template, and does not expand the product editor.
+
+Validation target:
+- `npm run smoke:producer-sample-manifest`
+- `npm run smoke:standalone-video-runtime`
+- existing sample smokes for uv, WorldCup, and PixelRAG
+- `npx tsc --noEmit --pretty false`
+- `npm run lint`
+- `git diff --check`
 
 ## Latest continuation — Final Goal Authority Reset
 

@@ -722,7 +722,7 @@ Acceptance:
 
 ### Phase B: Producer Sample OS v1
 
-Status: next recommended bounded slice.
+Status: implemented for manifest, scaffold convention, and smoke guard.
 
 Goal: make Agent Producer runs easier to start, review, and hand off without
 turning them into a generic web prompt or universal template.
@@ -749,11 +749,15 @@ Non-goals:
 
 Acceptance:
 
+- `src/remotion/producer-samples/` describes maintained samples without
+  changing their renderer contracts.
 - `PixelRAGChineseStandalonePreview`, `WorldCupBettingAnalysis`, and
   `UvOpenSourceBrief` can be described by the same manifest model
-- a new producer sample has a predictable folder and smoke shape before visual
-  implementation begins
-- docs make clear that local artifacts stay ignored
+- `src/remotion/producer-samples/scaffold/` documents the expected future
+  `src/remotion/<SampleName>/` source shape.
+- `npm run smoke:producer-sample-manifest` validates the manifest and
+  local-only artifact boundary without requiring generated media in Git.
+- docs make clear that local artifacts stay ignored.
 
 ### Phase C: Evidence Lens Block v1
 

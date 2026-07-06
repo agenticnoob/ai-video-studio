@@ -18,6 +18,23 @@ Agent Producer goal:
 - reusable visual language is promoted gradually into primitives, blocks,
   recipes, or templates after real samples prove it
 
+### Producer Sample OS
+
+Maintained Agent Producer samples are described by
+`src/remotion/producer-samples/`. The manifest records composition id, content
+family, canvas profile, local artifact root, review frames, TTS status,
+committed source files, and promotion candidates.
+
+New maintained samples should still live under `src/remotion/<SampleName>/`.
+Use `src/remotion/producer-samples/scaffold/` as the starting convention, then
+compose the real video from existing primitives, recipe blocks,
+`src/remotion/standalone-video/` helpers, local data, and sample-specific
+scenes.
+
+Generated screenshots, generated narration audio, and rendered videos stay
+local-only under `public/generated/<slug>/` or `out/` unless the user explicitly
+asks to commit them.
+
 Parked productized web goal:
 - user enters a natural-language brief
 - AI plans storyboard segments from the brief and registered template
