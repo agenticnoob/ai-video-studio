@@ -35,7 +35,9 @@ A successful Agent Producer run should:
 
 1. Start from a topic, brief, source, repo, page, dataset, product, or story.
 2. Research or inspect the source material when the facts matter.
-3. Capture screenshots or other evidence assets when visuals need proof.
+3. Attempt real screenshot/source capture when visuals need proof; use a
+   generated source-card fallback only after recording why real capture failed
+   or was not readable.
 4. Write narration beats before locking scene timing.
 5. Generate or prepare TTS and let narration duration own the timeline.
 6. Inventory existing primitives, recipe blocks, standalone-video helpers, and
@@ -111,6 +113,19 @@ A video job should state:
 
 For factual topics, use current source material. Capture or prepare evidence
 screenshots when a visual claim needs proof.
+
+Evidence capture rule:
+
+- Attempt real capture first for source-backed beats: website, GitHub repo,
+  product UI, dashboard, chart, document, or supplied asset.
+- If real capture fails or is not useful, record the reason in local production
+  data or notes before generating a source-card fallback.
+- Acceptable fallback reasons include paywall, auth wall, geoblock, automation
+  block, network failure, dynamic-render failure, source unavailable, or
+  unreadable screenshot after scaling.
+- Do not call a generated source-card fallback a screenshot. Treat it as
+  fallback evidence, localize its visible copy, and review at least one still
+  where it appears.
 
 Generated or captured artifacts should stay under ignored local paths, usually:
 
@@ -315,6 +330,29 @@ Non-goals:
 - no universal data-story or project-intro template by default
 - no multi-template-per-segment orchestration
 - no primitive prop exposure to providers
+
+### Phase E: OpenAI News Producer Sample And Evidence Capture Hardening
+
+Status: implemented for the current news sample and workflow docs.
+
+Goal: produce a maintained Chinese trend-briefing sample while closing the
+process gap that allowed generated source-card fallback assets to be treated
+like screenshots.
+
+Deliver:
+
+- `OpenAiHardwareNewsBrief`, a standalone 16:9 Agent Producer composition
+- generated local F5-TTS narration metadata and local-only source-card assets
+- smoke coverage for Chinese source-card copy, no long post-voiceover silence,
+  evidence fallback reasons, and duration metadata alignment
+- workflow docs that require real screenshot/source capture before source-card
+  fallback
+
+Non-goals:
+
+- no automatic screenshot repair
+- no broad media ingestion system
+- no planner-visible template or recipe exposure for the news source cards
 
 ## 6. Validation Expectations
 

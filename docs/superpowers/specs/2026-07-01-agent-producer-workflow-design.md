@@ -121,6 +121,9 @@ The first practical use should be one real information video, such as:
 Acceptance:
 
 - source facts and screenshots are captured or explicitly noted as unavailable
+- source-backed evidence beats attempt real capture before generated
+  source-card fallback; fallback reasons are recorded and fallback cards are not
+  described as screenshots
 - narration beats are written before visual durations are locked
 - TTS or TTS-ready narration owns timing
 - candidate primitives, blocks, and standalone runtime helpers are listed

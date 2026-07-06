@@ -1,8 +1,68 @@
 # Iteration Status
 
-Last updated: Phase D Promotion Gate v1
+Last updated: Agent Producer evidence capture workflow alignment
 
-## Latest continuation — Phase D Promotion Gate v1
+## Latest continuation — Agent Producer OpenAI Hardware News Brief + Evidence Capture Workflow
+
+- Produced `OpenAiHardwareNewsBrief`, a 16:9 Chinese Agent Producer news video
+  about OpenAI's reported Codex Micro / Work Louder hardware teaser.
+- The script frames the Codex hardware story as a reported July 15 launch watch
+  item, with the government-stake item explicitly treated as reported early
+  talks rather than a completed deal.
+- The sample lives under `src/remotion/OpenAiHardwareNewsBrief/` with explicit
+  `types.ts`, `script.ts`, `data.ts`, generated TTS metadata, and a dedicated
+  renderer registered in `src/remotion/Root.tsx`.
+- It reuses `StandaloneTimeline`, `StandaloneVoiceover`,
+  `StandaloneBottomCaption`, `EvidenceScreenshotBackdrop`,
+  `EvidenceOverlayPanel`, `MetricCardGrid`, `WorkflowMapBlock`, and
+  `TimelineProgressBlock`; sample-local visuals cover the news hero, Codex
+  shortcut controller sketch, localized source-card fallback assets,
+  uncertainty note, and launch-watch closing.
+- Corrected the first-pass source-card fallback issue: source cards are now
+  Chinese, are modeled as `evidenceAssets` rather than screenshots, and record
+  `source-card-fallback` reasons in sample data.
+- Agent Producer docs now enforce a real-capture-first rule: source-backed
+  evidence scenes must attempt real screenshot/source capture before generated
+  source-card fallback; fallback use must record why capture failed or was
+  unreadable and must not be described as a screenshot.
+- Corrected the first-pass post-voiceover pause issue: scene tail padding is
+  now 8 frames, and the smoke guard fails if any scene keeps more than 12
+  frames of post-voiceover silence.
+- Generated source-card fallback assets, TTS audio, stills, and mp4 are
+  local-only under `public/generated/openai-hardware-news-brief/` and `out/`.
+- TTS generation used `f5-tts` with `usedFallback: false`.
+- Rendered review stills:
+  `out/openai-hardware-news-brief-frame-45.png`,
+  `out/openai-hardware-news-brief-frame-360.png`,
+  `out/openai-hardware-news-brief-frame-760.png`, and
+  `out/openai-hardware-news-brief-frame-1100.png`, plus the earlier
+  `out/openai-hardware-news-brief-frame-1420.png`.
+- Rendered mp4:
+  `out/openai-hardware-news-brief.mp4`; `ffprobe` reported `h264` video,
+  `aac` audio, duration `49.322667`, size `8427435`, and `ffmpeg volumedetect`
+  reported `mean_volume: -20.3 dB`, `max_volume: -3.0 dB`.
+- Added `npm run generate:openai-hardware-news-brief` and
+  `npm run smoke:openai-hardware-news-brief`.
+
+Validation performed:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run generate:openai-hardware-news-brief'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:openai-hardware-news-brief'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:producer-sample-manifest'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit --pretty false'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+  passed with 0 errors and 2 pre-existing warnings from ignored generated files
+  under `public/generated/agent-producer-uv/`.
+- `git diff --check`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts OpenAiHardwareNewsBrief /workspace/out/openai-hardware-news-brief-frame-45.png --frame=45 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts OpenAiHardwareNewsBrief /workspace/out/openai-hardware-news-brief-frame-360.png --frame=360 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts OpenAiHardwareNewsBrief /workspace/out/openai-hardware-news-brief-frame-760.png --frame=760 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts OpenAiHardwareNewsBrief /workspace/out/openai-hardware-news-brief-frame-1100.png --frame=1100 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts OpenAiHardwareNewsBrief /workspace/out/openai-hardware-news-brief-frame-1420.png --frame=1420 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion render src/remotion/index.ts OpenAiHardwareNewsBrief /workspace/out/openai-hardware-news-brief.mp4'`
+- `ffprobe -v error -show_entries stream=codec_type,codec_name -show_entries format=duration,size -of default=noprint_wrappers=1 out/openai-hardware-news-brief.mp4`
+- `ffmpeg -hide_banner -i out/openai-hardware-news-brief.mp4 -af volumedetect -f null /dev/null`
+
+## Previous continuation — Phase D Promotion Gate v1
 
 - Phase D adds a Promotion Gate v1 model for Agent Producer sample reuse:
   stay sample-local, promote to primitive, promote to block, promote to recipe,

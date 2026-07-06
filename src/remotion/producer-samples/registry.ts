@@ -2,6 +2,78 @@ import type { ProducerSampleManifest } from "./manifest";
 
 export const producerSampleManifests = [
   {
+    compositionId: "OpenAiHardwareNewsBrief",
+    sampleName: "OpenAiHardwareNewsBrief",
+    slug: "openai-hardware-news-brief",
+    contentFamily: "trend-briefing",
+    canvasProfile: "landscape-16x9",
+    localArtifactRoot: "public/generated/openai-hardware-news-brief/",
+    ttsStatus: "generated-local",
+    reviewFrames: [
+      {
+        frame: 45,
+        label: "opening hook",
+        purpose: "Check headline readability and device focal point.",
+      },
+      {
+        frame: 300,
+        label: "codex report evidence",
+        purpose: "Check Evidence Lens screenshot/source card readability.",
+      },
+      {
+        frame: 720,
+        label: "workflow analysis",
+        purpose: "Check workflow block density and metric card spacing.",
+      },
+      {
+        frame: 1180,
+        label: "launch watch",
+        purpose: "Check date-focused closing and caption clearance.",
+      },
+    ],
+    sourceFiles: [
+      {
+        path: "src/remotion/OpenAiHardwareNewsBrief/OpenAiHardwareNewsBrief.tsx",
+        kind: "renderer",
+      },
+      { path: "src/remotion/OpenAiHardwareNewsBrief/types.ts", kind: "types" },
+      { path: "src/remotion/OpenAiHardwareNewsBrief/script.ts", kind: "script" },
+      { path: "src/remotion/OpenAiHardwareNewsBrief/data.ts", kind: "data" },
+      {
+        path: "src/remotion/OpenAiHardwareNewsBrief/audio.generated.ts",
+        kind: "audio-metadata",
+      },
+      { path: "src/remotion/Root.tsx", kind: "root-registration" },
+      { path: "scripts/openai-hardware-news-brief-smoke.mjs", kind: "smoke" },
+    ],
+    promotionCandidates: [
+      {
+        id: "news-source-card",
+        targetLayer: "block",
+        gateState: "stay-sample-local",
+        status: "sample-local",
+        productizationExposure: "none",
+        reason:
+          "The source-card fallback is useful for this news sample but needs another run before block promotion.",
+      },
+      {
+        id: "hardware-shortcut-console",
+        targetLayer: "block",
+        gateState: "stay-sample-local",
+        status: "sample-local",
+        productizationExposure: "none",
+        reason:
+          "The Codex shortcut controller visual is topic-specific until another hardware/workflow story proves reuse.",
+      },
+    ],
+    notes: [
+      "Generated source cards and narration audio stay local-only under public/generated/openai-hardware-news-brief/.",
+      "The generated source cards are explicitly source-card fallbacks, not screenshots; the sample data records why real capture was not used.",
+      "The government stake beat is framed only as reported early talks, not as a completed deal.",
+      "This sample remains a dedicated Agent Producer composition and does not use the parked web prompt path.",
+    ],
+  },
+  {
     compositionId: "UvOpenSourceBrief",
     sampleName: "UvOpenSourceBrief",
     slug: "uv-open-source-brief",

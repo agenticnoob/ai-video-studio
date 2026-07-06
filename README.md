@@ -9,7 +9,9 @@ AI-first Remotion video workspace with two deliberate paths:
 
 Agent Producer goal:
 - user gives a topic or brief
-- agent researches sources and captures evidence assets when needed
+- agent researches sources and attempts real evidence capture when needed
+- generated source-card fallback is used only after a failed or unreadable real
+  capture attempt is recorded
 - agent writes narration beats and generates or prepares TTS before locking
   timing
 - agent inventories primitives, recipe blocks, and standalone-video helpers
@@ -40,6 +42,12 @@ scenes.
 Generated screenshots, generated narration audio, and rendered videos stay
 local-only under `public/generated/<slug>/` or `out/` unless the user explicitly
 asks to commit them.
+
+Source-backed evidence scenes follow a real-capture-first rule: capture the
+actual page, repo, product UI, dashboard, chart, document, or supplied asset
+when possible. If capture fails or is unreadable, record the reason before
+making a localized source-card fallback, and do not describe that fallback as a
+screenshot.
 
 Parked productized web goal:
 - user enters a natural-language brief
@@ -539,6 +547,16 @@ sample-local visuals composed with `src/remotion/standalone-video/` plus
 recipe blocks. Generated screenshots and audio live under ignored
 `public/generated/uv-open-source-brief/`.
 
+For the current OpenAI news producer sample, open `OpenAiHardwareNewsBrief`.
+It is a standalone 16:9 Chinese trend brief about the reported Codex Micro /
+Work Louder hardware teaser. It uses generated F5-TTS narration metadata,
+Evidence Lens source-card fallback assets, workflow blocks, and sample-local
+hardware/news visuals. Its source-card assets are explicitly recorded as
+fallback evidence, not screenshots, with fallback reasons in
+`src/remotion/OpenAiHardwareNewsBrief/data.ts`. Generated source cards, audio,
+stills, and mp4 live under ignored
+`public/generated/openai-hardware-news-brief/` and `out/`.
+
 Preview the local Remotion primitive catalog in the app:
 - http://localhost:3000/primitives
 
@@ -549,7 +567,8 @@ crowd the Studio composition list.
 For a higher-quality local producer run, use
 `.agents/skills/ai-video-studio-agent-producer-workflow/` before writing new
 Remotion visuals. That workflow starts with the primitive catalog, then uses
-research, screenshots, TTS-first timing, existing recipe blocks,
+research, real source capture before source-card fallback, TTS-first timing,
+existing recipe blocks,
 `src/remotion/standalone-video/` helpers, and still-frame review to build a
 dedicated composition like `WorldCupBettingAnalysis`. Treat `VideoProject` as a
 productization, editing, regeneration, or app export target, not the default

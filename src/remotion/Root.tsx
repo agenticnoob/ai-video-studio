@@ -46,6 +46,15 @@ import {
   UvOpenSourceBriefVideo,
 } from "./UvOpenSourceBrief";
 import {
+  getOpenAiHardwareNewsBriefDuration,
+  OPENAI_HARDWARE_NEWS_BRIEF_COMPOSITION_ID,
+  OPENAI_HARDWARE_NEWS_BRIEF_FPS,
+  OPENAI_HARDWARE_NEWS_BRIEF_HEIGHT,
+  OPENAI_HARDWARE_NEWS_BRIEF_WIDTH,
+  openAiHardwareNewsBriefData,
+  OpenAiHardwareNewsBriefVideo,
+} from "./OpenAiHardwareNewsBrief";
+import {
   AI_NEWS_COMPOSITION_ID,
   AiNewsVideo,
   VIDEO_DURATION_IN_FRAMES,
@@ -171,6 +180,14 @@ export const RemotionRoot: FC = () => {
         fps={UV_OPEN_SOURCE_BRIEF_FPS}
         width={UV_OPEN_SOURCE_BRIEF_WIDTH}
         height={UV_OPEN_SOURCE_BRIEF_HEIGHT}
+      />
+      <Composition
+        id={OPENAI_HARDWARE_NEWS_BRIEF_COMPOSITION_ID}
+        component={OpenAiHardwareNewsBriefVideo}
+        durationInFrames={getOpenAiHardwareNewsBriefDuration(openAiHardwareNewsBriefData)}
+        fps={OPENAI_HARDWARE_NEWS_BRIEF_FPS}
+        width={OPENAI_HARDWARE_NEWS_BRIEF_WIDTH}
+        height={OPENAI_HARDWARE_NEWS_BRIEF_HEIGHT}
       />
       <Composition
         id={AI_NEWS_COMPOSITION_ID}

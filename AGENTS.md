@@ -101,6 +101,10 @@ scripts for local F5/TTS probes live under `scripts/f5-tts/`.
   start from primitives/blocks/standalone-video runtime helpers, compose a
   dedicated Remotion video by default, and promote recipes/templates only after
   reuse is proven. Do not route this default back through the web prompt.
+- For source-backed Agent Producer evidence, attempt real screenshot/source
+  capture before generated source-card fallback. If fallback is used, record
+  why capture failed or was unreadable and do not call the fallback a
+  screenshot.
 - Remotion animation must be frame-driven with Remotion APIs.
 
 ## ANTI-PATTERNS (THIS PROJECT)

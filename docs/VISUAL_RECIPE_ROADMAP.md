@@ -49,6 +49,8 @@ Keep the Agent Producer model first:
 
 - one dedicated Remotion composition per finished sample
 - sample-owned source data, narration beats, and generated audio metadata
+- real screenshot/source capture before generated source-card fallback; any
+  fallback must record why capture failed or was unreadable
 - local-only screenshots, audio, and renders unless explicitly requested
 - shared `src/remotion/standalone-video/` helpers for timing/audio/captions
 - reuse primitives and blocks before writing sample-local scene code
@@ -647,6 +649,9 @@ Acceptance:
 - agent output is not just page generation plus screenshots; it composes
   repo-owned primitives, blocks, runtime helpers, and data into a dedicated
   video
+- source-backed evidence beats attempt real screenshot/source capture before
+  generated source-card fallback; fallback use is recorded and not labeled as a
+  screenshot
 - recipes remain template-owned reusable treatments promoted from evidence,
   not a separate component system
 - generated screenshots, audio, and renders stay local-only unless explicitly
@@ -657,6 +662,8 @@ Acceptance:
   screenshots as proof, compact translucent local overlays, claim-aligned
   screenshot focus metadata, and frame-driven quick zoom-in / hold /
   return-to-context motion
+- future source-card fallbacks are only acceptable after a failed or unreadable
+  real capture attempt, with localized visible copy and a recorded reason
 
 ## 6. First Implementation Slice
 
@@ -845,6 +852,29 @@ Acceptance:
 - new samples can list promotion candidates without promoting them immediately
 - productized recipes/templates require evidence from finished samples
 - web/editor recipe work remains bounded to registered template contracts
+
+### Phase E: OpenAI News Producer Sample And Evidence Capture Hardening
+
+Status: implemented for `OpenAiHardwareNewsBrief` and the workflow docs.
+
+Goal: add a maintained trend-briefing Agent Producer sample and make
+source-backed evidence handling stricter for future runs.
+
+Deliver:
+
+- dedicated `OpenAiHardwareNewsBrief` Remotion composition
+- local F5-TTS narration metadata and local-only generated source-card assets
+- producer sample manifest entry with review frames and promotion candidates
+- sample smoke that checks Chinese source-card copy, source-card fallback
+  reasons, scene duration padding, and duration metadata alignment
+- docs/skill rule that real screenshot/source capture must be attempted before
+  generated source-card fallback
+
+Non-goals:
+
+- no automatic screenshot repair loop
+- no broad media library
+- no productized recipe/template exposure for the news source-card treatment
 
 ## 7. Validation
 

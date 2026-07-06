@@ -12,30 +12,38 @@ const {
 const rootSource = readFileSync("src/remotion/Root.tsx", "utf8");
 
 const expectedCompositionIds = [
+  "OpenAiHardwareNewsBrief",
   "UvOpenSourceBrief",
   "WorldCupBettingAnalysis",
   "PixelRAGChineseStandalonePreview",
 ];
 
 const expectedLocalRoots = new Map([
+  ["OpenAiHardwareNewsBrief", "public/generated/openai-hardware-news-brief/"],
   ["UvOpenSourceBrief", "public/generated/uv-open-source-brief/"],
   ["WorldCupBettingAnalysis", "public/generated/world-cup-betting-analysis/"],
   ["PixelRAGChineseStandalonePreview", "public/generated/pixelrag-chinese-standalone/"],
 ]);
 
 const expectedProfiles = new Map([
+  ["OpenAiHardwareNewsBrief", "landscape-16x9"],
   ["UvOpenSourceBrief", "landscape-16x9"],
   ["WorldCupBettingAnalysis", "portrait-9x16"],
   ["PixelRAGChineseStandalonePreview", "landscape-16x9"],
 ]);
 
 const expectedFamilies = new Map([
+  ["OpenAiHardwareNewsBrief", "trend-briefing"],
   ["UvOpenSourceBrief", "project-intro"],
   ["WorldCupBettingAnalysis", "data-analysis"],
   ["PixelRAGChineseStandalonePreview", "project-intro"],
 ]);
 
 const expectedRootMarkers = new Map([
+  [
+    "OpenAiHardwareNewsBrief",
+    ["OPENAI_HARDWARE_NEWS_BRIEF_COMPOSITION_ID", "OpenAiHardwareNewsBriefVideo"],
+  ],
   ["UvOpenSourceBrief", ["UV_OPEN_SOURCE_BRIEF_COMPOSITION_ID", "UvOpenSourceBriefVideo"]],
   [
     "WorldCupBettingAnalysis",

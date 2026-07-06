@@ -102,6 +102,16 @@ For real topics, gather enough source material before scripting:
 - Search or inspect primary sources when current facts matter.
 - Capture website, GitHub, product, or chart screenshots when the video needs
   visual proof.
+- Try real source capture before creating a generated source-card fallback.
+  A source-card fallback is allowed only after the real page/screenshot is
+  unavailable, blocked, unreadable after scaling, or otherwise not useful for
+  the claim.
+- Record the capture result in a local working note or data module: source URL,
+  asset path when captured, or a short fallback reason such as paywall,
+  geoblock, auth wall, automation block, network failure, dynamic-render
+  failure, or unreadable screenshot.
+- Do not describe a generated source-card fallback as a screenshot. Label it as
+  source-card fallback evidence in data, notes, or handoff text.
 - Store generated or captured media under ignored local artifact paths, usually
   `public/generated/<slug>/` or `out/`.
 - Do not commit generated screenshots, audio, or rendered videos unless the user
@@ -168,6 +178,12 @@ Default assembly path:
 
 Screenshot evidence direction:
 
+- Real capture comes first. For a source-backed evidence beat, attempt to
+  capture the actual page, repo, product UI, dashboard, chart, or document
+  before generating a source-card fallback.
+- If real capture fails or is not readable, keep the fallback honest: use a
+  clearly labeled source-card fallback, localize all visible text for the
+  video's language, and record why it replaced the real screenshot.
 - When a beat uses a website, GitHub, product page, docs page, or dashboard
   screenshot as visual evidence, prefer making the screenshot the dominant
   full-frame visual instead of a small side card.
@@ -196,21 +212,27 @@ Use this micro-workflow when the screenshot must prove a real claim:
 
 1. Name the claim first, such as `stars/forks`, `official definition`,
    `release title/date`, `benchmark`, `pricing`, or `product state`.
-2. Capture or select a screenshot where that claim is visible without relying
+2. Attempt real capture from the source URL or local provided asset before
+   making a fallback card.
+3. Capture or select a screenshot where that claim is visible without relying
    on tiny text after scaling.
-3. Record a scene-local focus target that matches the claim. Do not zoom into a
+4. If real capture fails, record the reason and use a clearly labeled
+   source-card fallback instead of calling it a screenshot.
+5. Record a scene-local focus target that matches the claim. Do not zoom into a
    visually interesting area if it is not the area being narrated.
-4. Make the screenshot the main layer at full-frame scale. Keep the screenshot
-   readable with normal brightness/contrast and only light edge vignettes.
-5. Put narration text, metrics, and labels in a compact translucent panel.
+6. Make the screenshot or fallback evidence card the main layer at full-frame
+   scale. Keep the evidence readable with normal brightness/contrast and only
+   light edge vignettes.
+7. Put narration text, metrics, and labels in a compact translucent panel.
    The panel may blur or darken only its own background; it should not mask the
-   whole screenshot.
-6. Animate the screenshot with a quick push-in, a short hold, and a return
-   toward the original scale. This gives both context and detail in one shot.
-7. Render stills at the start/context frame, the zoom/hold frame, and the
-   return frame. Check that the screenshot evidence remains legible, the panel
-   does not cover the claim, captions do not collide, and the focal point
-   matches the narration.
+   whole evidence layer.
+8. Animate the screenshot or fallback card with a quick push-in, a short hold,
+   and a return toward the original scale. This gives both context and detail
+   in one shot.
+9. Render stills at the start/context frame, the zoom/hold frame, and the
+   return frame. Check that the evidence remains legible, the panel does not
+   cover the claim, captions do not collide, the focal point matches the
+   narration, and fallback cards do not contain untranslated copy.
 
 Promotion candidates from the uv first run:
 
@@ -247,6 +269,9 @@ Inspect stills for:
 - no blank or broken media
 - no cramped dashboard-like clutter
 - useful motion state at intro, middle, and ending frames
+- source-backed scenes use real captures when available, or clearly labeled
+  source-card fallbacks with a recorded failure reason
+- target-language visible copy on fallback cards and overlays
 
 For finished samples, also render an mp4 and inspect with `ffprobe` when
 practical.
@@ -298,6 +323,8 @@ End producer work with:
 - why the output is standalone or why `VideoProject` was explicitly chosen
 - primitives/blocks/runtime helpers used
 - source assets created and whether they are local-only
+- evidence capture attempts: real screenshot path, or source-card fallback
+  reason when capture failed or was unreadable
 - TTS/caption status
 - stills or render artifacts checked
 - validation commands and results
