@@ -214,7 +214,7 @@ scripts/f5-tts-real.sh up-build
 
 `scripts/f5-tts-real.sh` applies `docker-compose.f5.gpu.yml`, rebuilds only the
 `f5-tts` image when requested, and recreates only the `f5-tts` container. The
-helper forces `F5_TTS_SERVICE_MODE=f5`, defaults `F5_TTS_DEVICE=cuda`, and the
+helper sets `F5_TTS_SERVICE_MODE=f5`, defaults `F5_TTS_DEVICE=cuda`, and the
 GPU overlay requests all visible GPUs. It requires a working host NVIDIA driver
 plus Docker NVIDIA runtime. Use CPU only for diagnostics or systems without GPU
 access.

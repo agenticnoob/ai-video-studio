@@ -88,7 +88,7 @@ Scope:
 Questions:
 
 - where should provider selection live?
-- where should voice clone "force F5, no MiniMax fallback" live?
+- where should voice clone "select a local provider with no MiniMax fallback" live?
 - where should caption sidecar writing live?
 - which errors should stay provider errors versus config errors?
 

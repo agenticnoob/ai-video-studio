@@ -14,9 +14,13 @@ export type F5TtsConfig = {
   referenceAudioPath?: string;
 };
 
+export type VoxcpmCloneMode = "clone" | "clone_with_prompt";
+
 export type VoxcpmTtsConfig = {
   baseUrl: string;
   endpoint: string;
+  cloneEndpoint: string;
+  cloneMode: VoxcpmCloneMode;
   control?: string;
   cfgValue: number;
   inferenceTimesteps: number;
@@ -52,6 +56,17 @@ const readNumberEnv = (name: string, fallback: number): number => {
   return value;
 };
 
+const readVoxcpmCloneModeEnv = (): VoxcpmCloneMode => {
+  const rawValue = (process.env.VOXCPM_TTS_CLONE_MODE ?? "").trim().toLowerCase();
+  if (!rawValue) {
+    return "clone_with_prompt";
+  }
+  if (rawValue === "clone" || rawValue === "clone_with_prompt") {
+    return rawValue;
+  }
+  throw new TtsConfigError("VOXCPM_TTS_CLONE_MODE must be one of: clone, clone_with_prompt.");
+};
+
 const readNarrationAudioFormatEnv = (
   name: string,
   fallback: NarrationAudioFormat,
@@ -73,7 +88,7 @@ export const readTtsProviderId = (): TtsProviderId => {
   ).toLowerCase();
 
   if (!rawValue) {
-    return "f5-tts";
+    return "voxcpm";
   }
   if (rawValue === "f5" || rawValue === "f5-tts") {
     return "f5-tts";
@@ -127,6 +142,13 @@ export const readVoxcpmTtsConfig = (): VoxcpmTtsConfig => {
       ? rawEndpoint
       : `${baseUrl}/${rawEndpoint.replace(/^\/+/, "")}`
     : `${baseUrl}/tts`;
+  const cloneMode = readVoxcpmCloneModeEnv();
+  const rawCloneEndpoint = (process.env.VOXCPM_TTS_CLONE_ENDPOINT ?? "").trim();
+  const cloneEndpoint = rawCloneEndpoint
+    ? /^https?:\/\//.test(rawCloneEndpoint)
+      ? rawCloneEndpoint
+      : `${baseUrl}/${rawCloneEndpoint.replace(/^\/+/, "")}`
+    : `${baseUrl}/${cloneMode}`;
 
   const inferenceTimesteps = readNumberEnv("VOXCPM_TTS_INFERENCE_TIMESTEPS", 10);
   if (!Number.isInteger(inferenceTimesteps) || inferenceTimesteps <= 0) {
@@ -136,6 +158,8 @@ export const readVoxcpmTtsConfig = (): VoxcpmTtsConfig => {
   return {
     baseUrl,
     endpoint,
+    cloneEndpoint,
+    cloneMode,
     control: (process.env.VOXCPM_TTS_CONTROL ?? "").trim() || undefined,
     cfgValue: readNumberEnv("VOXCPM_TTS_CFG_VALUE", 2),
     inferenceTimesteps,

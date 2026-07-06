@@ -20,15 +20,8 @@ export const resolveTtsProvider = async ({
   voiceClone,
 }: ResolveTtsProviderRequest): Promise<ResolvedTtsProvider> => {
   const voiceCloneReference = await resolveVoiceCloneReference(voiceClone);
-
-  if (voiceCloneReference) {
-    return {
-      provider: "f5-tts",
-      voiceCloneReference,
-    };
-  }
-
   return {
     provider: provider ?? readTtsProviderId(),
+    ...(voiceCloneReference ? { voiceCloneReference } : {}),
   };
 };

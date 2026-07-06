@@ -92,9 +92,11 @@ Rules:
   into the project timeline at render time.
 
 F5-TTS and VoxCPM should be integrated as in-project provider boundaries, not
-as separate products. The F5-TTS runtime may run as a local process or Docker
-service, and the VoxCPM runtime is the existing `/data/projects/labs/voxcpm-api`
-service, but this repo owns:
+as separate products. VoxCPM is now the default Agent Producer TTS and clone
+provider. The F5-TTS runtime remains an explicit fallback and legacy local
+provider path. The F5 runtime may run as a local process or Docker service, and
+the VoxCPM runtime is the existing `/data/projects/labs/voxcpm-api` service,
+but this repo owns:
 
 - provider adapter
 - request/response contract
@@ -104,9 +106,9 @@ service, but this repo owns:
 - fallback behavior when provider captions are missing
 - preview/export rendering of shared segment caption data
 
-F5-TTS remains the voice-clone provider. VoxCPM can be selected for ordinary
-text-to-speech through the same `POST /api/tts` boundary. Neither path silently
-falls back to MiniMax.
+VoxCPM handles the default plain and clone TTS path through the same
+`POST /api/tts` boundary. F5-TTS remains available when explicitly selected
+with `TTS_PROVIDER=f5-tts`. Neither path silently falls back to MiniMax.
 
 ## Current Implementation State
 
@@ -165,9 +167,9 @@ Implemented in the F5/captions/runtime slices:
   stored under `AI_VIDEO_STUDIO_ARTIFACT_ROOT/voice-references`, then paired with generation-time
   `voiceClone: { enabled, referenceId, referenceText }`, and used as
   `referenceAudio` / `referenceText` by the F5 runtime.
-- VoxCPM can be selected for ordinary TTS through the same `POST /api/tts`
-  boundary. It writes segment-owned WAV narration assets and uses deterministic
-  caption fallback. Voice-clone requests continue to force F5-TTS.
+- VoxCPM is selected by default through the same `POST /api/tts` boundary. It
+  writes segment-owned WAV narration assets, uses deterministic caption
+  fallback, and handles clone requests through `/clone_with_prompt` by default.
 - Docker overlays for the F5 service and explicit GPU runtime.
 - direct service smoke, Next `/api/tts` provider smoke, deterministic staged
   smoke, and deterministic staged export smoke.

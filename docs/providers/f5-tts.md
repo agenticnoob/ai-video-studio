@@ -17,9 +17,8 @@ the vocab file, and the Vocos vocoder under `models/f5-tts/`.
 
 ## Product Role
 
-The F5-TTS provider is the preferred local narration synthesis path for voice
-cloning and for the in-repo local runtime flow once `F5_TTS_BASE_URL` points at
-a running service:
+The F5-TTS provider is an explicit fallback local narration synthesis path once
+`TTS_PROVIDER=f5-tts` and `F5_TTS_BASE_URL` point at a running service:
 
 ```txt
 StoryboardSegmentPlan.narration.text
@@ -29,10 +28,11 @@ StoryboardSegmentPlan.narration.text
   -> assembled VideoProject
 ```
 
-F5-TTS and VoxCPM are the active local narration providers. F5-TTS owns
-voice-clone requests; VoxCPM owns ordinary text synthesis when explicitly
-selected. If the selected local runtime is not configured or not running,
-narration generation fails explicitly instead of falling back to MiniMax.
+F5-TTS and VoxCPM are the active local narration providers. VoxCPM is the
+default Agent Producer provider for plain narration and clone requests; F5 is
+kept for explicit fallback/runtime compatibility. If the selected local runtime
+is not configured or not running, narration generation fails explicitly instead
+of falling back to MiniMax.
 
 ## Provider Boundary
 
@@ -43,7 +43,7 @@ Input:
 - segment id and project id for deterministic artifacts
 - optional voice id / speaker profile
 - optional uploaded reference audio and matching reference text when page-level
-  F5-TTS voice cloning is enabled
+  voice cloning is enabled with F5 selected
 - optional caption style or alignment detail level
 
 Output:
@@ -81,9 +81,9 @@ segment regeneration, and export.
 - Keep provider config in project-owned environment variables:
   - `TTS_PROVIDER=f5-tts` or `AI_VIDEO_STUDIO_TTS_PROVIDER=f5-tts` selects F5
     explicitly.
-  - If no provider is set, F5 is used automatically.
-  - `TTS_PROVIDER=voxcpm` selects VoxCPM for ordinary text-to-speech only.
-    `voiceClone.enabled` still forces F5-TTS.
+  - If no provider is set, VoxCPM is used automatically.
+  - `TTS_PROVIDER=voxcpm` selects VoxCPM for ordinary text-to-speech and clone
+    requests.
   - `F5_TTS_BASE_URL` points at the local/container F5 runtime.
   - `F5_TTS_ENDPOINT` optionally overrides the default
     `${F5_TTS_BASE_URL}/synthesize` endpoint. It may be absolute or relative.
@@ -136,16 +136,17 @@ Request body sent to the runtime:
 }
 ```
 
-Page-level voice cloning uses this runtime contract:
+Page-level voice cloning uses this runtime contract when F5 is explicitly
+selected:
 
 1. `POST /api/tts/voice-references` accepts multipart `audio`, validates
    `.wav`, `.mp3`, `.m4a`, or `.aac`, and stores the file under ignored
    `AI_VIDEO_STUDIO_ARTIFACT_ROOT/voice-references`.
 2. `/api/tts` and `/api/generate/staged` accept optional
    `voiceClone: { enabled, referenceId, referenceText }`.
-3. When `voiceClone.enabled` is true, the TTS boundary forces `f5-tts`, resolves
-   `referenceId` to the shared reference-audio path, and sends both `referenceAudio`
-   and `referenceText` to `/synthesize`.
+3. When `voiceClone.enabled` is true and provider selection is `f5-tts`, the
+   TTS boundary resolves `referenceId` to the shared reference-audio path and
+   sends both `referenceAudio` and `referenceText` to `/synthesize`.
 4. When cloning is disabled or omitted, the existing default F5
    reference-audio behavior remains unchanged.
 
@@ -153,10 +154,9 @@ Voice clone and normal narration requests do not silently fall back to MiniMax.
 If F5 cannot synthesize audio, the request fails so the UI can surface the real
 provider problem.
 
-F5-TTS remains the preferred provider for voice cloning and the in-repo local
-runtime path. VoxCPM can be selected for ordinary text-to-speech with
-`TTS_PROVIDER=voxcpm`, but this slice does not route `voiceClone.enabled`
-requests to VoxCPM.
+F5-TTS remains available for the in-repo local runtime path and explicit
+fallback scenarios. The default Agent Producer path uses VoxCPM for both
+ordinary text-to-speech and voice clone.
 
 ## Non-Goals For The First Slice
 
@@ -198,7 +198,7 @@ Current runtime note:
   The service reports `modelLoaded: false` until the first real `/synthesize`
   request loads the model.
 - GPU real mode is enabled through `scripts/f5-tts-real.sh`, which applies
-  `docker-compose.f5.gpu.yml`, forces `F5_TTS_SERVICE_MODE=f5`, defaults
+  `docker-compose.f5.gpu.yml`, sets `F5_TTS_SERVICE_MODE=f5`, defaults
   `F5_TTS_DEVICE=cuda`, and requests Docker GPU access. CPU should be treated
   as a diagnostic fallback, not the preferred runtime.
 - `F5_TTS_RUNTIME_CONCURRENCY` limits direct `/synthesize` requests inside the

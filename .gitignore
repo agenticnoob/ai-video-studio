@@ -43,8 +43,9 @@ build
 __pycache__/
 *.py[cod]
 
-# Local F5-TTS runtime assets. Keep model checkpoints and private voices out of Git.
+# Local TTS runtime assets. Keep model checkpoints and private voices out of Git.
 models/f5-tts/
+voices/
 voices/f5-tts/
 scripts/f5-tts/clone_test.wav
 
@@ -60,6 +61,7 @@ public/generated/
 
 # Local visual brainstorming companion sessions.
 .superpowers/
+.claude/
 
 # Throwaway ad-hoc research / verification scripts — never committed.
 # Keep them out of the repo: they're noisy, time-bounded, and reference the

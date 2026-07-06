@@ -144,7 +144,8 @@ Rules:
 
 - real narration duration owns scene timing
 - captions belong with narration data, not template-specific implementation
-- F5-TTS is preferred when configured and appropriate
+- Agent Producer defaults to VoxCPM for narration, including voice clone when
+  configured; F5-TTS is an explicit fallback provider when selected
 - static voiceover assets for dedicated samples should be Remotion-readable via
   `staticFile()` from ignored generated artifact paths
 

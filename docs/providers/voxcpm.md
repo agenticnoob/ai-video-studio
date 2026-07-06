@@ -1,17 +1,21 @@
 # VoxCPM TTS Provider
 
-Status: local provider adapter for the existing `/data/projects/labs/voxcpm-api`
-service.
+Status: default Agent Producer local provider adapter for the existing
+`/data/projects/labs/voxcpm-api` service.
 
-VoxCPM is a selectable narration provider for ordinary text-to-speech. It is
-not the voice-clone provider in this project slice; `voiceClone.enabled`
-continues to force F5-TTS.
+VoxCPM is the default narration provider for Agent Producer work. Plain
+text-to-speech uses `/tts`; `voiceClone.enabled` with provider `voxcpm` uses
+VoxCPM clone through `/clone_with_prompt` by default. F5-TTS remains available
+only when explicitly selected with `TTS_PROVIDER=f5-tts`.
 
 ## Runtime Contract
 
 - `GET /health`: liveness.
 - `GET /ready`: readiness; `200` means model loaded, `503` means still loading.
 - `POST /tts`: JSON text synthesis, returns `audio/wav`.
+- `POST /clone`: multipart clone request with `text` and `reference_audio`.
+- `POST /clone_with_prompt`: multipart clone request with `text`,
+  `prompt_text`, `prompt_audio`, and optional `reference_audio`.
 
 Default personal deployment:
 
@@ -24,20 +28,17 @@ before using this URL. `host.docker.internal` may require Docker host gateway
 mapping and may still not reach a service bound only to host loopback on every
 platform.
 
-Current local probe note: during the 2026-07-07 provider integration, host
-readiness passed at `http://127.0.0.1:8810/ready`. The bridge-mode `web`
-container still timed out at `http://host.docker.internal:8810/ready`, because
-the VoxCPM service binds host loopback. A temporary host-network Next server on
-`http://127.0.0.1:3010` passed `npm run smoke:voxcpm-next` with
-`VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810`, generating a VoxCPM WAV and
-verifying byte-range serving.
+Current topology note: bridge-mode `web` could not reach the personal service
+through `host.docker.internal` while VoxCPM was bound to host loopback. Use
+`docker-compose.voxcpm.yml` or `scripts/producer-voxcpm.sh` for the documented
+host-network topology.
 
 ## Project Contract
 
 ```txt
-StoryboardSegmentPlan.narration.text
+StoryboardSegmentPlan.narration.text + optional voiceClone reference
   -> POST /api/tts provider="voxcpm"
-  -> VoxCPM POST /tts
+  -> VoxCPM POST /tts, /clone_with_prompt, or /clone
   -> local wav under AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts
   -> measured duration + fallback captions
   -> VideoSegment.narration
@@ -48,6 +49,9 @@ StoryboardSegmentPlan.narration.text
 - `TTS_PROVIDER=voxcpm`
 - `VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810` for host-run Next, or a verified
   container-reachable URL for Docker.
+- `VOXCPM_TTS_CLONE_MODE=clone_with_prompt` by default. Set `clone` only for
+  compatibility with `/clone`.
+- `VOXCPM_TTS_CLONE_ENDPOINT` optionally overrides the derived clone endpoint.
 - `VOXCPM_TTS_CONTROL` optionally controls voice design.
 - `VOXCPM_TTS_CFG_VALUE`, `VOXCPM_TTS_INFERENCE_TIMESTEPS`,
   `VOXCPM_TTS_NORMALIZE`, `VOXCPM_TTS_DENOISE`, `VOXCPM_TTS_SAVE`, and
@@ -57,5 +61,16 @@ StoryboardSegmentPlan.narration.text
 
 ```bash
 npm run smoke:provider-boundary
-VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810 NEXT_ORIGIN=http://127.0.0.1:3000 npm run smoke:voxcpm-next
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:voxcpm-clone-adapter'
+scripts/producer-voxcpm.sh ready
+scripts/producer-voxcpm.sh up
+scripts/producer-voxcpm.sh smoke
+```
+
+Clone live validation needs a private local reference audio file:
+
+```bash
+VOXCPM_TTS_NEXT_SMOKE_REFERENCE_AUDIO=/absolute/path/to/private-reference.wav \
+VOXCPM_TTS_NEXT_SMOKE_REFERENCE_TEXT='exact transcript of the private reference audio' \
+scripts/producer-voxcpm.sh smoke-clone
 ```

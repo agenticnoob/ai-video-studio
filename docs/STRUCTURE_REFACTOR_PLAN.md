@@ -88,7 +88,7 @@ Current issues:
 
 - provider selection, voice clone rules, synthesis fallback, caption fallback,
   and sidecar writing are close together.
-- voice clone must force F5 and must not silently fall back to MiniMax.
+- voice clone must select the configured local provider and must not silently fall back to MiniMax.
 - normal F5 generation can still use configured fallback behavior.
 - caption sidecar output must remain identical to final segment-owned caption
   data.
@@ -238,7 +238,7 @@ Implementation rules:
 Result:
 
 - `src/lib/tts/provider-selection.ts` owns provider choice and the voice-clone
-  rule that forces F5 and disables MiniMax fallback.
+  rule that selects the local provider and disables MiniMax fallback.
 - `src/lib/tts/synthesis.ts` owns provider dispatch and configured non-clone
   F5-to-MiniMax fallback.
 - `src/lib/tts/caption-artifacts.ts` owns sidecar caption JSON persistence.

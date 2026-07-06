@@ -4,10 +4,10 @@ Status: active staged generation LLM provider path.
 
 The staged generation path uses DeepSeek through the Vercel AI SDK provider
 for storyboard planning, selected-segment replanning, and selected-template
-implementation compilation. F5-TTS and VoxCPM are the active local
-narration/TTS providers. F5-TTS owns voice-clone requests; VoxCPM can be
-selected for ordinary `/tts` synthesis. MiniMax is no longer used by the
-active LLM or TTS pipeline.
+implementation compilation. VoxCPM is the default Agent Producer
+narration/TTS provider for plain `/tts` and clone requests; F5-TTS remains an
+explicit fallback provider. MiniMax is no longer used by the active LLM or TTS
+pipeline.
 
 ## Scope
 
@@ -40,8 +40,8 @@ Out of scope:
 Narration uses the local TTS variables documented in
 [`docs/providers/f5-tts.md`](f5-tts.md) and
 [`docs/providers/voxcpm.md`](voxcpm.md). Leave `TTS_PROVIDER` empty or set it
-to `f5-tts` for F5-TTS; set it to `voxcpm` for ordinary VoxCPM `/tts`
-synthesis. `voiceClone.enabled` still forces F5-TTS.
+to `voxcpm` for the default VoxCPM path. Set `TTS_PROVIDER=f5-tts` only when
+you intentionally want the explicit F5 fallback.
 
 ## Generation Flow
 

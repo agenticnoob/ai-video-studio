@@ -1,16 +1,64 @@
 # Iteration Status
 
-Last updated: VoxCPM TTS provider integration
+Last updated: VoxCPM clone Agent Producer default
 
-## Latest continuation — VoxCPM TTS provider integration
+## Latest continuation — VoxCPM clone Agent Producer default
+
+- Agent Producer default TTS is now VoxCPM. With no provider env, the project
+  resolves `voxcpm`; explicit `provider: "f5-tts"` remains available for the
+  F5 fallback path.
+- The previous boundary where `voiceClone.enabled` selected F5 has been
+  superseded. Provider selection now preserves the requested/configured
+  provider and only resolves the uploaded reference audio/text.
+- VoxCPM clone is implemented in `src/lib/tts/voxcpm.ts`: plain narration calls
+  `/tts`; clone calls `/clone_with_prompt` by default with multipart
+  `prompt_text`, `prompt_audio`, and `reference_audio`. Set
+  `VOXCPM_TTS_CLONE_MODE=clone` for `/clone` compatibility or
+  `VOXCPM_TTS_CLONE_ENDPOINT` for an explicit endpoint override.
+- Added `docker-compose.voxcpm.yml` and `scripts/producer-voxcpm.sh` for the
+  host-network Next topology required by the personal VoxCPM service while it
+  binds host `127.0.0.1:8810`.
+- `.env.example`, local `.env`, README, provider docs, the Agent Producer
+  workflow skill, final goal, and F5 handoff are aligned around VoxCPM default
+  and F5 explicit fallback semantics. `.env` remains local-only and must not be
+  committed.
+
+Validation performed:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:provider-boundary'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:voxcpm-clone-adapter'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit --pretty false'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+  passed with 0 errors and the two pre-existing warnings from ignored generated
+  files under `public/generated/agent-producer-uv/`.
+- `git diff --check`
+- obsolete F5-clone wording check returned no matches across README, docs,
+  `.agents/skills`, and `.env.example`.
+- `scripts/producer-voxcpm.sh ready` passed from the host-network `web`
+  container and returned `ready: true`, model `/models/VoxCPM2`, device
+  `cuda`, sample rate `48000`.
+- `scripts/producer-voxcpm.sh up` started the host-network Next service.
+- `scripts/producer-voxcpm.sh smoke` passed plain live VoxCPM `/tts`: provider
+  `voxcpm`, WAV, duration `5.6` seconds, one caption cue, and byte-range
+  `206 Partial Content`.
+- Clone live smoke passed with ignored private reference
+  `/tmp/voxcpm-clone-reference.wav` derived from `voices/f5-tts/noobli/ref.m4a`
+  and matching reference text: provider `voxcpm`, WAV, duration `8.16`
+  seconds, one caption cue, and byte-range `206 Partial Content`.
+- Topology note: the Codex sandbox process could not curl
+  `http://127.0.0.1:8810/ready`, but the host-network `web` container could.
+  This confirms the runner must validate VoxCPM from the same host-network
+  topology used by Next, not from an unrelated sandbox loopback namespace.
+
+## Previous continuation — VoxCPM TTS provider integration
 
 - Added VoxCPM as a selectable ordinary TTS provider beside F5-TTS.
 - The provider calls the existing `/data/projects/labs/voxcpm-api` service at
   `POST /tts`, stores local WAV narration artifacts under
   `AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts`, probes real duration with `ffprobe`, and
   reuses segment-owned fallback captions.
-- F5-TTS remains the voice-clone provider; `voiceClone.enabled` still forces
-  F5 even when `provider: "voxcpm"` is requested.
+- In this previous slice, voice clone still used the older F5 route even when
+  `provider: "voxcpm"` was requested; the newer clone-default continuation
+  above supersedes that boundary.
 - Added `scripts/voxcpm-tts-next-smoke.sh` / `npm run smoke:voxcpm-next` for
   Next-side live adapter validation and byte-range asset serving.
 - Docker config now passes VoxCPM env vars into `web`, `studio`, and `render`
@@ -1274,8 +1322,8 @@ Validation performed so far:
   timeline flattening, and smoke entrypoints.
 - TTS/F5 provider boundary now separates provider selection, provider dispatch
   and fallback, and caption sidecar artifact persistence:
-  - `src/lib/tts/provider-selection.ts` forces voice clone requests to F5 and
-    disables MiniMax fallback for clone requests.
+  - `src/lib/tts/provider-selection.ts` routed voice clone requests to F5 and
+    disabled MiniMax fallback for clone requests in that older boundary.
   - `src/lib/tts/synthesis.ts` owns F5 dispatch and configured non-clone
     MiniMax fallback.
   - `src/lib/tts/caption-artifacts.ts` writes sidecar caption JSON from the
@@ -1441,9 +1489,9 @@ Current readiness:
   mounts the shared `/workspace/out` tree read-only into the F5 container.
 - Extended `/api/tts` and `/api/generate/staged` with
   `voiceClone: { enabled, referenceId, referenceText }`.
-- When `voiceClone.enabled` is true, the TTS boundary forces `f5-tts` and sends
+- In that older boundary, voice-clone requests selected `f5-tts` and sent
   request-level `referenceAudio` / `referenceText` to the F5 runtime. Clone
-  requests do not silently fall back to MiniMax, because that would produce a
+  requests did not silently fall back to MiniMax, because that would produce a
   non-cloned voice.
 - Added staged-page UI controls for a global cloned voice used by both
   full-project generation and selected-segment regeneration. Shortcut

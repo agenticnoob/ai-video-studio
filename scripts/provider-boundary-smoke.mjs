@@ -135,8 +135,8 @@ const run = async () => {
 
   withoutEnv(["TTS_PROVIDER", "AI_VIDEO_STUDIO_TTS_PROVIDER", "F5_TTS_BASE_URL"], () => {
     const provider = readTtsProviderId();
-    if (provider !== "f5-tts") {
-      fail(`Expected default TTS provider f5-tts, received ${provider}.`);
+    if (provider !== "voxcpm") {
+      fail(`Expected default TTS provider voxcpm, received ${provider}.`);
     }
   });
 
@@ -194,13 +194,15 @@ const run = async () => {
     },
   );
 
-  const providerSelection = await resolveTtsProvider({});
-  if (providerSelection.provider !== "f5-tts") {
-    fail(`Expected resolved provider f5-tts, received ${providerSelection.provider}.`);
-  }
-  if ("fallbackToMinimax" in providerSelection) {
-    fail("Expected provider selection to omit legacy MiniMax fallback.");
-  }
+  await withEnv({ TTS_PROVIDER: "", AI_VIDEO_STUDIO_TTS_PROVIDER: "" }, async () => {
+    const providerSelection = await resolveTtsProvider({});
+    if (providerSelection.provider !== "voxcpm") {
+      fail(`Expected resolved provider voxcpm, received ${providerSelection.provider}.`);
+    }
+    if ("fallbackToMinimax" in providerSelection) {
+      fail("Expected provider selection to omit legacy MiniMax fallback.");
+    }
+  });
 
   const { createVoiceReferenceId, writeVoiceReferenceFile } = await import(
     "../src/lib/tts/voice-references.js"
@@ -221,8 +223,24 @@ const run = async () => {
     },
   });
 
-  if (voiceCloneSelection.provider !== "f5-tts") {
-    fail(`Expected voice clone to force f5-tts, received ${voiceCloneSelection.provider}.`);
+  if (voiceCloneSelection.provider !== "voxcpm") {
+    fail(`Expected voice clone to preserve provider voxcpm, received ${voiceCloneSelection.provider}.`);
+  }
+  if (!voiceCloneSelection.voiceCloneReference) {
+    fail("Expected voice clone selection to include a resolved reference.");
+  }
+
+  const explicitF5CloneSelection = await resolveTtsProvider({
+    provider: "f5-tts",
+    voiceClone: {
+      enabled: true,
+      referenceId,
+      referenceText: "This is the reference text.",
+    },
+  });
+
+  if (explicitF5CloneSelection.provider !== "f5-tts") {
+    fail(`Expected explicit f5-tts clone provider, received ${explicitF5CloneSelection.provider}.`);
   }
 
   await withEnv({ VOXCPM_TTS_BASE_URL: "" }, async () => {

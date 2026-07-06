@@ -43,6 +43,12 @@ Generated screenshots, generated narration audio, and rendered videos stay
 local-only under `public/generated/<slug>/` or `out/` unless the user explicitly
 asks to commit them.
 
+Agent Producer narration defaults to VoxCPM. Use `scripts/producer-voxcpm.sh up`
+to start the host-network Next topology for the loopback-bound personal
+VoxCPM service, `scripts/producer-voxcpm.sh smoke` for plain `/tts`, and
+`scripts/producer-voxcpm.sh smoke-clone` with private reference env vars for
+clone validation.
+
 Source-backed evidence scenes follow a real-capture-first rule: capture the
 actual page, repo, product UI, dashboard, chart, document, or supplied asset
 when possible. If capture fails or is unreadable, record the reason before
@@ -194,24 +200,24 @@ Parked web/product modeling direction:
   `implementation` fields; the target home is segment-owned
   `VideoSegment.narration`, and the scripted scene schema no longer exposes an
   audio field to generation providers
-- the in-project F5-TTS provider adapter is the preferred local narration path
-  for voice cloning and the in-repo local runtime path when `F5_TTS_BASE_URL`
-  points at a running service
-- VoxCPM can be selected with `TTS_PROVIDER=voxcpm` for ordinary `/tts` text
-  synthesis through the existing `/data/projects/labs/voxcpm-api` service;
-  `voiceClone.enabled` still forces F5-TTS
+- VoxCPM is the default Agent Producer narration provider. Plain narration
+  uses the existing `/data/projects/labs/voxcpm-api` `/tts` service, and
+  `voiceClone.enabled` with provider `voxcpm` uses VoxCPM clone through
+  `/clone_with_prompt` by default.
+- the in-project F5-TTS provider adapter is retained as an explicit fallback
+  when `TTS_PROVIDER=f5-tts` and `F5_TTS_BASE_URL` points at a running service
 - the optional `f5-tts` Docker overlay provides a contract-smoke runtime and a
   real `F5_TTS_SERVICE_MODE=f5` runtime; the GPU overlay has been validated
   with the local checkpoint, vocab, and Vocos vocoder
 - caption cues should be stored with segment narration data using segment-local
   timing, then rendered by shared project preview/export code
-- F5-TTS can be selected with `TTS_PROVIDER=f5-tts` or by setting
-  `F5_TTS_BASE_URL`; when F5 does not return alignment, the project normalizes
-  deterministic punctuation-split fallback captions from narration text and
-  real audio duration
-- staged generation can optionally use page-level F5 voice cloning: upload a
-  reference audio file, provide the exact reference text, and the same cloned
-  voice is used for full-project generation and selected-segment regeneration
+- F5-TTS can be selected with `TTS_PROVIDER=f5-tts`; when F5 does not return
+  alignment, the project normalizes deterministic punctuation-split fallback
+  captions from narration text and real audio duration
+- staged generation can use page-level voice cloning: upload a reference audio
+  file, provide the exact reference text, and the selected TTS provider receives
+  the same reference for full-project generation and selected-segment
+  regeneration
 - F5 runtime setup and validation details live in
   `docs/providers/f5-tts-service-plan.md`
 - VoxCPM provider setup and validation details live in
@@ -688,16 +694,28 @@ It still uses contract-smoke audio, not a downloaded F5 model.
 Validate the Next-side VoxCPM adapter and generated TTS asset route:
 ```bash
 cd /data/projects/labs/ai-video-studio
-VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810 NEXT_ORIGIN=http://127.0.0.1:3000 npm run smoke:voxcpm-next
+scripts/producer-voxcpm.sh up
+scripts/producer-voxcpm.sh smoke
 ```
 
-Use `TTS_PROVIDER=voxcpm` for ordinary text-to-speech through the existing
-VoxCPM `/tts` service. `voiceClone.enabled` still forces F5-TTS because VoxCPM
-clone support is not part of this provider slice. For Docker-based `web`,
-verify that `VOXCPM_TTS_BASE_URL` is reachable from inside the container. The
-personal VoxCPM service currently binds to host `127.0.0.1:8810`, so host-run
-Next can use that URL directly while Docker may need a verified host gateway or
-host-network override.
+Use `TTS_PROVIDER=voxcpm` for the default Agent Producer narration path.
+Ordinary text-to-speech calls VoxCPM `/tts`; voice cloning calls
+`/clone_with_prompt` by default. The personal VoxCPM service currently binds to
+host `127.0.0.1:8810`, and bridge-mode `host.docker.internal` was not
+sufficient for that loopback-only service in the local validation. The
+`docker-compose.voxcpm.yml` override therefore runs `web` with host networking
+so Next can reach the same loopback URL as the host.
+
+Validate VoxCPM clone with a private local reference file:
+```bash
+cd /data/projects/labs/ai-video-studio
+VOXCPM_TTS_NEXT_SMOKE_REFERENCE_AUDIO=/absolute/path/to/private-reference.wav \
+VOXCPM_TTS_NEXT_SMOKE_REFERENCE_TEXT='exact transcript of the private reference audio' \
+scripts/producer-voxcpm.sh smoke-clone
+```
+
+Set `TTS_PROVIDER=f5-tts` only when you intentionally want the explicit F5
+fallback path.
 
 Validate a deterministic staged project using F5 narration assets:
 ```bash
@@ -744,7 +762,7 @@ scripts/f5-tts-smoke.sh
 
 `scripts/f5-tts-real.sh` applies `docker-compose.f5.gpu.yml`, rebuilds only the
 `f5-tts` image when requested, and recreates only the `f5-tts` container. The
-helper forces `F5_TTS_SERVICE_MODE=f5`, defaults `F5_TTS_DEVICE=cuda`, and the
+helper sets `F5_TTS_SERVICE_MODE=f5`, defaults `F5_TTS_DEVICE=cuda`, and the
 GPU overlay requests all visible GPUs. It still requires the local F5
 checkpoint, vocab, and Vocos vocoder under `models/f5-tts/`.
 

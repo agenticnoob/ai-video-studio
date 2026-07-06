@@ -153,7 +153,9 @@ Rules:
 
 - Let real narration duration own timing.
 - Keep captions under segment-owned narration data.
-- Use F5-TTS when configured for local generation.
+- Use VoxCPM by default for local Agent Producer narration and voice clone
+  timing; use F5-TTS only when explicitly configured with `TTS_PROVIDER=f5-tts`.
+- TTS timing still owns scene timing regardless of provider.
 - For local producer videos, write static voiceover assets into
   `public/generated/<slug>/` so Remotion can read them through `staticFile()`.
 
