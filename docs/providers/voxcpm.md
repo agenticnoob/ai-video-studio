@@ -24,11 +24,13 @@ before using this URL. `host.docker.internal` may require Docker host gateway
 mapping and may still not reach a service bound only to host loopback on every
 platform.
 
-Current local probe note: during the 2026-07-07 provider integration,
-`http://127.0.0.1:8810/ready` was not reachable from the host, and
-`http://host.docker.internal:8810/ready` timed out from the `web` container.
-Start the VoxCPM service and re-run the live smoke before claiming live Docker
-validation.
+Current local probe note: during the 2026-07-07 provider integration, host
+readiness passed at `http://127.0.0.1:8810/ready`. The bridge-mode `web`
+container still timed out at `http://host.docker.internal:8810/ready`, because
+the VoxCPM service binds host loopback. A temporary host-network Next server on
+`http://127.0.0.1:3010` passed `npm run smoke:voxcpm-next` with
+`VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810`, generating a VoxCPM WAV and
+verifying byte-range serving.
 
 ## Project Contract
 

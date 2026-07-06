@@ -14,14 +14,16 @@ Last updated: VoxCPM TTS provider integration
 - Added `scripts/voxcpm-tts-next-smoke.sh` / `npm run smoke:voxcpm-next` for
   Next-side live adapter validation and byte-range asset serving.
 - Docker config now passes VoxCPM env vars into `web`, `studio`, and `render`
-  and maps `host.docker.internal` to the Docker host gateway, but live Docker
-  reachability still must be verified because the personal VoxCPM service binds
-  host `127.0.0.1:8810`.
-- Live VoxCPM validation was attempted in this environment: host
-  `curl -fsS http://127.0.0.1:8810/ready` failed to connect, and container
-  `curl --connect-timeout 3 --max-time 5 -fsS http://host.docker.internal:8810/ready`
-  timed out. Do not mark Docker live VoxCPM validation complete until the
-  VoxCPM service is running and a container-reachable URL is confirmed.
+  and maps `host.docker.internal` to the Docker host gateway. Because the
+  personal VoxCPM service binds host `127.0.0.1:8810`, the current bridge-mode
+  `web` container still cannot reach it through `host.docker.internal`.
+- Live VoxCPM validation is complete for a host-network Next topology:
+  `curl -fsS http://127.0.0.1:8810/ready` returned ready, then a temporary
+  host-network Next server on `http://127.0.0.1:3010` passed
+  `VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810 NEXT_ORIGIN=http://127.0.0.1:3010 npm run smoke:voxcpm-next`.
+  The smoke generated a `provider: "voxcpm"` WAV with duration `5.92` seconds,
+  one caption cue, and verified `/api/tts/assets/...` byte-range serving with
+  `206 Partial Content`.
 
 Validation target:
 - `npm run smoke:provider-boundary`
@@ -29,8 +31,9 @@ Validation target:
 - `npx tsc --noEmit --pretty false`
 - `npm run lint`
 - `git diff --check`
-- live VoxCPM smoke only after confirming a URL reachable from the running Next
-  topology.
+- bridge-mode Docker live VoxCPM smoke remains a topology follow-up unless the
+  VoxCPM service listens on a bridge-reachable address or web uses a
+  host-network override.
 
 ## Latest continuation — Agent Producer OpenAI Hardware News Brief + Evidence Capture Workflow
 
