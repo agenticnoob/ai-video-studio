@@ -761,7 +761,7 @@ Acceptance:
 
 ### Phase C: Evidence Lens Block v1
 
-Status: planned after Producer Sample OS v1.
+Status: implemented for the first shared block slice.
 
 Goal: promote the reusable screenshot-proof language from `UvOpenSourceBrief`
 into a shared block while keeping topic-specific facts sample-local.
@@ -776,6 +776,18 @@ Deliver:
 - uv sample updated to consume the shared block without changing its source
   facts, narration, or generated assets
 - still-review guidance for context / zoom / return frames
+
+Implementation:
+
+- shared block location:
+  `src/remotion/producer-samples/evidence-lens/`
+- public producer-sample export:
+  `src/remotion/producer-samples/index.ts`
+- focused smoke:
+  `npm run smoke:evidence-lens`
+- uv smoke now checks that `UvOpenSourceBrief` delegates backdrop, overlay, and
+  screenshot focus motion to the shared block while retaining sample-local
+  focus targets and overlay content
 
 Non-goals:
 

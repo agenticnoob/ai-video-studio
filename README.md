@@ -277,6 +277,11 @@ Current visual-quality direction:
   Astral `uv`. It uses current GitHub/docs/release facts, generated F5-TTS
   narration metadata, full-frame screenshot evidence, compact translucent
   overlays, and claim-aligned zoom-in / hold / return motion.
+- Phase C now extracts that screenshot-proof language into
+  `src/remotion/producer-samples/evidence-lens/`: shared `ScreenshotFocus`,
+  `EvidenceScreenshotBackdrop`, and `EvidenceOverlayPanel`. `UvOpenSourceBrief`
+  consumes the shared block while keeping its facts, narration, TTS metadata,
+  composition id, and duration contract sample-local.
 - Finished-video-first samples share the categorized
   `src/remotion/standalone-video/` runtime for timing, static voiceover,
   captions, and canvas profiles. This is a reusable production skeleton, not a

@@ -30,6 +30,10 @@ const componentSource = readFileSync(
   path.join(process.cwd(), "src", "remotion", "UvOpenSourceBrief", "UvOpenSourceBrief.tsx"),
   "utf8",
 );
+const evidenceLensSource = readFileSync(
+  path.join(process.cwd(), "src", "remotion", "producer-samples", "evidence-lens", "evidence-lens.tsx"),
+  "utf8",
+);
 const generatorSource = readFileSync(
   path.join(process.cwd(), "scripts", "generate-uv-open-source-brief.mjs"),
   "utf8",
@@ -127,8 +131,11 @@ if (!componentSource.includes('targetDescription: "uv docs definition text"')) {
 if (!componentSource.includes('targetDescription: "GitHub release title and date"')) {
   fail("UvOpenSourceBrief release screenshot focus should name the actual release title/date target.");
 }
+if (!componentSource.includes("../producer-samples/evidence-lens")) {
+  fail("UvOpenSourceBrief should consume the shared Evidence Lens block.");
+}
 if (!componentSource.includes("EvidenceScreenshotBackdrop")) {
-  fail("UvOpenSourceBrief should use full-frame screenshots as visual evidence backdrops.");
+  fail("UvOpenSourceBrief should use shared full-frame screenshots as visual evidence backdrops.");
 }
 if (!componentSource.includes("zoomInFrame")) {
   fail("UvOpenSourceBrief screenshot focus should use a fast zoom-in phase.");
@@ -139,20 +146,29 @@ if (!componentSource.includes("zoomHoldFrame")) {
 if (!componentSource.includes("zoomOutFrame")) {
   fail("UvOpenSourceBrief screenshot focus should return toward the original screenshot size.");
 }
-if (!componentSource.includes("readableScreenshotFilter")) {
-  fail("UvOpenSourceBrief should keep screenshot backdrops readable instead of hiding them behind a heavy mask.");
+if (componentSource.includes("const readableScreenshotFilter")) {
+  fail("UvOpenSourceBrief should not keep a sample-local readable screenshot filter.");
+}
+if (!evidenceLensSource.includes("readableScreenshotFilter")) {
+  fail("Evidence Lens should own the readable screenshot backdrop filter.");
 }
 if (componentSource.includes("rgba(7,19,15,0.94)") || componentSource.includes("rgba(7,19,15,0.66)")) {
   fail("UvOpenSourceBrief should not cover screenshot evidence with a heavy full-frame foreground mask.");
 }
-if (!componentSource.includes("TransparentOverlayPanel")) {
-  fail("UvOpenSourceBrief should layer semi-transparent overlays over evidence screenshots.");
+if (componentSource.includes("const TransparentOverlayPanel")) {
+  fail("UvOpenSourceBrief should not keep a sample-local transparent overlay panel.");
 }
-if (!componentSource.includes("scale: interpolate(")) {
-  fail("UvOpenSourceBrief should use frame-driven zoom for screenshot focus.");
+if (!componentSource.includes("EvidenceOverlayPanel")) {
+  fail("UvOpenSourceBrief should layer shared semi-transparent overlays over evidence screenshots.");
 }
-if (!componentSource.includes("translate: `${interpolate(")) {
-  fail("UvOpenSourceBrief should use frame-driven pan for screenshot focus.");
+if (componentSource.includes("scale: interpolate(frame")) {
+  fail("UvOpenSourceBrief should delegate screenshot zoom motion to the shared Evidence Lens block.");
+}
+if (!evidenceLensSource.includes("scale: interpolate(")) {
+  fail("Evidence Lens should use frame-driven zoom for screenshot focus.");
+}
+if (!evidenceLensSource.includes("translate: `${interpolate(")) {
+  fail("Evidence Lens should use frame-driven pan for screenshot focus.");
 }
 if (!componentSource.includes("StandaloneBottomCaption")) {
   fail("UvOpenSourceBrief should use shared standalone captions.");

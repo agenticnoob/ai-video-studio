@@ -251,6 +251,8 @@ Non-goals:
 
 ### Phase C: Evidence Lens Block v1
 
+Status: implemented for the first shared block slice.
+
 Goal: promote the reusable screenshot-proof language from `UvOpenSourceBrief`
 into a shared block while keeping topic-specific facts sample-local.
 
@@ -261,6 +263,17 @@ Deliver:
 - compact translucent evidence overlay
 - frame-driven zoom-in / hold / return motion
 - still-review guidance for context / zoom / return frames
+
+Implementation note:
+
+- v1 lives under `src/remotion/producer-samples/evidence-lens/` and is
+  re-exported from `src/remotion/producer-samples/`.
+- `UvOpenSourceBrief` now uses the shared Evidence Lens backdrop and overlay
+  while keeping uv facts, narration, TTS metadata, composition id, and duration
+  target unchanged.
+- `npm run smoke:evidence-lens` guards frame-driven motion, `staticFile()`
+  screenshot usage, no CSS animation/transition, and the local-only artifact
+  contract.
 
 Non-goals:
 

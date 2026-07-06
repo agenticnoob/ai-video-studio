@@ -1,5 +1,10 @@
-import type { CSSProperties, FC, ReactNode } from "react";
+import type { CSSProperties, FC } from "react";
 import { AbsoluteFill, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
+import {
+  EvidenceOverlayPanel,
+  EvidenceScreenshotBackdrop,
+  type ScreenshotFocus,
+} from "../producer-samples/evidence-lens";
 import {
   MetricCardGrid,
   TerminalSessionBlock,
@@ -57,28 +62,7 @@ const screenshotById = new Map(uvOpenSourceBriefData.assets.screenshots.map((ass
 
 type UvVisualKind = UvOpenSourceBriefScene["visual"]["kind"];
 
-type ScreenshotFocus = {
-  readonly assetId: UvScreenshotAsset["id"];
-  readonly endScale: number;
-  readonly endX: number;
-  readonly endY: number;
-  readonly objectPosition: string;
-  readonly overlayAlign: "left" | "right";
-  readonly overlayMode?: "compact" | "default";
-  readonly overlayVertical?: "center" | "flex-end" | "flex-start";
-  readonly overlayMaxWidth?: number;
-  readonly startScale: number;
-  readonly startX: number;
-  readonly startY: number;
-  readonly targetDescription: string;
-  readonly zoomHoldFrame: number;
-  readonly zoomInFrame: number;
-  readonly zoomOutFrame: number;
-};
-
-const readableScreenshotFilter = "brightness(1.2) contrast(1.06) saturate(1.06)";
-
-const screenshotFocusBySceneKind: Partial<Record<UvVisualKind, ScreenshotFocus>> = {
+const screenshotFocusBySceneKind: Partial<Record<UvVisualKind, ScreenshotFocus<UvScreenshotAsset["id"]>>> = {
   metrics: {
     assetId: "repo",
     endScale: 1.55,
@@ -145,103 +129,6 @@ const screenshotFocusBySceneKind: Partial<Record<UvVisualKind, ScreenshotFocus>>
     zoomInFrame: 24,
     zoomOutFrame: 112,
   },
-};
-
-const EvidenceScreenshotBackdrop: FC<{
-  readonly focus: ScreenshotFocus;
-  readonly scene: UvOpenSourceBriefScene;
-}> = ({ focus, scene }) => {
-  const frame = useCurrentFrame();
-  const asset = screenshotById.get(focus.assetId);
-
-  if (!asset) {
-    return <Background scene={scene} />;
-  }
-
-  const zoomFrames = [
-    0,
-    focus.zoomInFrame,
-    Math.min(focus.zoomHoldFrame, Math.max(scene.durationInFrames - 30, focus.zoomInFrame + 1)),
-    Math.min(focus.zoomOutFrame, scene.durationInFrames),
-  ];
-
-  return (
-    <AbsoluteFill style={{ background: palette.background, overflow: "hidden" }}>
-      <Img
-        src={staticFile(asset.src)}
-        style={{
-          filter: readableScreenshotFilter,
-          height: "100%",
-          objectFit: "cover",
-          objectPosition: focus.objectPosition,
-          scale: interpolate(
-            frame,
-            zoomFrames,
-            [focus.startScale, focus.endScale, focus.endScale, focus.startScale],
-            clamp,
-          ),
-          translate: `${interpolate(
-            frame,
-            zoomFrames,
-            [focus.startX, focus.endX, focus.endX, focus.startX],
-            clamp,
-          )}px ${interpolate(
-            frame,
-            zoomFrames,
-            [focus.startY, focus.endY, focus.endY, focus.startY],
-            clamp,
-          )}px`,
-          width: "100%",
-        }}
-      />
-      <AbsoluteFill
-        style={{
-          background:
-            "linear-gradient(90deg, rgba(7,19,15,0.22), rgba(7,19,15,0.06) 45%, rgba(7,19,15,0.18))",
-        }}
-      />
-      <AbsoluteFill
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(7,19,15,0.2), rgba(7,19,15,0) 40%, rgba(7,19,15,0.3))",
-        }}
-      />
-      <AbsoluteFill
-        style={{
-          boxShadow: "inset 0 0 90px rgba(0,0,0,0.34)",
-        }}
-      />
-    </AbsoluteFill>
-  );
-};
-
-const TransparentOverlayPanel: FC<{
-  readonly children: ReactNode;
-  readonly compact?: boolean;
-  readonly style?: CSSProperties;
-}> = ({ children, compact = false, style }) => {
-  const frame = useCurrentFrame();
-  const enter = interpolate(frame, [10, 38], [0, 1], clamp);
-
-  return (
-    <div
-      style={{
-        background: "rgba(6, 18, 14, 0.58)",
-        backdropFilter: "blur(2px)",
-        border: "1px solid rgba(255,255,255,0.18)",
-        borderRadius: 26,
-        boxShadow: "0 34px 110px rgba(0,0,0,0.42)",
-        color: palette.ink,
-        opacity: enter,
-        padding: compact ? "24px 28px" : "42px 46px",
-        scale: interpolate(enter, [0, 1], [0.98, 1], clamp),
-        translate: `${interpolate(enter, [0, 1], [-24, 0], clamp)}px 0`,
-        ...style,
-      }}
-    >
-      {children}
-    </div>
-  );
 };
 
 const OverlayText: FC<{
@@ -375,7 +262,7 @@ const EvidenceOverlayDetail: FC<{ readonly scene: UvOpenSourceBriefScene }> = ({
 };
 
 const EvidenceScene: FC<{
-  readonly focus: ScreenshotFocus;
+  readonly focus: ScreenshotFocus<UvScreenshotAsset["id"]>;
   readonly scene: UvOpenSourceBriefScene;
 }> = ({ focus, scene }) => {
   const exit = interpolate(
@@ -387,7 +274,13 @@ const EvidenceScene: FC<{
 
   return (
     <AbsoluteFill style={{ ...shellStyle, opacity: exit }}>
-      <EvidenceScreenshotBackdrop focus={focus} scene={scene} />
+      <EvidenceScreenshotBackdrop
+        asset={screenshotById.get(focus.assetId)}
+        backgroundColor={palette.background}
+        durationInFrames={scene.durationInFrames}
+        fallback={<Background scene={scene} />}
+        focus={focus}
+      />
       <AbsoluteFill
         style={{
           alignItems: focus.overlayAlign === "left" ? "flex-start" : "flex-end",
@@ -396,7 +289,7 @@ const EvidenceScene: FC<{
           padding: "86px 112px 150px",
         }}
       >
-        <TransparentOverlayPanel
+        <EvidenceOverlayPanel
           compact={focus.overlayMode === "compact"}
           style={{
             maxWidth: focus.overlayMaxWidth ?? 720,
@@ -404,7 +297,7 @@ const EvidenceScene: FC<{
         >
           <OverlayText compact={focus.overlayMode === "compact"} scene={scene} />
           <EvidenceOverlayDetail scene={scene} />
-        </TransparentOverlayPanel>
+        </EvidenceOverlayPanel>
       </AbsoluteFill>
       <StandaloneBottomCaption captions={scene.captions} variant="landscape" />
     </AbsoluteFill>

@@ -45,21 +45,22 @@ export const producerSampleManifests = [
         id: "evidence-screenshot-backdrop",
         targetLayer: "block",
         reason:
-          "Full-frame screenshot evidence with readable focus motion can be shared after more samples prove it.",
+          "Shared in Producer Sample OS as the Evidence Lens full-frame screenshot backdrop.",
       },
       {
         id: "evidence-overlay-panel",
         targetLayer: "block",
-        reason: "Compact translucent proof overlays recur across source-backed explainer samples.",
+        reason: "Shared in Producer Sample OS as the Evidence Lens translucent proof overlay.",
       },
       {
         id: "screenshot-focus",
         targetLayer: "primitive",
-        reason: "Claim-aligned zoom-in, hold, and return metadata is a small reusable motion contract.",
+        reason: "Shared in Producer Sample OS as claim-aligned zoom-in, hold, and return metadata.",
       },
     ],
     notes: [
       "Generated screenshots and narration audio stay local-only under public/generated/uv-open-source-brief/.",
+      "Screenshot evidence scenes use the shared Evidence Lens block while keeping uv facts sample-local.",
       "This sample remains a dedicated composition and does not use the parked web prompt path.",
     ],
   },

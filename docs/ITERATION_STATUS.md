@@ -1,6 +1,31 @@
 # Iteration Status
 
-Last updated: Producer Sample OS v1
+Last updated: Phase C Evidence Lens Block v1
+
+## Latest continuation — Phase C Evidence Lens Block v1
+
+- Phase C promotes the reusable screenshot-proof language from
+  `UvOpenSourceBrief` into `src/remotion/producer-samples/evidence-lens/`.
+- The shared block exports `ScreenshotFocus`, `EvidenceScreenshotBackdrop`, and
+  `EvidenceOverlayPanel` for full-frame readable screenshot evidence,
+  translucent local proof panels, and frame-driven zoom-in / hold / return
+  motion.
+- `UvOpenSourceBrief` now consumes the shared block while keeping uv facts,
+  narration, generated audio metadata, composition id, and duration contract
+  unchanged.
+- The slice stays on the Agent Producer path: no web prompt routing, no
+  universal template, no editor/product expansion, and no generated
+  screenshots/audio/mp4 committed.
+
+Validation target:
+- `npm run smoke:evidence-lens`
+- `npm run smoke:producer-sample-manifest`
+- `npm run smoke:uv-open-source-brief`
+- `npm run smoke:standalone-video-runtime`
+- `npx tsc --noEmit --pretty false`
+- `npm run lint`
+- `git diff --check`
+- `git status --short`
 
 ## Latest continuation — Producer Sample OS v1 Implementation
 
