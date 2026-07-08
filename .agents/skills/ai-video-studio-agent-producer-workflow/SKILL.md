@@ -69,6 +69,9 @@ cannot express.
    - `http://localhost:3000/primitives`
 5. Use `.agents/skills/remotion-best-practices/` for Remotion rules. Load
    `rules/video-layout.md` before designing text-heavy scenes.
+6. When using VoxCPM for narration or voice clone, use
+   `.agents/skills/ai-video-studio-voxcpm-expression-workflow/` before writing
+   final TTS text or control instructions.
 
 ## Workflow
 
@@ -155,6 +158,9 @@ Rules:
 - Keep captions under segment-owned narration data.
 - Use VoxCPM by default for local Agent Producer narration and voice clone
   timing; use F5-TTS only when explicitly configured with `TTS_PROVIDER=f5-tts`.
+- For VoxCPM, write control instructions and sparse non-language tags with
+  `.agents/skills/ai-video-studio-voxcpm-expression-workflow/`; do not over-tag
+  narration text.
 - TTS timing still owns scene timing regardless of provider.
 - For local producer videos, write static voiceover assets into
   `public/generated/<slug>/` so Remotion can read them through `staticFile()`.

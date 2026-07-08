@@ -44,6 +44,19 @@ StoryboardSegmentPlan.narration.text + optional voiceClone reference
   -> VideoSegment.narration
 ```
 
+## Expression Guidance
+
+When VoxCPM is used for Agent Producer narration or voice clone, write the
+final TTS text with `.agents/skills/ai-video-studio-voxcpm-expression-workflow/`.
+That skill covers compact control instructions, expressive delivery state,
+pacing, and sparse English square-bracket non-language tags such as
+`[laughing]`, `[sigh]`, and `[Uhm]`.
+
+Keep the reference transcript exact for voice clone. Use control instructions
+and target narration text to adjust delivery; do not use them to change the
+speaker identity. If tags leak into generated captions, keep them in the TTS
+input but clean or hide them in display captions.
+
 ## Config
 
 - `TTS_PROVIDER=voxcpm`

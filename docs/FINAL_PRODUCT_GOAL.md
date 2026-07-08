@@ -146,6 +146,9 @@ Rules:
 - captions belong with narration data, not template-specific implementation
 - Agent Producer defaults to VoxCPM for narration, including voice clone when
   configured; F5-TTS is an explicit fallback provider when selected
+- VoxCPM narration text should use
+  `.agents/skills/ai-video-studio-voxcpm-expression-workflow/` when expression
+  state, control instructions, pacing, or non-language bracket tags matter
 - static voiceover assets for dedicated samples should be Remotion-readable via
   `staticFile()` from ignored generated artifact paths
 

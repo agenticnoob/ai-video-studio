@@ -1,6 +1,30 @@
 # Iteration Status
 
-Last updated: VoxCPM clone Agent Producer default
+Last updated: VoxCPM expression skill alignment
+
+## Latest continuation — VoxCPM expression skill alignment
+
+- Added `.agents/skills/ai-video-studio-voxcpm-expression-workflow/SKILL.md`
+  as the repo-local guidance for VoxCPM control instructions, expressive
+  delivery state, pacing, voice-clone text handling, and sparse non-language
+  bracket tags.
+- Updated the Agent Producer workflow skill so future video-generation runs
+  load the VoxCPM expression skill only when VoxCPM narration or voice clone is
+  used. This keeps Agent Producer as the main production path and avoids
+  turning VoxCPM expression guidance into a separate video workflow.
+- Active docs now point to the new skill from README, AGENTS, final goal,
+  visual roadmap, and `docs/providers/voxcpm.md`.
+- Generated audio, private voice references, and local VoxCPM runtime outputs
+  remain local-only artifact concerns; this slice changes docs/skills only.
+
+Validation performed:
+- manual frontmatter/name check for
+  `.agents/skills/ai-video-studio-voxcpm-expression-workflow/SKILL.md`
+- `git diff --check`
+
+Validation note:
+- `python3 /home/zzzxc/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/ai-video-studio-voxcpm-expression-workflow`
+  could not run in the host Python because `yaml` is not installed.
 
 ## Latest continuation — VoxCPM clone Agent Producer default
 

@@ -60,6 +60,7 @@ scripts for local F5/TTS probes live under `scripts/f5-tts/`.
 | Template registration | `src/templates/` | Server-safe definitions + runtime bundles. |
 | Preview/export composition | `src/remotion/ProjectVideo/` | Shared Remotion render surface. |
 | Agent producer workflow | `.agents/skills/ai-video-studio-agent-producer-workflow/`, `docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md` | Local research/assets/TTS/primitives/blocks/runtime/stills loop for dedicated videos. |
+| VoxCPM expression guidance | `.agents/skills/ai-video-studio-voxcpm-expression-workflow/`, `docs/providers/voxcpm.md` | VoxCPM control instructions, expressive state, and sparse non-language tags for Agent Producer narration/voice clone. |
 | Standalone sample references | `src/remotion/standalone-samples/`, `public/standalone-samples/audio/` | Reference-only compositions and static audio. |
 | F5 runtime service | `services/f5-tts/` | Contract-smoke and real-GPU service. |
 
@@ -101,6 +102,9 @@ scripts for local F5/TTS probes live under `scripts/f5-tts/`.
   start from primitives/blocks/standalone-video runtime helpers, compose a
   dedicated Remotion video by default, and promote recipes/templates only after
   reuse is proven. Do not route this default back through the web prompt.
+- When Agent Producer uses VoxCPM for narration or voice clone, load the
+  VoxCPM expression skill before final TTS text. Use control instructions for
+  delivery state and sparse English bracket tags for non-language cues.
 - For source-backed Agent Producer evidence, attempt real screenshot/source
   capture before generated source-card fallback. If fallback is used, record
   why capture failed or was unreadable and do not call the fallback a

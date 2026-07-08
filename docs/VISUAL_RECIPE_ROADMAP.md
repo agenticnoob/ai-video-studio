@@ -53,6 +53,10 @@ Keep the Agent Producer model first:
   fallback must record why capture failed or was unreadable
 - local-only screenshots, audio, and renders unless explicitly requested
 - shared `src/remotion/standalone-video/` helpers for timing/audio/captions
+- VoxCPM expression guidance stays in
+  `.agents/skills/ai-video-studio-voxcpm-expression-workflow/` so narration
+  control instructions and sparse non-language tags are handled before final
+  TTS generation, without changing the visual production path
 - reuse primitives and blocks before writing sample-local scene code
 - promote only reusable visual language after still/mp4 review
 

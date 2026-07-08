@@ -47,7 +47,9 @@ Agent Producer narration defaults to VoxCPM. Use `scripts/producer-voxcpm.sh up`
 to start the host-network Next topology for the loopback-bound personal
 VoxCPM service, `scripts/producer-voxcpm.sh smoke` for plain `/tts`, and
 `scripts/producer-voxcpm.sh smoke-clone` with private reference env vars for
-clone validation.
+clone validation. When writing final VoxCPM narration or clone text, use
+`.agents/skills/ai-video-studio-voxcpm-expression-workflow/` for delivery
+state, control instructions, and sparse non-language bracket tags.
 
 Source-backed evidence scenes follow a real-capture-first rule: capture the
 actual page, repo, product UI, dashboard, chart, document, or supplied asset
@@ -204,6 +206,10 @@ Parked web/product modeling direction:
   uses the existing `/data/projects/labs/voxcpm-api` `/tts` service, and
   `voiceClone.enabled` with provider `voxcpm` uses VoxCPM clone through
   `/clone_with_prompt` by default.
+- VoxCPM expressive narration guidance lives in
+  `.agents/skills/ai-video-studio-voxcpm-expression-workflow/`; it should be
+  used when final TTS text needs control instructions, emotional state,
+  pacing, or non-language tags.
 - the in-project F5-TTS provider adapter is retained as an explicit fallback
   when `TTS_PROVIDER=f5-tts` and `F5_TTS_BASE_URL` points at a running service
 - the optional `f5-tts` Docker overlay provides a contract-smoke runtime and a
@@ -376,13 +382,16 @@ Current top-level boundaries:
     - repo-local skill for the local Agent Producer workflow: research,
       screenshots/assets, primitive/block/runtime inventory, TTS-first timing,
       dedicated composition assembly, still review, and later promotion
-14. `/src/remotion/standalone-samples/*`
+14. `/.agents/skills/ai-video-studio-voxcpm-expression-workflow/*`
+    - repo-local skill for VoxCPM narration expression: control instructions,
+      delivery state, voice-clone text handling, and sparse non-language tags
+15. `/src/remotion/standalone-samples/*`
     - reference-only standalone compositions kept out of template/runtime
       folders
-15. `/public/standalone-samples/audio/*`
+16. `/public/standalone-samples/audio/*`
     - checked-in sample audio required by reference-only standalone
       compositions
-16. `/scripts/f5-tts/*`
+17. `/scripts/f5-tts/*`
     - local F5/TTS helper scripts; private reference voices stay in ignored
       `voices/f5-tts/`
 
@@ -399,6 +408,9 @@ Start from:
 - `docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md` and
   `.agents/skills/ai-video-studio-agent-producer-workflow/SKILL.md` when the
   task is a local high-quality producer run rather than a quick web prompt
+- `.agents/skills/ai-video-studio-voxcpm-expression-workflow/SKILL.md` when a
+  producer run uses VoxCPM narration or voice clone and the script needs
+  delivery state, expressive pacing, or non-language tags
 - `docs/PRODUCT_REQUIREMENTS.md`
 - `docs/FUTURE_DIRECTION_NOTES.md`
 - `README.md`
