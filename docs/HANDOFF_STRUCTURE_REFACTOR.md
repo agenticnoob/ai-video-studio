@@ -9,7 +9,7 @@ inside the parked prompt-to-`VideoProject` web/editor path.
 
 For current Agent Producer work, start from `docs/FINAL_PRODUCT_GOAL.md`,
 `docs/VISUAL_RECIPE_ROADMAP.md`, and
-`.agents/skills/ai-video-studio-agent-producer-workflow/SKILL.md` instead.
+`.agents/skills/ai-video-studio-agent-producer/SKILL.md` instead.
 
 ## One-Sentence Context
 

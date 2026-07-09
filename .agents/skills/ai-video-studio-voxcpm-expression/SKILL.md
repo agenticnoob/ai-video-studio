@@ -1,15 +1,15 @@
 ---
-name: ai-video-studio-voxcpm-expression-workflow
-description: Use when working in /data/projects/labs/ai-video-studio and Codex writes or generates VoxCPM narration, VoxCPM voice clone text, VoxCPM control instructions, or Agent Producer video voiceover that should use expressive state, pacing, emotion, scene delivery, or non-language bracket tags such as [laughing], [sigh], [Uhm], or question/surprise markers.
+name: ai-video-studio-voxcpm-expression
+description: Use when working in /data/projects/labs/ai-video-studio and Codex writes or revises VoxCPM narration, VoxCPM voice clone text, VoxCPM control instructions, or Agent Producer voiceover that needs expressive delivery state, pacing, emotion, scene tone, or sparse non-language bracket tags such as [laughing], [sigh], [Uhm], and question/surprise markers.
 ---
 
-# AI Video Studio VoxCPM Expression Workflow
+# AI Video Studio VoxCPM Expression
 
 ## Purpose
 
-Use this skill to write VoxCPM-ready narration for Agent Producer videos.
-It keeps the voice track expressive without turning scripts into noisy prompt
-strings.
+Use this provider-specific guidance to write VoxCPM-ready narration for Agent
+Producer videos. Keep the voice track expressive without turning scripts into
+noisy prompt strings or creating a separate video-production path.
 
 Reference the current VoxCPM cookbook when details matter:
 `https://voxcpm.readthedocs.io/zh-cn/latest/cookbook.html`.
@@ -25,6 +25,28 @@ Reference the current VoxCPM cookbook when details matter:
   before the real VoxCPM audio duration is known.
 - Do not over-tag. If every sentence carries a tag, the script is probably
   worse.
+- Treat punctuation as production timing, not decoration. Chinese/English
+  commas, semicolons, colons, sentence-ending marks, question marks, and
+  exclamation marks are the intended split points for readable VoxCPM chunks.
+- Preserve decimal model names and versions such as `GPT-5.6`; do not split
+  them into `GPT-5.` and `6`.
+
+## Provider Timing Contract
+
+VoxCPM returns audio/wav for `/tts`, `/clone`, and `/clone_with_prompt`; it has
+no per-line timestamps in the current project adapter. The repo compensates by
+splitting narration on punctuation before synthesis, trimming leading/trailing
+silence from each chunk, concatenating chunk WAVs, and building captions from
+the measured chunk durations.
+
+Implications:
+
+- Write punctuation where a subtitle or listening pause should occur.
+- Avoid giant sentences that require the adapter to estimate a long cue.
+- Avoid punctuation spam; too many tiny chunks can sound choppy.
+- If a rendered line still shows a long blank tail or awkward subtitle cue,
+  inspect the generated WAV with `ffmpeg silencedetect` and the generated
+  caption metadata before rewriting visuals.
 
 ## Control Instruction
 
@@ -104,6 +126,8 @@ When generating an Agent Producer video with VoxCPM:
 - Keep captions readable. If bracket tags appear in generated captions and look
   distracting, hide or clean them in display captions while preserving them in
   the TTS input.
+- Keep display captions punctuation-aligned. Do not merge unrelated clauses
+  into one caption merely because VoxCPM returned one final WAV.
 - For voice clone, keep the reference transcript exact and use control
   instruction only to adjust emotion, speed, and delivery. Do not expect clone
   control to change the speaker identity.
@@ -118,5 +142,7 @@ Before using the audio in a final render, verify:
 - tags are sparse and purposeful
 - the control instruction matches the scene state
 - generated captions do not expose awkward tags to viewers
+- decimals and model names remain intact in the display captions
+- no segment has a long unexplained leading or trailing silence
 - `ffprobe` or project metadata reports a positive real duration
 - the video timing follows the generated VoxCPM audio duration

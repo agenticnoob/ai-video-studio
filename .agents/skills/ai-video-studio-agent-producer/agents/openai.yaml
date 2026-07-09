@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Video Producer"
+  short_description: "Produce component-built Remotion videos"
+  default_prompt: "Use $ai-video-studio-agent-producer to produce a dedicated Remotion video from a real topic with repo components, TTS-owned timing, source capture, and still review."

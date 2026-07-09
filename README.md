@@ -27,6 +27,12 @@ Maintained Agent Producer samples are described by
 family, canvas profile, local artifact root, review frames, TTS status,
 committed source files, and promotion candidates.
 
+Current maintained samples include `AiDailyNewsBrief20260708`,
+`OpenAiHardwareNewsBrief`, `UvOpenSourceBrief`, `WorldCupBettingAnalysis`, and
+`PixelRAGChineseStandalonePreview`. News/trend-briefing samples should keep
+source-backed claims honest: use real screenshots when available, otherwise
+record localized source-card fallback reasons in sample data.
+
 Promotion candidates now use the Phase D gate in
 `docs/PRODUCER_PROMOTION_GATE.md`: stay sample-local, promote to primitive,
 promote to block, promote to recipe, or promote to template. Evidence Lens is
@@ -48,8 +54,23 @@ to start the host-network Next topology for the loopback-bound personal
 VoxCPM service, `scripts/producer-voxcpm.sh smoke` for plain `/tts`, and
 `scripts/producer-voxcpm.sh smoke-clone` with private reference env vars for
 clone validation. When writing final VoxCPM narration or clone text, use
-`.agents/skills/ai-video-studio-voxcpm-expression-workflow/` for delivery
-state, control instructions, and sparse non-language bracket tags.
+`.agents/skills/ai-video-studio-voxcpm-expression/` for delivery
+state, control instructions, and sparse non-language bracket tags. The current
+VoxCPM adapter returns audio without per-line timestamps, so repo TTS generation
+splits narration by punctuation, trims each returned chunk's silence,
+concatenates the WAV chunks, and builds caption cues from measured chunk
+durations.
+
+The local production skill stack is:
+
+- `.agents/skills/ai-video-studio-agent-producer/` for real-topic video
+  production from research, sources, TTS timing, primitives, blocks, and still
+  review.
+- `.agents/skills/remotion-best-practices/` for Remotion code, layout,
+  subtitle, audio, and render rules.
+- `.agents/skills/ai-video-studio-voxcpm-expression/` only when VoxCPM
+  narration, voice clone text, control instructions, pacing, or expression tags
+  matter.
 
 Source-backed evidence scenes follow a real-capture-first rule: capture the
 actual page, repo, product UI, dashboard, chart, document, or supplied asset
@@ -134,8 +155,8 @@ Current implementation status:
   `docs/VISUAL_RECIPE_ROADMAP.md`
 - higher-quality local video-production work that needs research, screenshots,
   TTS-first timing, primitive selection, and still review should use
-  `.agents/skills/ai-video-studio-agent-producer-workflow/` plus
-  `docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md`; this
+  `.agents/skills/ai-video-studio-agent-producer/` plus
+  `docs/superpowers/specs/2026-07-01-agent-producer-design.md`; this
   is the default path for personal finished-video production, not a wrapper
   around the web prompt
 - current progress and next-step notes live in `docs/ITERATION_STATUS.md`
@@ -207,9 +228,9 @@ Parked web/product modeling direction:
   `voiceClone.enabled` with provider `voxcpm` uses VoxCPM clone through
   `/clone_with_prompt` by default.
 - VoxCPM expressive narration guidance lives in
-  `.agents/skills/ai-video-studio-voxcpm-expression-workflow/`; it should be
+  `.agents/skills/ai-video-studio-voxcpm-expression/`; it should be
   used when final TTS text needs control instructions, emotional state,
-  pacing, or non-language tags.
+  pacing, punctuation-aware caption phrasing, or non-language tags.
 - the in-project F5-TTS provider adapter is retained as an explicit fallback
   when `TTS_PROVIDER=f5-tts` and `F5_TTS_BASE_URL` points at a running service
 - the optional `f5-tts` Docker overlay provides a contract-smoke runtime and a
@@ -331,7 +352,7 @@ Current visual-quality direction:
   `src/remotion/standalone-samples/`, with checked-in sample audio under
   `public/standalone-samples/audio/`. They remain references, not registered
   product templates or planner-visible recipes.
-- The Agent Producer workflow is the local high-quality path outside the
+- The Agent Producer skill is the local high-quality path outside the
   one-shot page prompt: research a real topic, capture or prepare source
   assets, inspect candidate primitives/blocks/runtime helpers, write
   narration/TTS before timing, assemble a dedicated Remotion composition in the
@@ -378,11 +399,11 @@ Current top-level boundaries:
     - render video from structured props instead of ad-hoc codegen
     - reusable video primitives live under `src/remotion/primitives/` and may
       be composed by template-local block renderers
-13. `/.agents/skills/ai-video-studio-agent-producer-workflow/*`
-    - repo-local skill for the local Agent Producer workflow: research,
+13. `/.agents/skills/ai-video-studio-agent-producer/*`
+    - repo-local Agent Producer skill: research,
       screenshots/assets, primitive/block/runtime inventory, TTS-first timing,
       dedicated composition assembly, still review, and later promotion
-14. `/.agents/skills/ai-video-studio-voxcpm-expression-workflow/*`
+14. `/.agents/skills/ai-video-studio-voxcpm-expression/*`
     - repo-local skill for VoxCPM narration expression: control instructions,
       delivery state, voice-clone text handling, and sparse non-language tags
 15. `/src/remotion/standalone-samples/*`
@@ -405,10 +426,10 @@ Start from:
   conversation or Subagent-Driven run
 - `docs/VISUAL_RECIPE_ROADMAP.md` when the task is visual quality, recipes,
   primitives, templates, motion, transitions, or generated-video polish
-- `docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md` and
-  `.agents/skills/ai-video-studio-agent-producer-workflow/SKILL.md` when the
+- `docs/superpowers/specs/2026-07-01-agent-producer-design.md` and
+  `.agents/skills/ai-video-studio-agent-producer/SKILL.md` when the
   task is a local high-quality producer run rather than a quick web prompt
-- `.agents/skills/ai-video-studio-voxcpm-expression-workflow/SKILL.md` when a
+- `.agents/skills/ai-video-studio-voxcpm-expression/SKILL.md` when a
   producer run uses VoxCPM narration or voice clone and the script needs
   delivery state, expressive pacing, or non-language tags
 - `docs/PRODUCT_REQUIREMENTS.md`
@@ -589,14 +610,16 @@ primitive catalog uses the app page above so small reusable components do not
 crowd the Studio composition list.
 
 For a higher-quality local producer run, use
-`.agents/skills/ai-video-studio-agent-producer-workflow/` before writing new
-Remotion visuals. That workflow starts with the primitive catalog, then uses
+`.agents/skills/ai-video-studio-agent-producer/` before writing new
+Remotion visuals. That skill starts with the primitive catalog, then uses
 research, real source capture before source-card fallback, TTS-first timing,
-existing recipe blocks,
-`src/remotion/standalone-video/` helpers, and still-frame review to build a
-dedicated composition like `WorldCupBettingAnalysis`. Treat `VideoProject` as a
-productization, editing, regeneration, or app export target, not the default
-local producer output.
+existing recipe blocks, `src/remotion/standalone-video/` helpers, and
+still-frame review to build a dedicated composition like
+`WorldCupBettingAnalysis`. Visible screenshot evidence must use an actual
+captured, readable screenshot; failed capture reasons belong in data or
+handoff text, not in the video frame. Treat `VideoProject` as a productization,
+editing, regeneration, or app export target, not the default local producer
+output.
 
 Render the default/sample composition to `out/ai-video.mp4`:
 ```bash

@@ -31,6 +31,7 @@ export type NormalizeSegmentCaptionsRequest = {
 const DEFAULT_FPS = 30;
 const MIN_CUE_DURATION_FRAMES = 12;
 const MAX_FALLBACK_CUE_CHARS = 42;
+const MIN_FALLBACK_CUE_CHARS = 8;
 
 const clamp = (value: number, min: number, max: number): number => {
   return Math.min(Math.max(value, min), max);
@@ -122,7 +123,79 @@ const normalizeProviderCue = ({
   };
 };
 
+export const stripCaptionPunctuation = (text: string): string => {
+  return text.replace(/[\s,，.。!?！？;；:：]/g, "");
+};
+
+const DECIMAL_POINT_PLACEHOLDER = "\u0000DECIMAL_POINT\u0000";
+
+const protectCaptionDecimals = (text: string): string =>
+  text.replace(/(?<=\d)\.(?=\d)/g, DECIMAL_POINT_PLACEHOLDER);
+
+const restoreCaptionDecimals = (text: string): string =>
+  text.replaceAll(DECIMAL_POINT_PLACEHOLDER, ".");
+
+export const splitCaptionTextByPunctuation = (text: string): string[] => {
+  const cleanedText = text.replace(/\s+/g, " ").trim();
+  if (!cleanedText) {
+    return [];
+  }
+
+  const protectedText = protectCaptionDecimals(cleanedText);
+  const parts = protectedText.match(/[^,，.。!?！？;；:：]+[,，.。!?！？;；:：]?/g) ?? [
+    protectedText,
+  ];
+  const chunks: string[] = [];
+  let pending = "";
+
+  for (const rawPart of parts) {
+    const part = rawPart.trim();
+    if (!part) {
+      continue;
+    }
+
+    pending = appendCaptionPart(pending, part);
+    if (
+      isSentenceTerminal(part) ||
+      lenientPhraseTerminal(part) ||
+      stripCaptionPunctuation(pending).length >= MIN_FALLBACK_CUE_CHARS
+    ) {
+      chunks.push(pending);
+      pending = "";
+    }
+  }
+
+  if (pending) {
+    if (chunks.length > 0 && stripCaptionPunctuation(pending).length < MIN_FALLBACK_CUE_CHARS) {
+      chunks[chunks.length - 1] = restoreCaptionDecimals(`${chunks[chunks.length - 1]}${pending}`);
+    } else {
+      chunks.push(restoreCaptionDecimals(pending));
+    }
+  }
+
+  return chunks.length > 0 ? chunks.map(restoreCaptionDecimals) : [cleanedText];
+};
+
+const appendCaptionPart = (current: string, part: string): string => {
+  if (!current) {
+    return part;
+  }
+  if (/[,.!?]$/.test(current)) {
+    return `${current} ${part}`;
+  }
+  return `${current}${part}`;
+};
+
+const isSentenceTerminal = (text: string): boolean => /[.。!?！？]$/.test(text);
+
+const lenientPhraseTerminal = (text: string): boolean => /[,，;；:：]$/.test(text);
+
 const splitFallbackCaptionText = (text: string): string[] => {
+  const punctuationChunks = splitCaptionTextByPunctuation(text);
+  if (punctuationChunks.length > 1) {
+    return punctuationChunks;
+  }
+
   const sentences = text
     .trim()
     .split(/(?<=[.!?。！？])\s+/)

@@ -1,6 +1,6 @@
-# Agent Producer Workflow Design
+# Agent Producer Design
 
-Status: accepted direction for the default personal production workflow.
+Status: accepted direction for the default personal production path.
 
 ## Problem
 
@@ -16,12 +16,12 @@ composition, and shared `src/remotion/standalone-video/` runtime helpers. It
 also has a large primitive catalog under `src/remotion/primitives/` and
 grouped blocks under `src/remotion/recipes/blocks/`.
 
-The missing layer is a local agent workflow that composes those assets into a
+The missing layer is a local Agent Producer skill that composes those assets into a
 purpose-built video instead of sending a bigger prompt through the page.
 
 ## Decision
 
-Add a repo-local Agent Producer workflow. The agent acts as a local producer
+Add a repo-local Agent Producer skill. The agent acts as a local producer
 and component composer:
 
 ```txt
@@ -37,14 +37,14 @@ topic
 -> final handoff
 ```
 
-The workflow is documented in:
+The skill is documented in:
 
-- `.agents/skills/ai-video-studio-agent-producer-workflow/SKILL.md`
+- `.agents/skills/ai-video-studio-agent-producer/SKILL.md`
 
-The workflow is not a wrapper around the page prompt. The old web/editor final
+The Agent Producer path is not a wrapper around the page prompt. The old web/editor final
 goal is parked indefinitely and remains a secondary productization surface for
 prompt entry, editing, selected-segment regeneration, and export. The producer
-workflow's default output is a dedicated Remotion composition assembled from
+path's default output is a dedicated Remotion composition assembled from
 repo-owned components. `VideoProject` is a productization target, not the
 default local producer output.
 
@@ -124,6 +124,9 @@ Acceptance:
 - source-backed evidence beats attempt real capture before generated
   source-card fallback; fallback reasons are recorded and fallback cards are not
   described as screenshots
+- fallback/source-card assets are not rendered as visible screenshot evidence
+  when no real captured screenshot exists; failed capture reasons stay in data
+  or handoff text, not in the video frame
 - narration beats are written before visual durations are locked
 - TTS or TTS-ready narration owns timing
 - candidate primitives, blocks, and standalone runtime helpers are listed
@@ -148,9 +151,9 @@ Acceptance:
 
 ## Documentation Updates
 
-Keep these files aligned when the workflow changes:
+Keep these files aligned when the skill changes:
 
-- `.agents/skills/ai-video-studio-agent-producer-workflow/SKILL.md`
+- `.agents/skills/ai-video-studio-agent-producer/SKILL.md`
 - `README.md`
 - `docs/FINAL_PRODUCT_GOAL.md`
 - `docs/ITERATION_STATUS.md`
@@ -164,7 +167,7 @@ For documentation-only updates:
 
 ```bash
 git diff --check
-python3 /home/zzzxc/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/ai-video-studio-agent-producer-workflow
+python3 /home/zzzxc/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/ai-video-studio-agent-producer
 ```
 
 For the first real producer run, add the smallest relevant Docker checks:

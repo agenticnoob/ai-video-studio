@@ -108,6 +108,8 @@ const run = async () => {
   try {
     const { synthesizeVoxcpmSpeech } = await import("../src/lib/tts/voxcpm.js");
 
+    const narrationText =
+      "GPT-5.6 先建立背景，第二句说明变化。第三句转到风险；最后一句给出动作建议。";
     const result = await withEnv(
       {
         AI_VIDEO_STUDIO_ARTIFACT_ROOT: artifactRoot,
@@ -126,10 +128,13 @@ const run = async () => {
           referenceText: "这是参考音频的原文。",
           runId: "tts-2026-07-07t00-00-00-000z-voxcpm-clone",
           segmentId: "clone-segment",
-          text: "这是 VoxCPM 克隆配音测试。",
+          text: narrationText,
         }),
     );
 
+    if (requests.length < 4) {
+      fail(`Expected VoxCPM clone to synthesize punctuation-split chunks, got ${requests.length}.`);
+    }
     const request = requests[0];
     if (!request) {
       fail("Expected synthesizeVoxcpmSpeech to call VoxCPM.");
@@ -150,6 +155,23 @@ const run = async () => {
     }
     if (!result.captions?.cues?.length) {
       fail("Expected fallback caption cues.");
+    }
+    const cueTexts = result.captions.cues.map((cue) => cue.text);
+    const expectedCueTexts = [
+      "GPT-5.6 先建立背景，",
+      "第二句说明变化。",
+      "第三句转到风险；",
+      "最后一句给出动作建议。",
+    ];
+    if (JSON.stringify(cueTexts) !== JSON.stringify(expectedCueTexts)) {
+      fail(`Expected punctuation-split captions, received ${JSON.stringify(cueTexts)}.`);
+    }
+    for (let index = 1; index < result.captions.cues.length; index += 1) {
+      const previous = result.captions.cues[index - 1];
+      const cue = result.captions.cues[index];
+      if (cue.startFrame !== previous.startFrame + previous.durationInFrames) {
+        fail("Expected VoxCPM caption cues to be contiguous.");
+      }
     }
   } finally {
     globalThis.fetch = originalFetch;

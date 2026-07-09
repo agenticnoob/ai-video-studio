@@ -55,6 +55,15 @@ import {
   OpenAiHardwareNewsBriefVideo,
 } from "./OpenAiHardwareNewsBrief";
 import {
+  AI_DAILY_NEWS_BRIEF_20260708_COMPOSITION_ID,
+  AI_DAILY_NEWS_BRIEF_20260708_FPS,
+  AI_DAILY_NEWS_BRIEF_20260708_HEIGHT,
+  AI_DAILY_NEWS_BRIEF_20260708_WIDTH,
+  AiDailyNewsBrief20260708Video,
+  aiDailyNewsBrief20260708Data,
+  getAiDailyNewsBrief20260708Duration,
+} from "./AiDailyNewsBrief20260708";
+import {
   AI_NEWS_COMPOSITION_ID,
   AiNewsVideo,
   VIDEO_DURATION_IN_FRAMES,
@@ -188,6 +197,14 @@ export const RemotionRoot: FC = () => {
         fps={OPENAI_HARDWARE_NEWS_BRIEF_FPS}
         width={OPENAI_HARDWARE_NEWS_BRIEF_WIDTH}
         height={OPENAI_HARDWARE_NEWS_BRIEF_HEIGHT}
+      />
+      <Composition
+        id={AI_DAILY_NEWS_BRIEF_20260708_COMPOSITION_ID}
+        component={AiDailyNewsBrief20260708Video}
+        durationInFrames={getAiDailyNewsBrief20260708Duration(aiDailyNewsBrief20260708Data)}
+        fps={AI_DAILY_NEWS_BRIEF_20260708_FPS}
+        width={AI_DAILY_NEWS_BRIEF_20260708_WIDTH}
+        height={AI_DAILY_NEWS_BRIEF_20260708_HEIGHT}
       />
       <Composition
         id={AI_NEWS_COMPOSITION_ID}

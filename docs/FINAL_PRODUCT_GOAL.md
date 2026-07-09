@@ -8,7 +8,7 @@ The previous prompt-to-`VideoProject` final goal is **parked indefinitely**.
 It remains useful historical context for a future web/editor productization
 track, but it is no longer the top-level goal for this repository.
 
-The current top-level goal is the Agent Producer workflow: given a real topic,
+The current top-level goal is Agent Producer: given a real topic,
 Codex acts as producer, researcher, script editor, TTS coordinator, asset
 collector, Remotion component composer, and render reviewer. The output should
 be a dedicated Remotion video assembled from repo-owned primitives, blocks,
@@ -25,11 +25,18 @@ topic -> research/assets -> narration/TTS -> component inventory
 ## 1. Current Goal
 
 The project should help produce high-quality, finished videos from real topics
-through an agent-led local production workflow.
+through an agent-led local production path.
 
 The default output is not a generated `VideoProject` from the website prompt.
 The default output is a purpose-built Remotion composition under a dedicated
 `src/remotion/<SampleName>/` folder.
+
+Start finished-video work from `.agents/skills/ai-video-studio-agent-producer/`
+and `docs/superpowers/specs/2026-07-01-agent-producer-design.md`. Add
+`.agents/skills/remotion-best-practices/` for Remotion code, layout, subtitle,
+audio, silence, and render rules. Add
+`.agents/skills/ai-video-studio-voxcpm-expression/` only when VoxCPM narration,
+voice clone text, control instructions, pacing, or expression tags matter.
 
 A successful Agent Producer run should:
 
@@ -147,8 +154,13 @@ Rules:
 - Agent Producer defaults to VoxCPM for narration, including voice clone when
   configured; F5-TTS is an explicit fallback provider when selected
 - VoxCPM narration text should use
-  `.agents/skills/ai-video-studio-voxcpm-expression-workflow/` when expression
-  state, control instructions, pacing, or non-language bracket tags matter
+  `.agents/skills/ai-video-studio-voxcpm-expression/` when expression
+  state, control instructions, pacing, punctuation-aware phrasing, or
+  non-language bracket tags matter
+- VoxCPM returns audio without line timestamps in the current adapter. Agent
+  Producer narration should stay on the repo TTS path that punctuation-splits
+  narration, trims chunk silence, concatenates WAV chunks, and derives caption
+  cue timing from measured chunk durations.
 - static voiceover assets for dedicated samples should be Remotion-readable via
   `staticFile()` from ignored generated artifact paths
 
@@ -245,7 +257,7 @@ Goal: make this document the top-level goal and mark the previous
 Acceptance:
 
 - new agents start from Agent Producer by default
-- README, AGENTS, iteration status, visual roadmap, and workflow skill agree on
+- README, AGENTS, iteration status, visual roadmap, and Agent Producer skill agree on
   the authority order
 - old web/editor pipeline is described as a productization track only
 
@@ -337,7 +349,7 @@ Non-goals:
 
 ### Phase E: OpenAI News Producer Sample And Evidence Capture Hardening
 
-Status: implemented for the current news sample and workflow docs.
+Status: implemented for the current news sample and Agent Producer docs.
 
 Goal: produce a maintained Chinese trend-briefing sample while closing the
 process gap that allowed generated source-card fallback assets to be treated
@@ -349,7 +361,7 @@ Deliver:
 - generated local F5-TTS narration metadata and local-only source-card assets
 - smoke coverage for Chinese source-card copy, no long post-voiceover silence,
   evidence fallback reasons, and duration metadata alignment
-- workflow docs that require real screenshot/source capture before source-card
+- Agent Producer docs that require real screenshot/source capture before source-card
   fallback
 
 Non-goals:

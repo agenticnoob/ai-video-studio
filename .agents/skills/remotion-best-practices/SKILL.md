@@ -9,6 +9,18 @@ metadata:
 
 Use this skills whenever you are dealing with Remotion code to obtain the domain-specific knowledge.
 
+## AI Video Studio Agent Producer
+
+When this repo is producing a dedicated Agent Producer video, combine these
+Remotion rules with `.agents/skills/ai-video-studio-agent-producer/`. For
+VoxCPM narration or voice clone work, also load
+`.agents/skills/ai-video-studio-voxcpm-expression/` before final TTS text.
+
+In this repo, let generated narration metadata own scene duration. For subtitle
+or voiceover work, load `rules/subtitles.md`; for long pauses or audio gaps,
+load `rules/silence-detection.md`; for dense information scenes, load
+`rules/video-layout.md`.
+
 ## New project setup
 
 When in an empty folder or workspace with no existing Remotion project, scaffold one using:

@@ -51,12 +51,18 @@ Keep the Agent Producer model first:
 - sample-owned source data, narration beats, and generated audio metadata
 - real screenshot/source capture before generated source-card fallback; any
   fallback must record why capture failed or was unreadable
+- news/trend-briefing samples such as `AiDailyNewsBrief20260708` may use
+  foreground 3D content cards and transition plates when they clarify the
+  story, but should not treat 3D as a background-only decorative layer
 - local-only screenshots, audio, and renders unless explicitly requested
 - shared `src/remotion/standalone-video/` helpers for timing/audio/captions
 - VoxCPM expression guidance stays in
-  `.agents/skills/ai-video-studio-voxcpm-expression-workflow/` so narration
+  `.agents/skills/ai-video-studio-voxcpm-expression/` so narration
   control instructions and sparse non-language tags are handled before final
-  TTS generation, without changing the visual production path
+  TTS generation, without changing the visual production path. Because VoxCPM
+  returns audio without per-line timestamps, Agent Producer samples should use
+  the repo TTS path that punctuation-splits narration, trims chunk silence,
+  concatenates WAV chunks, and derives subtitle cues from measured chunk audio
 - reuse primitives and blocks before writing sample-local scene code
 - promote only reusable visual language after still/mp4 review
 
@@ -620,13 +626,13 @@ Acceptance:
 - `StatsDashboardTemplatePreview` can render an EV/risk ranking style dashboard
 - preview/export still use the main `ProjectVideo` path for generated projects
 
-### Phase 5.6: Agent Producer Workflow v1
+### Phase 5.6: Agent Producer Skill v1
 
 Status: implemented for docs and repo-local skill; first real producer run
 completed with `UvOpenSourceBrief`; now accepted as the default personal
 video-production path.
 
-Goal: define the local production workflow for topics that need agent research,
+Goal: define the local production skill for topics that need agent research,
 current information, screenshots, TTS-first timing, primitive/block selection,
 purpose-built Remotion composition, and still/render review before they become
 a good finished video.
@@ -634,12 +640,12 @@ a good finished video.
 Deliver:
 
 - repo-local skill:
-  `.agents/skills/ai-video-studio-agent-producer-workflow/SKILL.md`
+  `.agents/skills/ai-video-studio-agent-producer/SKILL.md`
 - design note:
-  `docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md`
+  `docs/superpowers/specs/2026-07-01-agent-producer-design.md`
 - explicit layer model:
   `primitive -> block -> dedicated composition -> recipe -> template -> VideoProject`
-- decision that the workflow is not a wrapper around the web prompt
+- decision that the Agent Producer path is not a wrapper around the web prompt
 - default preference for a component-composed standalone Remotion composition,
   following the `WorldCupBettingAnalysis` style of explicit data, generated
   narration, standalone-video runtime helpers, and sample-specific scenes
@@ -648,7 +654,7 @@ Deliver:
 
 Acceptance:
 
-- future agents can start from one skill instead of rediscovering the workflow
+- future agents can start from one skill instead of rediscovering the producer path
 - visual planning begins with the primitive catalog before new TSX is written
 - agent output is not just page generation plus screenshots; it composes
   repo-owned primitives, blocks, runtime helpers, and data into a dedicated
@@ -656,11 +662,14 @@ Acceptance:
 - source-backed evidence beats attempt real screenshot/source capture before
   generated source-card fallback; fallback use is recorded and not labeled as a
   screenshot
+- fallback/source-card assets are not rendered as visible screenshot evidence
+  when no real captured screenshot exists; failed capture reasons stay in data
+  and handoff text, not in the video frame
 - recipes remain template-owned reusable treatments promoted from evidence,
   not a separate component system
 - generated screenshots, audio, and renders stay local-only unless explicitly
   requested
-- no runtime or product schema changes are introduced by the workflow document
+- no runtime or product schema changes are introduced by the skill document
   itself
 - first real run validates the readable screenshot evidence lens: full-frame
   screenshots as proof, compact translucent local overlays, claim-aligned
@@ -859,7 +868,7 @@ Acceptance:
 
 ### Phase E: OpenAI News Producer Sample And Evidence Capture Hardening
 
-Status: implemented for `OpenAiHardwareNewsBrief` and the workflow docs.
+Status: implemented for `OpenAiHardwareNewsBrief` and the Agent Producer docs.
 
 Goal: add a maintained trend-briefing Agent Producer sample and make
 source-backed evidence handling stricter for future runs.

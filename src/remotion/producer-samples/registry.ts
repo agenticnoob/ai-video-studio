@@ -2,6 +2,88 @@ import type { ProducerSampleManifest } from "./manifest";
 
 export const producerSampleManifests = [
   {
+    compositionId: "AiDailyNewsBrief20260708",
+    sampleName: "AiDailyNewsBrief20260708",
+    slug: "ai-daily-news-brief-2026-07-08",
+    contentFamily: "trend-briefing",
+    canvasProfile: "landscape-16x9",
+    localArtifactRoot: "public/generated/ai-daily-news-brief-2026-07-08/",
+    ttsStatus: "generated-local",
+    reviewFrames: [
+      {
+        frame: 45,
+        label: "opening thesis",
+        purpose: "Check first-read headline, 3D card hierarchy, and caption clearance.",
+      },
+      {
+        frame: 620,
+        label: "model gate evidence",
+        purpose: "Check source-card fallback readability and cautious GPT-5.6 framing.",
+      },
+      {
+        frame: 1540,
+        label: "china access map",
+        purpose: "Check limited-license and capital map density.",
+      },
+      {
+        frame: 2600,
+        label: "coding security",
+        purpose: "Check audit checklist readability and 3D foreground card motion.",
+      },
+      {
+        frame: 4000,
+        label: "power grid",
+        purpose: "Check electricity source-card fallback and overlay placement.",
+      },
+      {
+        frame: 5520,
+        label: "closing playbook",
+        purpose: "Check final infrastructure takeaway and safe margins.",
+      },
+    ],
+    sourceFiles: [
+      {
+        path: "src/remotion/AiDailyNewsBrief20260708/AiDailyNewsBrief20260708.tsx",
+        kind: "renderer",
+      },
+      { path: "src/remotion/AiDailyNewsBrief20260708/types.ts", kind: "types" },
+      { path: "src/remotion/AiDailyNewsBrief20260708/script.ts", kind: "script" },
+      { path: "src/remotion/AiDailyNewsBrief20260708/data.ts", kind: "data" },
+      {
+        path: "src/remotion/AiDailyNewsBrief20260708/audio.generated.ts",
+        kind: "audio-metadata",
+      },
+      { path: "src/remotion/Root.tsx", kind: "root-registration" },
+      { path: "scripts/ai-daily-news-brief-2026-07-08-smoke.mjs", kind: "smoke" },
+    ],
+    promotionCandidates: [
+      {
+        id: "foreground-news-card-3d",
+        targetLayer: "block",
+        gateState: "stay-sample-local",
+        status: "sample-local",
+        productizationExposure: "none",
+        reason:
+          "The foreground 3D content-card language fits this long trend briefing; promote only after another news video reuses it cleanly.",
+      },
+      {
+        id: "localized-news-source-card",
+        targetLayer: "block",
+        gateState: "stay-sample-local",
+        status: "sample-local",
+        productizationExposure: "none",
+        reason:
+          "The localized source-card fallback pattern is useful but should be generalized after a real screenshot capture pass and another topic.",
+      },
+    ],
+    notes: [
+      "Generated source cards, TTS audio, stills, and rendered mp4 stay local-only under public/generated/ai-daily-news-brief-2026-07-08/ and out/.",
+      "GPT-5.6 is framed as reported broader rollout plus official preview context; the sample explicitly avoids overstating government approval.",
+      "3D is used for foreground content cards and transition plates rather than as a background-only scene.",
+      "This sample remains a dedicated Agent Producer composition and does not use the parked web prompt path.",
+    ],
+  },
+  {
     compositionId: "OpenAiHardwareNewsBrief",
     sampleName: "OpenAiHardwareNewsBrief",
     slug: "openai-hardware-news-brief",

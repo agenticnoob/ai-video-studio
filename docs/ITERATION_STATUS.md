@@ -1,30 +1,244 @@
 # Iteration Status
 
-Last updated: VoxCPM expression skill alignment
+Last updated: Skill alignment for Agent Producer, VoxCPM, and Remotion
 
-## Latest continuation — VoxCPM expression skill alignment
+## Latest continuation — Skill alignment for Agent Producer, VoxCPM, and Remotion
 
-- Added `.agents/skills/ai-video-studio-voxcpm-expression-workflow/SKILL.md`
-  as the repo-local guidance for VoxCPM control instructions, expressive
-  delivery state, pacing, voice-clone text handling, and sparse non-language
-  bracket tags.
-- Updated the Agent Producer workflow skill so future video-generation runs
-  load the VoxCPM expression skill only when VoxCPM narration or voice clone is
-  used. This keeps Agent Producer as the main production path and avoids
-  turning VoxCPM expression guidance into a separate video workflow.
-- Active docs now point to the new skill from README, AGENTS, final goal,
+- Optimized the repo-local skill stack around the current production model:
+  `.agents/skills/ai-video-studio-agent-producer/` is the main real-topic video
+  authority, `.agents/skills/remotion-best-practices/` supplies Remotion layout,
+  subtitle, audio, silence, and render rules, and
+  `.agents/skills/ai-video-studio-voxcpm-expression/` stays provider-specific
+  for VoxCPM narration, voice clone text, control instructions, pacing, and
+  sparse expression tags.
+- Reworded the skills so they describe production capabilities rather than
+  separate `workflow` skills. The old `*-workflow` skill directories remain
+  absent, and `agents/openai.yaml` prompts now invoke the current skill names.
+- Added `npm run smoke:skill-alignment`, which checks skill frontmatter,
+  openai.yaml prompts, missing old workflow directories, active-doc references,
+  and the VoxCPM punctuation/silence/caption contract.
+- Synced README, AGENTS, final goal, visual roadmap, and VoxCPM provider docs
+  so future runs inherit the same skill stack and the same VoxCPM timing
+  contract.
+
+Validation target:
+- `npm run smoke:skill-alignment`
+- `npm run smoke:voxcpm-clone-adapter`
+- `npm run smoke:provider-boundary`
+- `npx tsc --noEmit --pretty false --incremental false`
+- `npm run lint`
+- `git diff --check`
+
+## Latest continuation — AiDailyNewsBrief20260708 VoxCPM punctuation-aligned narration
+
+- Fixed the VoxCPM narration path so it now reuses punctuation-aware caption
+  splitting before synthesis. Long narration is split on Chinese/English
+  punctuation, including comma, semicolon, colon, question, exclamation, and
+  sentence-ending marks, while decimal model names such as `GPT-5.6` stay
+  intact.
+- VoxCPM now synthesizes each punctuation chunk separately, trims leading and
+  trailing PCM silence from each returned WAV, concatenates the chunks into the
+  final segment-owned WAV, and creates provider caption cues from the measured
+  chunk durations. This avoids the previous rough fallback where VoxCPM
+  returned only one audio file and captions were estimated after the fact.
+- Regenerated all 12 `AiDailyNewsBrief20260708` narration tracks with live
+  VoxCPM voice clone audio, using the private local reference voice at
+  `voices/f5-tts/noobli/ref.m4a` plus `voices/f5-tts/noobli/ref.txt`.
+  `tts-summary.json` reports provider `voxcpm` for every track and
+  `usedFallback: false`.
+- The previously problematic third `gpt56` narration now has `7` caption cues
+  instead of a few broad fallback cues. Its WAV duration is `34.929375`
+  seconds, and `ffmpeg silencedetect` found only natural pauses below about
+  `0.8` seconds rather than the old multi-second tail gap.
+- The regenerated composition duration is `8720` frames, approximately
+  `290.67` seconds at 30 fps, with narration playback still set to `1.19x`.
+- Re-rendered review stills at frames `45`, `270`, `620`, and `8460`; visual
+  inspection found the sampled frames readable with no obvious text overlap.
+- Re-rendered mp4:
+  `out/ai-daily-news-brief-2026-07-08.mp4`; `ffprobe` reported `h264` video,
+  `aac` audio, duration `290.730667`, and size `34035437`.
+
+Validation performed:
+- `scripts/producer-voxcpm.sh ready` returned `ready: true`, model
+  `/models/VoxCPM2`, device `cuda`, and sample rate `48000`.
+- `VOXCPM_TTS_NEXT_SMOKE_REFERENCE_AUDIO=voices/f5-tts/noobli/ref.m4a VOXCPM_TTS_NEXT_SMOKE_REFERENCE_TEXT='<private reference text>' scripts/producer-voxcpm.sh smoke-clone`
+  passed with provider `voxcpm`, WAV output, and byte-range asset serving.
+- `docker compose -f docker-compose.yml -f docker-compose.voxcpm.yml run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; NEXT_ORIGIN=http://127.0.0.1:3000 TTS_PROVIDER=voxcpm VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810 AI_DAILY_NEWS_BRIEF_VOICE_REFERENCE_AUDIO=voices/f5-tts/noobli/ref.m4a AI_DAILY_NEWS_BRIEF_VOICE_REFERENCE_TEXT=voices/f5-tts/noobli/ref.txt npm run generate:ai-daily-news-brief-2026-07-08'`
+  completed with `fallback=false`.
+- `npm run smoke:voxcpm-clone-adapter` first failed on the old one-request
+  behavior, then passed after VoxCPM generated punctuation-split chunks and
+  contiguous chunk-duration caption cues.
+- `npm run smoke:ai-daily-news-brief-2026-07-08` first failed on the old
+  broad `gpt56` caption metadata, then passed after regeneration confirmed
+  punctuation-split readable cues.
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:ai-daily-news-brief-2026-07-08'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:voxcpm-clone-adapter'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:provider-boundary'`
+- `ffmpeg -hide_banner -i public/generated/ai-daily-news-brief-2026-07-08/gpt56.wav -af silencedetect=noise=-40dB:d=0.3 -f null /dev/null`
+  reported no long tail silence; the longest detected pause was about `0.73`
+  seconds.
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts AiDailyNewsBrief20260708 /workspace/out/ai-daily-news-brief-2026-07-08-frame-45.png --frame=45 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts AiDailyNewsBrief20260708 /workspace/out/ai-daily-news-brief-2026-07-08-frame-270.png --frame=270 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts AiDailyNewsBrief20260708 /workspace/out/ai-daily-news-brief-2026-07-08-frame-620.png --frame=620 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts AiDailyNewsBrief20260708 /workspace/out/ai-daily-news-brief-2026-07-08-frame-8460.png --frame=8460 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion render src/remotion/index.ts AiDailyNewsBrief20260708 /workspace/out/ai-daily-news-brief-2026-07-08.mp4'`
+- `ffprobe -v error -show_entries stream=codec_type,codec_name -show_entries format=duration,size -of default=noprint_wrappers=1 out/ai-daily-news-brief-2026-07-08.mp4`
+- `ffmpeg -hide_banner -i out/ai-daily-news-brief-2026-07-08.mp4 -af volumedetect -f null /dev/null`
+  reported `mean_volume: -25.2 dB` and `max_volume: -6.9 dB`, confirming the
+  mp4 now contains audible cloned narration rather than silent fallback audio.
+
+## Latest continuation — VoxCPM expression skill rename
+
+- Renamed the repo-local VoxCPM guidance skill to
+  `.agents/skills/ai-video-studio-voxcpm-expression/SKILL.md`; the skill
+  frontmatter name is now `ai-video-studio-voxcpm-expression`.
+- Tightened the skill body so it reads as provider-specific narration guidance,
+  not a separate production path. It still covers VoxCPM control
+  instructions, expressive delivery state, pacing, voice-clone text handling,
+  and sparse non-language bracket tags.
+- Added `agents/openai.yaml` for the renamed skill so UI metadata and the
+  default prompt invoke `$ai-video-studio-voxcpm-expression`.
+- Updated the Agent Producer skill so future video-generation runs load the
+  VoxCPM expression skill only when VoxCPM narration or voice clone is used.
+- Active docs now point to the renamed skill from README, AGENTS, final goal,
   visual roadmap, and `docs/providers/voxcpm.md`.
 - Generated audio, private voice references, and local VoxCPM runtime outputs
   remain local-only artifact concerns; this slice changes docs/skills only.
 
 Validation performed:
-- manual frontmatter/name check for
-  `.agents/skills/ai-video-studio-voxcpm-expression-workflow/SKILL.md`
+- `python3 /home/zzzxc/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/ai-video-studio-voxcpm-expression`
+  could not run because host Python lacks `yaml` / PyYAML.
+- `node -e "<frontmatter/name validation>"` passed for
+  `.agents/skills/ai-video-studio-voxcpm-expression/SKILL.md`.
+- `node -e "<agents/openai.yaml validation>"` passed for
+  `.agents/skills/ai-video-studio-voxcpm-expression/agents/openai.yaml`.
+- `rg` found no stale VoxCPM workflow-style skill references in README,
+  AGENTS, docs, `.agents/skills`, package files, src, or scripts.
+- `test ! -e <old VoxCPM skill directory>` confirmed the old skill directory
+  is absent.
+- `git diff --check -- <changed VoxCPM skill/docs paths>` passed.
+
+## Latest continuation — Agent Producer skill rename and evidence rules
+
+- Renamed the repo-local Agent Producer skill directory from
+  `.agents/skills/ai-video-studio-agent-producer-workflow/` to
+  `.agents/skills/ai-video-studio-agent-producer/`.
+- Updated the skill frontmatter name to `ai-video-studio-agent-producer` and
+  refreshed `agents/openai.yaml` so the default prompt invokes
+  `$ai-video-studio-agent-producer`.
+- Rewrote the skill body as direct producer instructions rather than a
+  workflow-labeled writeup. The skill now makes screenshot evidence handling a
+  concrete requirement: attempt real capture first; use a visible screenshot
+  only when it is real, readable, and claim-relevant; record failed capture
+  reasons outside the video frame; do not render source-card fallback visuals
+  or visible fallback/capture-failure wording when no captured screenshot is
+  available.
+- Tightened the skill around primitive/block inventory, TTS-owned timing,
+  source-backed scene review, no-overlap still checks, and focused smokes for
+  producer samples.
+- Synced active references in README, AGENTS, visual roadmap, iteration status,
+  handoff docs, and the existing producer design spec to the new skill path.
+
+Validation performed:
+- `node -e "<equivalent quick_validate frontmatter/name check>"` passed for
+  `.agents/skills/ai-video-studio-agent-producer/SKILL.md`.
 - `git diff --check`
 
 Validation note:
-- `python3 /home/zzzxc/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/ai-video-studio-voxcpm-expression-workflow`
-  could not run in the host Python because `yaml` is not installed.
+- Host `python3 /home/zzzxc/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/ai-video-studio-agent-producer`
+  could not run because host Python still lacks `yaml` / PyYAML. Docker `web`
+  does not mount `/home/zzzxc/.codex/...`, so the original script path is not
+  visible inside the container.
+
+## Latest continuation — AI Daily News Brief 2026-07-08 producer sample
+
+- Produced `AiDailyNewsBrief20260708`, a 16:9 Chinese Agent Producer news
+  video based on the user-provided 2026-07-08 AI news pack.
+- The story is organized as a 12-beat trend briefing: main thesis, model
+  release gates, GPT-5.6 model tiering, China H200/Zhipu access and financing,
+  agent infrastructure, coding-agent security, AI sovereignty/regulation,
+  capital stack, power-grid spillover, market capex risk, developer playbook,
+  and closing synthesis.
+- The sample lives under `src/remotion/AiDailyNewsBrief20260708/` with explicit
+  `types.ts`, `script.ts`, `data.ts`, generated audio metadata, and a
+  dedicated renderer registered in `src/remotion/Root.tsx`.
+- It reuses `StandaloneTimeline`, `StandaloneVoiceover`,
+  `StandaloneBottomCaption`, `EvidenceOverlayPanel`, `MetricCardGrid`,
+  `WorkflowMapBlock`, and `TimelineProgressBlock`; sample-local visuals add
+  foreground 3D content cards rather than background-only 3D.
+- Follow-up visual repair: the second `model-gate` beat and ninth
+  `power-grid` beat were rebuilt after still review found overlapping content.
+  `model-gate` now uses a two-column release-process information graphic with
+  3D content cards and does not display generated source-card fallback assets;
+  `power-grid` uses a dedicated chart-and-pathway information graphic. Both
+  beats now explicitly reuse primitives including `VideoPanel`, `Kicker`,
+  `CalloutGrid`, and `BarChart` instead of relying only on sample-local cards.
+- Sequence 2 screenshot follow-up: a real OpenAI page capture was attempted on
+  2026-07-09 through the local Playwright wrapper, but the browser landed on a
+  Cloudflare `Just a moment...` challenge page. The Reuters URL attempt failed
+  with `net::ERR_CONNECTION_CLOSED`. No captured screenshot asset is used for
+  `model-gate`; the frame intentionally avoids screenshot/source-card fallback
+  visuals and only presents the release-process analysis.
+- Source-backed beats use localized source-card fallback assets under
+  `public/generated/ai-daily-news-brief-2026-07-08/`. Real browser capture was
+  attempted first through the local Playwright wrapper; when capture fails or
+  is unreadable, the data records `source-card-fallback` reasons and does not
+  call those assets screenshots. Those fallback assets are not automatically
+  suitable for visible screenshot beats.
+- GPT-5.6 is framed carefully as reported broader rollout plus official
+  preview context. The sample explicitly avoids overstating government
+  approval and records the White House denial framing in `topic.factPolicy`.
+- Added `npm run generate:ai-daily-news-brief-2026-07-08` and
+  `npm run smoke:ai-daily-news-brief-2026-07-08`.
+- Rendered review stills:
+  `out/ai-daily-news-brief-2026-07-08-frame-45.png`,
+  `out/ai-daily-news-brief-2026-07-08-frame-620.png`,
+  `out/ai-daily-news-brief-2026-07-08-frame-2600.png`,
+  `out/ai-daily-news-brief-2026-07-08-frame-4000.png`, and
+  `out/ai-daily-news-brief-2026-07-08-frame-5520.png`.
+- Follow-up review stills for the repaired beats:
+  `out/ai-daily-news-brief-2026-07-08-frame-620.png` and
+  `out/ai-daily-news-brief-2026-07-08-frame-4060.png`.
+- Rendered mp4:
+  `out/ai-daily-news-brief-2026-07-08.mp4`; `ffprobe` reported `h264` video,
+  `aac` audio, duration `190.144000`, latest rendered size `28741588`.
+- TTS status: local generation currently used `local-silent-fallback`. VoxCPM
+  was unreachable at `127.0.0.1:8810`; F5-TTS is running in the compose bridge
+  network, but the current `web` container is host-networked with
+  `F5_TTS_BASE_URL=` and cannot resolve the bridge `f5-tts` service without a
+  runtime topology change or web restart.
+
+Validation performed:
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run generate:ai-daily-news-brief-2026-07-08'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:ai-daily-news-brief-2026-07-08'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:producer-sample-manifest'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit --pretty false --incremental false'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'`
+  passed with 0 errors and the two pre-existing warnings from ignored generated
+  files under `public/generated/agent-producer-uv/`.
+- Follow-up repair red/green:
+  `npm run smoke:ai-daily-news-brief-2026-07-08` first failed because the
+  renderer did not reuse existing primitives, then passed after the dedicated
+  `model-gate` and `power-grid` layouts were rebuilt.
+- Sequence 2 evidence red/green:
+  `npm run smoke:ai-daily-news-brief-2026-07-08` first failed with
+  `model-gate must not declare screenshot backdrop usage without a captured
+  screenshot asset`, then passed after `model-gate` stopped declaring or
+  rendering screenshot/source-card fallback visuals.
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts AiDailyNewsBrief20260708 /workspace/out/ai-daily-news-brief-2026-07-08-frame-45.png --frame=45 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts AiDailyNewsBrief20260708 /workspace/out/ai-daily-news-brief-2026-07-08-frame-620.png --frame=620 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts AiDailyNewsBrief20260708 /workspace/out/ai-daily-news-brief-2026-07-08-frame-2600.png --frame=2600 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts AiDailyNewsBrief20260708 /workspace/out/ai-daily-news-brief-2026-07-08-frame-4000.png --frame=4000 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts AiDailyNewsBrief20260708 /workspace/out/ai-daily-news-brief-2026-07-08-frame-4060.png --frame=4060 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts AiDailyNewsBrief20260708 /workspace/out/ai-daily-news-brief-2026-07-08-frame-5520.png --frame=5520 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion render src/remotion/index.ts AiDailyNewsBrief20260708 /workspace/out/ai-daily-news-brief-2026-07-08.mp4'`
+- `ffprobe -v error -show_entries stream=codec_type,codec_name -show_entries format=duration,size -of default=noprint_wrappers=1 out/ai-daily-news-brief-2026-07-08.mp4`
+- `ffmpeg -hide_banner -i out/ai-daily-news-brief-2026-07-08.mp4 -af volumedetect -f null /dev/null`
+
+Validation note:
+- `ffmpeg volumedetect` reported `mean_volume: -91.0 dB` and `max_volume:
+  -91.0 dB`, confirming the current mp4 uses silent fallback audio rather than
+  real narration.
 
 ## Latest continuation — VoxCPM clone Agent Producer default
 
@@ -43,7 +257,7 @@ Validation note:
   host-network Next topology required by the personal VoxCPM service while it
   binds host `127.0.0.1:8810`.
 - `.env.example`, local `.env`, README, provider docs, the Agent Producer
-  workflow skill, final goal, and F5 handoff are aligned around VoxCPM default
+  skill, final goal, and F5 handoff are aligned around VoxCPM default
   and F5 explicit fallback semantics. `.env` remains local-only and must not be
   committed.
 
@@ -303,7 +517,7 @@ Validation target:
   hold / return-to-context, and re-aligned zoom targets with the narrated
   claims: GitHub stars/forks, uv docs definition text, and release title/date.
 - Recorded this screenshot-evidence direction back into
-  `.agents/skills/ai-video-studio-agent-producer-workflow/SKILL.md` for future
+  `.agents/skills/ai-video-studio-agent-producer/SKILL.md` for future
   Agent Producer runs.
 - The readable result is now captured as the `Readable screenshot evidence
   lens` micro-workflow: name the claim, choose a screenshot where the claim is
@@ -381,9 +595,9 @@ Validation note:
 ## Latest continuation — Agent Producer Workflow v1 Component-Composition Correction
 
 - Added a repo-local skill for the higher-quality local production path:
-  `.agents/skills/ai-video-studio-agent-producer-workflow/`.
+  `.agents/skills/ai-video-studio-agent-producer/`.
 - Added the design note
-  `docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md` to
+  `docs/superpowers/specs/2026-07-01-agent-producer-design.md` to
   lock the decision that the Agent Producer workflow is a component-composed
   local video path, not a wrapper around the web prompt.
 - Corrected the previous wording that still made the workflow sound like an
@@ -411,14 +625,14 @@ Validation note:
 
 Validation performed:
 - manual frontmatter validation equivalent to `quick_validate.py` passed for
-  `.agents/skills/ai-video-studio-agent-producer-workflow/SKILL.md` and
+  `.agents/skills/ai-video-studio-agent-producer/SKILL.md` and
   `.agents/skills/remotion-best-practices/SKILL.md`
-- `rg -n --glob '!docs/ITERATION_STATUS.md' "\[TODO|TODO:" .agents/skills/ai-video-studio-agent-producer-workflow docs/superpowers/specs/2026-07-01-agent-producer-workflow-design.md README.md docs/VISUAL_RECIPE_ROADMAP.md AGENTS.md`
+- `rg -n --glob '!docs/ITERATION_STATUS.md' "\[TODO|TODO:" .agents/skills/ai-video-studio-agent-producer docs/superpowers/specs/2026-07-01-agent-producer-design.md README.md docs/VISUAL_RECIPE_ROADMAP.md AGENTS.md`
   returned no matches
 - `git diff --check`
 
 Validation note:
-- `python3 /home/zzzxc/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/ai-video-studio-agent-producer-workflow`
+- `python3 /home/zzzxc/.codex/skills/.system/skill-creator/scripts/quick_validate.py .agents/skills/ai-video-studio-agent-producer`
   could not run in the host Python environment because `yaml` / PyYAML is not
   installed.
 
