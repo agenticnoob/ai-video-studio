@@ -2,6 +2,260 @@ import type { ProducerSampleManifest } from "./manifest";
 
 export const producerSampleManifests = [
   {
+    compositionId: "AiConceptsForBeginners",
+    sampleName: "AiConceptsForBeginners",
+    slug: "ai-concepts-for-beginners",
+    contentFamily: "tutorial",
+    canvasProfile: "landscape-16x9",
+    localArtifactRoot: "public/generated/ai-concepts-for-beginners/",
+    ttsStatus: "generated-local",
+    reviewFrames: [
+      {
+        frame: 60,
+        label: "restaurant opening",
+        purpose: "Check the orbiting concept labels, main title hierarchy, and caption clearance.",
+      },
+      {
+        frame: 3999,
+        label: "context workbench",
+        purpose: "Check workbench density, context-window capacity bar, and readable labels.",
+      },
+      {
+        frame: 5235,
+        label: "retrieval conveyor",
+        purpose: "Check RAG flow direction, step hierarchy, and beginner readability.",
+      },
+      {
+        frame: 9019,
+        label: "agent loop",
+        purpose: "Check observe-plan-act-check loop focus and manager metaphor.",
+      },
+      {
+        frame: 12604,
+        label: "subagent delegation",
+        purpose: "Check main-agent delegation tree and bounded parallel assignments.",
+      },
+      {
+        frame: 14995,
+        label: "complete concept map",
+        purpose: "Check final five-category relationship map and closing caption clearance.",
+      },
+    ],
+    sourceFiles: [
+      {
+        path: "src/remotion/AiConceptsForBeginners/AiConceptsForBeginners.tsx",
+        kind: "renderer",
+      },
+      { path: "src/remotion/AiConceptsForBeginners/types.ts", kind: "types" },
+      { path: "src/remotion/AiConceptsForBeginners/script.ts", kind: "script" },
+      { path: "src/remotion/AiConceptsForBeginners/data.ts", kind: "data" },
+      {
+        path: "src/remotion/AiConceptsForBeginners/audio.generated.ts",
+        kind: "audio-metadata",
+      },
+      { path: "src/remotion/Root.tsx", kind: "root-registration" },
+      { path: "scripts/ai-concepts-for-beginners-smoke.mjs", kind: "smoke" },
+    ],
+    promotionCandidates: [
+      {
+        id: "concept-metaphor-system-map",
+        targetLayer: "recipe",
+        gateState: "stay-sample-local",
+        status: "sample-local",
+        productizationExposure: "none",
+        reason:
+          "The restaurant metaphor and final category map work for this AI beginner curriculum but need a second educational topic before becoming a generic recipe.",
+      },
+      {
+        id: "beginner-concept-workbench",
+        targetLayer: "block",
+        gateState: "stay-sample-local",
+        status: "sample-local",
+        productizationExposure: "none",
+        reason:
+          "The context workbench, MCP socket rail, and agent loop are useful local visual blocks but their props are still tailored to this script.",
+      },
+    ],
+    notes: [
+      "Generated VoxCPM clone audio, TTS summary, stills, and mp4 stay local-only under public/generated/ai-concepts-for-beginners/ and out/.",
+      "The narration explains eleven concepts in dependency-aware order and treats LangChain as one optional implementation framework.",
+      "The sample uses an AI restaurant metaphor and repo primitives before sample-local relationship diagrams.",
+      "This remains a dedicated Agent Producer composition and does not use the parked web prompt path.",
+    ],
+  },
+  {
+    compositionId: "AiDailyNewsBrief20260709",
+    sampleName: "AiDailyNewsBrief20260709",
+    slug: "ai-daily-news-brief-2026-07-09",
+    contentFamily: "trend-briefing",
+    canvasProfile: "landscape-16x9",
+    localArtifactRoot: "public/generated/ai-daily-news-brief-2026-07-09/",
+    ttsStatus: "generated-local",
+    reviewFrames: [
+      {
+        frame: 45,
+        label: "opening thesis",
+        purpose: "Check daily 2026-07-09 thesis, foreground 3D cards, and caption clearance.",
+      },
+      {
+        frame: 620,
+        label: "GPT-5.6 model tiers",
+        purpose: "Check Sol/Terra/Luna model-tier readability and caption clearance.",
+      },
+      {
+        frame: 1560,
+        label: "sovereign compute",
+        purpose: "Check Humain/Cohere workflow map density and 50MW framing.",
+      },
+      {
+        frame: 2500,
+        label: "grid equipment",
+        purpose: "Check 160-week equipment bottleneck chart and side-card spacing.",
+      },
+      {
+        frame: 3680,
+        label: "market repricing",
+        purpose: "Check Samsung/capital hard-asset repricing card readability.",
+      },
+      {
+        frame: 5200,
+        label: "developer playbook",
+        purpose: "Check model gateway, audit, cost, and fallback workflow readability.",
+      },
+    ],
+    sourceFiles: [
+      {
+        path: "src/remotion/AiDailyNewsBrief20260709/AiDailyNewsBrief20260709.tsx",
+        kind: "renderer",
+      },
+      { path: "src/remotion/AiDailyNewsBrief20260709/types.ts", kind: "types" },
+      { path: "src/remotion/AiDailyNewsBrief20260709/script.ts", kind: "script" },
+      { path: "src/remotion/AiDailyNewsBrief20260709/data.ts", kind: "data" },
+      {
+        path: "src/remotion/AiDailyNewsBrief20260709/audio.generated.ts",
+        kind: "audio-metadata",
+      },
+      { path: "src/remotion/Root.tsx", kind: "root-registration" },
+      { path: "scripts/ai-daily-news-brief-2026-07-09-smoke.mjs", kind: "smoke" },
+    ],
+    promotionCandidates: [
+      {
+        id: "daily-ai-news-card-3d",
+        targetLayer: "block",
+        gateState: "stay-sample-local",
+        status: "sample-local",
+        productizationExposure: "none",
+        reason:
+          "The foreground 3D news-card language now works across consecutive daily news samples; keep sample-local until another topic proves a stable reusable API.",
+      },
+      {
+        id: "ai-infrastructure-briefing-flow",
+        targetLayer: "recipe",
+        gateState: "stay-sample-local",
+        status: "sample-local",
+        productizationExposure: "none",
+        reason:
+          "The model-access to compute-power to capital-repricing story structure is useful but still specific to this AI infrastructure day.",
+      },
+    ],
+    notes: [
+      "Generated source cards, TTS audio, stills, and rendered mp4 stay local-only under public/generated/ai-daily-news-brief-2026-07-09/ and out/.",
+      "The video covers only the user-provided 2026-07-09 daily AI news pack, not the older 2026-06-17 to 2026-07-09 strategic recap.",
+      "Real source capture is handled with source-card fallback records outside the frame; generated source cards are not called screenshots.",
+      "3D is used for foreground content cards and transition plates rather than as a background-only scene.",
+      "This sample remains a dedicated Agent Producer composition and does not use the parked web prompt path.",
+    ],
+  },
+  {
+    compositionId: "AiNewsStrategicBrief20260709",
+    sampleName: "AiNewsStrategicBrief20260709",
+    slug: "ai-news-strategic-brief-2026-07-09",
+    contentFamily: "trend-briefing",
+    canvasProfile: "landscape-16x9",
+    localArtifactRoot: "public/generated/ai-news-strategic-brief-2026-07-09/",
+    ttsStatus: "generated-local",
+    reviewFrames: [
+      {
+        frame: 45,
+        label: "opening thesis",
+        purpose: "Check broad 23-day thesis, foreground 3D cards, and caption clearance.",
+      },
+      {
+        frame: 620,
+        label: "model access gate",
+        purpose: "Check access-control framing and no fallback/screenshot wording in-frame.",
+      },
+      {
+        frame: 1760,
+        label: "model matrix",
+        purpose: "Check flagship/daily/low-cost model tier readability and caption clearance.",
+      },
+      {
+        frame: 3300,
+        label: "coding security",
+        purpose:
+          "Check coding-agent security checklist readability and foreground 3D card spacing.",
+      },
+      {
+        frame: 4300,
+        label: "financial regulation",
+        purpose: "Check financial-agent risk framing and timeline readability.",
+      },
+      {
+        frame: 5500,
+        label: "power grid",
+        purpose: "Check electricity chart readability and side-card spacing.",
+      },
+      {
+        frame: 6200,
+        label: "market risk",
+        purpose: "Check AI capex/real-delivery risk framing and stacked-card spacing.",
+      },
+    ],
+    sourceFiles: [
+      {
+        path: "src/remotion/AiNewsStrategicBrief20260709/AiNewsStrategicBrief20260709.tsx",
+        kind: "renderer",
+      },
+      { path: "src/remotion/AiNewsStrategicBrief20260709/types.ts", kind: "types" },
+      { path: "src/remotion/AiNewsStrategicBrief20260709/script.ts", kind: "script" },
+      { path: "src/remotion/AiNewsStrategicBrief20260709/data.ts", kind: "data" },
+      {
+        path: "src/remotion/AiNewsStrategicBrief20260709/audio.generated.ts",
+        kind: "audio-metadata",
+      },
+      { path: "src/remotion/Root.tsx", kind: "root-registration" },
+      { path: "scripts/ai-news-strategic-brief-2026-07-09-smoke.mjs", kind: "smoke" },
+    ],
+    promotionCandidates: [
+      {
+        id: "strategic-news-card-3d",
+        targetLayer: "block",
+        gateState: "stay-sample-local",
+        status: "sample-local",
+        productizationExposure: "none",
+        reason:
+          "The 3D content-card stack is effective for long strategic briefings; keep sample-local until another recap reuses it.",
+      },
+      {
+        id: "multi-week-ai-trend-briefing",
+        targetLayer: "recipe",
+        gateState: "stay-sample-local",
+        status: "sample-local",
+        productizationExposure: "none",
+        reason:
+          "The compressed multi-week trend structure needs another topic before promotion into a planner-visible recipe.",
+      },
+    ],
+    notes: [
+      "Generated source cards, TTS audio, stills, and rendered mp4 stay local-only under public/generated/ai-news-strategic-brief-2026-07-09/ and out/.",
+      "The video compresses the user-provided 2026-06-17 to 2026-07-09 news stream into structural trends rather than a day-by-day bulletin.",
+      "Real browser capture was attempted with the local Playwright wrapper, but it stalled before producing usable screenshots; visible evidence uses information graphics and localized source-card fallback assets.",
+      "3D is used for foreground content cards and transition plates rather than as a background-only scene.",
+      "This sample remains a dedicated Agent Producer composition and does not use the parked web prompt path.",
+    ],
+  },
+  {
     compositionId: "AiDailyNewsBrief20260708",
     sampleName: "AiDailyNewsBrief20260708",
     slug: "ai-daily-news-brief-2026-07-08",
@@ -201,8 +455,7 @@ export const producerSampleManifests = [
         gateState: "promote-to-block",
         status: "promoted",
         productizationExposure: "agent-producer-internal",
-        reason:
-          "Shared in Producer Sample OS as the Evidence Lens full-frame screenshot backdrop.",
+        reason: "Shared in Producer Sample OS as the Evidence Lens full-frame screenshot backdrop.",
       },
       {
         id: "evidence-overlay-panel",

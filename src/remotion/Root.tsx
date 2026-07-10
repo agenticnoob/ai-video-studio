@@ -64,6 +64,33 @@ import {
   getAiDailyNewsBrief20260708Duration,
 } from "./AiDailyNewsBrief20260708";
 import {
+  AI_CONCEPTS_FOR_BEGINNERS_COMPOSITION_ID,
+  AI_CONCEPTS_FOR_BEGINNERS_FPS,
+  AI_CONCEPTS_FOR_BEGINNERS_HEIGHT,
+  AI_CONCEPTS_FOR_BEGINNERS_WIDTH,
+  AiConceptsForBeginnersVideo,
+  aiConceptsForBeginnersData,
+  getAiConceptsForBeginnersDuration,
+} from "./AiConceptsForBeginners";
+import {
+  AI_DAILY_NEWS_BRIEF_20260709_COMPOSITION_ID,
+  AI_DAILY_NEWS_BRIEF_20260709_FPS,
+  AI_DAILY_NEWS_BRIEF_20260709_HEIGHT,
+  AI_DAILY_NEWS_BRIEF_20260709_WIDTH,
+  AiDailyNewsBrief20260709Video,
+  aiDailyNewsBrief20260709Data,
+  getAiDailyNewsBrief20260709Duration,
+} from "./AiDailyNewsBrief20260709";
+import {
+  AI_NEWS_STRATEGIC_BRIEF_20260709_COMPOSITION_ID,
+  AI_NEWS_STRATEGIC_BRIEF_20260709_FPS,
+  AI_NEWS_STRATEGIC_BRIEF_20260709_HEIGHT,
+  AI_NEWS_STRATEGIC_BRIEF_20260709_WIDTH,
+  AiNewsStrategicBrief20260709Video,
+  aiNewsStrategicBrief20260709Data,
+  getAiNewsStrategicBrief20260709Duration,
+} from "./AiNewsStrategicBrief20260709";
+import {
   AI_NEWS_COMPOSITION_ID,
   AiNewsVideo,
   VIDEO_DURATION_IN_FRAMES,
@@ -205,6 +232,30 @@ export const RemotionRoot: FC = () => {
         fps={AI_DAILY_NEWS_BRIEF_20260708_FPS}
         width={AI_DAILY_NEWS_BRIEF_20260708_WIDTH}
         height={AI_DAILY_NEWS_BRIEF_20260708_HEIGHT}
+      />
+      <Composition
+        id={AI_CONCEPTS_FOR_BEGINNERS_COMPOSITION_ID}
+        component={AiConceptsForBeginnersVideo}
+        durationInFrames={getAiConceptsForBeginnersDuration(aiConceptsForBeginnersData)}
+        fps={AI_CONCEPTS_FOR_BEGINNERS_FPS}
+        width={AI_CONCEPTS_FOR_BEGINNERS_WIDTH}
+        height={AI_CONCEPTS_FOR_BEGINNERS_HEIGHT}
+      />
+      <Composition
+        id={AI_DAILY_NEWS_BRIEF_20260709_COMPOSITION_ID}
+        component={AiDailyNewsBrief20260709Video}
+        durationInFrames={getAiDailyNewsBrief20260709Duration(aiDailyNewsBrief20260709Data)}
+        fps={AI_DAILY_NEWS_BRIEF_20260709_FPS}
+        width={AI_DAILY_NEWS_BRIEF_20260709_WIDTH}
+        height={AI_DAILY_NEWS_BRIEF_20260709_HEIGHT}
+      />
+      <Composition
+        id={AI_NEWS_STRATEGIC_BRIEF_20260709_COMPOSITION_ID}
+        component={AiNewsStrategicBrief20260709Video}
+        durationInFrames={getAiNewsStrategicBrief20260709Duration(aiNewsStrategicBrief20260709Data)}
+        fps={AI_NEWS_STRATEGIC_BRIEF_20260709_FPS}
+        width={AI_NEWS_STRATEGIC_BRIEF_20260709_WIDTH}
+        height={AI_NEWS_STRATEGIC_BRIEF_20260709_HEIGHT}
       />
       <Composition
         id={AI_NEWS_COMPOSITION_ID}

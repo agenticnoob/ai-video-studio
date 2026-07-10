@@ -27,11 +27,13 @@ Maintained Agent Producer samples are described by
 family, canvas profile, local artifact root, review frames, TTS status,
 committed source files, and promotion candidates.
 
-Current maintained samples include `AiDailyNewsBrief20260708`,
-`OpenAiHardwareNewsBrief`, `UvOpenSourceBrief`, `WorldCupBettingAnalysis`, and
-`PixelRAGChineseStandalonePreview`. News/trend-briefing samples should keep
-source-backed claims honest: use real screenshots when available, otherwise
-record localized source-card fallback reasons in sample data.
+Current maintained samples include `AiConceptsForBeginners`,
+`AiDailyNewsBrief20260709`, `AiNewsStrategicBrief20260709`,
+`AiDailyNewsBrief20260708`, `OpenAiHardwareNewsBrief`, `UvOpenSourceBrief`,
+`WorldCupBettingAnalysis`, and `PixelRAGChineseStandalonePreview`.
+News/trend-briefing samples should keep source-backed claims honest: use real
+screenshots when available, otherwise record localized source-card fallback
+reasons in sample data.
 
 Promotion candidates now use the Phase D gate in
 `docs/PRODUCER_PROMOTION_GATE.md`: stay sample-local, promote to primitive,
@@ -44,6 +46,13 @@ Use `src/remotion/producer-samples/scaffold/` as the starting convention, then
 compose the real video from existing primitives, recipe blocks,
 `src/remotion/standalone-video/` helpers, local data, and sample-specific
 scenes.
+
+`AiConceptsForBeginners` is the maintained long-form tutorial example. It uses
+an AI restaurant metaphor to explain LLM, Prompt, Context, RAG, Function
+Calling, MCP, Agent, Workflow, Skill, Subagent, and LangChain through a
+dedicated primitive-first Remotion composition with VoxCPM-owned timing.
+Its ready-to-publish title, descriptions, chapter timestamps, cover copy, and
+topic tags live in `docs/publishing/AI_CONCEPTS_FOR_BEGINNERS_COPY.md`.
 
 Generated screenshots, generated narration audio, and rendered videos stay
 local-only under `public/generated/<slug>/` or `out/` unless the user explicitly

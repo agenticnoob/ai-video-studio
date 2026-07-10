@@ -51,7 +51,8 @@ Keep the Agent Producer model first:
 - sample-owned source data, narration beats, and generated audio metadata
 - real screenshot/source capture before generated source-card fallback; any
   fallback must record why capture failed or was unreadable
-- news/trend-briefing samples such as `AiDailyNewsBrief20260708` may use
+- news/trend-briefing samples such as `AiDailyNewsBrief20260709`,
+  `AiNewsStrategicBrief20260709`, and `AiDailyNewsBrief20260708` may use
   foreground 3D content cards and transition plates when they clarify the
   story, but should not treat 3D as a background-only decorative layer
 - local-only screenshots, audio, and renders unless explicitly requested
@@ -866,20 +867,24 @@ Acceptance:
 - productized recipes/templates require evidence from finished samples
 - web/editor recipe work remains bounded to registered template contracts
 
-### Phase E: OpenAI News Producer Sample And Evidence Capture Hardening
+### Phase E: News Producer Samples And Evidence Capture Hardening
 
-Status: implemented for `OpenAiHardwareNewsBrief` and the Agent Producer docs.
+Status: implemented for the maintained news samples and Agent Producer docs.
 
-Goal: add a maintained trend-briefing Agent Producer sample and make
+Goal: add maintained trend-briefing Agent Producer samples and make
 source-backed evidence handling stricter for future runs.
 
 Deliver:
 
-- dedicated `OpenAiHardwareNewsBrief` Remotion composition
-- local F5-TTS narration metadata and local-only generated source-card assets
-- producer sample manifest entry with review frames and promotion candidates
-- sample smoke that checks Chinese source-card copy, source-card fallback
-  reasons, scene duration padding, and duration metadata alignment
+- dedicated `OpenAiHardwareNewsBrief`, `AiDailyNewsBrief20260708`,
+  `AiNewsStrategicBrief20260709`, and `AiDailyNewsBrief20260709` Remotion
+  compositions
+- local F5-TTS or VoxCPM narration metadata and local-only generated
+  source-card assets
+- producer sample manifest entries with review frames and promotion candidates
+- focused sample smokes that check Chinese source-card copy, source-card
+  fallback reasons, scene duration padding, duration metadata alignment, and
+  composition-specific facts
 - docs/skill rule that real screenshot/source capture must be attempted before
   generated source-card fallback
 
@@ -888,6 +893,42 @@ Non-goals:
 - no automatic screenshot repair loop
 - no broad media library
 - no productized recipe/template exposure for the news source-card treatment
+
+### Phase F: Beginner Concept Explainer Sample
+
+Status: implemented as `AiConceptsForBeginners`.
+
+Goal: prove that a longer educational Agent Producer video can explain a
+dependency graph of abstract concepts through one coherent metaphor while
+remaining visually varied and primitive-first.
+
+Delivered:
+
+- 13-scene, 8-minute-42-second Chinese tutorial composition
+- AI restaurant metaphor connecting brain, information, tools, decisions, and
+  organization
+- dedicated visual treatments for context workbench, RAG flow, function-call
+  ticket, MCP connector rail, agent loop, workflow rail, skill manuals,
+  subagent delegation, and final system map
+- real VoxCPM voice-clone narration with measured caption timing and local-only
+  audio/render artifacts
+- focused smoke coverage for concept order, duration range, real TTS, runtime
+  reuse, primitive reuse, registration, and frame-driven motion
+
+Promotion notes:
+
+- keep `concept-metaphor-system-map` sample-local until a second educational
+  topic proves a stable generic recipe
+- keep the context workbench, MCP connector rail, and agent loop sample-local
+  blocks until their APIs are reused outside this curriculum
+- do not promote the restaurant metaphor itself into a provider-visible recipe
+
+Non-goals:
+
+- no general course-authoring product surface
+- no arbitrary diagram DSL
+- no LangChain-specific product dependency
+- no generated `VideoProject` or web prompt path
 
 ## 7. Validation
 

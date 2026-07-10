@@ -1,6 +1,137 @@
 # Iteration Status
 
-Last updated: Skill alignment for Agent Producer, VoxCPM, and Remotion
+Last updated: AiConceptsForBeginners Agent Producer video
+
+## Latest continuation — AiConceptsForBeginners Agent Producer video
+
+- Produced `AiConceptsForBeginners`, a 13-scene, 16:9 Chinese beginner
+  explainer covering `LLM`, `Prompt`, `Context`, `RAG`, `Function Calling`,
+  `MCP`, `Agent`, `Workflow`, `Skill`, `Subagent`, and `LangChain` in
+  dependency-aware order.
+- Used one continuous “AI restaurant” metaphor and three acts: a brain that can
+  talk, a brain that can retrieve and use tools, and a system that can organize
+  work. `LangChain` is framed as one optional implementation toolbox rather
+  than a synonym for Agent or RAG.
+- Kept the implementation on the dedicated Agent Producer path under
+  `src/remotion/AiConceptsForBeginners/`. The renderer reuses
+  `StandaloneTimeline`, `StandaloneVoiceover`, `StandaloneBottomCaption`,
+  `GradientShiftBackground`, `GridPulse`, `VideoPanel`, `Kicker`,
+  `CalloutGrid`, and `useEntranceProgress` before adding sample-local concept
+  diagrams.
+- Generated 13 real VoxCPM voice-clone tracks with
+  `voices/f5-tts/noobli/ref.m4a` and `voices/f5-tts/noobli/ref.txt`.
+  `public/generated/ai-concepts-for-beginners/tts-summary.json` reports
+  `usedFallback: false`. Playback and caption timing use `1.2x`, reducing the
+  measured narration from `624.9` seconds to a final `521.96` seconds.
+- Fixed the Remotion Studio error path exposed by the new sample: generated
+  audio metadata is no longer empty, caption scaling uses the real
+  `durationInFrames` cue contract, and the renderer no longer has duplicate
+  imports. A Remotion bundle and still render from the same `Root.tsx` path
+  completed successfully.
+- Reviewed representative frames for the opening, RAG flow, Agent loop,
+  Subagent delegation tree, and final relationship map. Replaced the
+  unsupported manager emoji with a render-safe text badge and shortened the
+  Subagent headline to avoid an orphaned final character.
+- Rendered final mp4:
+  `out/ai-concepts-for-beginners/ai-concepts-for-beginners.mp4`. `ffprobe`
+  reports H.264 video, AAC stereo audio, 1920x1080 at 30 fps, duration
+  `521.962667` seconds, and size `157587043` bytes.
+- Added ready-to-publish title options, long and short descriptions, cover
+  copy, chapter timestamps, pinned-comment copy, and platform-specific topic
+  tags in `docs/publishing/AI_CONCEPTS_FOR_BEGINNERS_COPY.md`.
+
+Validation performed:
+- `docker compose run --rm web bash -lc 'npm run smoke:ai-concepts-for-beginners && npx tsc --noEmit --pretty false'`
+- focused ESLint for the sample, generator, smoke, Root registration, and
+  producer manifest
+- positive `ffprobe` duration checks for all 13 generated WAV files
+- `ffmpeg silencedetect=noise=-45dB:d=1.2` on the opening and closing tracks;
+  no abnormal long silence was reported
+- representative Remotion still renders at frames `60`, `5235`, `9019`,
+  `12604`, and `14995`
+- final `npx remotion render` plus `ffprobe` media inspection
+- `git diff --check`
+
+## Latest continuation — AiDailyNewsBrief20260709 Agent Producer video
+
+- Produced `AiDailyNewsBrief20260709`, a 16:9 Chinese Agent Producer video
+  from the user-provided 2026-07-09 AI daily news pack. The sample is a
+  12-scene daily briefing covering GPT-5.6 controlled release, Meta Iris,
+  Humain/Cohere sovereign compute, Alberta data-center power, grid-equipment
+  bottlenecks, Nvidia regulation, Samsung memory, China model-access risk,
+  capital repricing, and the developer playbook.
+- Kept the implementation on the dedicated Remotion composition path:
+  `src/remotion/AiDailyNewsBrief20260709/` owns the script, data, scene
+  renderer, generated audio metadata, and source-card fallback notes. The
+  parked `VideoProject` / web prompt path was not used.
+- Generated real VoxCPM voice-clone narration with
+  `voices/f5-tts/noobli/ref.m4a` and `voices/f5-tts/noobli/ref.txt`.
+  `tts-summary.json` reports `usedFallback: false`; all 12 tracks in
+  `audio.generated.ts` use provider `voxcpm`.
+- Used localized source-card / information-card assets for the news sources.
+  Real source capture was considered first, but this sample does not label
+  the fallback cards as screenshots.
+- Used foreground 3D content cards, tilted source cards, and 3D transition
+  plates rather than background-only 3D. Review stills were rendered at
+  frames `45`, `620`, `1560`, `2500`, `2975`, `3680`, `4331`, `5504`,
+  `6173`, `6878`, and `7700`; visual inspection found the sampled frames
+  readable with subtitles in the bottom safe area.
+- Rendered final mp4:
+  `out/ai-daily-news-brief-2026-07-09.mp4`. `ffprobe` reports H.264 video,
+  AAC audio, 1920x1080 at 30 fps, duration `263.786667` seconds, and size
+  `30715755` bytes. `ffmpeg volumedetect` reports `mean_volume: -25.2 dB`
+  and `max_volume: -6.9 dB`.
+
+Validation performed:
+- `docker compose -f docker-compose.yml -f docker-compose.voxcpm.yml run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; NEXT_ORIGIN=http://127.0.0.1:3000 TTS_PROVIDER=voxcpm VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810 AI_DAILY_NEWS_BRIEF_20260709_VOICE_REFERENCE_AUDIO=voices/f5-tts/noobli/ref.m4a AI_DAILY_NEWS_BRIEF_20260709_VOICE_REFERENCE_TEXT=voices/f5-tts/noobli/ref.txt npm run generate:ai-daily-news-brief-2026-07-09'`
+  completed with `fallback=false`.
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:ai-daily-news-brief-2026-07-09'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:producer-sample-manifest'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit --pretty false --incremental false'`
+- `docker compose run --rm web bash -lc 'npx remotion render src/remotion/index.ts AiDailyNewsBrief20260709 /workspace/out/ai-daily-news-brief-2026-07-09.mp4'`
+- `ffprobe -v error -show_entries format=duration,size -show_entries stream=index,codec_type,codec_name,width,height,r_frame_rate -of default=noprint_wrappers=1 out/ai-daily-news-brief-2026-07-09.mp4`
+- `ffmpeg -hide_banner -i out/ai-daily-news-brief-2026-07-09.mp4 -af volumedetect -f null /dev/null`
+
+## Latest continuation — AiNewsStrategicBrief20260709 Agent Producer video
+
+- Produced `AiNewsStrategicBrief20260709`, a 16:9 Chinese Agent Producer video
+  from the user-provided 2026-06-17 to 2026-07-09 AI news stream. The sample
+  compresses the daily bulletins into a 12-scene strategic briefing about model
+  access control, agent safety, sovereign AI, compute finance, data-center
+  power, market repricing, and developer infrastructure implications.
+- Kept the implementation on the dedicated Remotion composition path:
+  `src/remotion/AiNewsStrategicBrief20260709/` owns the script, data contract,
+  scene renderer, generated audio metadata, and cautious fact-policy notes. The
+  old `VideoProject` / web prompt path remains parked.
+- Generated real VoxCPM voice-clone narration with
+  `voices/f5-tts/noobli/ref.m4a` and `voices/f5-tts/noobli/ref.txt`.
+  `tts-summary.json` reports `usedFallback: false`; all 12 tracks in
+  `audio.generated.ts` use provider `voxcpm`.
+- Attempted real browser/source capture first with the local Playwright wrapper,
+  but the wrapper stalled before producing usable screenshots. The sample
+  records that reason in data and uses localized source-card / information-card
+  assets without labeling them as screenshots in the video.
+- Used foreground 3D content cards and transition plates rather than
+  background-only 3D. Review stills were rendered at frames `45`, `620`,
+  `1760`, `3300`, `4300`, `5500`, and `6200`; visual inspection found the
+  sampled frames readable with subtitles in the bottom safe area.
+- Rendered final mp4:
+  `out/ai-news-strategic-brief-2026-07-09.mp4`. `ffprobe` reports H.264 video,
+  AAC audio, 1920x1080 at 30 fps, duration `273.258667` seconds, and size
+  `33299310` bytes. `ffmpeg volumedetect` reports `mean_volume: -25.3 dB` and
+  `max_volume: -5.7 dB`.
+
+Validation performed:
+- `docker compose -f docker-compose.yml -f docker-compose.voxcpm.yml run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; NEXT_ORIGIN=http://127.0.0.1:3000 TTS_PROVIDER=voxcpm VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810 AI_NEWS_STRATEGIC_BRIEF_VOICE_REFERENCE_AUDIO=voices/f5-tts/noobli/ref.m4a AI_NEWS_STRATEGIC_BRIEF_VOICE_REFERENCE_TEXT=voices/f5-tts/noobli/ref.txt npm run generate:ai-news-strategic-brief-2026-07-09'`
+  completed with `fallback=false`.
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:ai-news-strategic-brief-2026-07-09'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:producer-sample-manifest'`
+- `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit --pretty false --incremental false'`
+- `docker compose run --rm web bash -lc 'mkdir -p /workspace/out/ai-news-strategic-brief-2026-07-09-stills && npx remotion still src/remotion/index.ts AiNewsStrategicBrief20260709 /workspace/out/ai-news-strategic-brief-2026-07-09-stills/frame-00045.png --frame=45 --scale=0.5 && npx remotion still src/remotion/index.ts AiNewsStrategicBrief20260709 /workspace/out/ai-news-strategic-brief-2026-07-09-stills/frame-00620.png --frame=620 --scale=0.5 && npx remotion still src/remotion/index.ts AiNewsStrategicBrief20260709 /workspace/out/ai-news-strategic-brief-2026-07-09-stills/frame-01760.png --frame=1760 --scale=0.5 && npx remotion still src/remotion/index.ts AiNewsStrategicBrief20260709 /workspace/out/ai-news-strategic-brief-2026-07-09-stills/frame-03300.png --frame=3300 --scale=0.5 && npx remotion still src/remotion/index.ts AiNewsStrategicBrief20260709 /workspace/out/ai-news-strategic-brief-2026-07-09-stills/frame-04300.png --frame=4300 --scale=0.5 && npx remotion still src/remotion/index.ts AiNewsStrategicBrief20260709 /workspace/out/ai-news-strategic-brief-2026-07-09-stills/frame-06200.png --frame=6200 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts AiNewsStrategicBrief20260709 /workspace/out/ai-news-strategic-brief-2026-07-09-stills/frame-05500.png --frame=5500 --scale=0.5'`
+- `docker compose run --rm web bash -lc 'npx remotion render src/remotion/index.ts AiNewsStrategicBrief20260709 /workspace/out/ai-news-strategic-brief-2026-07-09.mp4'`
+- `ffprobe -v error -show_entries format=duration,size -show_entries stream=index,codec_type,codec_name,width,height,r_frame_rate -of default=noprint_wrappers=1 out/ai-news-strategic-brief-2026-07-09.mp4`
+- `ffmpeg -hide_banner -i out/ai-news-strategic-brief-2026-07-09.mp4 -af volumedetect -f null /dev/null`
 
 ## Latest continuation — Skill alignment for Agent Producer, VoxCPM, and Remotion
 

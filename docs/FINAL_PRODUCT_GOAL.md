@@ -225,6 +225,11 @@ Agent Producer deliverable.
 
 Current references:
 
+- `src/remotion/AiConceptsForBeginners/`
+- `src/remotion/AiDailyNewsBrief20260709/`
+- `src/remotion/AiNewsStrategicBrief20260709/`
+- `src/remotion/AiDailyNewsBrief20260708/`
+- `src/remotion/OpenAiHardwareNewsBrief/`
 - `src/remotion/UvOpenSourceBrief/`
 - `src/remotion/WorldCupBettingAnalysis/`
 - `src/remotion/PixelRAGChineseStandalone/`
@@ -347,20 +352,24 @@ Non-goals:
 - no multi-template-per-segment orchestration
 - no primitive prop exposure to providers
 
-### Phase E: OpenAI News Producer Sample And Evidence Capture Hardening
+### Phase E: News Producer Samples And Evidence Capture Hardening
 
-Status: implemented for the current news sample and Agent Producer docs.
+Status: implemented for the maintained news samples and Agent Producer docs.
 
-Goal: produce a maintained Chinese trend-briefing sample while closing the
+Goal: produce maintained Chinese trend-briefing samples while closing the
 process gap that allowed generated source-card fallback assets to be treated
 like screenshots.
 
 Deliver:
 
-- `OpenAiHardwareNewsBrief`, a standalone 16:9 Agent Producer composition
-- generated local F5-TTS narration metadata and local-only source-card assets
+- `OpenAiHardwareNewsBrief`, `AiDailyNewsBrief20260708`,
+  `AiNewsStrategicBrief20260709`, and `AiDailyNewsBrief20260709` as standalone
+  16:9 Agent Producer compositions
+- generated local F5-TTS or VoxCPM narration metadata and local-only
+  source-card assets
 - smoke coverage for Chinese source-card copy, no long post-voiceover silence,
-  evidence fallback reasons, and duration metadata alignment
+  evidence fallback reasons, duration metadata alignment, and producer sample
+  manifest registration
 - Agent Producer docs that require real screenshot/source capture before source-card
   fallback
 
@@ -369,6 +378,32 @@ Non-goals:
 - no automatic screenshot repair
 - no broad media ingestion system
 - no planner-visible template or recipe exposure for the news source cards
+
+### Phase F: Long-Form Beginner Concept Explainer
+
+Status: implemented as `AiConceptsForBeginners`.
+
+Goal: prove that Agent Producer can sustain a longer educational narrative
+without falling back to a sequence of generic title cards.
+
+Deliver:
+
+- a dedicated 16:9 composition covering eleven AI concepts in prerequisite
+  order
+- one coherent AI restaurant metaphor across brain, information, tools,
+  decisions, and organization
+- real VoxCPM clone narration with measured caption timing
+- primitive-first scenes plus sample-local context, retrieval, tool, agent,
+  workflow, skill, delegation, and system-map diagrams
+- representative still review, final mp4 inspection, focused smoke coverage,
+  and ready-to-publish title/description/tag copy
+
+Non-goals:
+
+- no general course-authoring product surface
+- no arbitrary provider-generated diagram language
+- no LangChain product dependency
+- no routing through the parked `VideoProject` prompt path
 
 ## 6. Validation Expectations
 
