@@ -22,7 +22,7 @@ Skill Stack:
 - Load `.agents/skills/remotion-best-practices/` before editing Remotion code;
   load `rules/video-layout.md` for dense scenes, `rules/subtitles.md` for
   caption display, and `rules/silence-detection.md` when inspecting audio gaps.
-- Load `.agents/skills/ai-video-studio-voxcpm-expression/` only when VoxCPM
+- Load `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md` only when VoxCPM
   narration, voice clone text, control instructions, or delivery-state tags are
   involved.
 
@@ -46,7 +46,7 @@ Skill Stack:
    `rules/video-layout.md` before text-heavy scene design; load caption/audio
    rules when subtitles, voiceover timing, silence, or media duration matter.
 5. If VoxCPM narration or voice clone is used, load
-   `.agents/skills/ai-video-studio-voxcpm-expression/` before final
+   `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md` before final
    TTS text or control instructions.
 
 ## Visual Construction Rule
