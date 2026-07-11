@@ -1,6 +1,32 @@
 # Iteration Status
 
-Last updated: AiConceptsForBeginners Agent Producer video
+Last updated: Agent Producer fixed production tools
+
+## Latest continuation — Agent Producer fixed production tools
+
+- Added provider-neutral future-sample audio tooling under
+  `scripts/lib/producer-audio/` with separate F5 and VoxCPM request-plan
+  adapters, `/api/tts` request normalization, display-caption cleanup,
+  deterministic audio metadata, duration constant updates, TTS summaries,
+  explicit fallback reporting, and dependency-injected file writes.
+- Added `npm run producer:validate -- --module <validation-module>` for
+  mechanical provider/audio/caption/duration/registration/local-only checks.
+- Added `npm run producer:stills -- --composition <composition-id>` for
+  manifest-driven sequential Remotion review frames plus
+  `review-summary.json`; `--dry-run` prints deterministic commands.
+- Added isolated fixtures and focused smokes. No completed sample was migrated,
+  regenerated, reformatted, or used as a writable test fixture.
+- Added `VOXCPM_TTS_RETRY_BADCASE`, default `true`, and forwards
+  `retry_badcase` to plain and clone requests.
+- Updated VoxCPM guidance to distinguish official `voice-design`,
+  `controllable-clone`, and `high-fidelity-clone` behavior from the current
+  repo `/api/tts` adapter. Punctuation splitting, PCM silence trimming, WAV
+  concatenation, and duration-derived captions are repo behavior, not upstream
+  timestamp capability.
+- This slice promotes no visual recipe/template and does not change the
+  dedicated Remotion composition path. Research, facts, narration design,
+  visual metaphor, scene/motion design, real visual review, creative revision,
+  and promotion judgment remain Agent-owned.
 
 ## Latest continuation — AiConceptsForBeginners Agent Producer video
 

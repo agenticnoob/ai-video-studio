@@ -62,6 +62,9 @@ scripts for local F5/TTS probes live under `scripts/f5-tts/`.
 | Agent producer skill | `.agents/skills/ai-video-studio-agent-producer/`, `docs/superpowers/specs/2026-07-01-agent-producer-design.md` | Local research/assets/TTS/primitives/blocks/runtime/stills loop for dedicated videos. |
 | Remotion guidance skill | `.agents/skills/remotion-best-practices/` | Frame-driven Remotion, layout, subtitles, audio, silence detection, and render rules. |
 | VoxCPM expression guidance | `.agents/skills/ai-video-studio-voxcpm-expression/`, `docs/providers/voxcpm.md` | VoxCPM control instructions, expressive state, punctuation-aware narration, silence checks, and sparse non-language tags for Agent Producer narration/voice clone. |
+| Fixed producer audio tools | `scripts/lib/producer-audio/` | Provider-neutral orchestration with separate F5/VoxCPM request-plan adapters, caption cleanup, measured duration, metadata, constants, summaries, and fallback reporting. |
+| Producer mechanical validation | `scripts/lib/producer-validation.ts`, `scripts/validate-producer-sample.mjs` | Provider/audio/caption/duration/registration/local-only checks for future samples. |
+| Producer review stills | `scripts/lib/producer-review-frames.ts`, `scripts/render-producer-review-frames.mjs` | Manifest-driven review-frame planning and sequential Remotion still rendering. |
 | Standalone sample references | `src/remotion/standalone-samples/`, `public/standalone-samples/audio/` | Reference-only compositions and static audio. |
 | F5 runtime service | `services/f5-tts/` | Contract-smoke and real-GPU service. |
 
@@ -103,6 +106,11 @@ scripts for local F5/TTS probes live under `scripts/f5-tts/`.
   start from primitives/blocks/standalone-video runtime helpers, compose a
   dedicated Remotion video by default, and promote recipes/templates only after
   reuse is proven. Do not route this default back through the web prompt.
+- For future samples, use `scripts/lib/producer-audio/`,
+  `npm run producer:validate -- --module <validation-module>`, and
+  `npm run producer:stills -- --composition <composition-id>` for fixed
+  production operations. Existing finished samples are frozen read-only
+  references and must not be migrated or regenerated to adopt these tools.
 - When Agent Producer uses VoxCPM for narration or voice clone, load the
   VoxCPM expression skill before final TTS text. Use control instructions for
   delivery state, punctuation-aware phrasing, and sparse English bracket tags
@@ -143,6 +151,12 @@ docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm
 docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'
 docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit'
 docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'
+
+npm run smoke:producer-audio-tools
+npm run smoke:producer-validation
+npm run smoke:producer-review-frames
+npm run producer:validate -- --module <validation-module>
+npm run producer:stills -- --composition <composition-id>
 
 bash scripts/dev.sh
 bash scripts/studio.sh

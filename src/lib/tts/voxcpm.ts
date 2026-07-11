@@ -54,6 +54,7 @@ const callVoxcpmTts = async ({
     inference_timesteps: config.inferenceTimesteps,
     normalize: config.normalize,
     denoise: config.denoise,
+    retry_badcase: config.retryBadcase,
     save: config.save,
     filename_prefix: filenamePrefix,
   };
@@ -329,6 +330,7 @@ const callVoxcpmClone = async ({
   form.set("inference_timesteps", String(config.inferenceTimesteps));
   form.set("normalize", String(config.normalize));
   form.set("denoise", String(config.denoise));
+  form.set("retry_badcase", String(config.retryBadcase));
   form.set("save", String(config.save));
   form.set("filename_prefix", filenamePrefix);
 

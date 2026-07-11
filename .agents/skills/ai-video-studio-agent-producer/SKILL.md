@@ -251,3 +251,21 @@ End producer work with:
 - stills or render artifacts checked
 - validation commands and results
 - reusable pieces worth promoting later
+
+## Fixed Production Tools
+
+Use shared tools for mechanical operations in every future sample. **existing finished samples are read-only references**: do not migrate, regenerate,
+format, or modify their code, scripts, smokes, narration, audio, captions,
+stills, or MP4.
+
+- Audio orchestration and provider adapters: `scripts/lib/producer-audio/`
+- Mechanical sample validation:
+  `npm run producer:validate -- --module <validation-module>`
+- Manifest-driven review stills:
+  `npm run producer:stills -- --composition <composition-id>`
+
+The Agent still owns research, narration structure, visual metaphor, scene
+composition, motion design, actual still/MP4 review, creative revision, and
+promotion judgment. The tools own TTS requests/errors, caption cleanup,
+measured duration, metadata/constants/summaries, artifact checks, provider and
+fallback checks, and review-frame command execution.

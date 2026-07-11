@@ -68,6 +68,7 @@ const assertFormDataRequest = (request) => {
     "denoise",
     "save",
     "filename_prefix",
+    "retry_badcase",
   ];
 
   for (const field of requiredTextFields) {
@@ -106,7 +107,23 @@ const run = async () => {
   };
 
   try {
+    const { readVoxcpmTtsConfig } = await import("../src/lib/tts/config.js");
     const { synthesizeVoxcpmSpeech } = await import("../src/lib/tts/voxcpm.js");
+
+    const defaultConfig = await withEnv(
+      { VOXCPM_TTS_BASE_URL: "http://voxcpm.local:8810", VOXCPM_TTS_RETRY_BADCASE: "" },
+      () => readVoxcpmTtsConfig(),
+    );
+    if (defaultConfig.retryBadcase !== true) {
+      fail("Expected VOXCPM_TTS_RETRY_BADCASE to default to true.");
+    }
+    const disabledConfig = await withEnv(
+      { VOXCPM_TTS_BASE_URL: "http://voxcpm.local:8810", VOXCPM_TTS_RETRY_BADCASE: "false" },
+      () => readVoxcpmTtsConfig(),
+    );
+    if (disabledConfig.retryBadcase !== false) {
+      fail("Expected VOXCPM_TTS_RETRY_BADCASE=false to be parsed.");
+    }
 
     const narrationText =
       "GPT-5.6 先建立背景，第二句说明变化。第三句转到风险；最后一句给出动作建议。";
@@ -120,6 +137,7 @@ const run = async () => {
         VOXCPM_TTS_DENOISE: "false",
         VOXCPM_TTS_SAVE: "false",
         VOXCPM_TTS_FILENAME_PREFIX: "clone-smoke",
+        VOXCPM_TTS_RETRY_BADCASE: "true",
       },
       () =>
         synthesizeVoxcpmSpeech({
@@ -143,6 +161,33 @@ const run = async () => {
       fail(`Expected VoxCPM clone URL /clone_with_prompt, received ${request.url}.`);
     }
     assertFormDataRequest(request);
+    if (readTextField(request.body, "retry_badcase") !== "true") {
+      fail("Expected VoxCPM clone FormData to forward retry_badcase=true.");
+    }
+
+    requests.length = 0;
+    await withEnv(
+      {
+        AI_VIDEO_STUDIO_ARTIFACT_ROOT: artifactRoot,
+        VOXCPM_TTS_BASE_URL: "http://voxcpm.local:8810",
+        VOXCPM_TTS_RETRY_BADCASE: "true",
+      },
+      () =>
+        synthesizeVoxcpmSpeech({
+          language: "zh",
+          runId: "tts-2026-07-07t00-00-00-000z-voxcpm-plain",
+          segmentId: "plain-segment",
+          text: "普通合成请求。",
+        }),
+    );
+    const plainRequest = requests[0];
+    if (!plainRequest || typeof plainRequest.body !== "string") {
+      fail("Expected VoxCPM plain /tts request to use a JSON body.");
+    }
+    const plainBody = JSON.parse(plainRequest.body);
+    if (plainBody.retry_badcase !== true) {
+      fail("Expected VoxCPM plain /tts JSON to forward retry_badcase=true.");
+    }
 
     if (result.provider !== "voxcpm") {
       fail(`Expected provider voxcpm, received ${result.provider}.`);

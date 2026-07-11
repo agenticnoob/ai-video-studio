@@ -26,6 +26,7 @@ export type VoxcpmTtsConfig = {
   inferenceTimesteps: number;
   normalize: boolean;
   denoise: boolean;
+  retryBadcase: boolean;
   save: boolean;
   filenamePrefix: string;
 };
@@ -165,6 +166,7 @@ export const readVoxcpmTtsConfig = (): VoxcpmTtsConfig => {
     inferenceTimesteps,
     normalize: readBooleanEnv("VOXCPM_TTS_NORMALIZE", true),
     denoise: readBooleanEnv("VOXCPM_TTS_DENOISE", false),
+    retryBadcase: readBooleanEnv("VOXCPM_TTS_RETRY_BADCASE", true),
     save: readBooleanEnv("VOXCPM_TTS_SAVE", false),
     filenamePrefix: (process.env.VOXCPM_TTS_FILENAME_PREFIX ?? "").trim() || "ai-video-studio",
   };

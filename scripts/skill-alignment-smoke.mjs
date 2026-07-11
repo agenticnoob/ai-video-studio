@@ -72,6 +72,12 @@ assertIncludes(producerSkill, "punctuation-split", "Agent Producer skill");
 assertIncludesWords(producerSkill, "trimmed and concatenated", "Agent Producer skill");
 assertIncludes(producerSkill, ".agents/skills/remotion-best-practices/", "Agent Producer skill");
 assertIncludes(producerSkill, ".agents/skills/ai-video-studio-voxcpm-expression/", "Agent Producer skill");
+for (const required of [
+  "npm run producer:validate",
+  "npm run producer:stills",
+  "scripts/lib/producer-audio/",
+  "existing finished samples are read-only references",
+]) assertIncludes(producerSkill, required, "Agent Producer skill");
 
 const voxcpmSkill = read(".agents/skills/ai-video-studio-voxcpm-expression/SKILL.md");
 assertIncludes(voxcpmSkill, "VoxCPM returns audio/wav", "VoxCPM skill");
@@ -79,6 +85,27 @@ assertIncludes(voxcpmSkill, "no per-line timestamps", "VoxCPM skill");
 assertIncludes(voxcpmSkill, "punctuation", "VoxCPM skill");
 assertIncludes(voxcpmSkill, "silence", "VoxCPM skill");
 assertIncludes(voxcpmSkill, "GPT-5.6", "VoxCPM skill");
+for (const required of [
+  "voice-design",
+  "controllable-clone",
+  "high-fidelity-clone",
+  "5–30 seconds",
+  "retry_badcase",
+  "Repo Adapter Contract",
+  "controllable clone does not require a transcript upstream",
+  "Hi-Fi clone requires an exact transcript",
+  "control instructions are ignored by Hi-Fi clone",
+]) assertIncludes(voxcpmSkill, required, "VoxCPM skill");
+assertIncludesWords(
+  voxcpmSkill,
+  "punctuation splitting, silence trimming, WAV concatenation, and duration-derived captions are repo adapter behavior",
+  "VoxCPM skill",
+);
+
+const voxcpmDoc = read("docs/providers/voxcpm.md");
+for (const required of ["voice-design", "controllable-clone", "high-fidelity-clone", "VOXCPM_TTS_RETRY_BADCASE=true", "Repo Adapter Contract"]) {
+  assertIncludes(voxcpmDoc, required, "VoxCPM provider doc");
+}
 
 const remotionSkill = read(".agents/skills/remotion-best-practices/SKILL.md");
 assertIncludes(remotionSkill, "AI Video Studio Agent Producer", "Remotion skill");

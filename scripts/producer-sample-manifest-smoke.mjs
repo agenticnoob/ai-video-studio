@@ -61,6 +61,23 @@ const assert = (condition, message) => {
   }
 };
 
+const scaffoldSources = [
+  "src/remotion/producer-samples/scaffold/SampleName/types.ts",
+  "src/remotion/producer-samples/scaffold/SampleName/generate.mjs",
+  "src/remotion/producer-samples/scaffold/SampleName/validation.ts",
+].map((file) => readFileSync(file, "utf8")).join("\n");
+
+for (const required of [
+  "scripts/lib/producer-audio",
+  "runProducerAudioGeneration",
+  "producerValidationInput",
+  "npm run producer:validate",
+  "npm run producer:stills",
+]) assert(scaffoldSources.includes(required), `Scaffold must reference ${required}.`);
+for (const frozenPath of ["AiConceptsForBeginners", "AiDailyNewsBrief20260709", "PixelRAGChineseStandalone"]) {
+  assert(!scaffoldSources.includes(frozenPath), `Scaffold must not import frozen sample ${frozenPath}.`);
+}
+
 const assertIgnoredPath = (path) => {
   try {
     execFileSync("git", ["check-ignore", "-q", path], { stdio: "ignore" });

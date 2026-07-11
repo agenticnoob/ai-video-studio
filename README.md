@@ -58,6 +58,21 @@ Generated screenshots, generated narration audio, and rendered videos stay
 local-only under `public/generated/<slug>/` or `out/` unless the user explicitly
 asks to commit them.
 
+Fixed production operations for future samples are shared instead of copied:
+
+- provider-neutral audio generation: `scripts/lib/producer-audio/`
+- mechanical validation:
+  `npm run producer:validate -- --module <validation-module>`
+- manifest-driven review frames:
+  `npm run producer:stills -- --composition <composition-id>`
+
+These tools own TTS requests/errors, provider adapters, display-caption cleanup,
+real duration aggregation, metadata/constants/summaries, fallback reporting,
+artifact-boundary checks, and still command execution. The Agent still owns
+research, narration structure, visual metaphor, scene composition, animation,
+actual still/mp4 review, revision, and promotion judgment. Existing finished
+videos remain frozen read-only references and are not migrated to these tools.
+
 Agent Producer narration defaults to VoxCPM. Use `scripts/producer-voxcpm.sh up`
 to start the host-network Next topology for the loopback-bound personal
 VoxCPM service, `scripts/producer-voxcpm.sh smoke` for plain `/tts`, and

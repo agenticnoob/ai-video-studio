@@ -1,111 +1,85 @@
 # VoxCPM TTS Provider
 
-Status: default Agent Producer local provider adapter for the existing
-`/data/projects/labs/voxcpm-api` service.
+Upstream authority: VoxCPM 2 Usage Guide,
+`https://voxcpm.readthedocs.io/zh-cn/latest/usage_guide.html`.
 
-VoxCPM is the default narration provider for Agent Producer work. Plain
-text-to-speech uses `/tts`; `voiceClone.enabled` with provider `voxcpm` uses
-VoxCPM clone through `/clone_with_prompt` by default. F5-TTS remains available
-only when explicitly selected with `TTS_PROVIDER=f5-tts`.
+Use `.agents/skills/ai-video-studio-agent-producer/` for the production flow and
+`.agents/skills/ai-video-studio-voxcpm-expression/` for mode, text, expression,
+and quality decisions.
 
-Use `.agents/skills/ai-video-studio-agent-producer/` as the main video
-production skill, then load `.agents/skills/ai-video-studio-voxcpm-expression/`
-only for VoxCPM narration, voice clone text, control instructions, pacing,
-expression tags, caption phrasing, and silence checks.
+## Official Model Modes
 
-## Runtime Contract
+- `voice-design`: no reference audio; parenthesized control instruction can
+  design a voice, but independent calls are not guaranteed to keep one random
+  speaker identity.
+- `controllable-clone`: reference audio preserves timbre and control can adjust
+  speed/emotion/style. A transcript is not required upstream.
+- `high-fidelity-clone`: requires reference audio plus an exact transcript;
+  control instructions are ignored.
 
-- `GET /health`: liveness.
-- `GET /ready`: readiness; `200` means model loaded, `503` means still loading.
-- `POST /tts`: JSON text synthesis, returns `audio/wav`.
-- `POST /clone`: multipart clone request with `text` and `reference_audio`.
-- `POST /clone_with_prompt`: multipart clone request with `text`,
-  `prompt_text`, `prompt_audio`, and optional `reference_audio`.
+Prefer clean single-speaker reference audio around 5–30 seconds.
 
-Default personal deployment:
+## Parameters
 
-```txt
-http://127.0.0.1:8810
-```
+- `cfg_value`: conditioning strength; start at `2`.
+- `inference_timesteps`: quality/latency tradeoff; start at `10`.
+- `normalize`: default `true`.
+- `denoise`: default `false`; use only for noisy reference audio.
+- `retry_badcase`: default `true`; retries obvious bad generations.
 
-When ai-video-studio runs in Docker, verify container-to-host reachability
-before using this URL. `host.docker.internal` may require Docker host gateway
-mapping and may still not reach a service bound only to host loopback on every
-platform.
+Tune reference quality, mode, text, and punctuation before changing parameters.
 
-Current topology note: bridge-mode `web` could not reach the personal service
-through `host.docker.internal` while VoxCPM was bound to host loopback. Use
-`docker-compose.voxcpm.yml` or `scripts/producer-voxcpm.sh` for the documented
-host-network topology.
+## Repo Adapter Contract
 
-## Project Contract
+The repo adapter is not the complete upstream VoxCPM API.
 
 ```txt
-StoryboardSegmentPlan.narration.text + optional voiceClone reference
+Agent Producer generator
+  -> scripts/lib/producer-audio/ VoxCPM request plan
   -> POST /api/tts provider="voxcpm"
-  -> VoxCPM POST /tts, /clone_with_prompt, or /clone
+  -> current /tts, /clone, or /clone_with_prompt compatibility
   -> punctuation-split chunk synthesis
-  -> trimmed and concatenated local wav under AI_VIDEO_STUDIO_ARTIFACT_ROOT/tts
-  -> measured duration + chunk-duration captions
-  -> VideoSegment.narration
+  -> PCM silence trimming + WAV concatenation
+  -> measured duration + duration-derived captions
 ```
 
-## Expression Guidance
+Punctuation splitting, silence trimming, WAV concatenation, and caption timing
+are repository adapter behavior. VoxCPM does not return the per-line timestamps
+used by this project.
 
-When VoxCPM is used for Agent Producer narration or voice clone, write the
-final TTS text with `.agents/skills/ai-video-studio-voxcpm-expression/`.
-That skill covers compact control instructions, expressive delivery state,
-pacing, and sparse English square-bracket non-language tags such as
-`[laughing]`, `[sigh]`, and `[Uhm]`.
+The current uploaded-reference `/api/tts` schema requires `referenceId` and
+`referenceText` together. Therefore it cannot directly express upstream
+controllable clone without a transcript. Report this as a repo adapter
+limitation, not a VoxCPM limitation. Hi-Fi-compatible clone requires exact
+reference text and ignores control.
 
-Keep the reference transcript exact for voice clone. Use control instructions
-and target narration text to adjust delivery; do not use them to change the
-speaker identity. If tags leak into generated captions, keep them in the TTS
-input but clean or hide them in display captions.
-
-## Caption And Silence Alignment
-
-The current VoxCPM endpoints return `audio/wav` only; they do not return
-provider timestamps for individual lines. The ai-video-studio adapter handles
-subtitle alignment by splitting narration on punctuation before synthesis,
-calling VoxCPM per chunk, trimming leading/trailing PCM silence from each
-chunk, concatenating the chunk WAVs, and creating caption cues from measured
-chunk durations.
-
-Write narration punctuation intentionally. Chinese and English sentence marks,
-commas, semicolons, and colons are subtitle boundaries; decimal model names
-such as `GPT-5.6` should stay intact. When a segment has a suspicious tail gap,
-verify the generated WAV with `ffmpeg silencedetect` and inspect generated
-caption metadata before changing visual timing.
-
-## Config
+## Runtime And Config
 
 - `TTS_PROVIDER=voxcpm`
-- `VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810` for host-run Next, or a verified
-  container-reachable URL for Docker.
-- `VOXCPM_TTS_CLONE_MODE=clone_with_prompt` by default. Set `clone` only for
-  compatibility with `/clone`.
-- `VOXCPM_TTS_CLONE_ENDPOINT` optionally overrides the derived clone endpoint.
-- `VOXCPM_TTS_CONTROL` optionally controls voice design.
-- `VOXCPM_TTS_CFG_VALUE`, `VOXCPM_TTS_INFERENCE_TIMESTEPS`,
-  `VOXCPM_TTS_NORMALIZE`, `VOXCPM_TTS_DENOISE`, `VOXCPM_TTS_SAVE`, and
-  `VOXCPM_TTS_FILENAME_PREFIX` map directly to the VoxCPM `/tts` request.
+- `VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810`
+- `VOXCPM_TTS_CLONE_MODE=clone_with_prompt`
+- `VOXCPM_TTS_CLONE_ENDPOINT=` optional override
+- `VOXCPM_TTS_CONTROL=` optional control
+- `VOXCPM_TTS_CFG_VALUE=2`
+- `VOXCPM_TTS_INFERENCE_TIMESTEPS=10`
+- `VOXCPM_TTS_NORMALIZE=true`
+- `VOXCPM_TTS_DENOISE=false`
+- `VOXCPM_TTS_RETRY_BADCASE=true`
+- `VOXCPM_TTS_SAVE=false`
+- `VOXCPM_TTS_FILENAME_PREFIX=ai-video-studio`
+
+The local service exposes `GET /health`, `GET /ready`, `POST /tts`, `POST
+/clone`, and `POST /clone_with_prompt`. Use `docker-compose.voxcpm.yml` or
+`scripts/producer-voxcpm.sh` when Docker bridge networking cannot reach a
+host-loopback service.
 
 ## Validation
 
 ```bash
 npm run smoke:skill-alignment
-npm run smoke:provider-boundary
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:voxcpm-clone-adapter'
-scripts/producer-voxcpm.sh ready
-scripts/producer-voxcpm.sh up
-scripts/producer-voxcpm.sh smoke
+npm run smoke:voxcpm-clone-adapter
+npm run smoke:producer-audio-tools
 ```
 
-Clone live validation needs a private local reference audio file:
-
-```bash
-VOXCPM_TTS_NEXT_SMOKE_REFERENCE_AUDIO=/absolute/path/to/private-reference.wav \
-VOXCPM_TTS_NEXT_SMOKE_REFERENCE_TEXT='exact transcript of the private reference audio' \
-scripts/producer-voxcpm.sh smoke-clone
-```
+Generated audio, captions, summaries, stills, and MP4 remain local-only under
+ignored `public/generated/` and `out/` paths.

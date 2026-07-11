@@ -1,148 +1,144 @@
 ---
 name: ai-video-studio-voxcpm-expression
-description: Use when working in /data/projects/labs/ai-video-studio and Codex writes or revises VoxCPM narration, VoxCPM voice clone text, VoxCPM control instructions, or Agent Producer voiceover that needs expressive delivery state, pacing, emotion, scene tone, or sparse non-language bracket tags such as [laughing], [sigh], [Uhm], and question/surprise markers.
+description: Use when working in /data/projects/labs/ai-video-studio and Codex writes or revises VoxCPM narration, voice clone text, VoxCPM control instructions, or Agent Producer voiceover that needs expressive delivery state, pacing, emotion, scene tone, or sparse non-language bracket tags such as [laughing], [sigh], [Uhm], and question/surprise markers.
 ---
 
 # AI Video Studio VoxCPM Expression
 
-## Purpose
+Use this skill only for VoxCPM narration decisions. The upstream authority is
+VoxCPM 2 Usage Guide: `https://voxcpm.readthedocs.io/zh-cn/latest/usage_guide.html`.
+Do not project F5 semantics onto VoxCPM.
 
-Use this provider-specific guidance to write VoxCPM-ready narration for Agent
-Producer videos. Keep the voice track expressive without turning scripts into
-noisy prompt strings or creating a separate video-production path.
+## Mode Selection
 
-Reference the current VoxCPM cookbook when details matter:
-`https://voxcpm.readthedocs.io/zh-cn/latest/cookbook.html`.
+Choose the upstream model mode before preparing text or references:
 
-## Core Rules
+- `voice-design`: no reference audio. Put a parenthesized control instruction
+  before target text. A randomly designed voice is not guaranteed to remain
+  consistent across independent calls.
+- `controllable-clone`: reference audio preserves timbre while control can
+  adjust delivery. **controllable clone does not require a transcript upstream**.
+- `high-fidelity-clone`: use when speaker fidelity matters most. **Hi-Fi clone requires an exact transcript** for the reference audio, and **control instructions are ignored by Hi-Fi clone**.
 
-- Write clean target-language narration first.
-- Add expression only where it improves the video beat.
-- Prefer one short control instruction per segment or scene.
-- Use sparse English bracket tags inside narration text for breath, hesitation,
-  laughter, sighs, question tone, or surprise.
-- Keep TTS timing authoritative after generation; never lock scene duration
-  before the real VoxCPM audio duration is known.
-- Do not over-tag. If every sentence carries a tag, the script is probably
-  worse.
-- Treat punctuation as production timing, not decoration. Chinese/English
-  commas, semicolons, colons, sentence-ending marks, question marks, and
-  exclamation marks are the intended split points for readable VoxCPM chunks.
-- Preserve decimal model names and versions such as `GPT-5.6`; do not split
-  them into `GPT-5.` and `6`.
+The current repo `/api/tts` adapter does not expose every upstream mode
+one-to-one. Read `Repo Adapter Contract` before building a request.
 
-## Provider Timing Contract
+## Reference Audio Rules
 
-VoxCPM returns audio/wav for `/tts`, `/clone`, and `/clone_with_prompt`; it has
-no per-line timestamps in the current project adapter. The repo compensates by
-splitting narration on punctuation before synthesis, trimming leading/trailing
-silence from each chunk, concatenating chunk WAVs, and building captions from
-the measured chunk durations.
+- Prefer clean single-speaker audio around **5–30 seconds**.
+- Avoid music, overlapping speech, reverb, clipping, and long silence.
+- For controllable clone, upstream can work without a transcript; supply one
+  only when the current repo adapter path requires it.
+- For Hi-Fi clone, use an exact word-for-word transcript. Do not paraphrase,
+  normalize numbers, remove fillers, or add words not present in the reference.
+- Private reference voices stay under ignored local paths such as `voices/`.
 
-Implications:
+## Parameters And Tuning Order
 
-- Write punctuation where a subtitle or listening pause should occur.
-- Avoid giant sentences that require the adapter to estimate a long cue.
-- Avoid punctuation spam; too many tiny chunks can sound choppy.
-- If a rendered line still shows a long blank tail or awkward subtitle cue,
-  inspect the generated WAV with `ffmpeg silencedetect` and the generated
-  caption metadata before rewriting visuals.
+Tune one dimension at a time in this order:
 
-## Control Instruction
+1. reference audio quality and correct mode
+2. target text and punctuation
+3. `inference_timesteps`
+4. `cfg_value`
+5. `normalize` and `denoise`
+6. `retry_badcase`
 
-Use the control instruction for stable delivery state. Keep it compact and
-describe only the voice behavior needed by the scene.
+Guidance:
 
-Include at most three useful dimensions:
+- `cfg_value`: controls conditioning strength. Start from the repo default `2`;
+  raise carefully when delivery ignores conditioning, lower if speech becomes
+  forced or unstable.
+- `inference_timesteps`: quality/latency tradeoff. Start from `10`; increase for
+  difficult lines only after text and reference quality are sound.
+- `normalize`: normally `true`; disable only when preserving input loudness is
+  more important than consistent output level.
+- `denoise`: normally `false`; enable for a genuinely noisy reference, not as a
+  substitute for choosing a clean reference.
+- `retry_badcase`: normally `true`; it asks upstream to retry obvious bad cases.
+  Disable only for deterministic diagnosis or when repeated retries hide a
+  reproducible failure.
 
-- identity or role: `young technical narrator`, `middle-aged male broadcaster`
-- voice texture: `low-pitched`, `bright`, `magnetic`, `slightly raspy`
-- expressive state: `calm and precise`, `curious`, `urgent but controlled`,
-  `slow historical narration`, `speaking very fast, bright and full`
+## Text, Punctuation, And Expression
 
-Good patterns:
+Write natural spoken text first. Use a compact control instruction with at most
+three dimensions: role, voice texture, and expressive state.
+
+Examples:
 
 ```txt
 calm Chinese technical narrator, clear and precise, lightly curious
+middle-aged male broadcaster, low-pitched and magnetic, urgent but controlled
 ```
 
-```txt
-middle-aged male broadcaster, low-pitched and magnetic, energetic but not shouting
-```
+Use official-style English bracket tags sparsely: `[laughing]`, `[sigh]`,
+`[Uhm]`, `[Shh]`, `[Question-ah]`, `[Surprise-wa]`. Keep tags in TTS text but
+remove them from display captions. Preserve decimal names such as `GPT-5.6`.
 
-```txt
-soft personal narration, warm and reflective, slower pace with small pauses
-```
+Punctuation is part of production timing. Use commas, semicolons, colons, and
+sentence-ending marks where a listening or subtitle boundary belongs. Do not
+create punctuation spam or giant unbroken sentences.
 
-Avoid long stacked instructions that fight the reference voice or describe the
-entire video visual style.
+## Long And Short Text Handling
 
-## Non-Language Tags
+- Short line: keep one clear intention and avoid excessive control text.
+- Long narration: split by semantic beats and punctuation before synthesis.
+- Repeated designed-voice calls may drift; prefer a stable reference-based mode
+  when a multi-scene video needs one consistent speaker.
+- Fix awkward text, reference quality, or mode before compensating with extreme
+  parameter values.
 
-Use official-style English square-bracket tags in the narration text when the
-spoken moment needs them.
+## Repo Adapter Contract
 
-Preferred tags:
+Official VoxCPM model behavior and this repository's adapter behavior are
+separate contracts.
 
-- laughter and sigh: `[laughing]`, `[sigh]`
-- hesitation and hush: `[Uhm]`, `[Shh]`
-- question tone: `[Question-ah]`, `[Question-ei]`, `[Question-en]`,
-  `[Question-oh]`
-- surprise or dissatisfaction: `[Surprise-wa]`, `[Surprise-yo]`,
-  `[Dissatisfaction-hnn]`
+Upstream VoxCPM provides audio generation modes and request parameters. It does
+not provide the per-line timestamps used by this project. In this repo,
+**punctuation splitting, silence trimming, WAV concatenation, and
+duration-derived captions are repo adapter behavior** rather than upstream
+timestamps.
 
-Use lowercase where the cookbook shows lowercase, especially `[laughing]` and
-`[sigh]`. Do not invent variants such as `[Laughter]` unless a local test proves
-they work better.
+The current adapter:
 
-## Script Pass
+- VoxCPM returns audio/wav in the current service integration
+- exposes plain `/tts` plus `clone` / `clone_with_prompt` compatibility through
+  the repo `/api/tts` request shape
+- requires uploaded `voiceClone.referenceId` and `referenceText` together, even
+  though controllable clone does not require a transcript upstream
+- maps Hi-Fi-compatible clone to exact prompt text and ignores control
+- splits narration on punctuation, trims PCM silence per chunk, concatenates
+  WAV chunks, measures real duration, and derives caption cues from measured
+  chunk durations
+- returns `audio/wav`; there are no per-line timestamps in the current adapter
 
-For each narration beat:
+When the repo request shape cannot represent an upstream mode, report a repo
+adapter limitation. Do not describe it as a VoxCPM model limitation.
 
-1. Write the plain spoken line.
-2. Decide the expression state in normal words.
-3. Add a bracket tag only if the beat needs audible hesitation, breath, laugh,
-   sigh, question tone, or surprise.
-4. Keep tags near the phrase they affect.
-5. Read the line aloud mentally; remove tags that make it feel written rather
-   than spoken.
+## Agent Producer Integration
 
-Example:
+1. Select mode and reference strategy.
+2. Write final TTS text and separate clean display text.
+3. Use `scripts/lib/producer-audio/` through the sample generator rather than
+   duplicating request, caption, metadata, duration, or summary logic.
+4. Generate audio before locking Remotion scene duration.
+5. Run `npm run producer:validate -- --module <validation-module>`.
+6. Run `npm run producer:stills -- --composition <composition-id>`.
+7. Review real audio, captions, stills, and MP4; tools do not make creative
+   quality judgments.
 
-```txt
-Plain: 这里最关键的不是参数，而是证据链有没有闭合。
-State: calm, precise, slightly skeptical
-VoxCPM text: [Uhm] 这里最关键的，不是参数，而是证据链有没有闭合。
-```
+## Quality Gate
 
-## Video Integration
+Before final render verify:
 
-When generating an Agent Producer video with VoxCPM:
-
-- Write the narration beats before visual timing.
-- Pick or derive control instructions per scene from the scene intent.
-- Store the final TTS text, including tags, with the segment or sample
-  narration data.
-- Keep captions readable. If bracket tags appear in generated captions and look
-  distracting, hide or clean them in display captions while preserving them in
-  the TTS input.
-- Keep display captions punctuation-aligned. Do not merge unrelated clauses
-  into one caption merely because VoxCPM returned one final WAV.
-- For voice clone, keep the reference transcript exact and use control
-  instruction only to adjust emotion, speed, and delivery. Do not expect clone
-  control to change the speaker identity.
-- After generation, inspect the real duration and update the Remotion timeline
-  from the audio metadata.
-
-## Quality Check
-
-Before using the audio in a final render, verify:
-
-- the narration still reads naturally without prompt clutter
-- tags are sparse and purposeful
-- the control instruction matches the scene state
-- generated captions do not expose awkward tags to viewers
-- decimals and model names remain intact in the display captions
-- no segment has a long unexplained leading or trailing silence
-- `ffprobe` or project metadata reports a positive real duration
-- the video timing follows the generated VoxCPM audio duration
+- correct mode for fidelity versus controllability
+- reference audio is clean and within the useful 5–30 seconds range
+- Hi-Fi transcript is exact; controllable-clone transcript requirement is not
+  falsely presented as upstream behavior
+- control instruction is compact and omitted for Hi-Fi clone
+- tags are sparse and absent from display captions
+- `cfg_value`, `inference_timesteps`, `normalize`, `denoise`, and
+  `retry_badcase` changes have a stated reason
+- no unexplained leading/trailing silence
+- measured duration is positive and drives scene timing
+- captions come from repo-measured chunk duration, not claimed VoxCPM timestamps

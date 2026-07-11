@@ -1,4 +1,5 @@
 import type { SegmentCaptions } from "../../../../lib/caption-schema";
+import type { ProducerAudioTrack } from "../../../../../scripts/lib/producer-audio";
 import type {
   StandaloneCanvasProfileId,
   StandaloneContentFamily,
@@ -9,6 +10,7 @@ export const SAMPLE_NAME_COMPOSITION_ID = "SampleName";
 export const SAMPLE_NAME_FPS = 30;
 export const SAMPLE_NAME_WIDTH = 1280;
 export const SAMPLE_NAME_HEIGHT = 720;
+export const SAMPLE_NAME_DURATION_IN_FRAMES = 300;
 export const SAMPLE_NAME_PROFILE_ID = "landscape-16x9";
 export const SAMPLE_NAME_CONTENT_FAMILY = "project-intro";
 
@@ -28,12 +30,4 @@ export type SampleNameData = {
   readonly scenes: readonly SampleNameScene[];
 };
 
-export type SampleNameAudioTrack = {
-  readonly sceneId: SampleNameSceneId;
-  readonly narration: string;
-  readonly audioFile: string;
-  readonly durationInFrames: number;
-  readonly durationInSeconds?: number;
-  readonly provider?: string;
-  readonly captions: SegmentCaptions;
-};
+export type SampleNameAudioTrack = ProducerAudioTrack & { readonly sceneId: SampleNameSceneId };

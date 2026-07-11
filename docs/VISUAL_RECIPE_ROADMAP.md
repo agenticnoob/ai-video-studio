@@ -30,6 +30,35 @@ remains a productization reference only when the user explicitly asks for web
 editing, selected-segment regeneration, app export, or generated
 `VideoProject` behavior.
 
+### Phase G: Fixed Producer Operations
+
+Status: implemented for future Agent Producer samples only.
+
+Goal: make non-creative production steps callable and mechanically verifiable
+without turning dedicated videos into a universal template or scene DSL.
+
+Delivered:
+
+- provider-neutral `scripts/lib/producer-audio/` orchestration with independent
+  F5 and VoxCPM adapters
+- TTS request/error normalization, caption cleanup, measured duration,
+  deterministic metadata/duration constant/TTS summary generation, and
+  explicit fallback reporting
+- `npm run producer:validate -- --module <validation-module>`
+- `npm run producer:stills -- --composition <composition-id>`
+- future-sample scaffold adoption and isolated fixture smokes
+- VoxCPM official-mode and parameter guidance separated from repo adapter
+  behavior
+
+Hard boundary: all existing finished videos remain frozen read-only evidence.
+They are not migrated, regenerated, reformatted, or modified by this phase.
+Generated audio, summaries, review frames, source cards, and MP4 stay ignored
+under `public/generated/` and `out/`.
+
+Non-goals: no recipe/template promotion, no news abstraction, no universal
+renderer, no scene DSL, no web prompt, no `VideoProject` migration, and no
+automation of creative still/mp4 judgment.
+
 The default personal production direction is Agent Producer: start from a real
 topic, research and capture evidence, write narration and TTS first, inventory
 existing primitives/blocks/runtime helpers, compose a dedicated Remotion video,

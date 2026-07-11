@@ -55,6 +55,26 @@ A successful Agent Producer run should:
    user explicitly asks to commit them.
 10. Record promotion notes for reusable visual language after the sample works.
 
+For future samples, fixed production operations should use the shared tooling
+instead of copying a finished video's generator logic:
+
+- audio orchestration and F5/VoxCPM request plans:
+  `scripts/lib/producer-audio/`
+- mechanical sample validation:
+  `npm run producer:validate -- --module <validation-module>`
+- manifest-driven review stills:
+  `npm run producer:stills -- --composition <composition-id>`
+
+These tools own TTS transport/error handling, display-caption cleanup, measured
+duration aggregation, metadata/duration/summary serialization, explicit
+fallback reporting, local-artifact checks, and review-frame command execution.
+They do not own topic research, factual judgment, narration structure, visual
+metaphor, scene composition, animation design, actual still/mp4 review,
+creative revision, or promotion decisions.
+
+Existing finished videos are frozen read-only references. Do not migrate,
+regenerate, reformat, or modify them to adopt the shared tooling.
+
 This is the direction to optimize first.
 
 ## 2. Parked Web Editor Goal
