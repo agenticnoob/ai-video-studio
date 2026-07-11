@@ -53,7 +53,7 @@ being committed as one aligned change after final verification.
 - `src/lib/tts/config.ts` — add the missing `retryBadcase` config field and environment parsing for the current repo VoxCPM adapter.
 - `src/lib/tts/voxcpm.ts` — forward `retry_badcase` to upstream requests.
 - `.env.example` — document `VOXCPM_TTS_RETRY_BADCASE`.
-- `.agents/skills/ai-video-studio-voxcpm-expression/SKILL.md` — upstream modes, parameters, quality tuning, and repo adapter contract.
+- `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md` — upstream modes, parameters, quality tuning, and repo adapter contract.
 - `.agents/skills/ai-video-studio-agent-producer/SKILL.md` — future sample adoption of fixed tools.
 - `docs/providers/voxcpm.md` — operational provider reference matching the skill.
 - `docs/REMOTION_COMPONENT_LIBRARY.md` — document the non-visual producer tool boundary if this file already routes production helpers; otherwise leave unchanged and put the entry in the Agent Producer skill only.
@@ -640,7 +640,7 @@ git commit -m "feat: add producer review frame renderer"
 ### Task 7: Update VoxCPM And Agent Producer Skills
 
 **Files:**
-- Modify: `.agents/skills/ai-video-studio-voxcpm-expression/SKILL.md`
+- Modify: `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md`
 - Modify: `.agents/skills/ai-video-studio-agent-producer/SKILL.md`
 - Modify: `docs/providers/voxcpm.md`
 - Modify: `scripts/skill-alignment-smoke.mjs`
@@ -712,7 +712,7 @@ Expected: `Skill alignment smoke passed.`
 - [ ] **Step 6: Commit skill alignment**
 
 ```bash
-git add .agents/skills/ai-video-studio-voxcpm-expression/SKILL.md .agents/skills/ai-video-studio-agent-producer/SKILL.md docs/providers/voxcpm.md scripts/skill-alignment-smoke.mjs
+git add .agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md .agents/skills/ai-video-studio-agent-producer/SKILL.md docs/providers/voxcpm.md scripts/skill-alignment-smoke.mjs
 git commit -m "docs: align producer tools and VoxCPM guidance"
 ```
 

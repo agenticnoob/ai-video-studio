@@ -1,4 +1,0 @@
-interface:
-  display_name: "VoxCPM Expression"
-  short_description: "Shape VoxCPM narration and clone text"
-  default_prompt: "Use $ai-video-studio-voxcpm-expression to prepare punctuation-aligned expressive VoxCPM narration or voice clone text for this Agent Producer video."

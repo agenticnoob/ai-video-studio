@@ -250,7 +250,7 @@ and decides whether the scene needs revision.
 
 ## 7. VoxCPM Skill Improvement
 
-Update `.agents/skills/ai-video-studio-voxcpm-expression/SKILL.md` so future
+Update `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md` so future
 Agent Producer runs can make correct voice-production decisions without
 re-reading implementation history.
 

@@ -78,7 +78,7 @@ to start the host-network Next topology for the loopback-bound personal
 VoxCPM service, `scripts/producer-voxcpm.sh smoke` for plain `/tts`, and
 `scripts/producer-voxcpm.sh smoke-clone` with private reference env vars for
 clone validation. When writing final VoxCPM narration or clone text, use
-`.agents/skills/ai-video-studio-voxcpm-expression/` for delivery
+`.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md` for delivery
 state, control instructions, and sparse non-language bracket tags. The current
 VoxCPM adapter returns audio without per-line timestamps, so repo TTS generation
 splits narration by punctuation, trims each returned chunk's silence,
@@ -92,7 +92,7 @@ The local production skill stack is:
   review.
 - `.agents/skills/remotion-best-practices/` for Remotion code, layout,
   subtitle, audio, and render rules.
-- `.agents/skills/ai-video-studio-voxcpm-expression/` only when VoxCPM
+- `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md` only when VoxCPM
   narration, voice clone text, control instructions, pacing, or expression tags
   matter.
 
@@ -252,7 +252,7 @@ Parked web/product modeling direction:
   `voiceClone.enabled` with provider `voxcpm` uses VoxCPM clone through
   `/clone_with_prompt` by default.
 - VoxCPM expressive narration guidance lives in
-  `.agents/skills/ai-video-studio-voxcpm-expression/`; it should be
+  `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md`; it should be
   used when final TTS text needs control instructions, emotional state,
   pacing, punctuation-aware caption phrasing, or non-language tags.
 - the in-project F5-TTS provider adapter is retained as an explicit fallback
@@ -427,9 +427,10 @@ Current top-level boundaries:
     - repo-local Agent Producer skill: research,
       screenshots/assets, primitive/block/runtime inventory, TTS-first timing,
       dedicated composition assembly, still review, and later promotion
-14. `/.agents/skills/ai-video-studio-voxcpm-expression/*`
-    - repo-local skill for VoxCPM narration expression: control instructions,
-      delivery state, voice-clone text handling, and sparse non-language tags
+14. `/.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md`
+    - repo-local skill inlined under Agent Producer: VoxCPM narration expression,
+      control instructions, delivery state, voice-clone text handling, and sparse
+      non-language tags
 15. `/src/remotion/standalone-samples/*`
     - reference-only standalone compositions kept out of template/runtime
       folders
@@ -453,7 +454,7 @@ Start from:
 - `docs/superpowers/specs/2026-07-01-agent-producer-design.md` and
   `.agents/skills/ai-video-studio-agent-producer/SKILL.md` when the
   task is a local high-quality producer run rather than a quick web prompt
-- `.agents/skills/ai-video-studio-voxcpm-expression/SKILL.md` when a
+- `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md` when a
   producer run uses VoxCPM narration or voice clone and the script needs
   delivery state, expressive pacing, or non-language tags
 - `docs/PRODUCT_REQUIREMENTS.md`

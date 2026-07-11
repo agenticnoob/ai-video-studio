@@ -4,7 +4,7 @@ Upstream authority: VoxCPM 2 Usage Guide,
 `https://voxcpm.readthedocs.io/zh-cn/latest/usage_guide.html`.
 
 Use `.agents/skills/ai-video-studio-agent-producer/` for the production flow and
-`.agents/skills/ai-video-studio-voxcpm-expression/` for mode, text, expression,
+`.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md` for mode, text, expression,
 and quality decisions.
 
 ## Official Model Modes

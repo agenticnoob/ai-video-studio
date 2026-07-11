@@ -165,7 +165,7 @@ Validation performed:
   `.agents/skills/ai-video-studio-agent-producer/` is the main real-topic video
   authority, `.agents/skills/remotion-best-practices/` supplies Remotion layout,
   subtitle, audio, silence, and render rules, and
-  `.agents/skills/ai-video-studio-voxcpm-expression/` stays provider-specific
+  `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md` stays provider-specific
   for VoxCPM narration, voice clone text, control instructions, pacing, and
   sparse expression tags.
 - Reworded the skills so they describe production capabilities rather than
@@ -244,7 +244,12 @@ Validation performed:
   reported `mean_volume: -25.2 dB` and `max_volume: -6.9 dB`, confirming the
   mp4 now contains audible cloned narration rather than silent fallback audio.
 
-## Latest continuation — VoxCPM expression skill rename
+## Latest continuation — VoxCPM expression skill inlined into Agent Producer
+
+- Inlined the VoxCPM guidance skill into
+  `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md`;
+  the original `.agents/skills/ai-video-studio-voxcpm-expression/` skill
+  is now deleted. All doc references updated to point to the inlined copy.
 
 - Renamed the repo-local VoxCPM guidance skill to
   `.agents/skills/ai-video-studio-voxcpm-expression/SKILL.md`; the skill

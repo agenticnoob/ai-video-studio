@@ -48,7 +48,6 @@ const frontmatterName = (source) => {
 
 const skillNames = [
   "ai-video-studio-agent-producer",
-  "ai-video-studio-voxcpm-expression",
   "remotion-best-practices",
 ];
 
@@ -63,7 +62,7 @@ for (const skillName of skillNames) {
 }
 
 assertMissing(".agents/skills/ai-video-studio-agent-producer-workflow");
-assertMissing(".agents/skills/ai-video-studio-voxcpm-expression-workflow");
+assertMissing(".agents/skills/ai-video-studio-voxcpm-expression"); // inlined into agent-producer
 
 const producerSkill = read(".agents/skills/ai-video-studio-agent-producer/SKILL.md");
 assertIncludes(producerSkill, "Production Chain", "Agent Producer skill");
@@ -71,7 +70,7 @@ assertIncludes(producerSkill, "Skill Stack", "Agent Producer skill");
 assertIncludes(producerSkill, "punctuation-split", "Agent Producer skill");
 assertIncludesWords(producerSkill, "trimmed and concatenated", "Agent Producer skill");
 assertIncludes(producerSkill, ".agents/skills/remotion-best-practices/", "Agent Producer skill");
-assertIncludes(producerSkill, ".agents/skills/ai-video-studio-voxcpm-expression/", "Agent Producer skill");
+assertIncludes(producerSkill, ".agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md", "Agent Producer skill");
 for (const required of [
   "npm run producer:validate",
   "npm run producer:stills",
@@ -79,7 +78,7 @@ for (const required of [
   "existing finished samples are read-only references",
 ]) assertIncludes(producerSkill, required, "Agent Producer skill");
 
-const voxcpmSkill = read(".agents/skills/ai-video-studio-voxcpm-expression/SKILL.md");
+const voxcpmSkill = read(".agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md");
 assertIncludes(voxcpmSkill, "VoxCPM returns audio/wav", "VoxCPM skill");
 assertIncludes(voxcpmSkill, "no per-line timestamps", "VoxCPM skill");
 assertIncludes(voxcpmSkill, "punctuation", "VoxCPM skill");
@@ -113,12 +112,16 @@ assertIncludes(remotionSkill, "rules/video-layout.md", "Remotion skill");
 assertIncludes(remotionSkill, "rules/subtitles.md", "Remotion skill");
 assertIncludes(remotionSkill, "rules/silence-detection.md", "Remotion skill");
 
-for (const skillName of ["ai-video-studio-agent-producer", "ai-video-studio-voxcpm-expression"]) {
-  const metadata = read(`.agents/skills/${skillName}/agents/openai.yaml`);
+for (const skillName of ["ai-video-studio-agent-producer"]) {
+  const skillDir = `.agents/skills/${skillName}`;
+  const metadata = read(`${skillDir}/agents/openai.yaml`);
   assertIncludes(metadata, `Use $${skillName}`, `${skillName} openai.yaml`);
   assertIncludes(metadata, "display_name:", `${skillName} openai.yaml`);
   assertIncludes(metadata, "short_description:", `${skillName} openai.yaml`);
 }
+// VoxCPM expression skill is inlined under agent producer
+const voxcpmMetadata = read(".agents/skills/ai-video-studio-agent-producer/voxcpm-expression/openai.yaml");
+assertIncludes(voxcpmMetadata, "display_name:", "VoxCPM inlined openai.yaml");
 
 const docsToCheck = [
   "README.md",
@@ -131,9 +134,8 @@ const docsToCheck = [
 for (const docPath of docsToCheck) {
   const source = read(docPath);
   assertIncludes(source, ".agents/skills/ai-video-studio-agent-producer/", docPath);
-  assertIncludes(source, ".agents/skills/ai-video-studio-voxcpm-expression/", docPath);
+  assertIncludes(source, ".agents/skills/ai-video-studio-agent-producer/voxcpm-expression/", docPath);
   assertNotIncludes(source, ".agents/skills/ai-video-studio-agent-producer-workflow", docPath);
-  assertNotIncludes(source, ".agents/skills/ai-video-studio-voxcpm-expression-workflow", docPath);
 }
 
 console.warn("Skill alignment smoke passed.");

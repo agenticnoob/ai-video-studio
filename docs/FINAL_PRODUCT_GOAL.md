@@ -35,7 +35,7 @@ Start finished-video work from `.agents/skills/ai-video-studio-agent-producer/`
 and `docs/superpowers/specs/2026-07-01-agent-producer-design.md`. Add
 `.agents/skills/remotion-best-practices/` for Remotion code, layout, subtitle,
 audio, silence, and render rules. Add
-`.agents/skills/ai-video-studio-voxcpm-expression/` only when VoxCPM narration,
+`.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md` only when VoxCPM narration,
 voice clone text, control instructions, pacing, or expression tags matter.
 
 A successful Agent Producer run should:
@@ -174,7 +174,7 @@ Rules:
 - Agent Producer defaults to VoxCPM for narration, including voice clone when
   configured; F5-TTS is an explicit fallback provider when selected
 - VoxCPM narration text should use
-  `.agents/skills/ai-video-studio-voxcpm-expression/` when expression
+  `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md` when expression
   state, control instructions, pacing, punctuation-aware phrasing, or
   non-language bracket tags matter
 - VoxCPM returns audio without line timestamps in the current adapter. Agent

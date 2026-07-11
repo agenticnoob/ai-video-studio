@@ -87,7 +87,7 @@ Keep the Agent Producer model first:
 - local-only screenshots, audio, and renders unless explicitly requested
 - shared `src/remotion/standalone-video/` helpers for timing/audio/captions
 - VoxCPM expression guidance stays in
-  `.agents/skills/ai-video-studio-voxcpm-expression/` so narration
+  `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md` so narration
   control instructions and sparse non-language tags are handled before final
   TTS generation, without changing the visual production path. Because VoxCPM
   returns audio without per-line timestamps, Agent Producer samples should use
