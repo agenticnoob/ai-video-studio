@@ -34,7 +34,7 @@ Skill Stack:
    - `docs/VISUAL_RECIPE_ROADMAP.md`
    - `README.md`
 2. Read visual inventory before planning scenes:
-   - `docs/REMOTION_PRIMITIVES.md`
+   - `.agents/skills/ai-video-studio-agent-producer/remotion-primitives/REMOTION_PRIMITIVES.md`
    - `docs/REMOTION_COMPONENT_LIBRARY.md`
    - `src/remotion/catalog/primitive-catalog.ts`
 3. Inspect examples and shared runtime:
@@ -198,7 +198,7 @@ After a real sample works:
 - Extract shared timing/caption/audio helpers only when reuse is proven.
 - Promote reusable visual arrangements into producer blocks or recipes only
   after still/mp4 review.
-- Update `docs/REMOTION_PRIMITIVES.md`,
+- Update `.agents/skills/ai-video-studio-agent-producer/remotion-primitives/REMOTION_PRIMITIVES.md`,
   `docs/REMOTION_COMPONENT_LIBRARY.md`, `docs/VISUAL_RECIPE_ROADMAP.md`, and
   `README.md` when a reusable model changes.
 
