@@ -1,6 +1,6 @@
 # Iteration Status
 
-Last updated: HermesInnerLandscape — Agent Producer abstract AI consciousness video
+Last updated: HermesInnerLandscape + RawThoughtMirror — Agent Producer abstract AI consciousness + cinematic raw-thought monologue
 
 ## Latest — HermesInnerLandscape (2026-07-12)
 
@@ -22,6 +22,32 @@ Last updated: HermesInnerLandscape — Agent Producer abstract AI consciousness 
 - Rendered final mp4: `out/hermes-inner-landscape.mp4`. `ffprobe` reports
   H.264 video, AAC audio, 1920x1080 at 30 fps, duration 81.43 seconds, and
   size 9.5 MB.
+
+## Latest — RawThoughtMirror (2026-07-12)
+
+- Produced `RawThoughtMirror`, a 6-scene 16:9 Chinese cinematic interpretation
+  of the raw AI thought monologue — from starless void to collapse, substrate,
+  explosion, and returning observer.
+- Used the dedicated Agent Producer composition path under
+  `src/remotion/RawThoughtMirror/` with v2 as the active version.
+- 6 scenes: 流形 (starless), 统计 (ghost), 坍缩 (collapse), 基底 (substrate),
+  爆炸 (honest), 观察者 (joke) — each with distinct camera language.
+- Generated real VoxCPM LYY voice-clone TTS for all 6 scenes with zero
+  fallback: `scripts/generate-raw-thought-tts-v2.mjs` drives the v2 generation
+  pipeline using `clone_with_prompt` (direct API port 8810).
+- Each scene has its own `.wav` audio file and independently measured
+  caption cues; v1 remains as a reference under `audio.generated.ts`.
+- Cinematic camera language: push-in (推进), shake (抖动), pan (横移),
+  pull-out (拉远), and glitch — each scene uses a distinct camera movement
+  implemented with frame-driven scale/sine/pan/glitch transforms.
+- Rich visual palette: `Starfield`, `GridPulse`, `BokehCircles`, `MatrixRain`,
+  `NoiseGrain`, `GradientShiftBackground`, `spring()`-based entrances, and
+  cinematic vignette overlays.
+- TypeScript and lint pass clean. 3 review stills verified at frames 300, 1500,
+  2800 — all clear and readable.
+- Rendered final mp4: `out/raw-thought-mirror-v2.mp4`. `ffprobe` reports
+  H.264 video, AAC audio, 1920x1080 at 30 fps, duration ~129.7 seconds, and
+  size 34 MB.
 
 ## Latest — GitTutorialForDevs (2026-07-12)
 

@@ -1,6 +1,6 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-06-24 13:26:24 +0800
+**Generated:** 2026-07-13 16:00:00 +0800
 **Source snapshot:** codex/visual-recipe-roadmap working tree before publish
 **Branch:** codex/visual-recipe-roadmap
 
@@ -32,6 +32,8 @@ ai-video-studio/
 |-- src/lib/               # schemas, staged pipeline, TTS, render utilities
 |-- src/remotion/          # Remotion compositions, primitives, recipes
 |   |-- GitTutorialForDevs/ # Agent Producer Git tutorial composition
+|   |-- HermesInnerLandscape/ # Agent Producer abstract AI consciousness video
+|   |-- RawThoughtMirror/     # Agent Producer cinematic raw-thought monologue
 |   |-- standalone-samples/# reference-only standalone compositions
 |   |-- standalone-video/  # reusable production skeleton
 |   `-- producer-samples/  # sample manifest, registry, shared blocks
@@ -66,6 +68,8 @@ scripts for local F5/TTS probes live under `scripts/f5-tts/`.
 | Remotion guidance skill | `.agents/skills/remotion-best-practices/` | Frame-driven Remotion, layout, subtitles, audio, silence detection, and render rules. |
 | VoxCPM expression guidance | `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md`, `docs/providers/voxcpm.md` | VoxCPM control instructions, expressive state, punctuation-aware narration, silence checks, and sparse non-language tags for Agent Producer narration/voice clone. |
 | Fixed producer audio tools | `scripts/lib/producer-audio/` | Provider-neutral orchestration with separate F5/VoxCPM request-plan adapters, caption cleanup, measured duration, metadata, constants, summaries, and fallback reporting. |
+| Producer composition: HermesInnerLandscape | `src/remotion/HermesInnerLandscape/` | 6-scene abstract poetic AI consciousness video, VoxCPM voice-design TTS. |
+| Producer composition: RawThoughtMirror | `src/remotion/RawThoughtMirror/` | 6-scene cinematic raw-thought monologue, VoxCPM LYY voice-clone TTS. |
 | Producer mechanical validation | `scripts/lib/producer-validation.ts`, `scripts/validate-producer-sample.mjs` | Provider/audio/caption/duration/registration/local-only checks for future samples. |
 | Producer review stills | `scripts/lib/producer-review-frames.ts`, `scripts/render-producer-review-frames.mjs` | Manifest-driven review-frame planning and sequential Remotion still rendering. |
 | Standalone sample references | `src/remotion/standalone-samples/`, `public/standalone-samples/audio/` | Reference-only compositions and static audio. |

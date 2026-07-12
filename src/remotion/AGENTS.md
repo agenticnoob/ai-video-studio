@@ -1,6 +1,6 @@
 # REMOTION KNOWLEDGE BASE
 
-**Generated:** 2026-06-24 13:26:24 +0800
+**Generated:** 2026-07-13 16:00:00 +0800
 
 ## OVERVIEW
 
@@ -21,6 +21,8 @@ src/remotion/
 |-- ScriptedVideo/            # scripted-template renderer
 |-- SpotlightVideo/           # spotlight-template renderer
 |-- GitTutorialForDevs/       # Agent Producer Git tutorial composition
+|-- HermesInnerLandscape/    # Agent Producer abstract AI consciousness video
+|-- RawThoughtMirror/        # Agent Producer cinematic raw-thought monologue
 |-- standalone-samples/       # reference-only standalone compositions
 |-- standalone-video/         # reusable production skeleton
 `-- producer-samples/          # sample manifest, registry, shared blocks

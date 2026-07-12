@@ -1,6 +1,6 @@
 # SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-06-24 13:26:24 +0800
+**Generated:** 2026-07-13 16:00:00 +0800
 
 ## OVERVIEW
 
@@ -19,6 +19,9 @@ Actions workflow.
 | Prod start | `prod.sh`, `prod-build.sh` | Requires `.env.prod`; uses `web-prod`. |
 | Remotion browser | `ensure-remotion-browser.mjs` | Container startup preflight. |
 | Real F5 runtime | `f5-tts-real.sh` | GPU overlay and real model mode. |
+| TTS: HermesInnerLandscape | `generate-hermes-tts.mjs` | VoxCPM voice-design per-scene TTS for 6-scene AI consciousness video. |
+| TTS: RawThoughtMirror v1 | `generate-raw-thought-tts.mjs` | VoxCPM voice-design per-scene TTS for raw-thought monologue v1. |
+| TTS: RawThoughtMirror v2 | `generate-raw-thought-tts-v2.mjs` | VoxCPM LYY voice-clone per-scene TTS for cinematic v2. |
 | F5 smoke | `f5-tts-smoke.sh`, `f5-tts-next-smoke.sh`, `f5-tts-staged-smoke.mjs` | Direct, Next adapter, staged checks. |
 | Staged live | `staged-live-smoke.mjs` | `/api/generate/staged` route check. |
 | Planner/draft smokes | `planner-recipe-manifest-smoke.mjs`, `storyboard-*.mjs` | Boundary regressions. |
