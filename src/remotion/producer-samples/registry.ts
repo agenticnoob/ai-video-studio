@@ -614,6 +614,87 @@ export const producerSampleManifests = [
       "Generated screenshots and audio stay local-only under public/generated/pixelrag-chinese-standalone/.",
     ],
   },
+  {
+    compositionId: "GitTutorialForDevs",
+    sampleName: "GitTutorialForDevs",
+    slug: "git-tutorial-for-devs",
+    contentFamily: "tutorial",
+    canvasProfile: "landscape-16x9",
+    localArtifactRoot: "public/generated/git-tutorial/",
+    ttsStatus: "generated-local",
+    reviewFrames: [
+      {
+        frame: 30,
+        label: "hero",
+        purpose: "Check Git logo badge, headline hierarchy, tag cloud, and caption clearance.",
+      },
+      {
+        frame: 800,
+        label: "what",
+        purpose: "Check 2x2 card grid density and command tag readability.",
+      },
+      {
+        frame: 1700,
+        label: "concepts",
+        purpose: "Check 4-column concept cards, bilingual labels, and command blocks.",
+      },
+      {
+        frame: 2800,
+        label: "terminal",
+        purpose: "Check terminal session density and file tree sidebar.",
+      },
+      {
+        frame: 4000,
+        label: "agent",
+        purpose: "Check timeline and code diff block readability.",
+      },
+      {
+        frame: 4800,
+        label: "tips",
+        purpose: "Check 4 wide tips cards with numbered badges.",
+      },
+      {
+        frame: 5400,
+        label: "close",
+        purpose: "Check stat row, checklist, and closing CTA clearance.",
+      },
+    ],
+    sourceFiles: [
+      { path: "src/remotion/GitTutorialForDevs/GitTutorialForDevs.tsx", kind: "renderer" },
+      { path: "src/remotion/GitTutorialForDevs/types.ts", kind: "types" },
+      { path: "src/remotion/GitTutorialForDevs/script.ts", kind: "script" },
+      { path: "src/remotion/GitTutorialForDevs/data.ts", kind: "data" },
+      { path: "src/remotion/GitTutorialForDevs/audio.generated.ts", kind: "audio-metadata" },
+      { path: "src/remotion/Root.tsx", kind: "root-registration" },
+      { path: "scripts/generate-git-tutorial-tts.mjs", kind: "script" },
+    ],
+    promotionCandidates: [
+      {
+        id: "git-basics-card-grid",
+        targetLayer: "block",
+        gateState: "stay-sample-local",
+        status: "sample-local",
+        productizationExposure: "none",
+        reason:
+          "The 2x2 card grid with icon-label-description-command works for this Git tutorial but needs another tutorial topic before block promotion.",
+      },
+      {
+        id: "scenic-background-composition",
+        targetLayer: "primitive",
+        gateState: "stay-sample-local",
+        status: "sample-local",
+        productizationExposure: "none",
+        reason:
+          "BokehCircles, GridPulse, and CameraDrift work together for this tutorial; extract individual primitives only after another video proves each independently.",
+      },
+    ],
+    notes: [
+      "Generated VoxCPM voice-design TTS, captions, stills, and mp4 stay local-only under public/generated/git-tutorial/ and out/.",
+      "Each scene has its own .wav file with properly measured durationInFrames and durationInSeconds.",
+      "This sample remains a dedicated Agent Producer composition and does not use the parked web prompt path.",
+      "GitTagBar (10-tag command decoration) is sample-local and not yet promoted.",
+    ],
+  },
 ] as const satisfies readonly ProducerSampleManifest[];
 
 export const getProducerSampleManifestByCompositionId = (

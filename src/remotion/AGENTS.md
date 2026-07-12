@@ -20,7 +20,10 @@ src/remotion/
 |-- primitives/               # lower-level visual primitives
 |-- ScriptedVideo/            # scripted-template renderer
 |-- SpotlightVideo/           # spotlight-template renderer
-`-- catalog/, demos/, MyComp/  # previews/examples
+|-- GitTutorialForDevs/       # Agent Producer Git tutorial composition
+|-- standalone-samples/       # reference-only standalone compositions
+|-- standalone-video/         # reusable production skeleton
+`-- producer-samples/          # sample manifest, registry, shared blocks
 ```
 
 ## WHERE TO LOOK

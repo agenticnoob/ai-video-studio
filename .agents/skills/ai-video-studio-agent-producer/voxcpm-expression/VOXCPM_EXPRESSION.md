@@ -49,15 +49,27 @@ Guidance:
 - `cfg_value`: controls conditioning strength. Start from the repo default `2`;
   raise carefully when delivery ignores conditioning, lower if speech becomes
   forced or unstable.
-- `inference_timesteps`: quality/latency tradeoff. Start from `10`; increase for
+| `inference_timesteps`: quality/latency tradeoff. Start from `10`; increase for
   difficult lines only after text and reference quality are sound.
-- `normalize`: normally `true`; disable only when preserving input loudness is
+| `normalize`: normally `true`; disable only when preserving input loudness is
   more important than consistent output level.
-- `denoise`: normally `false`; enable for a genuinely noisy reference, not as a
+| `denoise`: normally `false`; enable for a genuinely noisy reference, not as a
   substitute for choosing a clean reference.
-- `retry_badcase`: normally `true`; it asks upstream to retry obvious bad cases.
+| `retry_badcase`: normally `true`; it asks upstream to retry obvious bad cases.
   Disable only for deterministic diagnosis or when repeated retries hide a
   reproducible failure.
+
+## Default Voice Clone Configuration
+
+When generating video narration without explicit override, use:
+
+- **Mode**: `high-fidelity-clone` (`clone_with_prompt` endpoint)
+- **prompt_audio**: `voices/clone/lyy.wav`
+- **prompt_text**: content of `voices/clone/lyy.txt` (`我觉得应该要犒赏一下自己。讨厌！好狗不挡道！天哪！原来命运是不可抗拒的。`)
+- **reference_audio**: `voices/clone/lyy-r.wav` (same speaker, different content, timbre anchor only)
+
+Both audio files are of the same speaker. `prompt_audio` carries the exact transcript;
+`reference_audio` provides additional timbre stability without needing its own transcript.
 
 ## Text, Punctuation, And Expression
 
@@ -126,6 +138,40 @@ adapter limitation. Do not describe it as a VoxCPM model limitation.
 6. Run `npm run producer:stills -- --composition <composition-id>`.
 7. Review real audio, captions, stills, and MP4; tools do not make creative
    quality judgments.
+
+## Common Pitfalls (Updated 2026-07-12)
+
+### Voice-design cross-call drift
+
+Each `voice-design` API call generates a **random** voice. Seven scenes = up to
+seven different speakers. For multi-scene consistency:
+1. Generate the first scene with voice-design using a good control instruction.
+2. Save the output `.wav` as the reference audio.
+3. Re-generate remaining scenes with `controllable-clone` mode using that
+   reference, so timbre is preserved across all scenes.
+
+### Control instruction format in the repo adapter
+
+Upstream VoxCPM requires control instructions as a parenthesized prefix in the
+`text` field:
+```
+"(Warm male narrator, friendly and clear)写代码的你，有没有遇到过这种情况……"
+```
+
+The repo `/api/tts` adapter's `globalStyle` / `narration.tone` fields are NOT
+automatically injected as `(xxx)` wrappers. Custom generation scripts must
+concatenate the control instruction manually into the `text` field before
+sending to `/api/tts`. Without this, voice-design will use an empty/default
+control, producing a less predictable voice.
+
+### Per-scene audio vs combined audio
+
+Each scene must have its own audio file with independently measured
+`durationInFrames`. A single shared audio file across all scenes causes every
+`<Sequence>` to replay from the start. The `renderAudio` callback in
+`StandaloneTimeline` should use `scene.audioFile` (per-scene), not a hardcoded
+path. Use `renderOverlay` only when one audio spans the entire composition and
+no per-scene caption timing is needed.
 
 ## Quality Gate
 

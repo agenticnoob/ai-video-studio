@@ -114,6 +114,15 @@ import {
   PROG_THINKING_WIDTH,
   AiProgrammingThinking,
 } from "./standalone-samples/AiProgrammingThinking";
+import {
+  GIT_TUTORIAL_COMPOSITION_ID,
+  GIT_TUTORIAL_FPS,
+  GIT_TUTORIAL_HEIGHT,
+  GIT_TUTORIAL_WIDTH,
+  GitTutorialForDevsVideo,
+  gitTutorialData,
+  getGitTutorialDuration,
+} from "./GitTutorialForDevs";
 
 const calculateVideoProjectMetadata = ({ props }: { props: VideoProject }) => {
   const parsedProject = videoProjectSchema.parse(props) as VideoProject;
@@ -290,6 +299,15 @@ export const RemotionRoot: FC = () => {
         fps={WC_PREDICTION_FPS}
         width={WC_PREDICTION_WIDTH}
         height={WC_PREDICTION_HEIGHT}
+      />
+      <Composition
+        id={GIT_TUTORIAL_COMPOSITION_ID}
+        component={GitTutorialForDevsVideo}
+        defaultProps={{ data: gitTutorialData }}
+        durationInFrames={getGitTutorialDuration(gitTutorialData)}
+        fps={GIT_TUTORIAL_FPS}
+        width={GIT_TUTORIAL_WIDTH}
+        height={GIT_TUTORIAL_HEIGHT}
       />
     </>
   );

@@ -31,7 +31,10 @@ ai-video-studio/
 |-- src/helpers/           # client-side generation/render/progress hooks
 |-- src/lib/               # schemas, staged pipeline, TTS, render utilities
 |-- src/remotion/          # Remotion compositions, primitives, recipes
-|   `-- standalone-samples/# reference-only standalone compositions
+|   |-- GitTutorialForDevs/ # Agent Producer Git tutorial composition
+|   |-- standalone-samples/# reference-only standalone compositions
+|   |-- standalone-video/  # reusable production skeleton
+|   `-- producer-samples/  # sample manifest, registry, shared blocks
 |-- src/templates/         # registered template definitions and runtimes
 `-- public/                # static assets addressable by Remotion/Next
     `-- standalone-samples/audio/ # sample-only Remotion audio assets

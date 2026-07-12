@@ -154,6 +154,10 @@ Write narration beats before locking visual timing:
   returned chunk's leading/trailing silence, then writes one trimmed and
   concatenated WAV and derives caption cue durations from measured chunk audio.
   Do not bypass that path with one broad fallback cue per paragraph.
+- Default voice clone configuration: see `voxcpm-expression/VOXCPM_EXPRESSION.md`
+  **Default Voice Clone Configuration** section. When no override is specified,
+  use `clone_with_prompt` with `voices/clone/lyy.wav` + `voices/clone/lyy.txt`
+  (prompt) and `voices/clone/lyy-r.wav` (reference).
 - For local producer videos, write static voiceover assets into
   `public/generated/<slug>/` so Remotion can read them through `staticFile()`.
 
@@ -269,3 +273,57 @@ composition, motion design, actual still/MP4 review, creative revision, and
 promotion judgment. The tools own TTS requests/errors, caption cleanup,
 measured duration, metadata/constants/summaries, artifact checks, provider and
 fallback checks, and review-frame command execution.
+
+## Production Pitfalls (Updated 2026-07-12)
+
+### Text visibility on dark backgrounds
+
+Every text element on a dark background (especially `#0D1117` or similar) needs
+an **explicit `color`** prop. Components like `EntranceHeadline`, scene headline
+`div`s, and `<span>` elements in logo badges default to `color: inherit` which
+may render as black (invisible on dark). Always set `color: palette.ink`
+(`#F0F6FC`) or an accent color explicitly.
+
+### Font sizing at 1920×1080
+
+The `video-layout.md` rule (`headlines 84px at 1080px`) scales to 1920px width.
+Actual minimums for a 1920px canvas:
+
+| Role | Size | Example |
+|------|------|---------|
+| Main headline | 84px+ | `Git 能做什么？` |
+| Card title | 28-32px | `版本追踪` |
+| Card body | 20-24px | `每一次改动都有记录` |
+| Command text | 16-20px | `git init my-project` |
+| Labels / tags | 18-22px | `# 版本控制` |
+| Caption / subtitle | 22-26px | Bottom caption overlay |
+
+### Scene density planning
+
+Estimate fill rate before composing. For a 1920×1080 canvas with 60px padding
+on each side (1800px usable width):
+
+| Desired fill | Content width | Strategy |
+|-------------|--------------|----------|
+| 60%+ | 1100-1400px | 2-column grid or wide cards |
+| 70%+ | 1400-1600px | Full-width layouts, side panels |
+| 80%+ | 1600-1800px | Dense information graphics |
+
+For scenes with vertical lists (tips, steps), expand the list container to
+fill horizontal space (1400px+) rather than centering a narrow column.
+
+### Per-scene audio architecture
+
+Each `GitTutorialScene` must have its own `audioFile` pointing to a per-scene
+audio file. Do not share one audio file across scenes. The `StandaloneTimeline`
+`renderAudio` callback should use `scene.audioFile`; the `renderOverlay` prop
+is for a single audio that spans the entire composition (no per-scene timing).
+
+### TTS generation order
+
+1. Write narration beats in `script.ts`
+2. Create a generation script (`.mjs`) that calls `POST /api/tts` per scene
+3. Generate audio BEFORE locking scene durations
+4. Write the resulting `audio.generated.ts` with measured durations
+5. Build scene data from the generated metadata
+6. Set `GIT_TUTORIAL_DURATION_IN_FRAMES` from the sum of measured durations

@@ -30,7 +30,8 @@ committed source files, and promotion candidates.
 Current maintained samples include `AiConceptsForBeginners`,
 `AiDailyNewsBrief20260709`, `AiNewsStrategicBrief20260709`,
 `AiDailyNewsBrief20260708`, `OpenAiHardwareNewsBrief`, `UvOpenSourceBrief`,
-`WorldCupBettingAnalysis`, and `PixelRAGChineseStandalonePreview`.
+`WorldCupBettingAnalysis`, `PixelRAGChineseStandalonePreview`, and
+`GitTutorialForDevs`.
 News/trend-briefing samples should keep source-backed claims honest: use real
 screenshots when available, otherwise record localized source-card fallback
 reasons in sample data.
@@ -626,6 +627,16 @@ fallback evidence, not screenshots, with fallback reasons in
 `src/remotion/OpenAiHardwareNewsBrief/data.ts`. Generated source cards, audio,
 stills, and mp4 live under ignored
 `public/generated/openai-hardware-news-brief/` and `out/`.
+
+For the latest Git tutorial producer sample, open `GitTutorialForDevs`. It is a
+standalone 16:9 Chinese Git tutorial for developers, built from 7 per-scene
+VoxCPM voice-design TTS assets, real measured caption cues, and a rich visual
+palette (BokehCircles, GridPulse, CameraDrift, GitTagBar). Each scene plays
+its own `.wav` audio via `StandaloneVoiceover`. Scenes include a 2×2 card
+grid, 4-column concept cards, a terminal session with file tree sidebar, a
+timeline + code diff block, and a closing CTA with stat row. Generated TTS
+audio, captions, stills, and mp4 stay under ignored
+`public/generated/git-tutorial/` and `out/`.
 
 Preview the local Remotion primitive catalog in the app:
 - http://localhost:3000/primitives

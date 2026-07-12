@@ -1,8 +1,27 @@
 # Iteration Status
 
-Last updated: Agent Producer fixed production tools
+Last updated: GitTutorialForDevs — Agent Producer Git tutorial video
 
-## Latest continuation — Agent Producer fixed production tools
+## Latest — GitTutorialForDevs (2026-07-12)
+
+- Added `GitTutorialForDevs`, a standalone 16:9 Chinese Git tutorial for
+  developers, as a dedicated Agent Producer composition with 7 per-scene
+  VoxCPM voice-design TTS assets and real measured caption cues.
+- Each scene has its own `.wav` audio file via `StandaloneVoiceover` instead
+  of a shared full-narration file.
+- Rich visual palette: `BokehCircles`, `GridPulse`, `CameraDrift`,
+  `GitTagBar` (10-tag command decoration), `GradientShiftBackground`,
+  Vignette overlay, and `spring()`-based entrances.
+- Added `scripts/generate-git-tutorial-tts.mjs` for per-scene VoxCPM TTS
+  generation via `POST /api/tts`.
+- Registered the composition in `Root.tsx` and the producer-samples manifest.
+- Updated SKILL.md with production pitfalls: text visibility on dark bg,
+  font sizing at 1920x1080, scene density planning, per-scene audio
+  architecture, and TTS generation order.
+- Updated VOXCPM_EXPRESSION.md with default voice clone configuration.
+- TypeScript, lint, and still-frame validation all pass.
+
+## Previous — Agent Producer fixed production tools
 
 - Added provider-neutral future-sample audio tooling under
   `scripts/lib/producer-audio/` with separate F5 and VoxCPM request-plan
