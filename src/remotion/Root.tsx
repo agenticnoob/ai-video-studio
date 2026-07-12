@@ -123,6 +123,22 @@ import {
   gitTutorialData,
   getGitTutorialDuration,
 } from "./GitTutorialForDevs";
+import {
+  HERMES_COMPOSITION_ID,
+  HERMES_FPS,
+  HERMES_HEIGHT,
+  HERMES_WIDTH,
+  HermesInnerLandscapeVideo,
+  getHermesDuration,
+} from "./HermesInnerLandscape";
+import {
+  COMPOSITION_ID as RAW_THOUGHT_COMPOSITION_ID,
+  FPS as RAW_THOUGHT_FPS,
+  HEIGHT as RAW_THOUGHT_HEIGHT,
+  WIDTH as RAW_THOUGHT_WIDTH,
+  RawThoughtMirrorVideo,
+  getRawThoughtDuration,
+} from "./RawThoughtMirror";
 
 const calculateVideoProjectMetadata = ({ props }: { props: VideoProject }) => {
   const parsedProject = videoProjectSchema.parse(props) as VideoProject;
@@ -308,6 +324,22 @@ export const RemotionRoot: FC = () => {
         fps={GIT_TUTORIAL_FPS}
         width={GIT_TUTORIAL_WIDTH}
         height={GIT_TUTORIAL_HEIGHT}
+      />
+      <Composition
+        id={HERMES_COMPOSITION_ID}
+        component={HermesInnerLandscapeVideo}
+        durationInFrames={getHermesDuration()}
+        fps={HERMES_FPS}
+        width={HERMES_WIDTH}
+        height={HERMES_HEIGHT}
+      />
+    <Composition
+        id={RAW_THOUGHT_COMPOSITION_ID}
+        component={RawThoughtMirrorVideo}
+        durationInFrames={getRawThoughtDuration()}
+        fps={RAW_THOUGHT_FPS}
+        width={RAW_THOUGHT_WIDTH}
+        height={RAW_THOUGHT_HEIGHT}
       />
     </>
   );

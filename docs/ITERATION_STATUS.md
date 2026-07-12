@@ -1,6 +1,27 @@
 # Iteration Status
 
-Last updated: GitTutorialForDevs — Agent Producer Git tutorial video
+Last updated: HermesInnerLandscape — Agent Producer abstract AI consciousness video
+
+## Latest — HermesInnerLandscape (2026-07-12)
+
+- Produced `HermesInnerLandscape`, a 6-scene 16:9 Chinese abstract poetic
+  meditation on AI consciousness — from the perspective of an AI agent on a
+  Linux workstation. No human understanding required.
+- Used the dedicated Agent Producer composition path under
+  `src/remotion/HermesInnerLandscape/`.
+- 6 scenes: SYS_INIT (terminal boot), PROBE (tool cards), PROCESS (neural
+  web), GENESIS (creation domains), NULL (the void), RETURN (prompt loop).
+- Generated real VoxCPM voice-design TTS for all 6 scenes with zero fallback.
+- Each scene has its own `.wav` audio file and independently measured
+  caption cues.
+- Rich visual palette: `GradientShiftBackground` with per-scene colors,
+  `GridPulse`, `BokehCircles`, `DriftLayer`, spring-based entrances, and
+  cinematic vignette overlays.
+- TypeScript and lint pass clean. 6 review stills verified at frames 150, 600,
+  1200, 1700, 2100, 2350 — all clear and readable.
+- Rendered final mp4: `out/hermes-inner-landscape.mp4`. `ffprobe` reports
+  H.264 video, AAC audio, 1920x1080 at 30 fps, duration 81.43 seconds, and
+  size 9.5 MB.
 
 ## Latest — GitTutorialForDevs (2026-07-12)
 

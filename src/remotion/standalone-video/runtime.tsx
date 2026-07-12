@@ -53,25 +53,25 @@ const landscapeCaptionStyle: CSSProperties = {
   background: "rgba(3, 7, 18, 0.82)",
   border: "1px solid rgba(255,255,255,0.12)",
   borderRadius: 8,
-  bottom: 34,
+  bottom: 40,
   boxShadow: "0 18px 48px rgba(0,0,0,0.32)",
   color: "#ffffff",
-  fontSize: 24,
+  fontSize: 30,
   fontWeight: 700,
-  left: 180,
+  left: 160,
   lineHeight: 1.35,
-  padding: "12px 22px",
+  padding: "14px 26px",
   position: "absolute",
-  right: 180,
+  right: 160,
   textAlign: "center",
 };
 
 const portraitCaptionStyle: CSSProperties = {
   ...landscapeCaptionStyle,
   bottom: 72,
-  fontSize: 34,
+  fontSize: 30,
   left: 54,
-  padding: "18px 26px",
+  padding: "20px 30px",
   right: 54,
 };
 

@@ -160,6 +160,7 @@ npm run smoke:producer-validation
 npm run smoke:producer-review-frames
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
+./scripts/render-video.sh <composition-id> <slug> <metadata-json>
 
 bash scripts/dev.sh
 bash scripts/studio.sh

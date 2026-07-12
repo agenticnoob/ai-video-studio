@@ -15,6 +15,7 @@ Actions workflow.
 | Next dev | `dev.sh` | Docker `web` service. |
 | Remotion Studio | `studio.sh` | Docker `studio` service on port 3001. |
 | Sample render | `render.sh` | Default/sample composition path only. |
+| Metadata-bundled render | `render-video.sh` | Render mp4 + JSON metadata to `out/<slug>/`. |
 | Prod start | `prod.sh`, `prod-build.sh` | Requires `.env.prod`; uses `web-prod`. |
 | Remotion browser | `ensure-remotion-browser.mjs` | Container startup preflight. |
 | Real F5 runtime | `f5-tts-real.sh` | GPU overlay and real model mode. |

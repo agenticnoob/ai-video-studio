@@ -193,9 +193,66 @@ Inspect for:
 - evidence scenes use real captures when visible; fallback reasons stay in
   data/handoff, not in the frame
 
-For finished samples, render an mp4 and inspect with `ffprobe` when practical.
+### 7. Render MP4 With Metadata
 
-### 7. Promote Only After Evidence
+After stills pass inspection, generate the final video with chapter metadata:
+
+**a) 准备章节元信息 JSON**
+
+在 composition 数据中提取章节信息，写入一个临时 JSON 文件：
+
+```json
+{
+  "title": "视频标题",
+  "description": "视频简介",
+  "fps": 30,
+  "chapters": [
+    { "name": "章节1", "durationInFrames": 750 },
+    { "name": "章节2", "durationInFrames": 800 }
+  ]
+}
+```
+
+`chapters[].durationInFrames` 对应每个场景的帧时长，脚本会自动累加计算出 `startTime`。
+
+**b) 渲染并输出结构化的文件夹**
+
+```bash
+./scripts/render-video.sh <CompositionId> <slug> <metadata-json-path>
+```
+
+输出：
+
+```
+out/<slug>/
+├── <slug>.mp4    — 渲染视频
+└── <slug>.json   — 元信息（标题、简介、章节列表含开始时间）
+```
+
+`<slug>.json` 示例：
+
+```json
+{
+  "title": "Git 教程 | 每个开发者都需要的版本控制",
+  "description": "Git 是目前最流行的版本控制系统...",
+  "duration": 188.1,
+  "durationInFrames": 5643,
+  "fps": 30,
+  "chapters": [
+    { "name": "开场", "startTime": "00:00:00" },
+    { "name": "核心价值", "startTime": "00:00:25" },
+    { "name": "核心概念", "startTime": "00:00:51" }
+  ]
+}
+```
+
+**c) 验证**
+
+```bash
+ffprobe -v error -show_entries format=duration -of csv=p=0 "out/<slug>/<slug>.mp4"
+```
+
+### 8. Promote Only After Evidence
 
 After a real sample works:
 
@@ -244,7 +301,7 @@ Add targeted smokes for:
 
 End producer work with:
 
-- topic and output path
+- topic and output path (`out/<slug>/`)
 - why the output is standalone, or why `VideoProject` was explicitly chosen
 - primitives/blocks/runtime helpers used
 - source assets created and whether they are local-only
@@ -253,6 +310,8 @@ End producer work with:
 - whether any visible evidence scenes used actual captured screenshots
 - TTS/caption status
 - stills or render artifacts checked
+- metadata JSON path (`out/<slug>/<slug>.json`) with title, description, and
+  chapter start times
 - validation commands and results
 - reusable pieces worth promoting later
 
@@ -267,6 +326,8 @@ stills, or MP4.
   `npm run producer:validate -- --module <validation-module>`
 - Manifest-driven review stills:
   `npm run producer:stills -- --composition <composition-id>`
+- Metadata-bundled mp4 render:
+  `./scripts/render-video.sh <composition-id> <slug> <metadata-json>`
 
 The Agent still owns research, narration structure, visual metaphor, scene
 composition, motion design, actual still/MP4 review, creative revision, and
@@ -296,7 +357,7 @@ Actual minimums for a 1920px canvas:
 | Card body | 20-24px | `每一次改动都有记录` |
 | Command text | 16-20px | `git init my-project` |
 | Labels / tags | 18-22px | `# 版本控制` |
-| Caption / subtitle | 22-26px | Bottom caption overlay |
+| Caption / subtitle | 30px | Bottom caption overlay |
 
 ### Scene density planning
 
