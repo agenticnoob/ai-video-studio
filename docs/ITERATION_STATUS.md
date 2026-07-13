@@ -175,7 +175,7 @@ Validation performed:
   and `max_volume: -6.9 dB`.
 
 Validation performed:
-- `docker compose -f docker-compose.yml -f docker-compose.voxcpm.yml run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; NEXT_ORIGIN=http://127.0.0.1:3000 TTS_PROVIDER=voxcpm VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810 AI_DAILY_NEWS_BRIEF_20260709_VOICE_REFERENCE_AUDIO=voices/f5-tts/noobli/ref.m4a AI_DAILY_NEWS_BRIEF_20260709_VOICE_REFERENCE_TEXT=voices/f5-tts/noobli/ref.txt npm run generate:ai-daily-news-brief-2026-07-09'`
+- `docker compose -f docker-compose.yml -f docker-compose.voxcpm.yml run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; NEXT_ORIGIN=http://127.0.0.1:3000 TTS_PROVIDER=voxcpm VOXCPM_TTS_BASE_URL=http://192.168.50.6:8810 AI_DAILY_NEWS_BRIEF_20260709_VOICE_REFERENCE_AUDIO=voices/f5-tts/noobli/ref.m4a AI_DAILY_NEWS_BRIEF_20260709_VOICE_REFERENCE_TEXT=voices/f5-tts/noobli/ref.txt npm run generate:ai-daily-news-brief-2026-07-09'`
   completed with `fallback=false`.
 - `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:ai-daily-news-brief-2026-07-09'`
 - `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:producer-sample-manifest'`
@@ -214,7 +214,7 @@ Validation performed:
   `max_volume: -5.7 dB`.
 
 Validation performed:
-- `docker compose -f docker-compose.yml -f docker-compose.voxcpm.yml run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; NEXT_ORIGIN=http://127.0.0.1:3000 TTS_PROVIDER=voxcpm VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810 AI_NEWS_STRATEGIC_BRIEF_VOICE_REFERENCE_AUDIO=voices/f5-tts/noobli/ref.m4a AI_NEWS_STRATEGIC_BRIEF_VOICE_REFERENCE_TEXT=voices/f5-tts/noobli/ref.txt npm run generate:ai-news-strategic-brief-2026-07-09'`
+- `docker compose -f docker-compose.yml -f docker-compose.voxcpm.yml run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; NEXT_ORIGIN=http://127.0.0.1:3000 TTS_PROVIDER=voxcpm VOXCPM_TTS_BASE_URL=http://192.168.50.6:8810 AI_NEWS_STRATEGIC_BRIEF_VOICE_REFERENCE_AUDIO=voices/f5-tts/noobli/ref.m4a AI_NEWS_STRATEGIC_BRIEF_VOICE_REFERENCE_TEXT=voices/f5-tts/noobli/ref.txt npm run generate:ai-news-strategic-brief-2026-07-09'`
   completed with `fallback=false`.
 - `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:ai-news-strategic-brief-2026-07-09'`
 - `docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:producer-sample-manifest'`
@@ -286,7 +286,7 @@ Validation performed:
   `/models/VoxCPM2`, device `cuda`, and sample rate `48000`.
 - `VOXCPM_TTS_NEXT_SMOKE_REFERENCE_AUDIO=voices/f5-tts/noobli/ref.m4a VOXCPM_TTS_NEXT_SMOKE_REFERENCE_TEXT='<private reference text>' scripts/producer-voxcpm.sh smoke-clone`
   passed with provider `voxcpm`, WAV output, and byte-range asset serving.
-- `docker compose -f docker-compose.yml -f docker-compose.voxcpm.yml run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; NEXT_ORIGIN=http://127.0.0.1:3000 TTS_PROVIDER=voxcpm VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810 AI_DAILY_NEWS_BRIEF_VOICE_REFERENCE_AUDIO=voices/f5-tts/noobli/ref.m4a AI_DAILY_NEWS_BRIEF_VOICE_REFERENCE_TEXT=voices/f5-tts/noobli/ref.txt npm run generate:ai-daily-news-brief-2026-07-08'`
+- `docker compose -f docker-compose.yml -f docker-compose.voxcpm.yml run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; NEXT_ORIGIN=http://127.0.0.1:3000 TTS_PROVIDER=voxcpm VOXCPM_TTS_BASE_URL=http://192.168.50.6:8810 AI_DAILY_NEWS_BRIEF_VOICE_REFERENCE_AUDIO=voices/f5-tts/noobli/ref.m4a AI_DAILY_NEWS_BRIEF_VOICE_REFERENCE_TEXT=voices/f5-tts/noobli/ref.txt npm run generate:ai-daily-news-brief-2026-07-08'`
   completed with `fallback=false`.
 - `npm run smoke:voxcpm-clone-adapter` first failed on the old one-request
   behavior, then passed after VoxCPM generated punctuation-split chunks and
@@ -431,7 +431,7 @@ Validation note:
   `out/ai-daily-news-brief-2026-07-08.mp4`; `ffprobe` reported `h264` video,
   `aac` audio, duration `190.144000`, latest rendered size `28741588`.
 - TTS status: local generation currently used `local-silent-fallback`. VoxCPM
-  was unreachable at `127.0.0.1:8810`; F5-TTS is running in the compose bridge
+  was unreachable at `192.168.50.6:8810`; F5-TTS is running in the compose bridge
   network, but the current `web` container is host-networked with
   `F5_TTS_BASE_URL=` and cannot resolve the bridge `f5-tts` service without a
   runtime topology change or web restart.
@@ -483,7 +483,7 @@ Validation note:
   `VOXCPM_TTS_CLONE_ENDPOINT` for an explicit endpoint override.
 - Added `docker-compose.voxcpm.yml` and `scripts/producer-voxcpm.sh` for the
   host-network Next topology required by the personal VoxCPM service while it
-  binds host `127.0.0.1:8810`.
+  binds host `192.168.50.6:8810`.
 - `.env.example`, local `.env`, README, provider docs, the Agent Producer
   skill, final goal, and F5 handoff are aligned around VoxCPM default
   and F5 explicit fallback semantics. `.env` remains local-only and must not be
@@ -511,7 +511,7 @@ Validation performed:
   and matching reference text: provider `voxcpm`, WAV, duration `8.16`
   seconds, one caption cue, and byte-range `206 Partial Content`.
 - Topology note: the Codex sandbox process could not curl
-  `http://127.0.0.1:8810/ready`, but the host-network `web` container could.
+  `http://192.168.50.6:8810/ready`, but the host-network `web` container could.
   This confirms the runner must validate VoxCPM from the same host-network
   topology used by Next, not from an unrelated sandbox loopback namespace.
 
@@ -529,12 +529,12 @@ Validation performed:
   Next-side live adapter validation and byte-range asset serving.
 - Docker config now passes VoxCPM env vars into `web`, `studio`, and `render`
   and maps `host.docker.internal` to the Docker host gateway. Because the
-  personal VoxCPM service binds host `127.0.0.1:8810`, the current bridge-mode
+  personal VoxCPM service binds host `192.168.50.6:8810`, the current bridge-mode
   `web` container still cannot reach it through `host.docker.internal`.
 - Live VoxCPM validation is complete for a host-network Next topology:
-  `curl -fsS http://127.0.0.1:8810/ready` returned ready, then a temporary
+  `curl -fsS http://192.168.50.6:8810/ready` returned ready, then a temporary
   host-network Next server on `http://127.0.0.1:3010` passed
-  `VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810 NEXT_ORIGIN=http://127.0.0.1:3010 npm run smoke:voxcpm-next`.
+  `VOXCPM_TTS_BASE_URL=http://192.168.50.6:8810 NEXT_ORIGIN=http://127.0.0.1:3010 npm run smoke:voxcpm-next`.
   The smoke generated a `provider: "voxcpm"` WAV with duration `5.92` seconds,
   one caption cue, and verified `/api/tts/assets/...` byte-range serving with
   `206 Partial Content`.

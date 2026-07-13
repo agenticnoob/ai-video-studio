@@ -56,7 +56,7 @@ reference text and ignores control.
 ## Runtime And Config
 
 - `TTS_PROVIDER=voxcpm`
-- `VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810`
+- `VOXCPM_TTS_BASE_URL=http://192.168.50.6:8810`
 - `VOXCPM_TTS_CLONE_MODE=clone_with_prompt`
 - `VOXCPM_TTS_CLONE_ENDPOINT=` optional override
 - `VOXCPM_TTS_CONTROL=` optional control

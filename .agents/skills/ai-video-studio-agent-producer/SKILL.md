@@ -35,11 +35,8 @@ Skill Stack:
    - `README.md`
 2. Read visual inventory before planning scenes:
    - `.agents/skills/ai-video-studio-agent-producer/remotion-primitives/REMOTION_PRIMITIVES.md`
-   - `docs/REMOTION_COMPONENT_LIBRARY.md`
    - `src/remotion/catalog/primitive-catalog.ts`
-3. Inspect examples and shared runtime:
-   - `src/remotion/WorldCupBettingAnalysis/`
-   - `src/remotion/PixelRAGChineseStandalone/`
+3. Inspect shared runtime and reusable blocks:
    - `src/remotion/standalone-video/`
    - `src/remotion/recipes/blocks/`
 4. Use `.agents/skills/remotion-best-practices/` for Remotion rules. Load

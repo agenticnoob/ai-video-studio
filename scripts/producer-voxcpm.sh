@@ -6,7 +6,7 @@ cd "${ROOT_DIR}"
 
 export APP_PORT="${APP_PORT:-3000}"
 export TTS_PROVIDER="${TTS_PROVIDER:-voxcpm}"
-export VOXCPM_TTS_BASE_URL="${VOXCPM_TTS_BASE_URL:-http://127.0.0.1:8810}"
+export VOXCPM_TTS_BASE_URL="${VOXCPM_TTS_BASE_URL:-http://192.168.50.6:8810}"
 export VOXCPM_TTS_CLONE_MODE="${VOXCPM_TTS_CLONE_MODE:-clone_with_prompt}"
 export NEXT_ORIGIN="${NEXT_ORIGIN:-http://127.0.0.1:${APP_PORT}}"
 

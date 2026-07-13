@@ -4,7 +4,7 @@
 
 **Goal:** Make VoxCPM the default Agent Producer TTS path, including voice clone via the existing `/data/projects/labs/voxcpm-api` service. Plain VoxCPM `/tts` remains supported. VoxCPM clone is implemented through `/clone_with_prompt` by default, with `/clone` as an explicit compatibility mode. F5-TTS remains available only as an explicit fallback provider.
 
-**Architecture:** Existing `voiceClone` upload and reference resolution stays in `src/lib/tts/voice-references.ts`. Provider selection preserves the requested or configured provider even when `voiceClone.enabled` is true. `src/lib/tts/voxcpm.ts` decides between plain JSON `/tts` and multipart clone calls based on `referenceAudioPath` plus `referenceText`. Agent Producer docs and scripts default to a host-network Next topology because the personal VoxCPM service binds host `127.0.0.1:8810`.
+**Architecture:** Existing `voiceClone` upload and reference resolution stays in `src/lib/tts/voice-references.ts`. Provider selection preserves the requested or configured provider even when `voiceClone.enabled` is true. `src/lib/tts/voxcpm.ts` decides between plain JSON `/tts` and multipart clone calls based on `referenceAudioPath` plus `referenceText`. Agent Producer docs and scripts default to a host-network Next topology because the personal VoxCPM service binds host `192.168.50.6:8810`.
 
 **Tech Stack:** Next 16, React 19, Remotion 4, TypeScript, Node 20 fetch/FormData/Blob APIs, Docker Compose, existing `/data/projects/labs/voxcpm-api` FastAPI service.
 
@@ -25,7 +25,7 @@
 - Do not implement any web/editor productization expansion beyond the TTS plumbing needed by Agent Producer and existing `/api/tts`.
 - Do not commit model files, generated audio, rendered video, `.env`, `.omo/`, `.claude/`, `out/`, `public/generated/`, or private voice reference files.
 - `.env` may be updated locally because the user explicitly requested local config alignment, but it must remain ignored and must not be staged.
-- VoxCPM service currently binds host `127.0.0.1:8810`. Do not assume bridge-mode Docker can reach it. Validate actual reachability.
+- VoxCPM service currently binds host `192.168.50.6:8810`. Do not assume bridge-mode Docker can reach it. Validate actual reachability.
 - `voiceClone.enabled` must preserve the selected provider after this plan. F5 is used only when provider selection is explicitly `f5-tts`.
 - Keep `F5_TTS_BASE_URL` and related config for explicit F5 usage.
 - Generated live-smoke narration audio is expected under ignored artifact paths and must stay uncommitted.
@@ -483,13 +483,13 @@ voiceClone: process.env.SMOKE_VOICE_CLONE === "true"
 - [ ] Plain live smoke using host-network Next:
 
 ```bash
-VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810 NEXT_ORIGIN=http://127.0.0.1:3000 npm run smoke:voxcpm-next
+VOXCPM_TTS_BASE_URL=http://192.168.50.6:8810 NEXT_ORIGIN=http://127.0.0.1:3000 npm run smoke:voxcpm-next
 ```
 
 - [ ] Clone live smoke using a private local reference:
 
 ```bash
-VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810 \
+VOXCPM_TTS_BASE_URL=http://192.168.50.6:8810 \
 NEXT_ORIGIN=http://127.0.0.1:3000 \
 VOXCPM_TTS_NEXT_SMOKE_CLONE=true \
 VOXCPM_TTS_NEXT_SMOKE_REFERENCE_AUDIO=/absolute/path/to/private-reference.wav \
@@ -531,7 +531,7 @@ services:
     environment:
       APP_PORT: "${APP_PORT:-3000}"
       TTS_PROVIDER: "${TTS_PROVIDER:-voxcpm}"
-      VOXCPM_TTS_BASE_URL: "${VOXCPM_TTS_BASE_URL:-http://127.0.0.1:8810}"
+      VOXCPM_TTS_BASE_URL: "${VOXCPM_TTS_BASE_URL:-http://192.168.50.6:8810}"
       VOXCPM_TTS_CLONE_MODE: "${VOXCPM_TTS_CLONE_MODE:-clone_with_prompt}"
       VOXCPM_TTS_CLONE_ENDPOINT: "${VOXCPM_TTS_CLONE_ENDPOINT:-}"
       VOXCPM_TTS_CFG_VALUE: "${VOXCPM_TTS_CFG_VALUE:-2}"
@@ -569,7 +569,7 @@ cd "${ROOT_DIR}"
 
 export APP_PORT="${APP_PORT:-3000}"
 export TTS_PROVIDER="${TTS_PROVIDER:-voxcpm}"
-export VOXCPM_TTS_BASE_URL="${VOXCPM_TTS_BASE_URL:-http://127.0.0.1:8810}"
+export VOXCPM_TTS_BASE_URL="${VOXCPM_TTS_BASE_URL:-http://192.168.50.6:8810}"
 export VOXCPM_TTS_CLONE_MODE="${VOXCPM_TTS_CLONE_MODE:-clone_with_prompt}"
 export NEXT_ORIGIN="${NEXT_ORIGIN:-http://127.0.0.1:${APP_PORT}}"
 
@@ -689,7 +689,7 @@ Required semantic changes:
 
 ```dotenv
 TTS_PROVIDER="voxcpm"
-VOXCPM_TTS_BASE_URL="http://127.0.0.1:8810"
+VOXCPM_TTS_BASE_URL="http://192.168.50.6:8810"
 VOXCPM_TTS_CLONE_MODE="clone_with_prompt"
 VOXCPM_TTS_CLONE_ENDPOINT=""
 ```

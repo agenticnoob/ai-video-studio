@@ -19,7 +19,7 @@
   - `GET /ready` returns `200` when model is loaded, `503` while loading.
   - `POST /tts` accepts JSON with `text`, optional `control`, `cfg_value`, `inference_timesteps`, `normalize`, `denoise`, `save`, and `filename_prefix`.
   - `POST /tts` returns `audio/wav` plus `X-Audio-Format: wav`.
-  - Current deployment binds `127.0.0.1:8810` on the Ubuntu host using Docker host networking.
+  - Current deployment binds `192.168.50.6:8810` on the Ubuntu host using Docker host networking.
 - Current ai-video-studio TTS boundary:
   - `src/lib/tts/config.ts` has `TtsProviderId = "f5-tts"` only.
   - `src/lib/tts/provider-selection.ts` routed `voiceClone` requests to F5-TTS in that earlier slice.
@@ -28,7 +28,7 @@
   - `src/lib/tts/index.ts` persists caption sidecars after provider synthesis.
   - `src/lib/tts/request-schema.ts` and `src/lib/staged-generation-api.ts` only allow `"f5-tts"`.
   - `scripts/provider-boundary-smoke.mjs` currently asserts that non-F5 legacy providers are rejected.
-- Important connectivity caveat: if ai-video-studio `web` runs in Docker bridge mode, `127.0.0.1:8810` points at the web container, not the Ubuntu host. Do not assume the current VoxCPM local-only bind is reachable from the `web` container without a deliberate bridge, host-network overlay, or different service bind.
+- Important connectivity caveat: if ai-video-studio `web` runs in Docker bridge mode, `192.168.50.6:8810` points at the web container, not the Ubuntu host. Do not assume the current VoxCPM local-only bind is reachable from the `web` container without a deliberate bridge, host-network overlay, or different service bind.
 
 ## Non-Goals
 
@@ -742,7 +742,7 @@ Start or verify VoxCPM on the Ubuntu host:
 ```bash
 cd /data/projects/labs/voxcpm-api
 nohup ./run.sh > /data/logs/voxcpm/voxcpm-api.log 2>&1 &
-curl -fsS http://127.0.0.1:8810/ready
+curl -fsS http://192.168.50.6:8810/ready
 ```
 
 If the web container can reach VoxCPM through a host gateway, run:
@@ -757,7 +757,7 @@ If `host.docker.internal` cannot reach a service bound to host `127.0.0.1`, use 
 
 ```bash
 # Alternative A: run the smoke from a host-run Next process, not Docker.
-VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810 NEXT_ORIGIN=http://127.0.0.1:3000 npm run smoke:voxcpm-next
+VOXCPM_TTS_BASE_URL=http://192.168.50.6:8810 NEXT_ORIGIN=http://127.0.0.1:3000 npm run smoke:voxcpm-next
 ```
 
 ```bash
@@ -789,7 +789,7 @@ In `scripts/provider-boundary-smoke.mjs`, import `readVoxcpmTtsConfig` and add:
 ```js
 withEnv(
   {
-    VOXCPM_TTS_BASE_URL: "http://127.0.0.1:8810",
+    VOXCPM_TTS_BASE_URL: "http://192.168.50.6:8810",
     VOXCPM_TTS_CFG_VALUE: "2.5",
     VOXCPM_TTS_INFERENCE_TIMESTEPS: "12",
     VOXCPM_TTS_NORMALIZE: "true",
@@ -799,7 +799,7 @@ withEnv(
   },
   () => {
     const config = readVoxcpmTtsConfig();
-    if (config.endpoint !== "http://127.0.0.1:8810/tts") {
+    if (config.endpoint !== "http://192.168.50.6:8810/tts") {
       fail(`Unexpected VoxCPM endpoint: ${config.endpoint}`);
     }
     if (config.cfgValue !== 2.5) {
@@ -859,7 +859,7 @@ Update the TTS section:
 # 旧切片未覆盖 VoxCPM voiceClone；后续 clone 默认切片已替换该边界。
 TTS_PROVIDER=""
 
-# VoxCPM 本地 TTS 服务。当前个人服务默认在 ubuntu host 的 127.0.0.1:8810。
+# VoxCPM 本地 TTS 服务。当前个人服务默认在 ubuntu host 的 192.168.50.6:8810。
 # 如果 Next 跑在 Docker 容器里，优先验证容器是否能访问该地址；必要时使用
 # host.docker.internal、host-network override，或调整 VoxCPM 服务监听策略。
 VOXCPM_TTS_BASE_URL=""
@@ -930,7 +930,7 @@ VoxCPM was introduced there as a selectable ordinary text-to-speech provider. Th
 Default personal deployment:
 
 ```txt
-http://127.0.0.1:8810
+http://192.168.50.6:8810
 ```
 
 When ai-video-studio runs in Docker, verify container-to-host reachability before using this URL. `host.docker.internal` may require Docker host gateway mapping and may still not reach a service bound only to host loopback on every platform.
@@ -949,7 +949,7 @@ StoryboardSegmentPlan.narration.text
 ## Config
 
 - `TTS_PROVIDER=voxcpm`
-- `VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810` for host-run Next, or a verified container-reachable URL for Docker.
+- `VOXCPM_TTS_BASE_URL=http://192.168.50.6:8810` for host-run Next, or a verified container-reachable URL for Docker.
 - `VOXCPM_TTS_CONTROL` optionally controls voice design.
 - `VOXCPM_TTS_CFG_VALUE`, `VOXCPM_TTS_INFERENCE_TIMESTEPS`, `VOXCPM_TTS_NORMALIZE`, `VOXCPM_TTS_DENOISE`, `VOXCPM_TTS_SAVE`, and `VOXCPM_TTS_FILENAME_PREFIX` map directly to the VoxCPM `/tts` request.
 
@@ -957,7 +957,7 @@ StoryboardSegmentPlan.narration.text
 
 ```bash
 npm run smoke:provider-boundary
-VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810 NEXT_ORIGIN=http://127.0.0.1:3000 npm run smoke:voxcpm-next
+VOXCPM_TTS_BASE_URL=http://192.168.50.6:8810 NEXT_ORIGIN=http://127.0.0.1:3000 npm run smoke:voxcpm-next
 ```
 ```
 
@@ -992,13 +992,13 @@ TTS provider selection:
 - `TTS_PROVIDER="voxcpm"` uses the existing VoxCPM service for ordinary `/tts` synthesis.
 - That earlier slice kept clone routing on F5 because VoxCPM clone support was not part of its scope.
 
-For Docker-based `web`, verify that `VOXCPM_TTS_BASE_URL` is reachable from inside the container. The personal VoxCPM service currently binds to host `127.0.0.1:8810`, so host-run Next can use that URL directly while Docker may need a verified host gateway or host-network override.
+For Docker-based `web`, verify that `VOXCPM_TTS_BASE_URL` is reachable from inside the container. The personal VoxCPM service currently binds to host `192.168.50.6:8810`, so host-run Next can use that URL directly while Docker may need a verified host gateway or host-network override.
 ```
 
 Add command:
 
 ```bash
-VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810 NEXT_ORIGIN=http://127.0.0.1:3000 npm run smoke:voxcpm-next
+VOXCPM_TTS_BASE_URL=http://192.168.50.6:8810 NEXT_ORIGIN=http://127.0.0.1:3000 npm run smoke:voxcpm-next
 ```
 
 - [ ] **Step 4: Update handoff and status docs**
@@ -1017,7 +1017,7 @@ At the top of `docs/ITERATION_STATUS.md`, add a short latest continuation:
 - Added/planned VoxCPM as a selectable ordinary TTS provider beside F5-TTS.
 - The provider calls the existing `/data/projects/labs/voxcpm-api` service at `POST /tts`, stores local WAV narration artifacts, probes real duration, and reuses segment-owned fallback captions.
 - That earlier slice left F5-TTS as the voice-clone route.
-- Docker connectivity to VoxCPM must be verified because the personal service binds host `127.0.0.1:8810`.
+- Docker connectivity to VoxCPM must be verified because the personal service binds host `192.168.50.6:8810`.
 ```
 
 If this task is still planning-only, write "planned" instead of "added".
@@ -1072,13 +1072,13 @@ Expected:
 Verify VoxCPM:
 
 ```bash
-curl -fsS http://127.0.0.1:8810/ready
+curl -fsS http://192.168.50.6:8810/ready
 ```
 
 Run the Next live smoke with the URL appropriate to the running Next topology:
 
 ```bash
-VOXCPM_TTS_BASE_URL=http://127.0.0.1:8810 \
+VOXCPM_TTS_BASE_URL=http://192.168.50.6:8810 \
 NEXT_ORIGIN=http://127.0.0.1:3000 \
 npm run smoke:voxcpm-next
 ```

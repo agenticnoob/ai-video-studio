@@ -772,8 +772,7 @@ scripts/producer-voxcpm.sh smoke
 Use `TTS_PROVIDER=voxcpm` for the default Agent Producer narration path.
 Ordinary text-to-speech calls VoxCPM `/tts`; voice cloning calls
 `/clone_with_prompt` by default. The personal VoxCPM service currently binds to
-host `127.0.0.1:8810`, and bridge-mode `host.docker.internal` was not
-sufficient for that loopback-only service in the local validation. The
+host `192.168.50.6:8810`. The VoxCPM service runs on a dedicated host
 `docker-compose.voxcpm.yml` override therefore runs `web` with host networking
 so Next can reach the same loopback URL as the host.
 

@@ -169,7 +169,7 @@ const run = async () => {
 
   await withEnv(
     {
-      VOXCPM_TTS_BASE_URL: "http://127.0.0.1:8810",
+      VOXCPM_TTS_BASE_URL: "http://192.168.50.6:8810",
       VOXCPM_TTS_CFG_VALUE: "2.5",
       VOXCPM_TTS_INFERENCE_TIMESTEPS: "12",
       VOXCPM_TTS_NORMALIZE: "true",
@@ -179,7 +179,7 @@ const run = async () => {
     },
     () => {
       const config = readVoxcpmTtsConfig();
-      if (config.endpoint !== "http://127.0.0.1:8810/tts") {
+      if (config.endpoint !== "http://192.168.50.6:8810/tts") {
         fail(`Unexpected VoxCPM endpoint: ${config.endpoint}`);
       }
       if (config.cfgValue !== 2.5) {
