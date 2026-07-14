@@ -64,6 +64,15 @@ import {
   getAiDailyNews20260713Duration,
 } from "./AiDailyNews20260713";
 import {
+  AI_DAILY_NEWS_20260714_COMPOSITION_ID,
+  AI_DAILY_NEWS_20260714_FPS,
+  AI_DAILY_NEWS_20260714_HEIGHT,
+  AI_DAILY_NEWS_20260714_WIDTH,
+  AiDailyNews20260714Video,
+  aiDailyNews20260714Data,
+  getAiDailyNews20260714Duration,
+} from "./AiDailyNews20260714";
+import {
   AI_DAILY_NEWS_BRIEF_20260708_COMPOSITION_ID,
   AI_DAILY_NEWS_BRIEF_20260708_FPS,
   AI_DAILY_NEWS_BRIEF_20260708_HEIGHT,
@@ -275,6 +284,14 @@ export const RemotionRoot: FC = () => {
         fps={AI_DAILY_NEWS_20260713_FPS}
         width={AI_DAILY_NEWS_20260713_WIDTH}
         height={AI_DAILY_NEWS_20260713_HEIGHT}
+      />
+      <Composition
+        id={AI_DAILY_NEWS_20260714_COMPOSITION_ID}
+        component={AiDailyNews20260714Video}
+        durationInFrames={getAiDailyNews20260714Duration(aiDailyNews20260714Data)}
+        fps={AI_DAILY_NEWS_20260714_FPS}
+        width={AI_DAILY_NEWS_20260714_WIDTH}
+        height={AI_DAILY_NEWS_20260714_HEIGHT}
       />
       <Composition
         id={AI_DAILY_NEWS_BRIEF_20260708_COMPOSITION_ID}

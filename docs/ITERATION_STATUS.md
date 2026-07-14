@@ -1,6 +1,42 @@
 # Iteration Status
 
-Last updated: 2026-07-15 — Cover image generation: 原内容→双封面, 取消卡片限制
+Last updated: 2026-07-15 — AiDailyNews20260714: 8-scene AI daily news briefing
+
+## Latest — AiDailyNews20260714 (2026-07-15)
+
+- Produced `AiDailyNews20260714`, an 8-scene 16:9 Chinese AI daily news
+  briefing covering July 14, 2026's top AI stories.
+- Used the dedicated Agent Producer composition path under
+  `src/remotion/AiDailyNews20260714/`.
+- 8 scenes: open (thesis), budget-shift (IBM + TSMC), perf-watt (NVIDIA +
+  TYLsemi), legal-hallu (legal LLM hallucination), regulation-wave (NY
+  moratorium + Germany), governance (Australia AI Office + DeepMind),
+  capital-flow (DeepSeek + Flex + SoftBank), close (5 signals for Agent
+  developers).
+- Generated real VoxCPM LYY voice-clone TTS for all 8 scenes with zero
+  fallback via `scripts/generate-ai-daily-news-20260714-tts-clone.mjs` using
+  direct `clone_with_prompt` API at `http://192.168.50.6:8810`.
+- Each scene has its own `.wav` audio file and independently measured
+  caption cues: 883+1022+1042+826+874+936+941+1018 = 7542 frames of narration
+  + 8 frames tail padding per scene = 7606 frames total.
+- 8 visual kinds with dedicated scene renderers: thesis, company-grid,
+  metrics-framework, regulation-grid, policy-grid, governance-scene,
+  capital-stack, closing — each with ContentCard3D, PrimitivePanel, and
+  SceneShell layout.
+- Rich visual palette: per-scene accent colors, spine column, decorative
+  frame, CalloutGrid data points, SourceTag section labels.
+- TypeScript passes clean. 6 review stills verified at frames 440, 1400, 2440,
+  4240, 6100, 7090 — all clear with readable text, good hierarchy, no
+  overlapping elements.
+- Rendered final mp4:
+  `out/ai-daily-news-2026-07-14/ai-daily-news-2026-07-14.mp4`.
+  `ffprobe` reports H.264 video, AAC audio, 1920×1080 at 30 fps,
+  duration ~253.6 seconds (~4.2 minutes), size 25.9 MB.
+- Metadata JSON with 8 chapters written to
+  `out/ai-daily-news-2026-07-14/ai-daily-news-2026-07-14.json`.
+- Cover images generated:
+  `out/ai-daily-news-2026-07-14/ai-daily-news-2026-07-14-cover-16x9.png`
+  `out/ai-daily-news-2026-07-14/ai-daily-news-2026-07-14-cover-9x16.png`
 
 ## 2026-07-15 — Cover image generation UX update
 

@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-07-15 01:00:00 +0800
-**Source snapshot:** refactor/agent-producer-service after AiConceptsRedefined commit
+**Generated:** 2026-07-15 02:55:00 +0800
+**Source snapshot:** refactor/agent-producer-service after AiDailyNews20260714
 
 ## OVERVIEW
 
@@ -31,6 +31,7 @@ ai-video-studio/
 |-- src/lib/               # schemas, staged pipeline, TTS, render utilities
 |-- src/remotion/          # Remotion compositions, primitives, recipes
 |   |-- AiConceptsRedefined/ # Agent Producer conceptual explainer (41 scenes)
+|   |-- AiDailyNews20260714/  # Agent Producer AI daily news briefing (8 scenes)
 |   |-- GitTutorialForDevs/ # Agent Producer Git tutorial composition
 |   |-- HermesInnerLandscape/ # Agent Producer abstract AI consciousness video
 |   |-- RawThoughtMirror/     # Agent Producer cinematic raw-thought monologue
@@ -71,7 +72,9 @@ scripts for local F5/TTS probes live under `scripts/f5-tts/`.
 | Producer composition: HermesInnerLandscape | `src/remotion/HermesInnerLandscape/` | 6-scene abstract poetic AI consciousness video, VoxCPM voice-design TTS. |
 | Producer composition: RawThoughtMirror | `src/remotion/RawThoughtMirror/` | 6-scene cinematic raw-thought monologue, VoxCPM LYY voice-clone TTS. |
 | Producer composition: AiConceptsRedefined | `src/remotion/AiConceptsRedefined/` | 41-scene conceptual explainer, 6 concepts redefined, VoxCPM LYY voice-clone TTS. |
+| Producer composition: AiDailyNews20260714 | `src/remotion/AiDailyNews20260714/` | 8-scene AI daily news briefing, VoxCPM LYY voice-clone TTS. |
 | Producer TTS generation: AiConceptsRedefined | `scripts/generate-ai-concepts-redefined-tts.mjs` | Direct VoxCPM clone_with_prompt per-scene TTS for 41-scene conceptual explainer. |
+| Producer TTS generation: AiDailyNews20260714 | `scripts/generate-ai-daily-news-20260714-tts-clone.mjs` | Direct VoxCPM clone_with_prompt per-scene TTS for 8-scene daily news briefing. |
 | Producer mechanical validation | `scripts/lib/producer-validation.ts`, `scripts/validate-producer-sample.mjs` | Provider/audio/caption/duration/registration/local-only checks for future samples. |
 | Producer review stills | `scripts/lib/producer-review-frames.ts`, `scripts/render-producer-review-frames.mjs` | Manifest-driven review-frame planning and sequential Remotion still rendering. |
 | Standalone sample references | `src/remotion/standalone-samples/`, `public/standalone-samples/audio/` | Reference-only compositions and static audio. |

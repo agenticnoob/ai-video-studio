@@ -24,6 +24,7 @@ src/remotion/
 |-- HermesInnerLandscape/    # Agent Producer abstract AI consciousness video
 |-- RawThoughtMirror/        # Agent Producer cinematic raw-thought monologue
 |-- AiConceptsRedefined/     # Agent Producer conceptual explainer (41 scenes)
+|-- AiDailyNews20260714/     # Agent Producer AI daily news briefing (8 scenes)
 |-- standalone-samples/       # reference-only standalone compositions
 |-- standalone-video/         # reusable production skeleton
 `-- producer-samples/          # sample manifest, registry, shared blocks
