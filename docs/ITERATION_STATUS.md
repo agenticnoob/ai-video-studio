@@ -1,6 +1,15 @@
 # Iteration Status
 
-Last updated: AiConceptsRedefined — Agent Producer conceptual explainer video for 2026-07-14
+Last updated: 2026-07-15 — Cover image generation: 原内容→双封面, 取消卡片限制
+
+## 2026-07-15 — Cover image generation UX update
+
+- Updated `.agents/skills/ai-video-studio-agent-producer/SKILL.md` §8 "Generate Cover Image":
+  - 封面生成依据改为**用户提供的原始内容/主题**，不再读取分镜/scene summary
+  - 去掉强制卡片布局和 timeline bar 限制，改为自由风格+内容描述
+  - **生成两张封面**：横屏 16:9 (`*-cover-16x9.png`) + 竖屏 9:16 (`*-cover-9x16.png`)
+  - 边缘留白充足，内容居中
+  - Handoff summary 和输出目录树同步更新
 
 ## Latest — AiConceptsRedefined (2026-07-14)
 

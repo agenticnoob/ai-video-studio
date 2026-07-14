@@ -235,9 +235,10 @@ After stills pass inspection, generate the final video with chapter metadata:
 
 ```
 out/<slug>/
-├── <slug>.mp4       — 渲染视频
-├── <slug>.json      — 元信息（标题、简介、章节列表含开始时间）
-└── <slug>-cover.png — 封面图（第8步生成）
+├── <slug>.mp4              — 渲染视频
+├── <slug>.json             — 元信息（标题、简介、章节列表含开始时间）
+├── <slug>-cover-16x9.png   — 横屏封面
+└── <slug>-cover-9x16.png   — 竖屏封面
 ```
 
 `<slug>.json` 示例：
@@ -265,41 +266,50 @@ ffprobe -v error -show_entries format=duration -of csv=p=0 "out/<slug>/<slug>.mp
 
 ### 8. Generate Cover Image
 
-After the video and metadata are in `out/<slug>/`, generate a cover image that
-matches the video's content and saves alongside it in the same directory.
+Generate cover images based on the **original topic/content the user provided**,
+not from the video's storyboard or scene summary. The cover should capture the
+core idea of the content, not the video's production structure.
+
+Generate **two cover images** and save both alongside the video in `out/<slug>/`:
+
+| Aspect | Ratio | File | Purpose |
+|--------|-------|------|---------|
+| Landscape | 16:9 | `<slug>-cover-16x9.png` | YouTube/banner/social header |
+| Portrait | 9:16 | `<slug>-cover-9x16.png` | Instagram Reels/Shorts/phone thumbnail |
 
 **Cover style (hand-drawn sketch with selective color):**
 
 - Warm cream/light paper texture background
 - Black ink hand-drawn marker lines
-- Selective accent colors only for highlights and card categories:
-  blue (infrastructure), green (AI/models), orange (policy), red (defense)
+- Selective accent colors for highlights (keep sparse — one or two dominant accent colors that fit the topic, not the full 4-color palette)
 - Clean, editorial illustration feel — like a designer's Moleskine sketch
+- **Edge margins: leave generous whitespace/padding on all four sides**
+- **Composition: content centered toward the middle of the frame, not edge-to-edge**
+- Do not force card-based layouts, chapter lists, or timeline bars — those are internal production structure, not the content's core idea
 
-**Cover content:**
+**Cover content direction:**
 
-- Read `out/<slug>/<slug>.json` for title, description, and chapters
-- Main headline: video title, hand-lettered bold black ink
-- Subtitle: video description, smaller hand-lettered ink
-- Chapter list with short labels, grouped into 4-6 card frames with
-  simple doodle icons and accent color stripe on each card
-- Bottom: simple horizontal timeline bar with chapter dots
+- Describe the visual **style and content** (e.g. "a programmer at a terminal with git branches visualized as tree branches", "AI neural network nodes floating above a notebook sketch") — not card frames or timeline bars
+- Headline text: the video's core title in Chinese, hand-lettered bold black ink
+- Optional subtitle: one short tagline, smaller hand-lettered ink
+- The rest is atmospheric illustration matching the content theme
 
 **Generation:**
 
-Use the agent's image generation capability (`image_generate` tool) with
-`aspect_ratio="portrait"` (4:3 tall, suitable for thumbnail/card covers). Write the prompt in Chinese for headline/subtitle
-text, and English for style/format instructions. Save to:
+Use the agent's image generation capability (`image_generate` tool) for each
+aspect ratio. Write the prompt in Chinese for headline/subtitle text, and
+English for style/format instructions. Generate both covers together:
 
 ```
-out/<slug>/<slug>-cover.png
+out/<slug>/<slug>-cover-16x9.png
+out/<slug>/<slug>-cover-9x16.png
 ```
 
 **Verification:**
 
 ```bash
-file "out/<slug>/<slug>-cover.png"
-du -h "out/<slug>/<slug>-cover.png"
+file "out/<slug>/<slug>-cover-16x9.png" "out/<slug>/<slug>-cover-9x16.png"
+du -h "out/<slug>/<slug>-cover-16x9.png" "out/<slug>/<slug>-cover-9x16.png"
 ```
 
 ### 9. Promote Only After Evidence
@@ -366,7 +376,7 @@ End producer work with:
 - stills or render artifacts checked
 - metadata JSON path (`out/<slug>/<slug>.json`) with title, description, and
   chapter start times
-- cover image path (`out/<slug>/<slug>-cover.png`)
+- cover image paths (`out/<slug>/<slug>-cover-16x9.png`, `out/<slug>/<slug>-cover-9x16.png`)
 - validation commands and results
 - reusable pieces worth promoting later
 
