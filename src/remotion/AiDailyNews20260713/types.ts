@@ -23,7 +23,6 @@ export type SceneId =
   | "us-policy"
   | "eu-copyright"
   | "helsing"
-  | "china-signal"
   | "trend-summary"
   | "close";
 
@@ -36,7 +35,6 @@ export type VisualKind =
   | "policy-power"
   | "regulation"
   | "defense-capital"
-  | "sovereignty"
   | "summary-matrix"
   | "closing";
 
@@ -71,9 +69,9 @@ export type Data = {
   };
 };
 
-// Total TTS frames (LYY clone): 686+1008+600+730+893+667+835+826+658+1051+677 = 8631
-// + 8 scene-tail padding per scene (11*8=88) = 8719
-export const DURATION_IN_FRAMES = 8719;
+// Total TTS frames (LYY clone): 686+1008+600+730+893+667+835+826+1051+677 = 7973
+// + 8 scene-tail padding per scene (10*8=80) = 8053
+export const DURATION_IN_FRAMES = 8053;
 
 export type AudioTrack = {
   readonly audioFile: string;

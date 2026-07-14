@@ -101,17 +101,6 @@ export const narrationBeats: NarrationBeat[] = [
     visualKind: "defense-capital",
   },
   {
-    accent: "#4ADE80",
-    headline: "习近平将首次现场出席世界人工智能大会",
-    id: "china-signal",
-    kicker: "中国信号｜WAIC",
-    narration:
-      "中国宣布习近平将于七月十七日至二十日在上海出席 2026 世界人工智能大会并发表讲话，这是首次现场参加。结合近期关于限制最先进模型向海外开放的讨论，可以看到中美 AI 战略正出现相似变化：先进模型开始被视为与芯片、军事技术类似的国家级战略资产。",
-    primitiveMap: ["ContentCard3D", "VideoPanel", "Kicker", "StandaloneBottomCaption"],
-    supportingText: "中美欧：先进模型正在被纳入国家级战略资产管控。",
-    visualKind: "sovereignty",
-  },
-  {
     accent: "#F8FAFC",
     headline: "今日趋势总结",
     id: "trend-summary",

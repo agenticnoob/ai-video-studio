@@ -586,56 +586,6 @@ export const aiDailyNews20260713Audio: AudioTrack[] = [
     "sceneId": "helsing"
   },
   {
-    "audioFile": "generated/ai-daily-news-2026-07-13/china-signal.wav",
-    "captions": {
-      "language": "zh-CN",
-      "cues": [
-        {
-          "id": "caption-1",
-          "text": "中国宣布习近平将于七月十七日至二十日在上海出席 2026 世界人工智能大会并发表讲话，",
-          "startFrame": 0,
-          "durationInFrames": 232
-        },
-        {
-          "id": "caption-2",
-          "text": "这是首次现场参加。",
-          "startFrame": 232,
-          "durationInFrames": 49
-        },
-        {
-          "id": "caption-3",
-          "text": "结合近期关于限制最先进模型向海外开放的讨论，",
-          "startFrame": 281,
-          "durationInFrames": 119
-        },
-        {
-          "id": "caption-4",
-          "text": "可以看到中美 AI 战略正出现相似变化：",
-          "startFrame": 400,
-          "durationInFrames": 108
-        },
-        {
-          "id": "caption-5",
-          "text": "先进模型开始被视为与芯片、",
-          "startFrame": 508,
-          "durationInFrames": 70
-        },
-        {
-          "id": "caption-6",
-          "text": "军事技术类似的国家级战略资产。",
-          "startFrame": 578,
-          "durationInFrames": 80
-        }
-      ]
-    },
-    "durationInFrames": 658,
-    "durationInSeconds": 21.92,
-    "format": "wav",
-    "narration": "中国宣布习近平将于七月十七日至二十日在上海出席 2026 世界人工智能大会并发表讲话，这是首次现场参加。结合近期关于限制最先进模型向海外开放的讨论，可以看到中美 AI 战略正出现相似变化：先进模型开始被视为与芯片、军事技术类似的国家级战略资产。",
-    "provider": "voxcpm-clone-lyy",
-    "sceneId": "china-signal"
-  },
-  {
     "audioFile": "generated/ai-daily-news-2026-07-13/trend-summary.wav",
     "captions": {
       "language": "zh-CN",

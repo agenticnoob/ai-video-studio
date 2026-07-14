@@ -288,7 +288,7 @@ matches the video's content and saves alongside it in the same directory.
 **Generation:**
 
 Use the agent's image generation capability (`image_generate` tool) with
-`aspect_ratio="landscape"`. Write the prompt in Chinese for headline/subtitle
+`aspect_ratio="portrait"` (4:3 tall, suitable for thumbnail/card covers). Write the prompt in Chinese for headline/subtitle
 text, and English for style/format instructions. Save to:
 
 ```

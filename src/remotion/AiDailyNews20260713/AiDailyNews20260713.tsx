@@ -854,104 +854,6 @@ const DefenseCapitalScene: FC<{ readonly scene: Scene }> = ({ scene }) => {
   );
 };
 
-const SovereigntyScene: FC<{ readonly scene: Scene }> = ({ scene }) => {
-  return (
-    <SceneShell scene={scene}>
-      <div
-        style={{
-          alignItems: "center",
-          display: "grid",
-          gap: 64,
-          gridTemplateColumns: "1fr 1fr",
-        }}
-      >
-        <div>
-          <BigTitle maxWidth={820}>{scene.headline}</BigTitle>
-          <div style={{ marginTop: 30 }}>
-            <SupportingCopy maxWidth={820}>{scene.supportingText}</SupportingCopy>
-          </div>
-        </div>
-        <div style={{ display: "grid", gap: 22 }}>
-          <ContentCard3D tint={scene.accent}>
-            <div style={{ textAlign: "center" }}>
-              <div
-                style={{
-                  color: palette.yellow,
-                  fontSize: 36,
-                  fontWeight: 980,
-                  lineHeight: 1,
-                  marginBottom: 16,
-                }}
-              >
-                🇨🇳 中国
-              </div>
-              <div
-                style={{
-                  color: palette.text,
-                  fontSize: 28,
-                  fontWeight: 860,
-                  lineHeight: 1.3,
-                  marginBottom: 20,
-                }}
-              >
-                习近平首次现场出席 WAIC 2026
-              </div>
-              <div
-                style={{
-                  borderTop: `1px solid ${palette.line}`,
-                  color: palette.muted,
-                  fontSize: 22,
-                  fontWeight: 760,
-                  paddingTop: 16,
-                }}
-              >
-                AI 被提升到经济增长、产业竞争和全球规则制定层面
-              </div>
-              <div
-                style={{
-                  borderTop: `1px solid ${palette.line}`,
-                  color: palette.muted,
-                  fontSize: 22,
-                  fontWeight: 760,
-                  marginTop: 12,
-                  paddingTop: 12,
-                }}
-              >
-                讨论限制最先进模型向海外开放
-              </div>
-            </div>
-          </ContentCard3D>
-          <ContentCard3D index={1} tint={palette.cyan}>
-            <div style={{ textAlign: "center" }}>
-              <div
-                style={{
-                  color: palette.red,
-                  fontSize: 28,
-                  fontWeight: 980,
-                  lineHeight: 1,
-                  marginBottom: 10,
-                }}
-              >
-                中美 AI 战略趋同
-              </div>
-              <div
-                style={{
-                  color: palette.text,
-                  fontSize: 24,
-                  fontWeight: 760,
-                  lineHeight: 1.3,
-                }}
-              >
-                先进模型 → 国家级战略资产 → 类似芯片和军事技术管控
-              </div>
-            </div>
-          </ContentCard3D>
-        </div>
-      </div>
-    </SceneShell>
-  );
-};
-
 const SummaryMatrixScene: FC<{ readonly scene: Scene }> = ({ scene }) => (
   <SceneShell compactHeader scene={scene}>
     <div
@@ -1127,8 +1029,6 @@ const SceneRenderer: FC<{ readonly scene: Scene }> = ({ scene }) => {
       return <RegulationScene scene={scene} />;
     case "defense-capital":
       return <DefenseCapitalScene scene={scene} />;
-    case "sovereignty":
-      return <SovereigntyScene scene={scene} />;
     case "summary-matrix":
       return <SummaryMatrixScene scene={scene} />;
     case "closing":
