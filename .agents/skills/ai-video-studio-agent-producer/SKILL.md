@@ -13,7 +13,8 @@ Production Chain:
 
 ```txt
 topic -> research/data -> narration/TTS -> component inventory
--> dedicated Remotion composition -> still/mp4 review -> promotion notes
+-> dedicated Remotion composition -> still/mp4 review
+-> cover image -> promotion notes
 ```
 
 Skill Stack:
@@ -89,6 +90,11 @@ selected-segment regeneration, app export, or main-site generation behavior.
 Gather enough evidence before scripting:
 
 - Search or inspect primary sources when current facts matter.
+- **Before writing a capture script, test connectivity first**: run
+  `curl -s -o /dev/null -w "%{http_code}" <target-url>`. If it returns `000`
+  (exit code 35, TLS/connect failure), all URLs on that domain will fail.
+  Record the failure and switch to information graphics immediately — do not
+  iterate over multiple URLs hoping one works.
 - Capture the actual page, repo, product UI, chart, or document when the video
   needs source-backed visual proof.
 - Record each capture attempt in data or a local note with URL, status, asset
@@ -146,6 +152,10 @@ Write narration beats before locking visual timing:
   implementation fields.
 - Use VoxCPM by default for local Agent Producer narration and voice clone
   timing; use F5-TTS only when explicitly configured with `TTS_PROVIDER=f5-tts`.
+  **For multi-scene videos, call VoxCPM directly at
+  `http://192.168.50.6:8810/clone_with_prompt` via multipart `curl`** rather
+  than the repo `/api/tts` adapter, which uses voice-design (random voice per
+  call) by default. The direct API gives consistent LYY voice across all scenes.
 - VoxCPM currently returns audio, not per-line alignment. The project adapter
   therefore makes readable captions by punctuation-split synthesis, trims each
   returned chunk's leading/trailing silence, then writes one trimmed and
@@ -168,6 +178,9 @@ Write narration beats before locking visual timing:
 - Compose scenes from existing primitives, existing recipe/producer blocks, and
   small sample-local renderers.
 - Register the standalone composition in `src/remotion/Root.tsx`.
+- **After writing the composition code, run the type-check checklist**
+  (see Production Pitfalls: Copying an existing composition) before any
+  renders — this catches most import/type/signature issues in one pass.
 - Add a focused smoke guard when the sample becomes a committed source artifact.
 
 ### 6. Visual Review
@@ -222,8 +235,9 @@ After stills pass inspection, generate the final video with chapter metadata:
 
 ```
 out/<slug>/
-├── <slug>.mp4    — 渲染视频
-└── <slug>.json   — 元信息（标题、简介、章节列表含开始时间）
+├── <slug>.mp4       — 渲染视频
+├── <slug>.json      — 元信息（标题、简介、章节列表含开始时间）
+└── <slug>-cover.png — 封面图（第8步生成）
 ```
 
 `<slug>.json` 示例：
@@ -249,7 +263,46 @@ out/<slug>/
 ffprobe -v error -show_entries format=duration -of csv=p=0 "out/<slug>/<slug>.mp4"
 ```
 
-### 8. Promote Only After Evidence
+### 8. Generate Cover Image
+
+After the video and metadata are in `out/<slug>/`, generate a cover image that
+matches the video's content and saves alongside it in the same directory.
+
+**Cover style (hand-drawn sketch with selective color):**
+
+- Warm cream/light paper texture background
+- Black ink hand-drawn marker lines
+- Selective accent colors only for highlights and card categories:
+  blue (infrastructure), green (AI/models), orange (policy), red (defense)
+- Clean, editorial illustration feel — like a designer's Moleskine sketch
+
+**Cover content:**
+
+- Read `out/<slug>/<slug>.json` for title, description, and chapters
+- Main headline: video title, hand-lettered bold black ink
+- Subtitle: video description, smaller hand-lettered ink
+- Chapter list with short labels, grouped into 4-6 card frames with
+  simple doodle icons and accent color stripe on each card
+- Bottom: simple horizontal timeline bar with chapter dots
+
+**Generation:**
+
+Use the agent's image generation capability (`image_generate` tool) with
+`aspect_ratio="landscape"`. Write the prompt in Chinese for headline/subtitle
+text, and English for style/format instructions. Save to:
+
+```
+out/<slug>/<slug>-cover.png
+```
+
+**Verification:**
+
+```bash
+file "out/<slug>/<slug>-cover.png"
+du -h "out/<slug>/<slug>-cover.png"
+```
+
+### 9. Promote Only After Evidence
 
 After a real sample works:
 
@@ -281,11 +334,15 @@ After a real sample works:
 Use the smallest checks that cover the changed boundary:
 
 ```bash
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit --pretty false'
 docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'
 docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit --pretty false'
 git diff --check
 ```
+
+**Order matters**: run `tsc --noEmit` first before any renders. Host `tsc` is
+not available — always use the Docker container. Fix all errors before
+proceeding to stills or MP4 export.
 
 Add targeted smokes for:
 
@@ -309,6 +366,7 @@ End producer work with:
 - stills or render artifacts checked
 - metadata JSON path (`out/<slug>/<slug>.json`) with title, description, and
   chapter start times
+- cover image path (`out/<slug>/<slug>-cover.png`)
 - validation commands and results
 - reusable pieces worth promoting later
 
@@ -332,7 +390,7 @@ promotion judgment. The tools own TTS requests/errors, caption cleanup,
 measured duration, metadata/constants/summaries, artifact checks, provider and
 fallback checks, and review-frame command execution.
 
-## Production Pitfalls (Updated 2026-07-12)
+## Production Pitfalls (Updated 2026-07-13)
 
 ### Text visibility on dark backgrounds
 
@@ -384,4 +442,62 @@ is for a single audio that spans the entire composition (no per-scene timing).
 3. Generate audio BEFORE locking scene durations
 4. Write the resulting `audio.generated.ts` with measured durations
 5. Build scene data from the generated metadata
-6. Set `GIT_TUTORIAL_DURATION_IN_FRAMES` from the sum of measured durations
+6. Set `DURATION_IN_FRAMES` from the sum of measured durations + 8 padding per scene
+
+### Voice mode: use clone for multi-scene videos
+
+For any video with 2+ scenes, **do not use `voice-design` mode** — each API call
+generates a random speaker, so 11 scenes can produce 11 different voices.
+
+**Always use LYY voice clone for multi-scene narration:**
+
+1. Set mode to `clone_with_prompt` targeting the direct VoxCPM API
+   (`http://192.168.50.6:8810/clone_with_prompt`) rather than the repo
+   `/api/tts` adapter, which uses voice-design by default.
+2. Upload `voices/clone/lyy.wav` as `prompt_audio` with the exact
+   `prompt_text` from `voices/clone/lyy.txt`.
+3. Upload `voices/clone/lyy-r.wav` as `reference_audio` for timbre stability.
+4. Use `cfg_value=2.0`, `inference_timesteps=10`, `normalize=true`,
+   `denoise=false`.
+5. Generate audio via multipart form POST with `curl` (not JSON), downloading
+   the raw WAV binary response.
+6. Derive caption cues from punctuation-split timing (same approach as the
+   adapter path).
+
+After regeneration, voice clone TTS durations differ from voice-design.
+Update `DURATION_IN_FRAMES`, metadata JSON chapter durations, and
+`ITERATION_STATUS.md` accordingly.
+
+### Screenshot capture failure: cut losses early
+
+When real screenshots are needed for evidence:
+
+1. Test connectivity FIRST with a single `curl` to a target URL before
+   launching a browser or writing a capture script.
+2. If `curl` returns `000` / exit code 35 (TLS/connect failure), all targets
+   on that domain will fail — do not iterate over 9 URLs.
+3. If one domain is blocked, try one representative URL from the alternative
+   domain before assuming all are down.
+4. Record the failure reason in data.ts / capture-summary.json as soon as
+   you confirm the block. Do not retry the same domain repeatedly.
+5. Design information graphics using repo primitives instead; do not keep
+   a "screenshot slot" empty in the composition.
+
+### Copying an existing composition: type-check checklist
+
+When copying an existing composition as a template for a new one, run this
+checklist before writing any scene renderer code:
+
+1. **Imports**: `Audio` from `remotion`, NOT `@remotion/media`.
+2. **Unused imports**: remove `Sequence`, `StandaloneVoiceover`, or any import
+   the new composition doesn't use.
+3. **`renderScene` signature**: takes `(scene)` only, NOT `(scene, offset)`.
+4. **`theme` variables**: only declare `theme` in scenes that actually use it
+   (pass to `PrimitivePanel`, `Kicker`, `CalloutGrid`). Remove it from scenes
+   that inline all styles directly.
+5. **Types**: `AudioTrack` must include `durationInSeconds?: number` if the
+   generated audio metadata includes it.
+6. **`data.ts`**: do not import unused symbols like `COMPOSITION_ID`.
+7. **Validate inside Docker**: host `tsc` is not available. Run
+   `docker compose run --rm web bash -lc 'npx tsc --noEmit --pretty false'`
+   and fix all errors before proceeding to renders.

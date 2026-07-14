@@ -22,6 +22,7 @@ topic
   -> component inventory
   -> dedicated Remotion composition
   -> still / mp4 review
+  -> cover image
   -> promotion notes
 ```
 

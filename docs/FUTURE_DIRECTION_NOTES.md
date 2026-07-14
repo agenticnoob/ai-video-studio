@@ -7,7 +7,7 @@ Status: historical notes plus parked productization context.
 - 2026-07-06 起，最终目标和 roadmap 上游依据以
   `docs/FINAL_PRODUCT_GOAL.md` 的 Agent Producer 目标为准：主题 ->
   调研/素材 -> narration/TTS -> component inventory -> dedicated Remotion
-  composition -> still/mp4 review -> promotion notes。
+  composition -> still/mp4 review -> 封面图 -> promotion notes。
 - 旧的 prompt-to-`VideoProject` 路线已经无限期搁置，只作为 web/editor
   产品化上下文保留。
 - staged 主链路已经做过一轮结构整理：页面生成状态、生成控制面板、预览面板、

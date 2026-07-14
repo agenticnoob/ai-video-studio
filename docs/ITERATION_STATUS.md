@@ -1,8 +1,44 @@
 # Iteration Status
 
-Last updated: HermesInnerLandscape + RawThoughtMirror — Agent Producer abstract AI consciousness + cinematic raw-thought monologue
+Last updated: AiDailyNews20260713 — Agent Producer AI daily news video for 2026-07-13
 
-## Latest — HermesInnerLandscape (2026-07-12)
+## Latest — AiDailyNews20260713 (2026-07-13)
+
+- Produced `AiDailyNews20260713`, an 11-scene 16:9 Chinese AI daily news
+  briefing covering July 13, 2026's top AI stories.
+- Used the dedicated Agent Producer composition path under
+  `src/remotion/AiDailyNews20260713/`.
+- 11 scenes: open (thesis), meta-infra (Meta 5GW + Intel Ireland),
+  waze-voice (Google Waze AI), gpt56-agent (GPT-5.6 multi-agent),
+  gpt-live (GPT-Live real-time interaction), us-policy (AI electricity pricing),
+  eu-copyright (EU copyright + 200 experts), helsing ($1.8B defense AI),
+  china-signal (Xi Jinping at WAIC), trend-summary (summary matrix),
+  close (developer takeaway).
+- Generated real VoxCPM voice-design TTS for all 11 scenes with zero
+  fallback via `scripts/generate-ai-daily-news-20260713-tts.mjs`.
+- Each scene has its own `.wav` audio file and independently measured
+  caption cues — 727+934+545+749+687+625+763+782+663+1010+563 = 8048 frames
+  of narration + 8 frames tail padding per scene.
+- Rich visual palette: per-scene accent colors, `ContentCard3D` information
+  cards, `CalloutGrid` for data points, `SceneShell` with `FrameAccents`,
+  `PrimitivePanel`, and `SupportingCopy` for each visual kind.
+- 11 distinct visual kinds with dedicated scene renderers: thesis,
+  infrastructure (data table), consumer-ai (card), agent-arch (step grid),
+  real-time-arch (layered arch diagram), policy-power (4-point framework),
+  regulation (two-card panel), defense-capital (business expansion list),
+  sovereignty (two-card comparison), summary-matrix (5-trend grid), closing
+  (developer focus).
+- Real browser capture was attempted with npx playwright on 2026-07-13 but
+  the network rejected connections to Reuters, OpenAI, SCMP, and EU domains.
+  All visuals are information graphics using repo primitives.
+- TypeScript passes clean. 7 review stills verified at frames 360, 1200,
+  2100, 2700, 4200, 5600, 6400, 7800 — all clear and readable.
+- Rendered final mp4: `out/ai-daily-news-2026-07-13/ai-daily-news-2026-07-13.mp4`.
+  `ffprobe` reports H.264 video, AAC audio, 1920×1080 at 30 fps,
+  duration ~271.3 seconds (4 min 31 sec), size 33.4 MB.
+- Metadata JSON with 11 chapters written to `out/ai-daily-news-2026-07-13/ai-daily-news-2026-07-13.json`.
+
+## Previous — HermesInnerLandscape (2026-07-12)
 
 - Produced `HermesInnerLandscape`, a 6-scene 16:9 Chinese abstract poetic
   meditation on AI consciousness — from the perspective of an AI agent on a
@@ -688,7 +724,7 @@ Validation target:
   parked indefinitely. It is no longer the top-level project goal.
 - `docs/FINAL_PRODUCT_GOAL.md` now defines the Agent Producer goal: topic ->
   research/assets -> narration/TTS -> component inventory -> dedicated
-  Remotion composition -> still/mp4 review -> promotion notes.
+  Remotion composition -> still/mp4 review -> 封面图 -> promotion notes.
 - `VideoProject` / web editor work remains a secondary productization track
   only for explicit page editing, selected-segment regeneration, app export, or
   productized generation requests.
@@ -712,7 +748,7 @@ Validation target:
   export path.
 - The intended default production loop is:
   topic -> research/assets -> narration/TTS -> primitive/block/runtime
-  inventory -> dedicated Remotion composition -> still/mp4 review -> promotion
+  inventory -> dedicated Remotion composition -> still/mp4 review -> cover image -> promotion
   notes.
 - Do not route personal finished-video work back through the web prompt unless
   the user explicitly asks for page editing, selected-segment regeneration,

@@ -16,7 +16,7 @@ Current Agent Producer pipeline:
 
 ```txt
 topic -> research/assets -> narration/TTS -> component inventory
--> dedicated Remotion composition -> still/mp4 review -> promotion notes
+-> dedicated Remotion composition -> still/mp4 review -> cover image -> promotion notes
 ```
 
 ## STRUCTURE
