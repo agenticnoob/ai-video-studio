@@ -148,6 +148,15 @@ import {
   RawThoughtMirrorVideo,
   getRawThoughtDuration,
 } from "./RawThoughtMirror";
+import {
+  COMPOSITION_ID as AI_CONCEPTS_REDEFINED_COMPOSITION_ID,
+  FPS as AI_CONCEPTS_REDEFINED_FPS,
+  HEIGHT as AI_CONCEPTS_REDEFINED_HEIGHT,
+  WIDTH as AI_CONCEPTS_REDEFINED_WIDTH,
+  AiConceptsRedefinedVideo,
+  getAiConceptsRedefinedDuration,
+  data as aiConceptsRedefinedData,
+} from "./AiConceptsRedefined";
 
 const calculateVideoProjectMetadata = ({ props }: { props: VideoProject }) => {
   const parsedProject = videoProjectSchema.parse(props) as VideoProject;
@@ -357,6 +366,15 @@ export const RemotionRoot: FC = () => {
         fps={RAW_THOUGHT_FPS}
         width={RAW_THOUGHT_WIDTH}
         height={RAW_THOUGHT_HEIGHT}
+      />
+      <Composition
+        id={AI_CONCEPTS_REDEFINED_COMPOSITION_ID}
+        component={AiConceptsRedefinedVideo}
+        durationInFrames={getAiConceptsRedefinedDuration(aiConceptsRedefinedData)}
+        fps={AI_CONCEPTS_REDEFINED_FPS}
+        width={AI_CONCEPTS_REDEFINED_WIDTH}
+        height={AI_CONCEPTS_REDEFINED_HEIGHT}
+        defaultProps={{ data: aiConceptsRedefinedData }}
       />
     </>
   );

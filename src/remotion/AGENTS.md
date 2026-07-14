@@ -23,6 +23,7 @@ src/remotion/
 |-- GitTutorialForDevs/       # Agent Producer Git tutorial composition
 |-- HermesInnerLandscape/    # Agent Producer abstract AI consciousness video
 |-- RawThoughtMirror/        # Agent Producer cinematic raw-thought monologue
+|-- AiConceptsRedefined/     # Agent Producer conceptual explainer (41 scenes)
 |-- standalone-samples/       # reference-only standalone compositions
 |-- standalone-video/         # reusable production skeleton
 `-- producer-samples/          # sample manifest, registry, shared blocks

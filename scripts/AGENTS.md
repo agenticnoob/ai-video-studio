@@ -22,6 +22,7 @@ Actions workflow.
 | TTS: HermesInnerLandscape | `generate-hermes-tts.mjs` | VoxCPM voice-design per-scene TTS for 6-scene AI consciousness video. |
 | TTS: RawThoughtMirror v1 | `generate-raw-thought-tts.mjs` | VoxCPM voice-design per-scene TTS for raw-thought monologue v1. |
 | TTS: RawThoughtMirror v2 | `generate-raw-thought-tts-v2.mjs` | VoxCPM LYY voice-clone per-scene TTS for cinematic v2. |
+| TTS: AiConceptsRedefined | `generate-ai-concepts-redefined-tts.mjs` | VoxCPM LYY voice-clone per-scene TTS for 41-scene conceptual explainer. |
 | F5 smoke | `f5-tts-smoke.sh`, `f5-tts-next-smoke.sh`, `f5-tts-staged-smoke.mjs` | Direct, Next adapter, staged checks. |
 | Staged live | `staged-live-smoke.mjs` | `/api/generate/staged` route check. |
 | Planner/draft smokes | `planner-recipe-manifest-smoke.mjs`, `storyboard-*.mjs` | Boundary regressions. |

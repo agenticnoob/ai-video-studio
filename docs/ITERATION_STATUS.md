@@ -1,6 +1,39 @@
 # Iteration Status
 
-Last updated: AiDailyNews20260713 — Agent Producer AI daily news video for 2026-07-13
+Last updated: AiConceptsRedefined — Agent Producer conceptual explainer video for 2026-07-14
+
+## Latest — AiConceptsRedefined (2026-07-14)
+
+- Produced `AiConceptsRedefined`, a 41-scene 16:9 Chinese conceptual explainer
+  video about how six core internet concepts (traffic, service, auth, privacy,
+  data, interaction) are being redefined in the AI era from human perspective
+  to Agent perspective.
+- Used the dedicated Agent Producer composition path under
+  `src/remotion/AiConceptsRedefined/`.
+- 41 scenes organized in 8 acts: 开场 (4 scenes), 流量 (4), 服务 (4),
+  鉴权 (5), 隐私 (5), 数据 (5), 交互 (6), 延伸与总结 (8).
+- Generated real VoxCPM LYY voice-clone TTS for all 41 scenes with zero
+  fallback via `scripts/generate-ai-concepts-redefined-tts.mjs` using direct
+  `clone_with_prompt` API at `http://localhost:8810`.
+- Each scene has its own `.wav` audio file and independently measured caption
+  cues via punctuation-split timing.
+- 9 reusable visual scene types: `thesis`, `old-way`, `new-way`,
+  `question-statement`, `new-definition`, `comparison-list`, `callout-list`,
+  `summary`, `closing` — each with dedicated renderer sharing
+  `GradientShiftBackground`, `GridPulse`, `SceneShell`, `Card`, `Title`,
+  `Supporting`, `StandaloneBottomCaption`, and `StandaloneTimeline`.
+- Highlight scene renderers: `ComparisonListScene` for old→new metric pairs,
+  `SummaryScene` with a 6-row comparison table grid, `DefinitionScene` with
+  animated accent underline, `QuestionScene` with large "?" marker.
+- Source-backed information graphics only (no external screenshots needed for
+  this conceptual content).
+- TypeScript passes clean. 4 review stills verified at frames 211 (opening),
+  2148 (old-traffic), 6859 (auth-essence definition), 17409 (summary table) —
+  all clear with readable text, good hierarchy, and no overlapping elements.
+- Rendered final mp4: `out/ai-concepts-redefined/ai-concepts-redefined.mp4`.
+- Metadata JSON with 8 chapters written to `out/ai-concepts-redefined/ai-concepts-redefined.json`.
+- Cover image generated: `out/ai-concepts-redefined/ai-concepts-redefined-cover.png`.
+- Total estimated duration: ~640 seconds (~10.7 minutes) at 1.2x playback.
 
 ## Latest — AiDailyNews20260713 (2026-07-13)
 
