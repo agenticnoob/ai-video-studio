@@ -1,5 +1,9 @@
 # F5-TTS Provider Target
 
+> Removal target: F5 generation is unsupported. This historical document is
+> retained only until Roadmap Phase 2 deletes F5 services, adapters, scripts,
+> configuration, and current documentation. Do not follow these instructions.
+
 Status: provider adapter implemented; contract-smoke runtime and real
 GPU-backed F5 runtime validated.
 

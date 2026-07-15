@@ -1,0 +1,378 @@
+{
+  "version": 1,
+  "decisionDate": "2026-07-15",
+  "authority": {
+    "skill": ".agents/skills/ai-video-studio-agent-producer/",
+    "roadmap": "docs/AGENT_PRODUCER_ONLY_ROADMAP.md"
+  },
+  "allowedHistoricalExceptions": [
+    {
+      "pattern": "src/remotion/**/audio.generated.ts",
+      "allowedValue": "provider: \"f5-tts\"",
+      "reason": "Frozen compositions retain accurate historical provider metadata."
+    }
+  ],
+  "categories": {
+    "producerOwned": [
+      {
+        "id": "producer-skill",
+        "path": ".agents/skills/ai-video-studio-agent-producer",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 0,
+        "reason": "Sole supported video-production entrypoint."
+      },
+      {
+        "id": "remotion-skill",
+        "path": ".agents/skills/remotion-best-practices",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 0,
+        "reason": "Frame-driven Remotion implementation authority."
+      },
+      {
+        "id": "voxcpm-doc",
+        "path": "docs/providers/voxcpm.md",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 1,
+        "reason": "Only supported narration provider documentation."
+      },
+      {
+        "id": "remotion-root",
+        "path": "src/remotion/Root.tsx",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 3,
+        "reason": "Composition registration remains required without Web."
+      },
+      {
+        "id": "primitives",
+        "path": "src/remotion/primitives",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 4,
+        "reason": "Code-driven reusable visual primitives."
+      },
+      {
+        "id": "primitive-catalog",
+        "path": "src/remotion/catalog",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 4,
+        "reason": "Agent-facing component discovery surface."
+      },
+      {
+        "id": "standalone-runtime",
+        "path": "src/remotion/standalone-video",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 4,
+        "reason": "Producer timing, caption, and canvas runtime."
+      },
+      {
+        "id": "producer-samples",
+        "path": "src/remotion/producer-samples",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 4,
+        "reason": "Future sample manifest, registry, scaffold, and blocks."
+      },
+      {
+        "id": "producer-validation",
+        "path": "scripts/lib/producer-validation.ts",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 4,
+        "reason": "Deterministic producer hard-failure checks."
+      },
+      {
+        "id": "producer-review",
+        "path": "scripts/lib/producer-review-frames.ts",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 4,
+        "reason": "Manifest-driven representative still planning."
+      }
+    ],
+    "webF5Only": [
+      {
+        "id": "f5-service",
+        "path": "services/f5-tts",
+        "pathKind": "path",
+        "action": "delete",
+        "phase": 2,
+        "reason": "Unsupported F5 runtime service."
+      },
+      {
+        "id": "f5-helper-dir",
+        "path": "scripts/f5-tts",
+        "pathKind": "path",
+        "action": "delete",
+        "phase": 2,
+        "reason": "Unsupported F5 generation and probe scripts."
+      },
+      {
+        "id": "f5-compose",
+        "path": "docker-compose.f5.yml",
+        "pathKind": "path",
+        "action": "delete",
+        "phase": 2,
+        "reason": "Unsupported F5 service topology."
+      },
+      {
+        "id": "f5-compose-gpu",
+        "path": "docker-compose.f5.gpu.yml",
+        "pathKind": "path",
+        "action": "delete",
+        "phase": 2,
+        "reason": "Unsupported F5 GPU topology."
+      },
+      {
+        "id": "f5-top-level-scripts",
+        "path": "scripts/f5-tts-*",
+        "pathKind": "glob",
+        "action": "delete",
+        "phase": 2,
+        "reason": "Unsupported F5 service, adapter, and staged smoke entrypoints."
+      },
+      {
+        "id": "f5-current-docs",
+        "path": "docs/{HANDOFF_F5_TTS_CAPTIONS.md,providers/f5-tts*.md}",
+        "pathKind": "glob",
+        "action": "delete",
+        "phase": 2,
+        "reason": "Unsupported current F5 setup and handoff documentation."
+      },
+      {
+        "id": "f5-lib-adapter",
+        "path": "src/lib/tts/f5.ts",
+        "pathKind": "path",
+        "action": "delete",
+        "phase": 2,
+        "reason": "Unsupported application F5 adapter."
+      },
+      {
+        "id": "f5-producer-adapter",
+        "path": "scripts/lib/producer-audio/providers/f5.ts",
+        "pathKind": "path",
+        "action": "delete",
+        "phase": 2,
+        "reason": "Unsupported Producer F5 request-plan adapter."
+      },
+      {
+        "id": "web-generate-routes",
+        "path": "src/app/api/generate",
+        "pathKind": "path",
+        "action": "delete",
+        "phase": 3,
+        "reason": "Unsupported brief-to-video generation API."
+      },
+      {
+        "id": "web-render-routes",
+        "path": "src/app/api/render",
+        "pathKind": "path",
+        "action": "delete",
+        "phase": 3,
+        "reason": "Unsupported Web project export API."
+      },
+      {
+        "id": "web-progress-routes",
+        "path": "src/app/api/progress",
+        "pathKind": "path",
+        "action": "delete",
+        "phase": 3,
+        "reason": "Unsupported Web render progress API."
+      },
+      {
+        "id": "lambda-routes",
+        "path": "src/app/api/lambda",
+        "pathKind": "path",
+        "action": "delete",
+        "phase": 3,
+        "reason": "Unsupported cloud video-generation routes."
+      },
+      {
+        "id": "product-assets-routes",
+        "path": "src/app/api/assets/product-ui",
+        "pathKind": "path",
+        "action": "delete",
+        "phase": 3,
+        "reason": "Unsupported Web product asset binding API."
+      },
+      {
+        "id": "web-page",
+        "path": "src/app/page.tsx",
+        "pathKind": "path",
+        "action": "delete",
+        "phase": 3,
+        "reason": "Unsupported generation and editor application entrypoint."
+      },
+      {
+        "id": "web-workbench",
+        "path": "src/components/project",
+        "pathKind": "path",
+        "action": "delete",
+        "phase": 3,
+        "reason": "Unsupported editor and generation UI."
+      },
+      {
+        "id": "web-generation-hooks",
+        "path": "src/helpers/project-generation",
+        "pathKind": "path",
+        "action": "delete",
+        "phase": 3,
+        "reason": "Unsupported client generation state and actions."
+      },
+      {
+        "id": "web-render-hooks",
+        "path": "src/helpers/{use-project-generation.ts,use-rendering.ts,use-task-progress.ts,create-progress-id.ts}",
+        "pathKind": "glob",
+        "action": "delete",
+        "phase": 3,
+        "reason": "Unsupported Web generation, progress, and export hooks."
+      },
+      {
+        "id": "template-system",
+        "path": "src/templates",
+        "pathKind": "path",
+        "action": "delete",
+        "phase": 3,
+        "reason": "Unsupported planner-selected template product system."
+      },
+      {
+        "id": "project-video",
+        "path": "src/remotion/ProjectVideo",
+        "pathKind": "path",
+        "action": "delete",
+        "phase": 3,
+        "reason": "Unsupported VideoProject preview and export composition."
+      },
+      {
+        "id": "web-project-contracts",
+        "path": "src/lib/{project-*,storyboard-*,staged-*,template-registry.ts}",
+        "pathKind": "glob",
+        "action": "delete",
+        "phase": 3,
+        "reason": "Unsupported Web project, planner, and staged-generation contracts."
+      }
+    ],
+    "shared": [
+      {
+        "id": "producer-audio",
+        "path": "scripts/lib/producer-audio",
+        "pathKind": "path",
+        "action": "extract-then-delete",
+        "phase": 1,
+        "reason": "Retain VoxCPM processing while removing HTTP and F5 branches."
+      },
+      {
+        "id": "tts-api",
+        "path": "src/app/api/tts",
+        "pathKind": "path",
+        "action": "extract-then-delete",
+        "phase": 1,
+        "reason": "Producer currently depends on this route until direct VoxCPM exists."
+      },
+      {
+        "id": "caption-schema",
+        "path": "src/lib/caption-schema.ts",
+        "pathKind": "path",
+        "action": "extract-then-delete",
+        "phase": 3,
+        "reason": "Producer captions need a Web-independent contract."
+      },
+      {
+        "id": "captions",
+        "path": "src/lib/captions.ts",
+        "pathKind": "path",
+        "action": "extract-then-delete",
+        "phase": 3,
+        "reason": "Retain only caption helpers used by Producer."
+      },
+      {
+        "id": "narration-schema",
+        "path": "src/lib/narration-asset-schema.ts",
+        "pathKind": "path",
+        "action": "extract-then-delete",
+        "phase": 3,
+        "reason": "Retain only Producer narration metadata fields."
+      },
+      {
+        "id": "render-project",
+        "path": "src/lib/render-project.ts",
+        "pathKind": "path",
+        "action": "extract-then-delete",
+        "phase": 3,
+        "reason": "Preserve CLI renderer needs without VideoProject contracts."
+      },
+      {
+        "id": "recipe-visuals",
+        "path": "src/remotion/recipes",
+        "pathKind": "path",
+        "action": "extract-then-delete",
+        "phase": 3,
+        "reason": "Promote proven Producer blocks before deleting planner recipes."
+      },
+      {
+        "id": "package-topology",
+        "path": "package.json",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 3,
+        "reason": "Remove legacy scripts while keeping Remotion and Producer commands."
+      },
+      {
+        "id": "environment-template",
+        "path": ".env.example",
+        "pathKind": "path",
+        "action": "extract-then-delete",
+        "phase": 2,
+        "reason": "Remove F5 and Web keys while preserving VoxCPM and render configuration."
+      },
+      {
+        "id": "docker-topology",
+        "path": "docker-compose.yml",
+        "pathKind": "path",
+        "action": "extract-then-delete",
+        "phase": 3,
+        "reason": "Replace Web service naming while preserving local Remotion tooling."
+      }
+    ],
+    "historicalDependency": [
+      {
+        "id": "historical-f5-metadata",
+        "path": "src/remotion/**/audio.generated.ts",
+        "pathKind": "glob",
+        "action": "preserve-history",
+        "phase": 0,
+        "reason": "Frozen generated metadata must remain truthful."
+      },
+      {
+        "id": "finished-compositions",
+        "path": "src/remotion/*",
+        "pathKind": "glob",
+        "action": "preserve-history",
+        "phase": 0,
+        "reason": "Finished dedicated compositions remain read-only references."
+      },
+      {
+        "id": "standalone-audio",
+        "path": "public/standalone-samples/audio",
+        "pathKind": "path",
+        "action": "preserve-history",
+        "phase": 0,
+        "reason": "Committed reference audio supports frozen samples."
+      },
+      {
+        "id": "archived-docs",
+        "path": "docs/archive/**",
+        "pathKind": "glob",
+        "action": "archive",
+        "phase": 0,
+        "reason": "Superseded plans remain searchable but non-authoritative."
+      }
+    ],
+    "unused": []
+  }
+}

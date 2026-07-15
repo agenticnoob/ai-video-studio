@@ -1,5 +1,9 @@
 # F5-TTS Service Plan
 
+> Removal target: F5 generation is unsupported. This historical document is
+> retained only until Roadmap Phase 2 deletes F5 services, adapters, scripts,
+> configuration, and current documentation. Do not follow these instructions.
+
 Status: runtime service, Next provider, deterministic staged smoke, and real
 GPU-backed F5 mode validation added.
 

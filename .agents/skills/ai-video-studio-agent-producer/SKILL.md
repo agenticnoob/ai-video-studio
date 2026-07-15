@@ -1,51 +1,64 @@
 ---
 name: ai-video-studio-agent-producer
-description: Use when working in /data/projects/labs/ai-video-studio and Codex should produce a dedicated Remotion video from a real topic using repo primitives, blocks, standalone-video helpers, TTS-owned timing, data modules, real source capture, still/mp4 review, and promotion notes instead of the one-shot web prompt or default VideoProject path.
+description: Use when working in /data/projects/labs/ai-video-studio and producing or revising any supported local video, narration, cover, review still, render, or publishing artifact.
 ---
 
 # AI Video Studio Agent Producer
 
-Use this skill for finished local videos from real topics. In this repo,
-Agent Producer is the default personal production path; `VideoProject` and the
-web editor are productization/export surfaces, not the default creative path.
+Use this skill for every supported video-production task in this repository.
+It is the only supported video-production entrypoint.
 
 Production Chain:
 
 ```txt
-topic -> research/data -> narration/TTS -> component inventory
--> dedicated Remotion composition -> still/mp4 review
--> cover image -> promotion notes
+topic -> research/existing assets -> narration/VoxCPM -> component inventory
+-> dedicated Remotion composition -> preflight -> still/mp4 review
+-> Remotion `<Still>` covers -> publishing notes
 ```
 
-Skill Stack:
+## Skill Stack
 
-- Use this skill as the main producer authority for real finished videos.
-- Load `.agents/skills/remotion-best-practices/` before editing Remotion code;
-  load `rules/video-layout.md` for dense scenes, `rules/subtitles.md` for
-  caption display, and `rules/silence-detection.md` when inspecting audio gaps.
-- Load `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md` only when VoxCPM
-  narration, voice clone text, control instructions, or delivery-state tags are
-  involved.
+- Use this skill as the workflow authority.
+- Load `.agents/skills/remotion-best-practices/` before editing Remotion code.
+  Load `rules/video-layout.md` for dense scenes, `rules/subtitles.md` for
+  captions, and `rules/silence-detection.md` for audio gaps.
+- Load
+  `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md`
+  before final VoxCPM narration, voice-clone text, control instructions, or
+  expression tags.
 
 ## Start Here
 
-1. Read current routing docs:
-   - `docs/FINAL_PRODUCT_GOAL.md`
-   - `docs/ITERATION_STATUS.md`
-   - `docs/VISUAL_RECIPE_ROADMAP.md`
-   - `README.md`
-2. Read visual inventory before planning scenes:
-   - `.agents/skills/ai-video-studio-agent-producer/remotion-primitives/REMOTION_PRIMITIVES.md`
-   - `src/remotion/catalog/primitive-catalog.ts`
-3. Inspect shared runtime and reusable blocks:
-   - `src/remotion/standalone-video/`
-   - `src/remotion/recipes/blocks/`
-4. Use `.agents/skills/remotion-best-practices/` for Remotion rules. Load
-   `rules/video-layout.md` before text-heavy scene design; load caption/audio
-   rules when subtitles, voiceover timing, silence, or media duration matter.
-5. If VoxCPM narration or voice clone is used, load
-   `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md` before final
-   TTS text or control instructions.
+Read in order:
+
+1. `docs/FINAL_PRODUCT_GOAL.md`
+2. `docs/ITERATION_STATUS.md`
+3. `docs/AGENT_PRODUCER_ONLY_ROADMAP.md`
+4. `docs/REMOTION_COMPONENT_LIBRARY.md`
+5. `.agents/skills/ai-video-studio-agent-producer/remotion-primitives/REMOTION_PRIMITIVES.md`
+
+Use CodeGraph before source dependency decisions. Inspect these retained
+surfaces before adding new abstractions:
+
+- `src/remotion/catalog/primitive-catalog.ts`
+- `src/remotion/primitives/`
+- `src/remotion/producer-samples/`
+- `src/remotion/standalone-video/`
+
+## Non-Negotiable Boundaries
+
+- Visual production uses code and existing assets only.
+- VoxCPM is the only supported narration provider for new work.
+- Build one dedicated composition under `src/remotion/<CompositionName>/`.
+- Use Remotion Studio and CLI for preview, stills, and MP4 rendering.
+- Render covers as code-driven Remotion `<Still>` compositions.
+- existing finished samples are read-only references. Do not migrate,
+  regenerate, reformat, or modify them merely to adopt new tooling.
+- Historical F5-generated audio and provider metadata may remain attached to
+  frozen compositions, but never generate, configure, select, or fall back to
+  F5 for new work.
+- Do not invoke Web generation, an editor workflow, a planner, segment
+  regeneration, Web export, image generation, or video generation.
 
 ## Visual Construction Rule
 
@@ -53,461 +66,262 @@ Choose the narrowest repo-owned building block that fits:
 
 ```txt
 existing primitive -> existing block -> sample-local scene/block
--> dedicated composition -> recipe/template promotion
+-> dedicated composition -> proven effect/transition/style extraction
 ```
 
-- Use primitives from `src/remotion/primitives/` before writing new UI.
-- Use recipe blocks, producer-sample blocks, or `standalone-video` helpers when
-  they fit the beat.
-- Write sample-local TSX only for arrangement/content that existing components
-  cannot express cleanly.
-- Promote a recipe/template only after the dedicated composition works and the
-  reusable pattern is proven.
-- Do not stop at "add screenshots." Name the primitive, block, or local scene
-  that owns every visual beat.
+- Inventory existing primitives and blocks before writing new TSX.
+- Use `standalone-video` helpers for timeline, captions, audio, and canvas
+  profiles when they fit.
+- Keep sample-specific content and arrangement inside the dedicated
+  composition.
+- Extract a reusable primitive, block, effect, transition, or style only after
+  at least one real video proves the boundary.
+- Never stop at “add screenshots.” Name the component that owns each visual
+  beat and the evidence or code-driven graphic it displays.
 
 ## Produce The Video
 
 ### 1. Define The Job
 
-Write a short production brief:
+Write a short production brief containing:
 
-- audience
-- duration target
-- aspect ratio
-- language
-- content family, such as `project-intro`, `data-analysis`, `tutorial`, or
-  `trend-briefing`
-- expected source material: web pages, repo pages, dashboards, charts, local
-  data, uploaded media, or user-provided brief
+- audience and publishing surface
+- duration target and aspect ratio
+- language and content family
+- factual freshness requirements
+- narration-required policy
+- expected existing assets and evidence sources
+- output slug and local artifact root
 
-Default to a component-composed standalone Remotion composition. Use
-`VideoProject` only when the user explicitly asks for web editing,
-selected-segment regeneration, app export, or main-site generation behavior.
+Default to a component-composed Remotion video. Do not introduce a universal
+scene DSL or a planner-authored component model.
 
-### 2. Research And Source Assets
+### 2. Research And Collect Existing Assets
 
-Gather enough evidence before scripting:
+Use primary sources when facts may have changed. Capture or localize only the
+assets that serve a named narration beat.
 
-- Search or inspect primary sources when current facts matter.
-- **Before writing a capture script, test connectivity first**: run
-  `curl -s -o /dev/null -w "%{http_code}" <target-url>`. If it returns `000`
-  (exit code 35, TLS/connect failure), all URLs on that domain will fail.
-  Record the failure and switch to information graphics immediately — do not
-  iterate over multiple URLs hoping one works.
-- Capture the actual page, repo, product UI, chart, or document when the video
-  needs source-backed visual proof.
-- Record each capture attempt in data or a local note with URL, status, asset
-  path when captured, or a short failure reason such as paywall, auth wall,
-  automation challenge, network failure, dynamic-render failure, or unreadable
-  scaling.
-- Store generated/captured media under ignored local artifact paths, usually
-  `public/generated/<slug>/` or `out/`.
-- Do not commit generated screenshots, generated source cards, audio, or mp4
-  unless the user explicitly asks.
+Allowed assets include user-supplied files, real screenshots, licensed stock
+media, open-source media, local images/video/SVG/audio/fonts, Lottie, Rive,
+GLB/glTF, HDRI, and textures.
 
-### 3. Evidence And Screenshot Rules
+For remote sources:
 
-Use these rules for every source-backed scene:
+1. Test one representative URL before automating a capture batch.
+2. Record URL, source, creator, license, local path, and capture status.
+3. Localize formal render assets before rendering.
+4. Keep remote URLs out of committed render-critical components.
 
-- Attempt real capture before creating any source-card fallback.
-- A real screenshot may enter the video only when it is actually captured,
-  readable at render size, and relevant to the narrated claim.
-- If a real screenshot is available and proves the beat, make it the dominant
-  full-frame background. Add compact translucent overlays for headline,
-  metrics, labels, or caution notes.
-- If capture fails or the screenshot is unreadable, record the reason in data
-  or handoff text. Do not show the fallback card in the video merely because it
-  exists.
-- Do not call a generated source-card fallback a screenshot in code, visible
-  copy, docs, or final handoff.
-- Do not show visible text such as "fallback", "screenshot fallback",
-  "source-card fallback", "capture failed", or production-process explanations
-  inside the video frame.
-- Do not use `EvidenceScreenshotBackdrop` or list it in a scene's
-  `primitiveMap` unless that scene has a real `captured-screenshot` asset.
-- If no real screenshot is usable, design an honest information graphic for
-  the claim using primitives/blocks and record the capture failure outside the
-  frame.
+Store captured/localized working media under ignored paths such as
+`public/generated/<slug>/` or `out/<slug>/`. Do not commit generated audio,
+captures, stills, covers, or MP4 files unless the user explicitly requests it.
 
-For evidence screenshots:
+### 3. Evidence Rules
 
-1. Name the claim first, such as `stars/forks`, `official definition`,
-   `release date`, `benchmark`, `pricing`, or `product state`.
-2. Capture/select a frame where that claim is visible without tiny-text
-   dependence after scaling.
-3. Store focus metadata that matches the claim. Do not zoom into an unrelated
-   visually interesting area.
-4. Keep the screenshot readable with normal brightness/contrast and light edge
-   vignettes only.
-5. Animate with frame-driven `interpolate()` push-in, hold, and return-to-context.
-6. Render stills at context, focus, and return frames and inspect them.
+- Attempt real source capture when a claim needs visual proof.
+- Admit a screenshot only when it is real, readable at render size, and
+  relevant to the narration.
+- Store focus metadata for the exact visible claim.
+- Use frame-driven push-in, hold, and return motion.
+- Render context, focus, and return stills for inspection.
+- If capture fails or is unreadable, record the reason outside the frame and
+  build an honest code-rendered information graphic.
+- Never label an information graphic as a screenshot.
+- Never put “fallback”, “capture failed”, or internal production explanations
+  in the video frame.
 
-### 4. Script And TTS First
+### 4. Write Narration And Generate VoxCPM Audio First
 
-Write narration beats before locking visual timing:
+Let measured narration duration own scene timing.
 
-- Let real narration duration own scene duration.
-- Keep captions under segment-owned narration data, not template-specific
-  implementation fields.
-- Use VoxCPM by default for local Agent Producer narration and voice clone
-  timing; use F5-TTS only when explicitly configured with `TTS_PROVIDER=f5-tts`.
-  **For multi-scene videos, call VoxCPM directly at
-  `http://192.168.50.6:8810/clone_with_prompt` via multipart `curl`** rather
-  than the repo `/api/tts` adapter, which uses voice-design (random voice per
-  call) by default. The direct API gives consistent LYY voice across all scenes.
-- VoxCPM currently returns audio, not per-line alignment. The project adapter
-  therefore makes readable captions by punctuation-split synthesis, trims each
-  returned chunk's leading/trailing silence, then writes one trimmed and
-  concatenated WAV and derives caption cue durations from measured chunk audio.
-  Do not bypass that path with one broad fallback cue per paragraph.
-- Default voice clone configuration: see `voxcpm-expression/VOXCPM_EXPRESSION.md`
-  **Default Voice Clone Configuration** section. When no override is specified,
-  use `clone_with_prompt` with `voices/clone/lyy.wav` + `voices/clone/lyy.txt`
-  (prompt) and `voices/clone/lyy-r.wav` (reference).
-- For local producer videos, write static voiceover assets into
-  `public/generated/<slug>/` so Remotion can read them through `staticFile()`.
+- Read the VoxCPM expression guidance before finalizing TTS text.
+- Keep spoken `ttsText` separate from visible `displayText`.
+- Use punctuation-split synthesis for punctuation-sized beats.
+- Trim leading and trailing silence from every returned chunk.
+- Keep returned chunks trimmed and concatenated into one WAV per scene.
+- Derive caption cues from measured chunk durations.
+- Keep captions readable and free of control instructions or non-language
+  expression tags.
+- Fail closed when narration is required. Silence is allowed only when the
+  sample manifest explicitly declares narration absent.
+- Keep private reference audio and exact transcripts under ignored
+  `voices/clone/` paths.
 
-### 5. Assemble The Composition
+For current multi-scene work, use an existing direct VoxCPM sample script and
+the repository's established `clone_with_prompt` behavior. The shared
+`scripts/lib/producer-audio/` library is transitional because its request path
+still reaches `/api/tts`; Roadmap Phase 1 replaces that boundary. Do not copy
+its provider-selection or HTTP-route dependency into a new sample.
 
-- Keep sample-specific files under `src/remotion/<SampleName>/`.
-- Model content explicitly with `types.ts`, `script.ts`, `data.ts`, and
-  generated audio metadata when needed.
-- Use `src/remotion/standalone-video/` for timeline, caption, voiceover, and
-  canvas-profile helpers when it fits.
-- Compose scenes from existing primitives, existing recipe/producer blocks, and
-  small sample-local renderers.
-- Register the standalone composition in `src/remotion/Root.tsx`.
-- **After writing the composition code, run the type-check checklist**
-  (see Production Pitfalls: Copying an existing composition) before any
-  renders — this catches most import/type/signature issues in one pass.
-- Add a focused smoke guard when the sample becomes a committed source artifact.
+### 5. Assemble The Dedicated Composition
 
-### 6. Visual Review
+Keep topic-specific files under `src/remotion/<CompositionName>/`:
 
-Render representative stills before claiming quality:
+```txt
+<CompositionName>/
+|-- index.ts
+|-- <CompositionName>.tsx
+|-- types.ts
+|-- script.ts
+|-- data.ts
+|-- audio.generated.ts
+|-- validation.ts
+`-- cover.tsx
+```
+
+Use only the files a composition actually needs. Model facts, narration, scene
+data, assets, and generated audio metadata explicitly. Register the video and
+cover Stills in `src/remotion/Root.tsx`.
+
+All render-critical motion must use frame-driven Remotion APIs such as
+`useCurrentFrame()`, `interpolate()`, `spring()`, `Sequence`, `Series`, and
+`TransitionSeries`.
+
+### 6. Preflight And Review Stills
+
+Run structural validation before aesthetic review:
 
 ```bash
-docker compose run --rm web bash -lc 'npx remotion still src/remotion/index.ts <CompositionId> /workspace/out/<slug>-frame-<frame>.png --frame=<frame> --scale=0.5'
+npm run producer:validate -- --module <validation-module>
+npm run producer:stills -- --composition <composition-id>
 ```
 
-Inspect for:
+Inspect representative frames for:
 
-- one obvious focal point
-- readable main text and target-language visible copy
-- safe margins and no subtitle collision
-- no overlapping cards, labels, dates, badges, or transition elements
-- no blank/broken media
-- no cramped dashboard-like clutter
-- useful motion states at intro, middle, and ending frames
-- evidence scenes use real captures when visible; fallback reasons stay in
-  data/handoff, not in the frame
+- one clear focal point
+- readable Chinese/target-language text
+- safe margins and no caption collision
+- no overlapping cards, labels, dates, badges, or transitions
+- no blank, broken, remote, or unlicensed media
+- no cramped dashboard-like layout
+- useful intro, middle, focus, transition, and ending states
+- evidence scenes that truthfully distinguish captures from information
+  graphics
 
-### 7. Render MP4 With Metadata
+Mechanical validators may fail on missing assets, overflow, unsafe margins,
+bad codecs, missing audio, clipping, or forbidden references. They must not
+claim that a video is aesthetically good.
 
-After stills pass inspection, generate the final video with chapter metadata:
+### 7. Render MP4 And Metadata
 
-**a) 准备章节元信息 JSON**
-
-在 composition 数据中提取章节信息，写入一个临时 JSON 文件：
-
-```json
-{
-  "title": "视频标题",
-  "description": "视频简介",
-  "fps": 30,
-  "chapters": [
-    { "name": "章节1", "durationInFrames": 750 },
-    { "name": "章节2", "durationInFrames": 800 }
-  ]
-}
-```
-
-`chapters[].durationInFrames` 对应每个场景的帧时长，脚本会自动累加计算出 `startTime`。
-
-**b) 渲染并输出结构化的文件夹**
+After still review:
 
 ```bash
-./scripts/render-video.sh <CompositionId> <slug> <metadata-json-path>
-```
-
-输出：
-
-```
-out/<slug>/
-├── <slug>.mp4              — 渲染视频
-├── <slug>.json             — 元信息（标题、简介、章节列表含开始时间）
-├── <slug>-cover-16x9.png   — 横屏封面
-└── <slug>-cover-9x16.png   — 竖屏封面
-```
-
-`<slug>.json` 示例：
-
-```json
-{
-  "title": "Git 教程 | 每个开发者都需要的版本控制",
-  "description": "Git 是目前最流行的版本控制系统...",
-  "duration": 188.1,
-  "durationInFrames": 5643,
-  "fps": 30,
-  "chapters": [
-    { "name": "开场", "startTime": "00:00:00" },
-    { "name": "核心价值", "startTime": "00:00:25" },
-    { "name": "核心概念", "startTime": "00:00:51" }
-  ]
-}
-```
-
-**c) 验证**
-
-```bash
+./scripts/render-video.sh <composition-id> <slug> <metadata-json>
 ffprobe -v error -show_entries format=duration -of csv=p=0 "out/<slug>/<slug>.mp4"
 ```
 
-### 8. Generate Cover Image
+Verify H.264/AAC output, dimensions, frame rate, duration, audio presence, and
+chapter start times. Watch the final MP4; successful rendering is not visual
+approval.
 
-Generate cover images based on the **original topic/content the user provided**,
-not from the video's storyboard or scene summary. The cover should capture the
-core idea of the content, not the video's production structure.
+### 8. Generate Covers With Remotion Still
 
-Generate **two cover images** and save both alongside the video in `out/<slug>/`:
+Create two topic-specific registered `<Still>` compositions:
 
-| Aspect | Ratio | File | Purpose |
-|--------|-------|------|---------|
-| Landscape | 16:9 | `<slug>-cover-16x9.png` | YouTube/banner/social header |
-| Portrait | 9:16 | `<slug>-cover-9x16.png` | Instagram Reels/Shorts/phone thumbnail |
+| Output    | Canvas    | Path                               |
+| --------- | --------- | ---------------------------------- |
+| Landscape | 1920×1080 | `out/<slug>/<slug>-cover-16x9.png` |
+| Portrait  | 1080×1920 | `out/<slug>/<slug>-cover-9x16.png` |
 
-**Cover style (hand-drawn sketch with selective color):**
+Build both from React/HTML/SVG/Canvas, repo primitives, fonts, and
+manifest-backed existing assets. The cover expresses the original topic, not
+the internal scene list or production workflow.
 
-- Warm cream/light paper texture background
-- Black ink hand-drawn marker lines
-- Selective accent colors for highlights (keep sparse — one or two dominant accent colors that fit the topic, not the full 4-color palette)
-- Clean, editorial illustration feel — like a designer's Moleskine sketch
-- **Edge margins: leave generous whitespace/padding on all four sides**
-- **Composition: content centered toward the middle of the frame, not edge-to-edge**
-- Do not force card-based layouts, chapter lists, or timeline bars — those are internal production structure, not the content's core idea
+Inspect both at full size and thumbnail size for text overflow, edge safety,
+contrast, factual imagery, and visual hierarchy.
 
-**Cover content direction:**
+### 9. Promote Only Proven Reuse
 
-- Describe the visual **style and content** (e.g. "a programmer at a terminal with git branches visualized as tree branches", "AI neural network nodes floating above a notebook sketch") — not card frames or timeline bars
-- Headline text: the video's core title in Chinese, hand-lettered bold black ink
-- Optional subtitle: one short tagline, smaller hand-lettered ink
-- The rest is atmospheric illustration matching the content theme
+After a real sample works, record promotion evidence in the Producer sample
+manifest. Extract only the smallest reusable primitive, block, effect,
+transition, or style profile. Keep topic facts, narration, and one-off scene
+arrangements sample-local.
 
-**Generation:**
-
-Use the agent's image generation capability (`image_generate` tool) for each
-aspect ratio. Write the prompt in Chinese for headline/subtitle text, and
-English for style/format instructions. Generate both covers together:
-
-```
-out/<slug>/<slug>-cover-16x9.png
-out/<slug>/<slug>-cover-9x16.png
-```
-
-**Verification:**
-
-```bash
-file "out/<slug>/<slug>-cover-16x9.png" "out/<slug>/<slug>-cover-9x16.png"
-du -h "out/<slug>/<slug>-cover-16x9.png" "out/<slug>/<slug>-cover-9x16.png"
-```
-
-### 9. Promote Only After Evidence
-
-After a real sample works:
-
-- Extract shared timing/caption/audio helpers only when reuse is proven.
-- Promote reusable visual arrangements into producer blocks or recipes only
-  after still/mp4 review.
-- Update `.agents/skills/ai-video-studio-agent-producer/remotion-primitives/REMOTION_PRIMITIVES.md`,
-  `docs/REMOTION_COMPONENT_LIBRARY.md`, `docs/VISUAL_RECIPE_ROADMAP.md`, and
-  `README.md` when a reusable model changes.
-
-## Non-Goals
-
-- Do not route a high-quality producer request back through the one-shot web
-  prompt.
-- Do not force every local producer video into `VideoProject`.
-- Do not treat screenshots alone as the improvement.
-- Do not render fallback/source-card evidence as if it were a captured source.
-- Do not expose internal production status, capture failures, or fallback
-  mechanics in the video frame.
-- Do not generate arbitrary provider-authored TSX.
-- Do not expose primitive props directly to the LLM.
-- Do not model one segment as multiple templates unless a future producer run
-  proves the need.
-- Do not use CSS animations, CSS transitions, or Tailwind animation utilities
-  for render-critical motion.
-
-## Validation
-
-Use the smallest checks that cover the changed boundary:
-
-```bash
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit --pretty false'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'
-git diff --check
-```
-
-**Order matters**: run `tsc --noEmit` first before any renders. Host `tsc` is
-not available — always use the Docker container. Fix all errors before
-proceeding to stills or MP4 export.
-
-Add targeted smokes for:
-
-- new standalone composition registration
-- new or changed producer sample
-- source-backed scenes that must not show fallback/source-card visuals
-- primitive/block usage that the user explicitly asked for
-
-## Handoff Summary
-
-End producer work with:
-
-- topic and output path (`out/<slug>/`)
-- why the output is standalone, or why `VideoProject` was explicitly chosen
-- primitives/blocks/runtime helpers used
-- source assets created and whether they are local-only
-- evidence capture attempts: real screenshot path, or failure reason recorded
-  outside the video frame
-- whether any visible evidence scenes used actual captured screenshots
-- TTS/caption status
-- stills or render artifacts checked
-- metadata JSON path (`out/<slug>/<slug>.json`) with title, description, and
-  chapter start times
-- cover image paths (`out/<slug>/<slug>-cover-16x9.png`, `out/<slug>/<slug>-cover-9x16.png`)
-- validation commands and results
-- reusable pieces worth promoting later
+Update `docs/REMOTION_COMPONENT_LIBRARY.md`, the relevant Skill inventory, and
+`docs/AGENT_PRODUCER_ONLY_ROADMAP.md` only when the supported capability set
+actually changes.
 
 ## Fixed Production Tools
 
-Use shared tools for mechanical operations in every future sample. **existing finished samples are read-only references**: do not migrate, regenerate,
-format, or modify their code, scripts, smokes, narration, audio, captions,
-stills, or MP4.
+Use shared tools for deterministic work in future samples:
 
-- Audio orchestration and provider adapters: `scripts/lib/producer-audio/`
-- Mechanical sample validation:
-  `npm run producer:validate -- --module <validation-module>`
-- Manifest-driven review stills:
-  `npm run producer:stills -- --composition <composition-id>`
-- Metadata-bundled mp4 render:
-  `./scripts/render-video.sh <composition-id> <slug> <metadata-json>`
+- transitional audio processing: `scripts/lib/producer-audio/`
+- mechanical validation: `npm run producer:validate -- --module <validation-module>`
+- manifest-driven review stills: `npm run producer:stills -- --composition <composition-id>`
+- metadata-bundled render: `./scripts/render-video.sh <composition-id> <slug> <metadata-json>`
 
-The Agent still owns research, narration structure, visual metaphor, scene
-composition, motion design, actual still/MP4 review, creative revision, and
-promotion judgment. The tools own TTS requests/errors, caption cleanup,
-measured duration, metadata/constants/summaries, artifact checks, provider and
-fallback checks, and review-frame command execution.
+The agent owns research, narration structure, visual metaphor, asset choice,
+scene composition, motion and sound design, still/MP4 inspection, creative
+revision, and promotion judgment.
 
-## Production Pitfalls (Updated 2026-07-13)
+Tools own request execution, caption cleanup, measured duration, metadata,
+artifact checks, registration checks, and review-frame command execution.
 
-### Text visibility on dark backgrounds
+## Production Pitfalls
 
-Every text element on a dark background (especially `#0D1117` or similar) needs
-an **explicit `color`** prop. Components like `EntranceHeadline`, scene headline
-`div`s, and `<span>` elements in logo badges default to `color: inherit` which
-may render as black (invisible on dark). Always set `color: palette.ink`
-(`#F0F6FC`) or an accent color explicitly.
+### Text And Layout
 
-### Font sizing at 1920×1080
+- Set explicit text colors on dark backgrounds.
+- At 1920×1080, use approximately 84px+ main headlines, 28–32px card titles,
+  20–24px body text, and 30px captions unless the design system proves another
+  scale.
+- Prefer a clear editorial composition over a grid of uniformly weighted
+  cards.
+- Measure long Chinese text and render overflow fixtures before final review.
 
-The `video-layout.md` rule (`headlines 84px at 1080px`) scales to 1920px width.
-Actual minimums for a 1920px canvas:
+### Audio
 
-| Role | Size | Example |
-|------|------|---------|
-| Main headline | 84px+ | `Git 能做什么？` |
-| Card title | 28-32px | `版本追踪` |
-| Card body | 20-24px | `每一次改动都有记录` |
-| Command text | 16-20px | `git init my-project` |
-| Labels / tags | 18-22px | `# 版本控制` |
-| Caption / subtitle | 30px | Bottom caption overlay |
+- Give every narrated scene its own audio file and measured duration.
+- Generate audio before locking scene duration.
+- Do not use one broad caption cue for a paragraph when punctuation-derived
+  timing is available.
+- Inspect long silence, clipping, and narration/music balance.
 
-### Scene density planning
+### Source Capture
 
-Estimate fill rate before composing. For a 1920×1080 canvas with 60px padding
-on each side (1800px usable width):
+- Stop retrying a blocked domain after representative connectivity checks
+  confirm the failure.
+- Record the failure promptly and switch to a code-driven information graphic.
+- Never leave an empty screenshot slot in the composition.
 
-| Desired fill | Content width | Strategy |
-|-------------|--------------|----------|
-| 60%+ | 1100-1400px | 2-column grid or wide cards |
-| 70%+ | 1400-1600px | Full-width layouts, side panels |
-| 80%+ | 1600-1800px | Dense information graphics |
+### Copying A Composition
 
-For scenes with vertical lists (tips, steps), expand the list container to
-fill horizontal space (1400px+) rather than centering a narrow column.
+- Remove unused imports and copied data fields before scene work.
+- Re-check component signatures instead of assuming the source sample's API.
+- Run Docker TypeScript validation before any still or MP4 render.
+- Preserve old compositions as references; create a new composition directory
+  for new work.
 
-### Per-scene audio architecture
+## Validation
 
-Each `GitTutorialScene` must have its own `audioFile` pointing to a per-scene
-audio file. Do not share one audio file across scenes. The `StandaloneTimeline`
-`renderAudio` callback should use `scene.audioFile`; the `renderOverlay` prop
-is for a single audio that spans the entire composition (no per-scene timing).
+Use the smallest checks covering the changed boundary, then the full gate when
+closing a production slice:
 
-### TTS generation order
+```bash
+npm run smoke:agent-producer-architecture
+npm run smoke:skill-alignment
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit --pretty false'
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'
+docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'
+git diff --check
+```
 
-1. Write narration beats in `script.ts`
-2. Create a generation script (`.mjs`) that calls `POST /api/tts` per scene
-3. Generate audio BEFORE locking scene durations
-4. Write the resulting `audio.generated.ts` with measured durations
-5. Build scene data from the generated metadata
-6. Set `DURATION_IN_FRAMES` from the sum of measured durations + 8 padding per scene
+The Docker service name is transitional until Roadmap Phase 3. Do not treat it
+as authorization to use the Web video product.
 
-### Voice mode: use clone for multi-scene videos
+## Handoff Summary
 
-For any video with 2+ scenes, **do not use `voice-design` mode** — each API call
-generates a random speaker, so 11 scenes can produce 11 different voices.
+End Producer work with:
 
-**Always use LYY voice clone for multi-scene narration:**
-
-1. Set mode to `clone_with_prompt` targeting the direct VoxCPM API
-   (`http://192.168.50.6:8810/clone_with_prompt`) rather than the repo
-   `/api/tts` adapter, which uses voice-design by default.
-2. Upload `voices/clone/lyy.wav` as `prompt_audio` with the exact
-   `prompt_text` from `voices/clone/lyy.txt`.
-3. Upload `voices/clone/lyy-r.wav` as `reference_audio` for timbre stability.
-4. Use `cfg_value=2.0`, `inference_timesteps=10`, `normalize=true`,
-   `denoise=false`.
-5. Generate audio via multipart form POST with `curl` (not JSON), downloading
-   the raw WAV binary response.
-6. Derive caption cues from punctuation-split timing (same approach as the
-   adapter path).
-
-After regeneration, voice clone TTS durations differ from voice-design.
-Update `DURATION_IN_FRAMES`, metadata JSON chapter durations, and
-`ITERATION_STATUS.md` accordingly.
-
-### Screenshot capture failure: cut losses early
-
-When real screenshots are needed for evidence:
-
-1. Test connectivity FIRST with a single `curl` to a target URL before
-   launching a browser or writing a capture script.
-2. If `curl` returns `000` / exit code 35 (TLS/connect failure), all targets
-   on that domain will fail — do not iterate over 9 URLs.
-3. If one domain is blocked, try one representative URL from the alternative
-   domain before assuming all are down.
-4. Record the failure reason in data.ts / capture-summary.json as soon as
-   you confirm the block. Do not retry the same domain repeatedly.
-5. Design information graphics using repo primitives instead; do not keep
-   a "screenshot slot" empty in the composition.
-
-### Copying an existing composition: type-check checklist
-
-When copying an existing composition as a template for a new one, run this
-checklist before writing any scene renderer code:
-
-1. **Imports**: `Audio` from `remotion`, NOT `@remotion/media`.
-2. **Unused imports**: remove `Sequence`, `StandaloneVoiceover`, or any import
-   the new composition doesn't use.
-3. **`renderScene` signature**: takes `(scene)` only, NOT `(scene, offset)`.
-4. **`theme` variables**: only declare `theme` in scenes that actually use it
-   (pass to `PrimitivePanel`, `Kicker`, `CalloutGrid`). Remove it from scenes
-   that inline all styles directly.
-5. **Types**: `AudioTrack` must include `durationInSeconds?: number` if the
-   generated audio metadata includes it.
-6. **`data.ts`**: do not import unused symbols like `COMPOSITION_ID`.
-7. **Validate inside Docker**: host `tsc` is not available. Run
-   `docker compose run --rm web bash -lc 'npx tsc --noEmit --pretty false'`
-   and fix all errors before proceeding to renders.
+- topic, composition id, and `out/<slug>/` path
+- narration mode, caption method, and audio verification
+- primitives, blocks, effects, transitions, and runtime helpers used
+- existing asset provenance and local-only artifact paths
+- real capture paths or recorded capture-failure reasons
+- representative stills inspected and revisions made
+- MP4/ffprobe result and metadata path
+- 16:9 and 9:16 Remotion Still cover paths
+- validation commands and results
+- proven reuse candidates
+- known issues and next bounded step

@@ -1,168 +1,96 @@
 # External Remotion References
 
-Status: reference notes for future implementation and design work.
+Status: active Producer-only intake guidance.
 
-This document records how selected external Remotion projects should influence
-`ai-video-studio` without changing the current product model.
+`.agents/skills/ai-video-studio-agent-producer/` is the only supported
+video-production entrypoint.
 
-Current referenced projects:
+Visual production uses code and existing assets only.
 
-- Clippkit: `https://github.com/reactvideoeditor/clippkit`
-- Remotion trailer: `https://github.com/remotion-dev/trailer`
+The implementation sequence is defined by
+`docs/AGENT_PRODUCER_ONLY_ROADMAP.md`.
 
-## Product Boundary
+External Remotion projects are references for component design and narrative
+craft. They do not define a Web product model, planner contract, or generation
+entrypoint.
 
-Keep the current boundary:
+## Referenced Projects
+
+- Clippkit: <https://github.com/reactvideoeditor/clippkit>
+- Remotion trailer: <https://github.com/remotion-dev/trailer>
+- React Video Editor templates:
+  <https://github.com/reactvideoeditor/remotion-templates>
+
+Before porting code, verify the current license, source commit, runtime
+dependencies, and whether the behavior remains deterministic under Remotion
+rendering.
+
+## Intake Boundary
 
 ```txt
-VideoProject
-  -> VideoSegment[]
-  -> one primary templateId per segment
-  -> template-specific implementation
-  -> template runtime
-  -> Remotion primitives / scene blocks
+external idea or component
+  -> local candidate
+  -> deterministic frame-driven normalization
+  -> catalog/review composition
+  -> real Producer sample
+  -> proven primitive/block/effect/transition/style extraction
 ```
 
-External projects can influence the primitive catalog, scene/block library,
-template internals, and future template design. They should not directly
-change the meaning of `VideoProject`, `VideoSegment`, `templateId`, or
-`implementation`.
+Do not install an external library as a black box when a focused local port is
+practical. Do not keep CSS animations, wall-clock timers, remote assets, or
+browser-only interaction in render-critical code.
 
 ## Clippkit
 
-Clippkit describes itself as a collection of reusable Remotion components for
-videos: intros, text effects, animations, transitions, and full scenes. It is
-closer to a video component library than to a video editor or generation
-framework.
+Use Clippkit as inspiration for reusable intros, typography, charts,
+transitions, scenes, and media treatments.
 
-Project interpretation:
+Adopt:
 
-```txt
-Clippkit component
-  -> primitive candidate
-  -> catalog entry
-  -> optional scene/block candidate
-  -> optional template-internal component
-```
+- component categorization and previews
+- small, comprehensible local source modules
+- explicit props and deterministic timing
+- source repository, commit, file, license, and review metadata
 
-What to adopt:
+Reject:
 
-- Treat video effects like a UI component system: categorized, previewable,
-  documented, and reusable.
-- Keep copied or ported components local so they can be normalized to this
-  repo's theme, props, and Remotion rules.
-- Record source metadata for imported ideas: repository, commit, source file,
-  license, category, status, and review duration.
-- Use `/primitives` and `src/remotion/catalog/primitive-catalog.ts` as the
-  internal review path before a component is used by templates.
-- Let components feed template-local block renderers, not the provider-facing
-  template registry.
-
-What not to adopt:
-
-- Do not register every Clippkit component as a `templateId`.
-- Do not let the provider choose low-level components such as text effects,
-  waveform elements, loaders, or card effects directly.
-- Do not preserve render-critical CSS animations or transitions when porting;
-  convert motion to Remotion frame-driven logic.
-- Do not install an external component library as a black box when local
-  source normalization is practical.
-
-Current local alignment:
-
-- The complete RVE primitive intake already follows this model: upstream
-  components are local primitives and catalog entries, not registered
-  `VideoSegment` templates.
-- Future Clippkit-style additions should follow the same intake path.
+- treating each component as a complete production workflow
+- exposing low-level props to a planner
+- importing remote media defaults
+- preserving render-critical CSS animation
 
 ## Remotion Trailer
 
-`remotion-dev/trailer` is the source project for the Remotion promo video. It
-is a hand-authored finished video project, not a reusable component registry.
+Use the Remotion trailer as a narrative and sequencing reference:
 
-Project interpretation:
+- focused scene components
+- explicit scene order and duration
+- intentional transition bridges
+- code/terminal/product demonstrations
+- typography with clear hierarchy
+- end cards and calls to action
 
-```txt
-Remotion trailer scene
-  -> scene/block pattern reference
-  -> possible primitive or template-local block
-  -> possible future segment-level template inspiration
-```
+Extract patterns only after a dedicated Agent Producer composition proves
+them. A finished-video scene is not automatically a reusable block.
 
-What to adopt:
+## React Video Editor Templates
 
-- Use explicit scene names and scene-level components for maintainable
-  narrative structure.
-- Compose complete videos from many focused scene blocks plus precise Remotion
-  timeline sequencing.
-- Treat product trailer patterns as future template inspiration:
-  intro, feature beat, code walkthrough, terminal/demo moment, website reveal,
-  transition bridge, pricing/CTA, and end card.
-- Keep timing, transitions, narration audio, and scene durations explicit enough to
-  reason about preview and export behavior.
-- Consider a future `product-intro` or `launch-trailer` registered template
-  only after its semantic schema is clear.
+The repository's existing RVE-derived primitives remain local component
+candidates and catalog entries. Review them through
+`src/remotion/catalog/primitive-catalog.ts` and their current local previews.
+They are not generation products.
 
-Possible future template shape:
+## Admission Checklist
 
-```ts
-type ProductIntroImplementation = {
-  meta: { title: string; fps: 30; width: 1280; height: 720 };
-  theme: RemotionTheme;
-  productName: string;
-  tagline?: string;
-  problem?: string;
-  featureBeats: Array<{
-    title: string;
-    description?: string;
-    codeSnippet?: string;
-    visualHint?: "code" | "terminal" | "website" | "card";
-  }>;
-  cta?: string;
-  durationInFrames: number;
-};
-```
+A port is admissible only when:
 
-What not to adopt:
+- its license permits the intended use
+- its code and assets are localized
+- animation is frame-driven
+- repeated still renders are deterministic
+- text and media fit the supported canvas profiles
+- the Agent Producer Skill can name when to use it
+- a real composition or capability showcase demonstrates it
 
-- Do not copy the whole trailer as a product template; it is tailored to
-  Remotion's own brand and script.
-- Do not replace the current segment-first project model with a one-off
-  hand-authored video tree.
-- Do not expose scene implementation details directly to the LLM provider before a
-  registered template schema exists.
-- Do not widen the current product into a full timeline editor just because
-  the trailer uses rich hand-authored sequencing.
-
-## Combined Takeaways
-
-Clippkit and the Remotion trailer point at two different layers:
-
-```txt
-Clippkit
-  -> reusable component / primitive catalog method
-
-Remotion trailer
-  -> complete-video narrative and scene composition method
-```
-
-The practical adoption path is:
-
-1. Add or port reusable effects into `src/remotion/primitives/`.
-2. Register them in `src/remotion/catalog/primitive-catalog.ts`.
-3. Review them through `/primitives`.
-4. Promote useful primitives into template-local block renderers.
-5. Create or extend registered templates only when there is a clear
-   segment-level semantic contract.
-
-This keeps the visual vocabulary growing without blurring the difference
-between low-level Remotion components and product-level templates.
-
-## Relationship To Media Layers
-
-These visual reference projects do not change the media-layer boundary.
-
-Images, videos, audio tracks, and color layers should be modeled as project-
-level or segment-level timeline/media data, as described in
-`docs/MEDIA_LAYERS.md`, not as another primitive selection or another segment
-template.
+Historical product-model notes are preserved in
+`docs/archive/2026-07-15-pre-producer-only-external-remotion-references.md`.

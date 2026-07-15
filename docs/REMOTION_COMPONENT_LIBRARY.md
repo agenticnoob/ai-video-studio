@@ -1,206 +1,99 @@
 # Remotion Component Library
 
-This document defines how external Remotion template/example libraries, such
-as React Video Editor's free Remotion templates, should be interpreted inside
-`ai-video-studio`.
+Status: active Agent Producer component inventory contract.
 
-## Naming Decision
+`.agents/skills/ai-video-studio-agent-producer/` is the only supported
+video-production entrypoint.
 
-Some external projects use the word `template` for any reusable Remotion
-composition, scene, transition, chart, text animation, or media effect.
+Visual production uses code and existing assets only.
 
-In this project, those assets are not product templates by default.
+The implementation sequence is defined by
+`docs/AGENT_PRODUCER_ONLY_ROADMAP.md`.
 
-```txt
-External Remotion "template"
-  reusable Remotion component, primitive, scene block, transition, chart,
-  background, media treatment, or motion example
+This library exists to help the Agent Producer discover and reuse visual
+capabilities while composing dedicated videos. It is not a template registry,
+planner manifest, or universal scene system.
 
-ai-video-studio template
-  one primary implementation mechanism for a VideoSegment, selected through
-  templateId and backed by a schema-valid implementation payload
-```
-
-Do not import the external naming directly into the product model. When an
-external library says "template", translate that to "component candidate" or
-"primitive candidate" first.
-
-## Role In The Product
-
-Reusable Remotion components are internal building blocks. They can help a
-registered template render richer visuals, but they are not directly selected
-by the generation provider.
-
-The durable flow is:
+## Reuse Layers
 
 ```txt
-VideoSegment
-  -> chooses one registered templateId
-  -> template validates one implementation payload
-  -> template runtime maps semantic fields to block renderers
-  -> block renderers compose Remotion primitives/components
+primitive -> block -> dedicated composition -> proven shared capability
 ```
 
-The provider should continue to choose high-level templates such as
-`scripted`, `spotlight`, or future segment-level templates such as
-`data-story`, `product-intro`, or `image-gallery`. It should not choose
-low-level components such as `PixelTransition`, `PoppingText`, or `BarChart`
-as segment templates.
+Shared capabilities may be effects, transitions, style profiles, media
+treatments, layout helpers, audio helpers, or review tools. Topic facts,
+narration, and one-off scene arrangements remain composition-local.
 
-## Where Components Live
+## Ownership
 
-Reusable Remotion building blocks should live under `src/remotion/`, grouped
-by role. Preferred structure:
+| Surface | Responsibility |
+| --- | --- |
+| `src/remotion/primitives/` | small visual atoms and focused treatments |
+| `src/remotion/producer-samples/` | manifests, scaffold, evidence-backed Producer blocks |
+| `src/remotion/standalone-video/` | timing, audio, captions, and canvas profiles |
+| `src/remotion/catalog/` | discovery metadata and review fixtures |
+| dedicated composition | topic data, narration, scene order, and local arrangement |
+| Agent Producer Skill | selection rules and production workflow |
 
-```txt
-src/remotion/primitives/
-  backgrounds/
-  charts/
-  cinematic/
-  elements/
-  layouts/
-  logos/
-  media/
-  scenes/
-  text/
-  transitions/
-```
+`src/remotion/recipes/` is transitional. Phase 3 must extract proven Producer
+visuals before deleting planner-facing recipe infrastructure.
 
-Use the narrowest directory that fits:
+## Component Contract
 
-- `elements/`: small visual atoms such as labels, panels, badges, chips, and
-  counters.
-- `layouts/`: repeated-content arrangements such as grids, split screens, and
-  comparison rows.
-- `backgrounds/`: full-frame visual backgrounds.
-- `text/`: reusable text animation treatments.
-- `charts/`: data visualization components.
-- `transitions/`: visual transitions and frame-driven transition helpers.
-- `logos/`: logo reveal or brand-mark treatments.
-- `media/`: image/video presentation components.
-- `cinematic/`: letterbox, film, vignette, and camera-style treatments.
-- `scenes/`: complete scene-level blocks composed from lower-level
-  primitives.
+A shared component should have:
 
-`src/components/` remains reserved for product-page UI.
+- one clear visual responsibility
+- deterministic frame-driven behavior
+- typed, runtime-focused props
+- no topic-specific facts or narration
+- no remote default asset
+- explicit canvas/layout assumptions
+- source and license metadata when derived externally
+- a real review fixture or composition use
 
-## Candidate Catalog
+Avoid giant prop bags, hidden wall-clock state, CSS animation, arbitrary URLs,
+and props that reproduce an entire scene DSL.
 
-If many external-style components are added, add a catalog before adding them
-to templates directly:
+## Existing Asset Contract
 
-```txt
-src/remotion/catalog/
-  categories.ts
-  primitive-catalog.ts
-  examples/
-```
+Components may consume only local or localized existing assets through stable
+paths. Asset choice and provenance belong to the Producer job/manifest, not to
+hard-coded remote defaults inside primitives.
 
-The catalog can power Remotion Studio showcase compositions and internal
-review, but it should not become the provider-facing template registry.
+Admit images, video, SVG, audio, fonts, Lottie, Rive, GLB/glTF, HDRI, and
+textures only after format and deterministic-render checks.
 
-A catalog entry should record:
+## Discovery Workflow
 
-- stable component id
-- label
-- category
-- description
-- supported use cases
-- runtime component
-- Zod props schema when useful
-- default props for Studio previews
-- current maturity: candidate, reusable, adopted, or deprecated
+Before writing a new visual component:
 
-The RVE intake uses `src/remotion/catalog/primitive-catalog.ts` as this
-metadata source and `/primitives` as the browser-based review page. Catalog
-entries record the upstream repository, commit, source file, license,
-category, component name, status, and review duration. The catalog is an
-internal component-library index; it is not the provider-facing template
-registry and it should not be expanded into one Remotion Studio composition
-per primitive.
+1. inspect `.agents/skills/ai-video-studio-agent-producer/remotion-primitives/`
+2. inspect `src/remotion/catalog/primitive-catalog.ts`
+3. inspect `src/remotion/primitives/`
+4. inspect Producer blocks and `standalone-video`
+5. choose sample-local TSX when no shared component fits
+6. extract reuse only after still/MP4 evidence
 
-Current RVE source baseline:
+## Capability Roadmap
 
-```txt
-repository: https://github.com/reactvideoeditor/remotion-templates
-commit: 6209b724798e48ff395f8df1a6fa2d26082372b5
-license: MIT
-```
+The following additions are owned by the Producer-only Roadmap:
 
-Related external references:
+- `@remotion/effects`, `CanvasImage`, and `HtmlInCanvas`
+- project effect presets and custom `createEffect()` effects
+- `@remotion/transitions` and transition/SFX mappings
+- `@remotion/layout-utils` for text measurement and overflow protection
+- local video, animated-image, Lottie, Rive, Three.js, and texture support
+- BGM, ambience, SFX, ducking, clipping, and silence checks
+- code-driven style profiles
 
-- Clippkit (`https://github.com/reactvideoeditor/clippkit`) reinforces the
-  component-library and catalog intake model.
-- Remotion trailer (`https://github.com/remotion-dev/trailer`) is a
-  finished-video narrative reference, not a primitive registry.
+A capability is not complete until the Agent Producer Skill documents when to
+use it and a deterministic fixture or real composition proves it.
 
-Project-specific takeaways from both are recorded in
-`docs/EXTERNAL_REMOTION_REFERENCES.md`.
+## Promotion Rule
 
-## Promotion Path
+Use `docs/PRODUCER_PROMOTION_GATE.md`. Do not promote a component because it is
+visually interesting in isolation; require a real Producer sample, review
+evidence, and a stable responsibility.
 
-Do not promote a primitive into `src/templates/` just because it is visually
-interesting.
-
-Promotion is only appropriate when the component set can implement a complete
-segment intent and deserves an AI-visible schema contract. The preferred
-evidence source is a finished Agent Producer sample: first prove the visual
-language in a dedicated Remotion composition, then extract reusable pieces into
-primitives or blocks, and only then consider productized recipes/templates.
-
-```txt
-primitive candidate
-  reusable visual component
-
-scene/block candidate
-  semantic visual unit used by a template runtime
-
-template-local block contract
-  server-safe mapping between implementation fields and primitives
-
-registered template
-  segment-level implementation mechanism with schema, definition, editor,
-  runtime adapter, and registration
-```
-
-Agent Producer samples are not product templates by default. They may contain
-sample-local scenes, data, screenshots, and narration timing that should stay
-local to that sample until multiple runs prove a reusable shape.
-
-Examples:
-
-| External-style component | Product interpretation |
-|---|---|
-| `PoppingText` | `src/remotion/primitives/text/PoppingText.tsx` |
-| `PixelTransition` | `src/remotion/primitives/transitions/PixelTransition.tsx` |
-| `BarChart` | `src/remotion/primitives/charts/BarChart.tsx` |
-| `LogoFadeReveal` | `src/remotion/primitives/logos/LogoFadeReveal.tsx` |
-| `LowerThird` | `src/remotion/primitives/scenes/LowerThird.tsx` |
-| `GalleryGrid` | `src/remotion/primitives/media/GalleryGrid.tsx` |
-| data-heavy report segment | possible future `src/templates/data-story/` |
-| product launch intro segment | possible future `src/templates/product-intro/` |
-
-## Implementation Rules
-
-When adding a reusable Remotion component:
-
-1. Check `.agents/skills/remotion-best-practices/SKILL.md`.
-2. Keep motion deterministic and frame-driven with Remotion APIs.
-3. Do not use CSS animations, CSS transitions, or Tailwind animation
-   utilities for render-critical motion.
-4. Keep primitive props runtime-focused and template-agnostic.
-5. Do not expose primitive-only props to the provider unless a template
-   explicitly promotes them into its implementation schema.
-6. Add a small Studio showcase only when it helps review the component.
-7. Keep showcase compositions separate from product template registration.
-8. Update `docs/REMOTION_PRIMITIVES.md` for adopted reusable primitives.
-
-## External Reference Policy
-
-External Remotion libraries can be used as inspiration for categories,
-interaction patterns, and implementation ideas.
-
-Do not copy source code directly unless the license clearly allows it and the
-source is recorded in the implementation notes. Prefer re-implementing the
-effect in the local style, using the repo-local Remotion rules and project
-theme contracts.
+Historical template-centered guidance is preserved in
+`docs/archive/2026-07-15-pre-producer-only-remotion-component-library.md`.

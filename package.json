@@ -62,6 +62,7 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "remotion:ensure-browser": "node scripts/ensure-remotion-browser.mjs",
+    "smoke:agent-producer-architecture": "node scripts/agent-producer-architecture-smoke.mjs",
     "smoke:f5-staged": "node scripts/f5-tts-staged-smoke.mjs",
     "smoke:voxcpm-next": "scripts/voxcpm-tts-next-smoke.sh",
     "smoke:voxcpm-clone-adapter": "rm -rf /tmp/voxcpm-clone-adapter-smoke-build && npx tsc --allowJs --target es2022 --module commonjs --moduleResolution node --skipLibCheck --esModuleInterop --noEmit false --outDir /tmp/voxcpm-clone-adapter-smoke-build scripts/voxcpm-clone-adapter-smoke.mjs src/lib/tts/voxcpm.ts src/lib/tts/config.ts src/lib/tts/artifacts.ts src/lib/tts/audio-duration.ts src/lib/artifact-paths.ts src/lib/captions.ts src/lib/narration-asset-schema.ts && NODE_PATH=/workspace/node_modules:node_modules node /tmp/voxcpm-clone-adapter-smoke-build/scripts/voxcpm-clone-adapter-smoke.mjs",

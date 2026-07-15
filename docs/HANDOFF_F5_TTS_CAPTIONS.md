@@ -1,5 +1,9 @@
 # Handoff: Segment-Owned Narration, F5-TTS, And Captions
 
+> Removal target: F5 generation is unsupported. This historical document is
+> retained only until Roadmap Phase 2 deletes F5 services, adapters, scripts,
+> configuration, and current documentation. Do not follow these instructions.
+
 Status: implementation handoff for the parked web/editor productization path;
 captions/provider adapter implemented, F5 runtime service implemented, and GPU
 real-mode validation passed.

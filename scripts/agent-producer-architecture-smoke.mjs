@@ -1,0 +1,168 @@
+import assert from "node:assert/strict";
+import console from "node:console";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+import process from "node:process";
+
+const root = process.cwd();
+const inventoryPath = "docs/architecture/agent-producer-only-removal-inventory.json";
+const categories = ["producerOwned", "webF5Only", "shared", "historicalDependency", "unused"];
+const actions = new Set(["retain", "extract-then-delete", "delete", "archive", "preserve-history"]);
+
+const absolute = (relativePath) => path.join(root, relativePath);
+const read = (relativePath) => readFileSync(absolute(relativePath), "utf8");
+
+assert(existsSync(absolute(inventoryPath)), `${inventoryPath} must exist`);
+const inventory = JSON.parse(read(inventoryPath));
+
+assert.equal(inventory.version, 1, "inventory version");
+assert.equal(
+  inventory.authority.skill,
+  ".agents/skills/ai-video-studio-agent-producer/",
+  "sole skill authority",
+);
+assert.equal(
+  inventory.authority.roadmap,
+  "docs/AGENT_PRODUCER_ONLY_ROADMAP.md",
+  "roadmap authority",
+);
+assert.deepEqual(
+  Object.keys(inventory.categories).sort(),
+  [...categories].sort(),
+  "exact category set",
+);
+
+const seen = new Set();
+for (const category of categories) {
+  assert(Array.isArray(inventory.categories[category]), `${category} must be an array`);
+  for (const entry of inventory.categories[category]) {
+    assert.equal(typeof entry.id, "string", `${category} id`);
+    assert(!seen.has(entry.id), `duplicate inventory id: ${entry.id}`);
+    seen.add(entry.id);
+    assert.equal(typeof entry.path, "string", `${entry.id} path`);
+    assert(["path", "glob"].includes(entry.pathKind), `${entry.id} pathKind`);
+    assert(actions.has(entry.action), `${entry.id} action`);
+    assert(
+      Number.isInteger(entry.phase) && entry.phase >= 0 && entry.phase <= 9,
+      `${entry.id} phase`,
+    );
+    assert.equal(typeof entry.reason, "string", `${entry.id} reason`);
+    assert(entry.reason.length >= 12, `${entry.id} reason must be specific`);
+    if (entry.pathKind === "path") {
+      assert(existsSync(absolute(entry.path)), `${entry.id} path must exist: ${entry.path}`);
+    }
+  }
+}
+
+assert(
+  inventory.allowedHistoricalExceptions.some(
+    (entry) =>
+      entry.pattern === "src/remotion/**/audio.generated.ts" &&
+      entry.allowedValue === 'provider: "f5-tts"',
+  ),
+  "historical F5 metadata exception",
+);
+
+const activeDocs = [
+  "README.md",
+  "AGENTS.md",
+  "docs/FINAL_PRODUCT_GOAL.md",
+  "docs/ITERATION_STATUS.md",
+  "docs/VISUAL_RECIPE_ROADMAP.md",
+  "docs/EXTERNAL_REMOTION_REFERENCES.md",
+  "docs/REMOTION_COMPONENT_LIBRARY.md",
+  "docs/REMOTION_PRIMITIVES.md",
+  "docs/PRODUCER_PROMOTION_GATE.md",
+  "docs/superpowers/README.md",
+];
+const requiredAuthority = [
+  ".agents/skills/ai-video-studio-agent-producer/",
+  "docs/AGENT_PRODUCER_ONLY_ROADMAP.md",
+  "code and existing assets only",
+];
+const forbiddenActivePhrases = [
+  "parked indefinitely",
+  "F5-TTS is an explicit fallback",
+  "TTS_PROVIDER=f5-tts",
+  "image_generate",
+  "generated source-card fallback",
+];
+
+for (const docPath of activeDocs) {
+  const source = read(docPath);
+  for (const phrase of requiredAuthority) {
+    assert(source.includes(phrase), `${docPath} must include ${JSON.stringify(phrase)}`);
+  }
+  for (const phrase of forbiddenActivePhrases) {
+    assert(!source.includes(phrase), `${docPath} must not include ${JSON.stringify(phrase)}`);
+  }
+}
+
+assert(read("docs/FINAL_PRODUCT_GOAL.md").includes("only supported production flow"));
+assert(read("docs/ITERATION_STATUS.md").includes("Phase 0"));
+assert(read("docs/VISUAL_RECIPE_ROADMAP.md").includes("Superseded"));
+
+const producerSkill = read(".agents/skills/ai-video-studio-agent-producer/SKILL.md");
+for (const phrase of [
+  "Use `VideoProject`",
+  "TTS_PROVIDER=f5-tts",
+  "use F5-TTS",
+  "image_generate",
+  "generated source-card",
+  "recipe/template promotion",
+]) {
+  assert(
+    !producerSkill.includes(phrase),
+    `Agent Producer skill must not include ${JSON.stringify(phrase)}`,
+  );
+}
+
+const legacyDocs = [
+  "docs/AGENT_PLATFORM_DESIGN.md",
+  "docs/FUTURE_DIRECTION_NOTES.md",
+  "docs/HANDOFF_STATS_DASHBOARD_TEMPLATE.md",
+  "docs/HANDOFF_STRUCTURE_REFACTOR.md",
+  "docs/MEDIA_LAYERS.md",
+  "docs/PRODUCT_ARCHITECTURE.md",
+  "docs/PRODUCT_REQUIREMENTS.md",
+  "docs/STRUCTURE_REFACTOR_PLAN.md",
+  "docs/TEMPLATE_ARCHITECTURE.md",
+  "docs/plans/STATS_DASHBOARD_TEMPLATE_ROADMAP.md",
+  "docs/providers/deepseek.md",
+  "docs/providers/minimax-tool-calling-review.md",
+  "docs/providers/minimax-tool-calling.md",
+  "docs/providers/minimax.md",
+  "docs/superpowers/plans/2026-06-21-recipe-runtime-primitives-phase-2.md",
+  "docs/superpowers/plans/2026-06-21-recipe-visual-blocks.md",
+  "docs/superpowers/plans/2026-06-22-asset-aware-recipes-phase-5.md",
+  "docs/superpowers/plans/2026-06-22-high-quality-recipe-templates-phase-3.md",
+  "docs/superpowers/plans/2026-06-22-phase-4-live-smoke-closure.md",
+  "docs/superpowers/plans/2026-06-22-planner-recipe-selection-phase-4.md",
+  "docs/superpowers/plans/2026-06-22-recipe-coverage-expansion.md",
+  "docs/superpowers/plans/2026-06-23-storyboard-draft-compiler.md",
+  "docs/superpowers/plans/2026-06-29-main-site-recipe-abstractions-v1.md",
+  "docs/superpowers/specs/2026-06-21-recipe-runtime-primitives-phase-2-design.md",
+  "docs/superpowers/specs/2026-06-22-asset-aware-recipes-phase-5-design.md",
+  "docs/superpowers/specs/2026-06-22-planner-recipe-selection-phase-4-design.md",
+];
+const f5RemovalBanner = [
+  "> Removal target: F5 generation is unsupported. This historical document is",
+  "> retained only until Roadmap Phase 2 deletes F5 services, adapters, scripts,",
+  "> configuration, and current documentation. Do not follow these instructions.",
+].join("\n");
+
+for (const sourcePath of legacyDocs) {
+  const archivedPath = path.join("docs/archive/web-product", path.basename(sourcePath));
+  assert(!existsSync(absolute(sourcePath)), `${sourcePath} must move out of active docs`);
+  assert(existsSync(absolute(archivedPath)), `${archivedPath} must exist`);
+}
+
+for (const f5Doc of [
+  "docs/HANDOFF_F5_TTS_CAPTIONS.md",
+  "docs/providers/f5-tts-service-plan.md",
+  "docs/providers/f5-tts.md",
+]) {
+  assert(read(f5Doc).includes(f5RemovalBanner), `${f5Doc} must include the removal banner`);
+}
+
+console.log("Agent Producer architecture inventory smoke passed.");

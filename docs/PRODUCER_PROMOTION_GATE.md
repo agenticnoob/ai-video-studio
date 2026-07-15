@@ -1,52 +1,65 @@
 # Producer Promotion Gate
 
-Status: Phase D Promotion Gate v1.
+Status: active Producer-only reuse gate.
 
-Use this gate when an Agent Producer sample reveals reusable visual language.
-The goal is to name the right reuse layer without turning every useful sample
-idea into a product template too early.
+`.agents/skills/ai-video-studio-agent-producer/` is the only supported
+video-production entrypoint.
+
+Visual production uses code and existing assets only.
+
+The implementation sequence is defined by
+`docs/AGENT_PRODUCER_ONLY_ROADMAP.md`.
+
+Use this gate after a dedicated composition has passed still and MP4 review.
+Promotion is evidence-based reuse extraction, not productization.
 
 ## Decisions
 
-Promotion candidates use one of five decisions:
+| Decision | Result |
+| --- | --- |
+| stay sample-local | keep topic-specific or unproven work in its composition |
+| promote to primitive | extract one small reusable visual responsibility |
+| promote to block | extract a semantic combination proven across beats |
+| promote to effect | extract a deterministic visual treatment preset |
+| promote to transition | extract a reusable bridge and optional SFX mapping |
+| promote to style profile | extract a complete proven visual/motion/sound language |
 
-| Decision | Meaning | Result |
-| --- | --- | --- |
-| stay sample-local | Keep the idea inside one dedicated sample until more evidence exists. | no shared layer |
-| promote to primitive | Extract a small reusable Remotion component with runtime-focused props. | `primitive` |
-| promote to block | Extract a semantic composition of primitives for Agent Producer or template runtime use. | `block` |
-| promote to recipe | Productize a proven treatment inside a registered template. | `recipe` |
-| promote to template | Create or extend a provider-visible segment implementation mechanism. | `template` |
+Do not create planner-facing recipes or templates. Transitional manifest enums
+may still contain those historical values until Roadmap Phase 4 migrates the
+Producer sample OS; future work must not select them.
 
-The manifest only allows promotion targets `primitive`, `block`, `recipe`,
-and `template`. Recipes and templates are productization layers. They require
-finished-sample evidence and should not be the default Agent Producer entry.
+## Required Evidence
 
-## Evidence Lens Example
+A promotion candidate records:
 
-Evidence Lens is the first block-level reusable producer sample block to pass
-this gate. It came from `UvOpenSourceBrief` after Phase C proved the readable
-screenshot proof language:
+- source composition and scenes
+- problem it solves
+- at least one reviewed still or MP4 state
+- proposed responsibility and props
+- code/assets to extract
+- source and license metadata when relevant
+- why it is not topic-specific
+- deterministic validation command
 
-- `EvidenceScreenshotBackdrop`
-- `EvidenceOverlayPanel`
-- `ScreenshotFocus`
+## Gate Questions
 
-The three pieces are recorded in the producer sample manifest as
-`promote-to-block`, `promoted`, and `agent-producer-internal`. They stay under
-`src/remotion/producer-samples/evidence-lens/` and remain Agent Producer sample
-infrastructure. They are not a productized editor feature and are not exposed
-through the planner recipe manifest.
+1. Has a real Producer video proved the treatment?
+2. Is the responsibility smaller than a complete scene system?
+3. Can topic facts and narration remain outside it?
+4. Can it use code and manifest-backed existing assets only?
+5. Is motion deterministic and frame-driven?
+6. Will another Producer task know when to choose it?
+
+Any “no” keeps the candidate sample-local.
 
 ## Documentation Hooks
 
-When a visual language is promoted, update only the docs that match its layer:
+Update only the matching authority:
 
-- primitives: `docs/REMOTION_PRIMITIVES.md`
-- component/block inventory: `docs/REMOTION_COMPONENT_LIBRARY.md`
-- producer roadmap/status: `docs/VISUAL_RECIPE_ROADMAP.md`
-- project entrypoint notes: `README.md`
+- primitive contract: `docs/REMOTION_PRIMITIVES.md`
+- component/block/effect inventory: `docs/REMOTION_COMPONENT_LIBRARY.md`
+- supported workflow: Agent Producer Skill
+- roadmap status: `docs/AGENT_PRODUCER_ONLY_ROADMAP.md`
 
-Keep generated screenshots, generated narration audio, and rendered mp4 files
-out of committed source. Local artifacts stay under `public/generated/` or
-`out/`.
+Historical productization guidance is preserved in
+`docs/archive/2026-07-15-pre-producer-only-producer-promotion-gate.md`.

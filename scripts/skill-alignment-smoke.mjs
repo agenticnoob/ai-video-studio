@@ -46,10 +46,7 @@ const frontmatterName = (source) => {
   return match?.[1]?.trim() ?? "";
 };
 
-const skillNames = [
-  "ai-video-studio-agent-producer",
-  "remotion-best-practices",
-];
+const skillNames = ["ai-video-studio-agent-producer", "remotion-best-practices"];
 
 for (const skillName of skillNames) {
   const skillPath = `.agents/skills/${skillName}/SKILL.md`;
@@ -70,15 +67,37 @@ assertIncludes(producerSkill, "Skill Stack", "Agent Producer skill");
 assertIncludes(producerSkill, "punctuation-split", "Agent Producer skill");
 assertIncludesWords(producerSkill, "trimmed and concatenated", "Agent Producer skill");
 assertIncludes(producerSkill, ".agents/skills/remotion-best-practices/", "Agent Producer skill");
-assertIncludes(producerSkill, ".agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md", "Agent Producer skill");
+assertIncludes(
+  producerSkill,
+  ".agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md",
+  "Agent Producer skill",
+);
 for (const required of [
   "npm run producer:validate",
   "npm run producer:stills",
   "scripts/lib/producer-audio/",
   "existing finished samples are read-only references",
-]) assertIncludes(producerSkill, required, "Agent Producer skill");
+  "only supported video-production entrypoint",
+  "docs/AGENT_PRODUCER_ONLY_ROADMAP.md",
+  "code and existing assets only",
+  "Remotion `<Still>`",
+  "honest code-rendered information graphic",
+  "VoxCPM is the only supported narration provider",
+])
+  assertIncludes(producerSkill, required, "Agent Producer skill");
+for (const forbidden of [
+  "Use `VideoProject`",
+  "TTS_PROVIDER=f5-tts",
+  "use F5-TTS",
+  "image_generate",
+  "generated source-card",
+  "recipe/template promotion",
+])
+  assertNotIncludes(producerSkill, forbidden, "Agent Producer skill");
 
-const voxcpmSkill = read(".agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md");
+const voxcpmSkill = read(
+  ".agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md",
+);
 assertIncludes(voxcpmSkill, "VoxCPM returns audio/wav", "VoxCPM skill");
 assertIncludes(voxcpmSkill, "no per-line timestamps", "VoxCPM skill");
 assertIncludes(voxcpmSkill, "punctuation", "VoxCPM skill");
@@ -94,7 +113,8 @@ for (const required of [
   "controllable clone does not require a transcript upstream",
   "Hi-Fi clone requires an exact transcript",
   "control instructions are ignored by Hi-Fi clone",
-]) assertIncludes(voxcpmSkill, required, "VoxCPM skill");
+])
+  assertIncludes(voxcpmSkill, required, "VoxCPM skill");
 assertIncludesWords(
   voxcpmSkill,
   "punctuation splitting, silence trimming, WAV concatenation, and duration-derived captions are repo adapter behavior",
@@ -102,7 +122,13 @@ assertIncludesWords(
 );
 
 const voxcpmDoc = read("docs/providers/voxcpm.md");
-for (const required of ["voice-design", "controllable-clone", "high-fidelity-clone", "VOXCPM_TTS_RETRY_BADCASE=true", "Repo Adapter Contract"]) {
+for (const required of [
+  "voice-design",
+  "controllable-clone",
+  "high-fidelity-clone",
+  "VOXCPM_TTS_RETRY_BADCASE=true",
+  "Repo Adapter Contract",
+]) {
   assertIncludes(voxcpmDoc, required, "VoxCPM provider doc");
 }
 
@@ -120,7 +146,9 @@ for (const skillName of ["ai-video-studio-agent-producer"]) {
   assertIncludes(metadata, "short_description:", `${skillName} openai.yaml`);
 }
 // VoxCPM expression skill is inlined under agent producer
-const voxcpmMetadata = read(".agents/skills/ai-video-studio-agent-producer/voxcpm-expression/openai.yaml");
+const voxcpmMetadata = read(
+  ".agents/skills/ai-video-studio-agent-producer/voxcpm-expression/openai.yaml",
+);
 assertIncludes(voxcpmMetadata, "display_name:", "VoxCPM inlined openai.yaml");
 
 const docsToCheck = [
@@ -134,7 +162,6 @@ const docsToCheck = [
 for (const docPath of docsToCheck) {
   const source = read(docPath);
   assertIncludes(source, ".agents/skills/ai-video-studio-agent-producer/", docPath);
-  assertIncludes(source, ".agents/skills/ai-video-studio-agent-producer/voxcpm-expression/", docPath);
   assertNotIncludes(source, ".agents/skills/ai-video-studio-agent-producer-workflow", docPath);
 }
 
