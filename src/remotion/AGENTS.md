@@ -28,7 +28,7 @@ src/remotion/
 | Composition registry | `Root.tsx` | Register dedicated compositions and Stills. |
 | Visual primitives | `primitives/`, `catalog/` | Inventory before adding local components. |
 | Producer runtime | `standalone-video/` | Future timing, captions, audio, canvas profiles. |
-| Producer Sample OS | `producer-samples/` | Maintained manifests, scaffold, and blocks. |
+| Producer Sample OS | `producer-samples/` | Strict future manifests, scaffold, frozen-reference metadata, and blocks. |
 | Frozen recipe compatibility | `recipes/blocks/`, `recipes/timing/` | Do not extend for future work. |
 
 ## CONVENTIONS

@@ -14,77 +14,77 @@ The implementation sequence is defined by
 
 ## Current Milestone
 
-Phase 3 — remove the Web video product line — is complete and verified.
+Phase 4 — consolidate Agent Producer OS — is complete.
 
-Phase 0 authority reset, Phase 1 direct VoxCPM runtime, and Phase 2 F5 removal
-remain complete. Phase 4 Producer OS consolidation is next and has not started.
+Phase 0 authority reset, Phase 1 direct VoxCPM runtime, Phase 2 F5 removal,
+and Phase 3 Web product removal remain complete. Phase 5 existing-asset supply
+is next and has not started.
 
-## Implemented Phase 3 Boundary
+## Implemented Phase 4 Boundary
 
-- removed the Next application, Web APIs, generation/editor UI and hooks,
-  Lambda routes, planner/compiler, staged generation, template system,
-  `ProjectVideo`, `ScriptedVideo`, `SpotlightVideo`, and
-  `RecipeShowcase`
-- removed Web-only render, progress, upload, TTS, provider, and project
-  contracts plus their focused smokes and one-off Web TTS generators
-- removed Next, AI SDK, Remotion Player/Lambda, Web utility dependencies,
-  production deployment files, and Web package scripts
-- replaced `web`/`studio`/`render` Compose services with one
-  Remotion-oriented `producer` service
-- moved future Producer caption typing into
-  `src/remotion/standalone-video/caption-types.ts`
-- reduced `src/lib/storyboard-plan-schema.ts` and
-  `src/lib/template-registry.ts` to frozen compatibility contracts
-- retained `src/lib/caption-schema.ts`, `src/remotion/recipes/blocks/`, and
-  `src/remotion/recipes/timing/` only because frozen compositions import them
-- preserved all finished compositions, historical provider metadata, ignored
-  private voice/audio/model data, `public/generated/`, and `out/`
+- replaced recipe/template productization values with Producer-owned promotion
+  targets: primitive, block, effect, transition, and style profile
+- classified every current finished registry entry as `frozen-reference`
+- added a strict `maintained` manifest contract for future compositions,
+  including production brief, VoxCPM narration, local assets, validation,
+  review frames, render metadata, two Remotion Still covers, publishing copy,
+  and promotion evidence
+- added `producer:scaffold` to create the complete dedicated source skeleton
+- kept one registry and exposed maintained entries separately without inventing
+  an unfinished real sample
+- composed existing audio, manifest, registration, and artifact checks through
+  `producer:validate`
+- retained the manifest-driven `producer:stills` review-frame entrypoint
+- added `producer:render` for MP4, final metadata, and both code-rendered covers
+- preserved every finished composition and all local/private/generated artifact
+  boundaries
 
 ## Verification
 
 RED evidence:
 
-- `npm run smoke:agent-producer-web-removal` exited 1 because `src/app`
-  still contained 16 tracked files
+- the pre-Phase 4 `smoke:producer-sample-manifest` passed its manifest stage,
+  then exited 1 because the old promotion smoke still required recipe/template
+  decisions that active Producer-only docs correctly omitted
+- the new `smoke:producer-os` exited 1 with
+  `Missing Phase 4 command: producer:scaffold` before implementation
 
 GREEN evidence:
 
-- `npm run smoke:agent-producer-web-removal`
-- `npm run smoke:agent-producer-architecture`
-- `npm run smoke:skill-alignment`
-- direct VoxCPM and Producer audio tooling smokes
-- Producer validation and review-frame smokes
-- standalone runtime and affected frozen-composition contract smokes
-- Docker `npx tsc --noEmit --pretty false`
-- Docker `npm run build`
-- Docker `npx remotion compositions src/remotion/index.ts`
-- changed-file ESLint and Prettier
-- Compose config, shell syntax, Phase 3 forbidden scan, frozen/artifact review,
-  and `git diff --check`
+- Phase 4 OS, manifest, promotion, validation, review-frame, architecture,
+  skill, direct VoxCPM, and standalone focused smokes pass
+- the scaffold smoke creates and inspects an isolated `/tmp` sample and removes
+  it without touching `src/remotion/Root.tsx`
+- Docker TypeScript, Remotion bundle build, and composition listing pass
+- changed-file ESLint and Prettier, shell/Compose syntax, forbidden/frozen/
+  artifact scans, and `git diff --check` pass
 
-The first Docker typecheck exposed that frozen `TimelineProgressBlock` still
-imports `recipes/timing`. CodeGraph confirmed seven frozen composition
-consumers, so the timing helper was restored byte-for-byte and recorded as
-historical compatibility rather than weakening or editing frozen callers.
+Repository-wide Docker lint reports 39 historical errors plus 2 ignored
+generated warnings, all outside the Phase 4 changed-file set. Phase 4 does not
+claim a clean whole-repository lint gate.
 
-Repository-wide Docker lint now reports 41 errors plus 2 ignored generated
-warnings, down from the Phase 2 baseline of 75 plus 2 because the deleted Web
-closure owned 34 of those errors. No changed Phase 3 file appears in the
-remaining error set, so this phase does not claim a clean whole-repository lint
-gate.
+No representative still was rendered because no registered composition or
+finished render code changed. The new cover is a future scaffold component;
+its first real sample must register both Stills, render them, and inspect them.
 
-An additional unchanged baseline was confirmed after the required gate:
-`smoke:producer-sample-manifest` passes its manifest check, then the bundled
-promotion-gate check fails because its old enum still requires “promote to
-recipe/template” while the active promotion doc forbids those choices.
-`scripts/producer-promotion-gate-smoke.mjs`, the manifest, and
-`docs/PRODUCER_PROMOTION_GATE.md` are unchanged from HEAD. Phase 4 owns this
-transitional Producer Sample OS migration; `smoke:evidence-lens` still passes.
+VoxCPM provider documentation, `.env.example`, and Docker Compose remain
+unchanged: Phase 4 composes the existing direct provider and `producer` service
+instead of adding a provider, environment variable, or service boundary.
+
+## Current Commands
+
+```bash
+npm run producer:scaffold -- --name <CompositionName> --slug <slug>
+npm run producer:validate -- --module <validation-module>
+npm run producer:stills -- --composition <composition-id>
+npm run producer:render -- --composition <composition-id>
+```
 
 ## Next Bounded Slice
 
-Phase 4 — consolidate Agent Producer OS — is next. Phase 4 has not started and
-requires a separate plan.
+Phase 5 — existing asset supply system — is next. It has not started. Its
+future plan owns localization, checksums, provenance, licenses, media metadata,
+and preflight; none of those capabilities were pulled into Phase 4.
 
 ## Frozen History
 

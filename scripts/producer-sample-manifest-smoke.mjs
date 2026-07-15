@@ -65,7 +65,9 @@ const scaffoldSources = [
   "src/remotion/producer-samples/scaffold/SampleName/types.ts",
   "src/remotion/producer-samples/scaffold/SampleName/generate.mjs",
   "src/remotion/producer-samples/scaffold/SampleName/validation.ts",
-].map((file) => readFileSync(file, "utf8")).join("\n");
+]
+  .map((file) => readFileSync(file, "utf8"))
+  .join("\n");
 
 for (const required of [
   "scripts/lib/producer-audio",
@@ -73,9 +75,17 @@ for (const required of [
   "producerValidationInput",
   "npm run producer:validate",
   "npm run producer:stills",
-]) assert(scaffoldSources.includes(required), `Scaffold must reference ${required}.`);
-for (const frozenPath of ["AiConceptsForBeginners", "AiDailyNewsBrief20260709", "PixelRAGChineseStandalone"]) {
-  assert(!scaffoldSources.includes(frozenPath), `Scaffold must not import frozen sample ${frozenPath}.`);
+])
+  assert(scaffoldSources.includes(required), `Scaffold must reference ${required}.`);
+for (const frozenPath of [
+  "AiConceptsForBeginners",
+  "AiDailyNewsBrief20260709",
+  "PixelRAGChineseStandalone",
+]) {
+  assert(
+    !scaffoldSources.includes(frozenPath),
+    `Scaffold must not import frozen sample ${frozenPath}.`,
+  );
 }
 
 const assertIgnoredPath = (path) => {
@@ -131,7 +141,24 @@ for (const compositionId of expectedCompositionIds) {
       !sourceFile.path.startsWith("out/"),
       `${compositionId} sourceFiles must not include rendered artifacts: ${sourceFile.path}`,
     );
-    assert(existsSync(sourceFile.path), `${compositionId} source file is missing: ${sourceFile.path}`);
+    assert(
+      existsSync(sourceFile.path),
+      `${compositionId} source file is missing: ${sourceFile.path}`,
+    );
+  }
+}
+
+for (const manifest of producerSampleManifests) {
+  assertProducerSampleManifest(manifest);
+  assert(
+    manifest.sampleStatus === "frozen-reference",
+    `${manifest.compositionId} must remain a frozen reference until a new maintained sample exists.`,
+  );
+  for (const sourceFile of manifest.sourceFiles) {
+    assert(
+      existsSync(sourceFile.path),
+      `${manifest.compositionId} source file is missing: ${sourceFile.path}`,
+    );
   }
 }
 
@@ -146,6 +173,10 @@ const scaffoldFiles = [
   "src/remotion/producer-samples/scaffold/SampleName/script.ts",
   "src/remotion/producer-samples/scaffold/SampleName/data.ts",
   "src/remotion/producer-samples/scaffold/SampleName/audio.generated.ts",
+  "src/remotion/producer-samples/scaffold/SampleName/manifest.ts",
+  "src/remotion/producer-samples/scaffold/SampleName/cover.tsx",
+  "src/remotion/producer-samples/scaffold/SampleName/render-metadata.json",
+  "src/remotion/producer-samples/scaffold/SampleName/publishing.md",
 ];
 
 for (const scaffoldFile of scaffoldFiles) {
@@ -166,16 +197,14 @@ assert(
   "Scaffold README must warn against committing generated media.",
 );
 assert(
-  scaffoldReadme.includes("After copying, update scaffold-relative imports"),
-  "Scaffold README must document the import rewrite required after copying.",
+  scaffoldReadme.includes("npm run producer:scaffold") &&
+    scaffoldReadme.includes("npm run producer:render"),
+  "Scaffold README must route future samples through scaffold and render commands.",
 );
 assertIgnoredPath("out/");
 
 const uvTypes = readFileSync("src/remotion/UvOpenSourceBrief/types.ts", "utf8");
-const uvComponent = readFileSync(
-  "src/remotion/UvOpenSourceBrief/UvOpenSourceBrief.tsx",
-  "utf8",
-);
+const uvComponent = readFileSync("src/remotion/UvOpenSourceBrief/UvOpenSourceBrief.tsx", "utf8");
 const worldCupTypes = readFileSync("src/remotion/WorldCupBettingAnalysis/types.ts", "utf8");
 const worldCupComponent = readFileSync(
   "src/remotion/WorldCupBettingAnalysis/WorldCupBettingAnalysis.tsx",
@@ -195,7 +224,10 @@ assert(
   uvTypes.includes('UV_OPEN_SOURCE_BRIEF_CONTENT_FAMILY = "project-intro"'),
   "Uv family contract missing.",
 );
-assert(uvComponent.includes("StandaloneTimeline"), "Uv sample should keep using standalone runtime.");
+assert(
+  uvComponent.includes("StandaloneTimeline"),
+  "Uv sample should keep using standalone runtime.",
+);
 
 assert(
   worldCupTypes.includes('WORLD_CUP_BETTING_ANALYSIS_PROFILE_ID = "portrait-9x16"'),

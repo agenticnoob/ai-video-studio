@@ -17,6 +17,8 @@ and architecture guards. There is no supported Web route smoke surface.
 | VoxCPM container access | `producer-voxcpm.sh` | `ready`, direct `run`, and `status`; no app server. |
 | Producer validation | `lib/producer-validation.ts` | Hard-failure manifest/composition checks. |
 | Review frames | `lib/producer-review-frames.ts` | Deterministic frame planning. |
+| Sample scaffold | `producer-scaffold.mjs` | Creates the strict maintained future source skeleton. |
+| Unified render | `lib/producer-render.ts`, `render-producer-sample.mjs` | Plans/runs MP4, metadata, and two code-rendered covers. |
 | Architecture guards | `agent-producer-*-smoke.mjs`, `skill-alignment-smoke.mjs` | Product boundary checks. |
 
 Older composition-specific generators and smokes are frozen maintenance
@@ -31,6 +33,7 @@ references. Do not use them as future Producer scaffolds.
 - Keep package smoke names aligned with maintained script files.
 - Direct VoxCPM runtime failures must fail closed without a provider fallback.
 - Keep private voices and generated media out of source control.
+- Treat registry entries marked `frozen-reference` as discovery metadata only.
 
 ## ANTI-PATTERNS
 

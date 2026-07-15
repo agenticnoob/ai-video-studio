@@ -252,13 +252,23 @@ actually changes.
 
 Use shared tools for deterministic work in future samples:
 
+- create a strict maintained manifest and dedicated composition scaffold:
+  `npm run producer:scaffold -- --name <CompositionName> --slug <slug>`
 - direct VoxCPM transport, audio processing, caption timing, and scene recovery:
   `scripts/lib/producer-audio/`
 - focused audio verification: `npm run smoke:producer-audio-direct-voxcpm` and
   `npm run smoke:producer-audio-tools`
 - mechanical validation: `npm run producer:validate -- --module <validation-module>`
 - manifest-driven review stills: `npm run producer:stills -- --composition <composition-id>`
-- metadata-bundled render: `./scripts/render-video.sh <composition-id> <slug> <metadata-json>`
+- metadata-bundled MP4 and both code-rendered covers:
+  `npm run producer:render -- --composition <composition-id>`
+
+Every new maintained sample uses the strict maintained manifest contract under
+`src/remotion/producer-samples/`. Existing registry entries are
+`frozen-reference` metadata for finished compositions and must not be migrated
+or regenerated. A future sample is not complete until its manifest names its
+VoxCPM narration, local assets, validation module, review frames, render
+metadata, two Remotion Still cover ids, and publishing copy.
 
 The agent owns research, narration structure, visual metaphor, asset choice,
 scene composition, motion and sound design, still/MP4 inspection, creative

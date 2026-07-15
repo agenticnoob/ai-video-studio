@@ -30,7 +30,7 @@ const sampleNameNarrationBeats = [
   },
 ];
 
-const root = "src/remotion/producer-samples/scaffold/SampleName";
+const root = "src/remotion/SampleName";
 const slug = "sample-name";
 const voxcpmConfig = readProducerVoxcpmConfig();
 
@@ -63,5 +63,5 @@ await runProducerAudioGeneration({
   writeOutputs: true,
 });
 
-// Then run: npm run producer:validate -- --module src/remotion/producer-samples/scaffold/SampleName/validation.js
+// Then run: npm run producer:validate -- --module src/remotion/SampleName/validation.ts
 // Then run: npm run producer:stills -- --composition SampleName

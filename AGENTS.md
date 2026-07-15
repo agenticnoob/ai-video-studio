@@ -29,6 +29,10 @@ repository contains `.codegraph/`.
 - The direct VoxCPM Producer runtime under `scripts/lib/producer-audio/` owns
   future narration without starting Next or using a repository HTTP route.
 - The Docker `producer` service owns Studio and Docker-first verification.
+- Phase 4 completed the strict maintained sample manifest plus executable
+  scaffold, validation, review-frame, and render command chain.
+- Existing Producer registry entries are `frozen-reference` metadata; Phase 5
+  existing-asset supply is next and has not started.
 - Historical caption/storyboard contracts and `recipes/blocks` plus
   `recipes/timing` remain only for frozen composition compatibility.
 
@@ -86,11 +90,17 @@ Use the smallest focused checks first:
 npm run smoke:agent-producer-architecture
 npm run smoke:agent-producer-web-removal
 npm run smoke:skill-alignment
+npm run smoke:producer-os
 npm run smoke:producer-audio-direct-voxcpm
 npm run smoke:producer-audio-tools
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
 ```
+
+Future sample command order starts with
+`npm run producer:scaffold -- --name <CompositionName> --slug <slug>` and ends
+with `npm run producer:render -- --composition <composition-id>` after
+validation and representative still review.
 
 Current full checks are Docker-first:
 

@@ -1,6 +1,7 @@
 import type { ProducerSampleManifest } from "../../../src/remotion/producer-samples/manifest";
 
 export const fixtureProducerManifest = {
+  sampleStatus: "frozen-reference",
   compositionId: "FixtureProducerVideo",
   sampleName: "FixtureProducerVideo",
   slug: "fixture-producer-video",

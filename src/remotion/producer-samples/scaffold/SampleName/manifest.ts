@@ -1,0 +1,55 @@
+import type { MaintainedProducerSampleManifest } from "../../manifest";
+
+export const sampleNameManifest = {
+  sampleStatus: "maintained",
+  compositionId: "SampleName",
+  sampleName: "SampleName",
+  slug: "sample-name",
+  contentFamily: "project-intro",
+  canvasProfile: "landscape-16x9",
+  localArtifactRoot: "public/generated/sample-name/",
+  ttsStatus: "planned",
+  productionBrief: {
+    audience: "Viewers who need a concise code-driven explanation.",
+    publishingSurface: "Local review and approved social publishing surfaces.",
+    durationTargetSeconds: 10,
+  },
+  narration: {
+    required: true,
+    provider: "voxcpm",
+    mode: "high-fidelity-clone",
+    scriptPath: "src/remotion/SampleName/script.ts",
+    audioMetadataPath: "src/remotion/SampleName/audio.generated.ts",
+  },
+  assets: [],
+  validationModule: "src/remotion/SampleName/validation.ts",
+  render: {
+    metadataPath: "src/remotion/SampleName/render-metadata.json",
+    cover16x9CompositionId: "SampleNameCover16x9",
+    cover9x16CompositionId: "SampleNameCover9x16",
+  },
+  publishingCopyPath: "src/remotion/SampleName/publishing.md",
+  reviewFrames: [
+    { frame: 15, label: "opening", purpose: "Check the first-read promise and safe area." },
+    { frame: 150, label: "proof", purpose: "Check the evidence beat and caption clearance." },
+    { frame: 285, label: "closing", purpose: "Check the final takeaway and ending state." },
+  ],
+  sourceFiles: [
+    { path: "src/remotion/SampleName/SampleName.tsx", kind: "renderer" },
+    { path: "src/remotion/SampleName/types.ts", kind: "types" },
+    { path: "src/remotion/SampleName/script.ts", kind: "script" },
+    { path: "src/remotion/SampleName/data.ts", kind: "data" },
+    { path: "src/remotion/SampleName/audio.generated.ts", kind: "audio-metadata" },
+    { path: "src/remotion/SampleName/manifest.ts", kind: "manifest" },
+    { path: "src/remotion/SampleName/validation.ts", kind: "validation" },
+    { path: "src/remotion/SampleName/cover.tsx", kind: "cover" },
+    { path: "src/remotion/SampleName/render-metadata.json", kind: "render-metadata" },
+    { path: "src/remotion/SampleName/publishing.md", kind: "publishing-copy" },
+    { path: "src/remotion/Root.tsx", kind: "root-registration" },
+  ],
+  promotionCandidates: [],
+  notes: [
+    "Generated narration, review frames, covers, metadata, and MP4 stay local-only.",
+    "Register the video and both cover Stills in Root before declaring the sample complete.",
+  ],
+} as const satisfies MaintainedProducerSampleManifest;

@@ -10,7 +10,71 @@ const validate = (overrides = {}) =>
     ...overrides,
   });
 
+const maintainedManifest = {
+  sampleStatus: "maintained",
+  compositionId: "FixtureProducerVideo",
+  sampleName: "FixtureProducerVideo",
+  slug: "fixture-producer-video",
+  contentFamily: "tutorial",
+  canvasProfile: "landscape-16x9",
+  localArtifactRoot: "public/generated/fixture-producer-video/",
+  ttsStatus: "planned",
+  productionBrief: {
+    audience: "Fixture viewers",
+    publishingSurface: "Local verification",
+    durationTargetSeconds: 11,
+  },
+  narration: {
+    required: true,
+    provider: "voxcpm",
+    mode: "voice-design",
+    scriptPath: "fixtures/script.ts",
+    audioMetadataPath: "fixtures/audio.generated.ts",
+  },
+  assets: [],
+  validationModule: "fixtures/validation.ts",
+  render: {
+    metadataPath: "fixtures/render-metadata.json",
+    cover16x9CompositionId: "FixtureProducerVideoCover16x9",
+    cover9x16CompositionId: "FixtureProducerVideoCover9x16",
+  },
+  publishingCopyPath: "fixtures/publishing.md",
+  reviewFrames: [{ frame: 45, label: "opening", purpose: "Check the fixture opening." }],
+  sourceFiles: [
+    { path: "fixtures/script.ts", kind: "script" },
+    { path: "fixtures/audio.generated.ts", kind: "audio-metadata" },
+    { path: "fixtures/validation.ts", kind: "validation" },
+    { path: "fixtures/cover.tsx", kind: "cover" },
+    { path: "fixtures/render-metadata.json", kind: "render-metadata" },
+    { path: "fixtures/publishing.md", kind: "publishing-copy" },
+    { path: "fixtures/manifest.ts", kind: "manifest" },
+    { path: "src/remotion/Root.tsx", kind: "root-registration" },
+  ],
+  promotionCandidates: [],
+  notes: [],
+};
+
 await assert.doesNotReject(() => validate());
+await assert.doesNotReject(() =>
+  validate({
+    manifest: maintainedManifest,
+    registeredCompositionIds: [
+      "FixtureProducerVideo",
+      "FixtureProducerVideoCover16x9",
+      "FixtureProducerVideoCover9x16",
+    ],
+  }),
+);
+await assert.rejects(
+  () =>
+    validate({
+      manifest: {
+        ...maintainedManifest,
+        render: { ...maintainedManifest.render, cover9x16CompositionId: "" },
+      },
+    }),
+  /cover composition id/i,
+);
 await assert.rejects(
   () => validate({ tracks: fixtureProducerValidationInput.tracks.slice(1) }),
   /missing audio id/i,

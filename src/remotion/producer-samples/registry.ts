@@ -1,4 +1,4 @@
-import type { ProducerSampleManifest } from "./manifest";
+import type { MaintainedProducerSampleManifest, ProducerSampleManifest } from "./manifest";
 
 export const producerSampleManifests = [
   {
@@ -9,6 +9,7 @@ export const producerSampleManifests = [
     canvasProfile: "landscape-16x9",
     localArtifactRoot: "public/generated/ai-concepts-for-beginners/",
     ttsStatus: "generated-local",
+    sampleStatus: "frozen-reference",
     reviewFrames: [
       {
         frame: 60,
@@ -59,19 +60,17 @@ export const producerSampleManifests = [
     promotionCandidates: [
       {
         id: "concept-metaphor-system-map",
-        targetLayer: "recipe",
+        targetLayer: "block",
         gateState: "stay-sample-local",
         status: "sample-local",
-        productizationExposure: "none",
         reason:
-          "The restaurant metaphor and final category map work for this AI beginner curriculum but need a second educational topic before becoming a generic recipe.",
+          "The restaurant metaphor and final category map need a second educational topic before becoming a shared Producer block.",
       },
       {
         id: "beginner-concept-workbench",
         targetLayer: "block",
         gateState: "stay-sample-local",
         status: "sample-local",
-        productizationExposure: "none",
         reason:
           "The context workbench, MCP socket rail, and agent loop are useful local visual blocks but their props are still tailored to this script.",
       },
@@ -91,6 +90,7 @@ export const producerSampleManifests = [
     canvasProfile: "landscape-16x9",
     localArtifactRoot: "public/generated/ai-daily-news-brief-2026-07-09/",
     ttsStatus: "generated-local",
+    sampleStatus: "frozen-reference",
     reviewFrames: [
       {
         frame: 45,
@@ -144,16 +144,14 @@ export const producerSampleManifests = [
         targetLayer: "block",
         gateState: "stay-sample-local",
         status: "sample-local",
-        productizationExposure: "none",
         reason:
           "The foreground 3D news-card language now works across consecutive daily news samples; keep sample-local until another topic proves a stable reusable API.",
       },
       {
         id: "ai-infrastructure-briefing-flow",
-        targetLayer: "recipe",
+        targetLayer: "block",
         gateState: "stay-sample-local",
         status: "sample-local",
-        productizationExposure: "none",
         reason:
           "The model-access to compute-power to capital-repricing story structure is useful but still specific to this AI infrastructure day.",
       },
@@ -174,6 +172,7 @@ export const producerSampleManifests = [
     canvasProfile: "landscape-16x9",
     localArtifactRoot: "public/generated/ai-news-strategic-brief-2026-07-09/",
     ttsStatus: "generated-local",
+    sampleStatus: "frozen-reference",
     reviewFrames: [
       {
         frame: 45,
@@ -233,18 +232,16 @@ export const producerSampleManifests = [
         targetLayer: "block",
         gateState: "stay-sample-local",
         status: "sample-local",
-        productizationExposure: "none",
         reason:
           "The 3D content-card stack is effective for long strategic briefings; keep sample-local until another recap reuses it.",
       },
       {
         id: "multi-week-ai-trend-briefing",
-        targetLayer: "recipe",
+        targetLayer: "block",
         gateState: "stay-sample-local",
         status: "sample-local",
-        productizationExposure: "none",
         reason:
-          "The compressed multi-week trend structure needs another topic before promotion into a planner-visible recipe.",
+          "The compressed multi-week trend structure needs another topic before extraction into a shared Producer block.",
       },
     ],
     notes: [
@@ -263,6 +260,7 @@ export const producerSampleManifests = [
     canvasProfile: "landscape-16x9",
     localArtifactRoot: "public/generated/ai-daily-news-brief-2026-07-08/",
     ttsStatus: "generated-local",
+    sampleStatus: "frozen-reference",
     reviewFrames: [
       {
         frame: 45,
@@ -316,7 +314,6 @@ export const producerSampleManifests = [
         targetLayer: "block",
         gateState: "stay-sample-local",
         status: "sample-local",
-        productizationExposure: "none",
         reason:
           "The foreground 3D content-card language fits this long trend briefing; promote only after another news video reuses it cleanly.",
       },
@@ -325,7 +322,6 @@ export const producerSampleManifests = [
         targetLayer: "block",
         gateState: "stay-sample-local",
         status: "sample-local",
-        productizationExposure: "none",
         reason:
           "The localized source-card fallback pattern is useful but should be generalized after a real screenshot capture pass and another topic.",
       },
@@ -345,6 +341,7 @@ export const producerSampleManifests = [
     canvasProfile: "landscape-16x9",
     localArtifactRoot: "public/generated/openai-hardware-news-brief/",
     ttsStatus: "generated-local",
+    sampleStatus: "frozen-reference",
     reviewFrames: [
       {
         frame: 45,
@@ -388,7 +385,6 @@ export const producerSampleManifests = [
         targetLayer: "block",
         gateState: "stay-sample-local",
         status: "sample-local",
-        productizationExposure: "none",
         reason:
           "The source-card fallback is useful for this news sample but needs another run before block promotion.",
       },
@@ -397,7 +393,6 @@ export const producerSampleManifests = [
         targetLayer: "block",
         gateState: "stay-sample-local",
         status: "sample-local",
-        productizationExposure: "none",
         reason:
           "The Codex shortcut controller visual is topic-specific until another hardware/workflow story proves reuse.",
       },
@@ -417,6 +412,7 @@ export const producerSampleManifests = [
     canvasProfile: "landscape-16x9",
     localArtifactRoot: "public/generated/uv-open-source-brief/",
     ttsStatus: "generated-local",
+    sampleStatus: "frozen-reference",
     reviewFrames: [
       {
         frame: 45,
@@ -454,7 +450,6 @@ export const producerSampleManifests = [
         targetLayer: "block",
         gateState: "promote-to-block",
         status: "promoted",
-        productizationExposure: "agent-producer-internal",
         reason: "Shared in Producer Sample OS as the Evidence Lens full-frame screenshot backdrop.",
       },
       {
@@ -462,7 +457,6 @@ export const producerSampleManifests = [
         targetLayer: "block",
         gateState: "promote-to-block",
         status: "promoted",
-        productizationExposure: "agent-producer-internal",
         reason: "Shared in Producer Sample OS as the Evidence Lens translucent proof overlay.",
       },
       {
@@ -470,7 +464,6 @@ export const producerSampleManifests = [
         targetLayer: "block",
         gateState: "promote-to-block",
         status: "promoted",
-        productizationExposure: "agent-producer-internal",
         reason:
           "Shared through the Evidence Lens block as claim-aligned zoom-in, hold, and return metadata.",
       },
@@ -489,6 +482,7 @@ export const producerSampleManifests = [
     canvasProfile: "portrait-9x16",
     localArtifactRoot: "public/generated/world-cup-betting-analysis/",
     ttsStatus: "generated-local",
+    sampleStatus: "frozen-reference",
     reviewFrames: [
       {
         frame: 30,
@@ -526,19 +520,17 @@ export const producerSampleManifests = [
     promotionCandidates: [
       {
         id: "odds-ev-ranking",
-        targetLayer: "recipe",
-        gateState: "promote-to-recipe",
-        status: "productized",
-        productizationExposure: "productization-existing",
+        targetLayer: "block",
+        gateState: "promote-to-block",
+        status: "promoted",
         reason:
-          "The odds, no-vig probability, EV, and risk ranking story already informed a productized stats recipe.",
+          "The odds, no-vig probability, EV, and risk ranking story remains historical evidence for a shared data-analysis block.",
       },
       {
         id: "risk-disclaimer-frame",
         targetLayer: "block",
         gateState: "promote-to-block",
         status: "candidate",
-        productizationExposure: "none",
         reason: "Explicit risk-note treatment is reusable for data-analysis shorts.",
       },
     ],
@@ -555,6 +547,7 @@ export const producerSampleManifests = [
     canvasProfile: "landscape-16x9",
     localArtifactRoot: "public/generated/pixelrag-chinese-standalone/",
     ttsStatus: "generated-local",
+    sampleStatus: "frozen-reference",
     reviewFrames: [
       {
         frame: 30,
@@ -592,19 +585,17 @@ export const producerSampleManifests = [
     promotionCandidates: [
       {
         id: "screenshot-evidence-flow",
-        targetLayer: "recipe",
-        gateState: "promote-to-recipe",
-        status: "productized",
-        productizationExposure: "productization-existing",
+        targetLayer: "block",
+        gateState: "promote-to-block",
+        status: "promoted",
         reason:
-          "Screenshot/process language already informed the technical-explainer evidence flow.",
+          "Screenshot/process language remains historical evidence for the shared Evidence Lens block.",
       },
       {
         id: "foreground-3d-evidence-cards",
         targetLayer: "block",
         gateState: "promote-to-block",
         status: "candidate",
-        productizationExposure: "none",
         reason:
           "The foreground 3D card/page/index treatment may be reusable after another project-intro sample proves it.",
       },
@@ -622,6 +613,7 @@ export const producerSampleManifests = [
     canvasProfile: "landscape-16x9",
     localArtifactRoot: "public/generated/git-tutorial/",
     ttsStatus: "generated-local",
+    sampleStatus: "frozen-reference",
     reviewFrames: [
       {
         frame: 30,
@@ -666,7 +658,6 @@ export const producerSampleManifests = [
       { path: "src/remotion/GitTutorialForDevs/data.ts", kind: "data" },
       { path: "src/remotion/GitTutorialForDevs/audio.generated.ts", kind: "audio-metadata" },
       { path: "src/remotion/Root.tsx", kind: "root-registration" },
-      { path: "scripts/generate-git-tutorial-tts.mjs", kind: "script" },
     ],
     promotionCandidates: [
       {
@@ -674,7 +665,6 @@ export const producerSampleManifests = [
         targetLayer: "block",
         gateState: "stay-sample-local",
         status: "sample-local",
-        productizationExposure: "none",
         reason:
           "The 2x2 card grid with icon-label-description-command works for this Git tutorial but needs another tutorial topic before block promotion.",
       },
@@ -683,7 +673,6 @@ export const producerSampleManifests = [
         targetLayer: "primitive",
         gateState: "stay-sample-local",
         status: "sample-local",
-        productizationExposure: "none",
         reason:
           "BokehCircles, GridPulse, and CameraDrift work together for this tutorial; extract individual primitives only after another video proves each independently.",
       },
@@ -701,3 +690,10 @@ export const getProducerSampleManifestByCompositionId = (
   compositionId: string,
 ): ProducerSampleManifest | undefined =>
   producerSampleManifests.find((manifest) => manifest.compositionId === compositionId);
+
+export const maintainedProducerSampleManifests = (
+  producerSampleManifests as readonly ProducerSampleManifest[]
+).filter(
+  (manifest): manifest is MaintainedProducerSampleManifest =>
+    manifest.sampleStatus === "maintained",
+);

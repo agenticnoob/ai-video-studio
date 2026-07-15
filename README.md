@@ -40,8 +40,9 @@ future narration transport, PCM WAV processing, duration-derived captions, and
 scene recovery without starting Next. Phase 2 removed the F5 narration service,
 adapters, scripts, configuration, and current provider documentation.
 Remotion Studio, CLI rendering, and the Docker `producer` service are the
-supported runtime surfaces. Phase 4 Producer OS consolidation is next and has
-not started.
+supported runtime surfaces. Phase 4 consolidated the Producer OS around one
+strict future manifest, executable scaffold, validation, review-frame, and
+render entrypoints. Phase 5 existing-asset supply is next and has not started.
 
 Existing finished compositions remain frozen read-only references. Historical
 `provider: "f5-tts"` metadata in their generated audio files stays truthful; it
@@ -81,15 +82,23 @@ Supporting references:
 ## Stable Producer Commands
 
 ```bash
+npm run producer:scaffold -- --name <CompositionName> --slug <slug>
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
-./scripts/render-video.sh <composition-id> <slug> <metadata-json>
+npm run producer:render -- --composition <composition-id>
+npm run smoke:producer-os
 npm run smoke:producer-audio-direct-voxcpm
 npm run smoke:producer-audio-tools
 npm run smoke:agent-producer-web-removal
 npm run smoke:agent-producer-architecture
 npm run smoke:skill-alignment
 ```
+
+New maintained samples declare a strict manifest under their dedicated
+composition folder and enter the single registry only after video, cover, and
+validation registration are ready. Current registry entries describe finished
+compositions as `frozen-reference`; they are discovery metadata, not migration
+targets.
 
 Current Docker validation remains:
 

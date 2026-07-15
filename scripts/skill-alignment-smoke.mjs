@@ -73,8 +73,12 @@ assertIncludes(
   "Agent Producer skill",
 );
 for (const required of [
+  "npm run producer:scaffold",
   "npm run producer:validate",
   "npm run producer:stills",
+  "npm run producer:render",
+  "strict maintained manifest",
+  "frozen-reference",
   "scripts/lib/producer-audio/",
   "existing finished samples are read-only references",
   "only supported video-production entrypoint",

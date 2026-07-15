@@ -1,0 +1,10 @@
+{
+  "title": "Replace with the real topic title",
+  "description": "Replace with a factual publishing description.",
+  "fps": 30,
+  "chapters": [
+    { "name": "Opening promise", "durationInFrames": 90 },
+    { "name": "Evidence beat", "durationInFrames": 120 },
+    { "name": "Closing takeaway", "durationInFrames": 90 }
+  ]
+}

@@ -1,6 +1,6 @@
 # Agent Producer-Only Roadmap
 
-Status: Phase 0 through Phase 3 complete; Phase 4 has not started.
+Status: Phase 0 through Phase 4 complete; Phase 5 has not started.
 
 Decision date: 2026-07-15.
 
@@ -554,6 +554,8 @@ Implementation evidence:
 
 ## 9. Phase 4 - Consolidate Agent Producer OS
 
+Status: complete and verified on 2026-07-16.
+
 ### Goal
 
 Make the retained workflow complete, discoverable, and mandatory for every
@@ -599,6 +601,25 @@ Every maintained new sample declares:
 - new samples do not copy F5, Next API, or Web product code
 - cover production does not call image-generation tooling
 - finished historical samples remain read-only
+
+Implementation evidence:
+
+- one strict maintained manifest covers production brief, VoxCPM narration,
+  local assets, validation, review frames, render metadata, two Remotion Still
+  covers, publishing copy, and promotion evidence
+- all current finished registry entries are explicitly `frozen-reference`; no
+  composition source or generated metadata was migrated
+- `producer:scaffold`, `producer:validate`, `producer:stills`, and
+  `producer:render` form the mandatory deterministic future-sample command set
+- Phase 4 smoke proves isolated scaffold generation and MP4/metadata/cover job
+  planning without creating local render artifacts
+- recipe/template productization values were removed from the active sample OS
+  in favor of primitive, block, effect, transition, and style-profile targets
+- focused Producer OS/manifest/promotion/validation/review/architecture/skill
+  smokes, Docker typecheck/build/composition listing, changed-file style checks,
+  forbidden scans, and `git diff --check` pass
+- Phase 5 asset localization, checksum, provenance, license, and media preflight
+  remain unstarted
 
 ## 10. Phase 5 - Existing Asset Supply System
 

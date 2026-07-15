@@ -1,8 +1,13 @@
 import { cleanProducerDisplayText } from "./producer-audio/captions";
 import type { ProducerAudioTrack, ProducerNarrationBeat } from "./producer-audio/types";
+import {
+  assertProducerSampleManifest,
+  type ProducerSampleManifest,
+} from "../../src/remotion/producer-samples/manifest";
 
 export type ProducerValidationInput = {
   readonly compositionId: string;
+  readonly manifest?: ProducerSampleManifest;
   readonly beats: readonly ProducerNarrationBeat[];
   readonly tracks: readonly ProducerAudioTrack[];
   readonly scenes: readonly { readonly id: string; readonly durationInFrames: number }[];
@@ -90,6 +95,23 @@ export const validateProducerArtifactBoundary = async (
 };
 
 export const validateProducerSample = async (input: ProducerValidationInput): Promise<void> => {
+  if (input.manifest) {
+    assertProducerSampleManifest(input.manifest);
+    if (input.manifest.compositionId !== input.compositionId) {
+      throw new Error(`${input.compositionId} does not match its Producer manifest.`);
+    }
+    if (input.manifest.sampleStatus === "maintained") {
+      for (const registrationId of [
+        input.manifest.compositionId,
+        input.manifest.render.cover16x9CompositionId,
+        input.manifest.render.cover9x16CompositionId,
+      ]) {
+        if (!input.registeredCompositionIds.includes(registrationId)) {
+          throw new Error(`${registrationId} is missing Remotion registration.`);
+        }
+      }
+    }
+  }
   validateProducerAudioAlignment(input);
   if (!input.registeredCompositionIds.includes(input.compositionId)) {
     throw new Error(`${input.compositionId} is missing Remotion registration.`);

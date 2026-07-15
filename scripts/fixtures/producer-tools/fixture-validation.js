@@ -13,6 +13,7 @@ export const producerValidationInput = {
       durationInFrames: 30,
       durationInSeconds: 1,
       provider: "voxcpm",
+      format: "wav",
     },
     {
       sceneId: "closing",
@@ -22,6 +23,7 @@ export const producerValidationInput = {
       durationInFrames: 30,
       durationInSeconds: 1,
       provider: "voxcpm",
+      format: "wav",
     },
   ],
   scenes: [

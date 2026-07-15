@@ -24,9 +24,9 @@ Promotion is evidence-based reuse extraction, not productization.
 | promote to transition | extract a reusable bridge and optional SFX mapping |
 | promote to style profile | extract a complete proven visual/motion/sound language |
 
-Do not create planner-facing recipes or templates. Transitional manifest enums
-may still contain those historical values until Roadmap Phase 4 migrates the
-Producer sample OS; future work must not select them.
+Do not create planner-facing recipes or templates. Phase 4 removed those stale
+values from the active Producer sample manifest and classified every existing
+finished registry entry as a frozen reference.
 
 ## Required Evidence
 

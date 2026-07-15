@@ -22,7 +22,7 @@ assert(existsSync(absolute(inventoryPath)), `${inventoryPath} must exist`);
 const inventory = JSON.parse(read(inventoryPath));
 
 assert.equal(inventory.version, 1, "inventory version");
-assert.deepEqual(inventory.completedPhases, [0, 1, 2, 3], "completed roadmap phases");
+assert.deepEqual(inventory.completedPhases, [0, 1, 2, 3, 4], "completed roadmap phases");
 const completedPhases = new Set(inventory.completedPhases);
 assert.equal(
   inventory.authority.skill,
@@ -116,7 +116,39 @@ for (const docPath of activeDocs) {
 
 assert(read("docs/FINAL_PRODUCT_GOAL.md").includes("only supported production flow"));
 assert(read("docs/ITERATION_STATUS.md").includes("Phase 0"));
+assert(read("docs/ITERATION_STATUS.md").includes("Phase 4"));
 assert(read("docs/VISUAL_RECIPE_ROADMAP.md").includes("Superseded"));
+
+const packageJson = JSON.parse(read("package.json"));
+for (const command of [
+  "producer:scaffold",
+  "producer:validate",
+  "producer:stills",
+  "producer:render",
+  "smoke:producer-os",
+]) {
+  assert(packageJson.scripts[command], `package.json must expose ${command}`);
+}
+for (const phase4Path of [
+  "scripts/producer-scaffold.mjs",
+  "scripts/lib/producer-render.ts",
+  "scripts/render-producer-sample.mjs",
+  "src/remotion/producer-samples/scaffold/SampleName/manifest.ts",
+  "src/remotion/producer-samples/scaffold/SampleName/cover.tsx",
+]) {
+  assert(existsSync(absolute(phase4Path)), `Phase 4 path must exist: ${phase4Path}`);
+}
+
+const activeProducerSampleOs = [
+  read("src/remotion/producer-samples/manifest.ts"),
+  read("src/remotion/producer-samples/registry.ts"),
+].join("\n");
+for (const forbidden of ['"recipe"', '"template"', "productized", "productizationExposure"]) {
+  assert(
+    !activeProducerSampleOs.includes(forbidden),
+    `Producer Sample OS must remove ${forbidden}`,
+  );
+}
 
 const producerSkill = read(".agents/skills/ai-video-studio-agent-producer/SKILL.md");
 for (const phrase of [

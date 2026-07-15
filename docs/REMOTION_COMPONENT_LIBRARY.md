@@ -29,7 +29,7 @@ narration, and one-off scene arrangements remain composition-local.
 | Surface | Responsibility |
 | --- | --- |
 | `src/remotion/primitives/` | small visual atoms and focused treatments |
-| `src/remotion/producer-samples/` | manifests, scaffold, evidence-backed Producer blocks |
+| `src/remotion/producer-samples/` | strict future manifests, scaffold, frozen-reference registry metadata, evidence-backed Producer blocks |
 | `src/remotion/standalone-video/` | timing, audio, captions, and canvas profiles |
 | `src/remotion/catalog/` | discovery metadata and review fixtures |
 | dedicated composition | topic data, narration, scene order, and local arrangement |
@@ -99,3 +99,8 @@ evidence, and a stable responsibility.
 
 Historical template-centered guidance is preserved in
 `docs/archive/2026-07-15-pre-producer-only-remotion-component-library.md`.
+
+Phase 4 exposes the deterministic operating chain through `producer:scaffold`,
+`producer:validate`, `producer:stills`, and `producer:render`. Phase 5 asset
+supply and its provenance/license schema remain outside this component
+inventory until implemented.
