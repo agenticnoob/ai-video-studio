@@ -25,6 +25,7 @@ src/remotion/
 |-- RawThoughtMirror/        # Agent Producer cinematic raw-thought monologue
 |-- AiConceptsRedefined/     # Agent Producer conceptual explainer (41 scenes)
 |-- AiDailyNews20260714/     # Agent Producer AI daily news briefing (8 scenes)
+|-- BeyondLanguage/          # Agent Producer AI language limitations explainer (61 scenes)
 |-- standalone-samples/       # reference-only standalone compositions
 |-- standalone-video/         # reusable production skeleton
 `-- producer-samples/          # sample manifest, registry, shared blocks

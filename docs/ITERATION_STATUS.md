@@ -1,6 +1,49 @@
 # Iteration Status
 
-Last updated: 2026-07-15 — AiDailyNews20260714: 8-scene AI daily news briefing
+Last updated: 2026-07-15 — BeyondLanguage: 61-scene AI language limitations explainer
+
+## Latest — BeyondLanguage (2026-07-15)
+
+- Produced `BeyondLanguage`, a 61-scene 16:9 Chinese AI language limitations
+  explainer covering the three layers of language model flaws, world models,
+  latent space communication, the shift from Token prediction to action
+  prediction, non-language agent protocols, AI aphasia, and the future of
+  controllable AI.
+- Used the dedicated Agent Producer composition path under
+  `src/remotion/BeyondLanguage/`.
+- 61 scenes organized in 16 chapters: 开场 (2), 语言≠现实 (4), 间接学习 (2),
+  信息带宽 (4), 解释≠解决 (3), 潜在空间通信 (3), 语言位置的变化 (3),
+  多模态 (3), 世界模型 (6), 可靠与验证 (3), Agent 时代 (6), 非语言循环 (3),
+  协议竞争 (5), 可理解性 (7), 失语症 (3), 总结 (4).
+- Generated real VoxCPM LYY voice-clone TTS for all 61 scenes with zero
+  fallback via `scripts/generate-beyond-language-tts.mjs` using direct
+  `clone_with_prompt` API at `http://192.168.50.6:8810`. 61/61 scenes
+  succeeded in a single batch; each scene has its own `.wav` audio file.
+- Caption timing derived from punctuation-split measured audio: 61 tracks
+  with per-scene cues, total 22047 frames at 30 fps.
+- 6 visual scene types with dedicated renderers sharing `GradientShiftBackground`,
+  `GridPulse`, `VideoPanel`, `CalloutGrid`, `Kicker`, `AccentBar`, `SceneNumberBadge`,
+  `FeaturedQuote`, `VisualKindBadge`, and `StandaloneBottomCaption`:
+  - `thesis` — centered layout with entrance title, accent bar, featured quote, CalloutGrid
+  - `flaw` — left/right grid with statement + VideoPanel warning card, callouts, quote
+  - `metaphor` — left/right with headline/quote + VideoPanel containing theory→practice diagram
+  - `contrast` — side-by-side VideoPanel cards with animated arrow, "传统" vs "AI 时代" labels
+  - `future` — centered with FUTURE badge, entrance title, CalloutGrid, accent bar
+  - `closing` — centered summary badge, entrance title, CalloutGrid, accent bar, closing gradient line
+- TypeScript passes clean (exit code 0). Multi-frame stills verified across
+  all 6 visual kinds using per-scene absolute frame calculation: thesis (s01),
+  contrast (s05), metaphor (s08), flaw (s12), future (s22), thesis+callouts (s51),
+  closing (s61) — all clear with readable text, good hierarchy, no overlapping
+  elements, accent-colored decorative panels, and CalloutGrid supporting points.
+- Rendered final mp4:
+  `out/beyond-language/beyond-language.mp4`.
+  `ffprobe` reports H.264 video, AAC audio, 1920×1080 at 30 fps,
+  duration ~734.95 seconds (~12.25 min), size 325 MB.
+- Metadata JSON with 16 chapters written to
+  `out/beyond-language/beyond-language.json`.
+- Cover images generated:
+  `out/beyond-language/beyond-language-cover-16x9.png` (2.6 MB)
+  `out/beyond-language/beyond-language-cover-9x16.png` (2.4 MB)
 
 ## Latest — AiDailyNews20260714 (2026-07-15)
 

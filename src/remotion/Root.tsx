@@ -166,6 +166,15 @@ import {
   getAiConceptsRedefinedDuration,
   data as aiConceptsRedefinedData,
 } from "./AiConceptsRedefined";
+import {
+  COMPOSITION_ID as BEYOND_LANGUAGE_COMPOSITION_ID,
+  FPS as BEYOND_LANGUAGE_FPS,
+  HEIGHT as BEYOND_LANGUAGE_HEIGHT,
+  WIDTH as BEYOND_LANGUAGE_WIDTH,
+  BeyondLanguageVideo,
+  getBeyondLanguageDuration,
+  data as beyondLanguageData,
+} from "./BeyondLanguage";
 
 const calculateVideoProjectMetadata = ({ props }: { props: VideoProject }) => {
   const parsedProject = videoProjectSchema.parse(props) as VideoProject;
@@ -392,6 +401,15 @@ export const RemotionRoot: FC = () => {
         width={AI_CONCEPTS_REDEFINED_WIDTH}
         height={AI_CONCEPTS_REDEFINED_HEIGHT}
         defaultProps={{ data: aiConceptsRedefinedData }}
+      />
+      <Composition
+        id={BEYOND_LANGUAGE_COMPOSITION_ID}
+        component={BeyondLanguageVideo}
+        durationInFrames={getBeyondLanguageDuration(beyondLanguageData)}
+        fps={BEYOND_LANGUAGE_FPS}
+        width={BEYOND_LANGUAGE_WIDTH}
+        height={BEYOND_LANGUAGE_HEIGHT}
+        defaultProps={{ data: beyondLanguageData }}
       />
     </>
   );
