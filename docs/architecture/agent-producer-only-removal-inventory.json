@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "completedPhases": [0, 1, 2, 3, 4],
+  "completedPhases": [0, 1, 2, 3, 4, 5],
   "decisionDate": "2026-07-15",
   "authority": {
     "skill": ".agents/skills/ai-video-studio-agent-producer/",
@@ -102,6 +102,22 @@
         "action": "retain",
         "phase": 4,
         "reason": "Manifest-driven representative still planning."
+      },
+      {
+        "id": "producer-assets",
+        "path": "scripts/lib/producer-assets",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 5,
+        "reason": "Producer-owned existing-asset localization, metadata, integrity, and preflight runtime."
+      },
+      {
+        "id": "producer-asset-contract",
+        "path": "docs/PRODUCER_ASSET_CONTRACT.md",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 5,
+        "reason": "Active local asset, provenance, license, and render-safety contract."
       }
     ],
     "webF5Only": [

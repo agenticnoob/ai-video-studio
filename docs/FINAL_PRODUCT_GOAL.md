@@ -104,10 +104,12 @@ The direct VoxCPM Producer runtime under `scripts/lib/producer-audio/` owns
 future narration transport, punctuation splitting, PCM silence trim and WAV
 concatenation, measured duration, captions, local output, and scene recovery.
 It runs without Next. Phase 2 alternate-provider deletion, Phase 3 Web product
-removal, and Phase 4 Producer OS consolidation are complete. A strict
-maintained manifest plus scaffold, validation, review-frame, and unified render
-commands now own every future composition. Current registry entries remain
-`frozen-reference`. Phase 5 existing-asset supply is next and has not started.
+removal, Phase 4 Producer OS consolidation, and Phase 5 existing-asset supply
+are complete. A strict maintained manifest plus asset manifest, manual/URL
+localization, checksum/provenance/license/media metadata, FFmpeg normalization,
+preflight, validation, review-frame, and unified render commands now own every
+future composition. Current registry entries remain `frozen-reference`. Phase
+6 Remotion capability core is next and has not started.
 
 ## Supporting Authorities
 
@@ -116,5 +118,6 @@ commands now own every future composition. Current registry entries remain
 - removal inventory: `docs/architecture/agent-producer-only-removal-inventory.json`
 - Remotion inventory: `docs/REMOTION_COMPONENT_LIBRARY.md`
 - promotion gate: `docs/PRODUCER_PROMOTION_GATE.md`
+- asset contract: `docs/PRODUCER_ASSET_CONTRACT.md`
 - VoxCPM reference: `docs/providers/voxcpm.md`
 - historical context: `docs/archive/`

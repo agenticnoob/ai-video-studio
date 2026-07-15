@@ -1,6 +1,6 @@
 # Agent Producer-Only Roadmap
 
-Status: Phase 0 through Phase 4 complete; Phase 5 has not started.
+Status: Phase 0 through Phase 5 complete; Phase 6 has not started.
 
 Decision date: 2026-07-15.
 
@@ -618,10 +618,12 @@ Implementation evidence:
 - focused Producer OS/manifest/promotion/validation/review/architecture/skill
   smokes, Docker typecheck/build/composition listing, changed-file style checks,
   forbidden scans, and `git diff --check` pass
-- Phase 5 asset localization, checksum, provenance, license, and media preflight
-  remain unstarted
+- at the Phase 4 boundary, asset localization/checksum/provenance/license/media
+  preflight remained deferred; Phase 5 now owns and completes that boundary
 
 ## 10. Phase 5 - Existing Asset Supply System
+
+Status: complete and verified on 2026-07-16.
 
 ### Goal
 
@@ -695,6 +697,31 @@ generated visual media is outside the product boundary.
 - all formal render assets are local and readable
 - provenance and license requirements are complete
 - a missing or invalid asset fails before representative still rendering
+
+Implementation evidence:
+
+- one strict `ProducerAssetManifest` records ids, kinds, local paths, purpose,
+  provenance, license/attribution, SHA-256, byte size, media metadata, and
+  optional minimum requirements while rejecting generation-model fields
+- `producer:assets` localizes named manual files and HTTP(S) URLs, keeps private
+  source paths out of final manifests, detects duplicate content, and writes
+  deterministic JSON
+- SVG/Lottie metadata uses deterministic parsing; raster image, video, and
+  audio metadata uses ffprobe; formal video localization uses real FFmpeg
+  H.264/yuv420p/CFR/AAC normalization
+- `producer:preflight` recalculates file integrity and metadata, enforces local
+  path/license/attribution/size/codec rules, and fails closed on missing,
+  corrupt, tampered, duplicate, undersized, remote, or non-normalized media
+- maintained sample validation agrees with its asset manifest, and maintained
+  still/render entrypoints run preflight before planning or spawning jobs
+- the future scaffold includes supply and final asset manifests; current
+  registry entries remain frozen references and were not migrated
+- remote image defaults were removed from three catalog primitives and replaced
+  with deterministic code fallbacks verified through an isolated Remotion still
+- focused asset/OS/validation and full Docker-first verification are recorded
+  in `docs/superpowers/plans/2026-07-16-agent-producer-assets-phase-5.md`
+- Phase 6 dependency upgrades, effects/transitions/layout utilities, text fit,
+  capability presets, and showcase work remain unstarted
 
 ## 11. Phase 6 - Remotion Capability Core
 
@@ -975,11 +1002,11 @@ The final package exposes a compact production command set:
 ```bash
 npm run producer:scaffold -- --name <CompositionName> --slug <slug>
 npm run producer:audio -- --module <audio-config-module>
-npm run producer:assets -- --manifest <asset-manifest>
+npm run producer:assets -- --manifest <supply-plan-json>
 npm run producer:preflight -- --composition <composition-id>
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
-npm run producer:render -- --composition <composition-id> --slug <slug> --metadata <metadata-json>
+npm run producer:render -- --composition <composition-id>
 npm run smoke:producer-os
 npm run smoke:remotion-capabilities
 npx remotion compositions src/remotion/index.ts

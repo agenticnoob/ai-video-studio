@@ -21,7 +21,9 @@ export const sampleNameManifest = {
     scriptPath: "src/remotion/SampleName/script.ts",
     audioMetadataPath: "src/remotion/SampleName/audio.generated.ts",
   },
-  assets: [],
+  assets: {
+    manifestPath: "src/remotion/SampleName/assets.manifest.json",
+  },
   validationModule: "src/remotion/SampleName/validation.ts",
   render: {
     metadataPath: "src/remotion/SampleName/render-metadata.json",
@@ -41,6 +43,7 @@ export const sampleNameManifest = {
     { path: "src/remotion/SampleName/data.ts", kind: "data" },
     { path: "src/remotion/SampleName/audio.generated.ts", kind: "audio-metadata" },
     { path: "src/remotion/SampleName/manifest.ts", kind: "manifest" },
+    { path: "src/remotion/SampleName/assets.manifest.json", kind: "asset-manifest" },
     { path: "src/remotion/SampleName/validation.ts", kind: "validation" },
     { path: "src/remotion/SampleName/cover.tsx", kind: "cover" },
     { path: "src/remotion/SampleName/render-metadata.json", kind: "render-metadata" },

@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "compositionId": "SampleName",
+  "slug": "sample-name",
+  "outputManifestPath": "src/remotion/SampleName/assets.manifest.json",
+  "assets": []
+}

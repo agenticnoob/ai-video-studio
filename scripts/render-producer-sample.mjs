@@ -39,6 +39,13 @@ await execFileAsync("npx", [
   "--outDir",
   buildRoot,
   "scripts/lib/producer-render.ts",
+  "scripts/lib/producer-assets/index.ts",
+  "scripts/lib/producer-assets/types.ts",
+  "scripts/lib/producer-assets/serialize.ts",
+  "scripts/lib/producer-assets/metadata.ts",
+  "scripts/lib/producer-assets/localize.ts",
+  "scripts/lib/producer-assets/preflight.ts",
+  "src/remotion/producer-samples/asset-manifest.ts",
   "src/remotion/producer-samples/manifest.ts",
   "src/remotion/producer-samples/registry.ts",
 ]);
@@ -53,8 +60,16 @@ if (!existsSync(registryModulePath) || !existsSync(rendererModulePath)) {
 
 const registry = await import(pathToFileURL(registryModulePath).href);
 const renderer = await import(pathToFileURL(rendererModulePath).href);
+const { preflightProducerAssets, readProducerAssetManifest } = await import(
+  pathToFileURL(path.join(buildRoot, "scripts/lib/producer-assets/index.js")).href
+);
 const manifest = registry.getProducerSampleManifestByCompositionId(compositionId);
 if (!manifest) throw new Error(`Unknown producer sample composition: ${compositionId}`);
+
+if (manifest.sampleStatus === "maintained") {
+  const assetManifest = await readProducerAssetManifest(path.resolve(manifest.assets.manifestPath));
+  await preflightProducerAssets({ manifest: assetManifest });
+}
 
 const jobs = renderer.buildProducerRenderJobs({ manifest });
 for (const job of jobs) {

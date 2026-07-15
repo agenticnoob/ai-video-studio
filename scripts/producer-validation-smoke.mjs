@@ -10,6 +10,13 @@ const validate = (overrides = {}) =>
     ...overrides,
   });
 
+const maintainedAssetManifest = {
+  version: 1,
+  compositionId: "FixtureProducerVideo",
+  slug: "fixture-producer-video",
+  assets: [],
+};
+
 const maintainedManifest = {
   sampleStatus: "maintained",
   compositionId: "FixtureProducerVideo",
@@ -31,7 +38,7 @@ const maintainedManifest = {
     scriptPath: "fixtures/script.ts",
     audioMetadataPath: "fixtures/audio.generated.ts",
   },
-  assets: [],
+  assets: { manifestPath: "fixtures/assets.manifest.json" },
   validationModule: "fixtures/validation.ts",
   render: {
     metadataPath: "fixtures/render-metadata.json",
@@ -48,6 +55,7 @@ const maintainedManifest = {
     { path: "fixtures/render-metadata.json", kind: "render-metadata" },
     { path: "fixtures/publishing.md", kind: "publishing-copy" },
     { path: "fixtures/manifest.ts", kind: "manifest" },
+    { path: "fixtures/assets.manifest.json", kind: "asset-manifest" },
     { path: "src/remotion/Root.tsx", kind: "root-registration" },
   ],
   promotionCandidates: [],
@@ -58,6 +66,7 @@ await assert.doesNotReject(() => validate());
 await assert.doesNotReject(() =>
   validate({
     manifest: maintainedManifest,
+    assetManifest: maintainedAssetManifest,
     registeredCompositionIds: [
       "FixtureProducerVideo",
       "FixtureProducerVideoCover16x9",
@@ -68,10 +77,24 @@ await assert.doesNotReject(() =>
 await assert.rejects(
   () =>
     validate({
+      manifest: maintainedManifest,
+      assetManifest: undefined,
+      registeredCompositionIds: [
+        "FixtureProducerVideo",
+        "FixtureProducerVideoCover16x9",
+        "FixtureProducerVideoCover9x16",
+      ],
+    }),
+  /asset manifest/i,
+);
+await assert.rejects(
+  () =>
+    validate({
       manifest: {
         ...maintainedManifest,
         render: { ...maintainedManifest.render, cover9x16CompositionId: "" },
       },
+      assetManifest: maintainedAssetManifest,
     }),
   /cover composition id/i,
 );

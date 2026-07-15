@@ -35,6 +35,7 @@ export type ProducerSampleSourceFileKind =
   | "root-registration"
   | "smoke"
   | "manifest"
+  | "asset-manifest"
   | "validation"
   | "cover"
   | "render-metadata"
@@ -135,11 +136,9 @@ export type MaintainedProducerSampleManifest = ProducerSampleManifestBase & {
     readonly scriptPath: string;
     readonly audioMetadataPath: string;
   };
-  readonly assets: readonly {
-    readonly id: string;
-    readonly localPath: string;
-    readonly purpose: string;
-  }[];
+  readonly assets: {
+    readonly manifestPath: string;
+  };
   readonly validationModule: string;
   readonly render: {
     readonly metadataPath: string;
@@ -239,19 +238,20 @@ export const assertProducerSampleManifest = (manifest: ProducerSampleManifest): 
   }
   requireText(manifest.publishingCopyPath, `${manifest.compositionId} publishing copy path`);
 
-  for (const asset of manifest.assets) {
-    requireText(asset.id, `${manifest.compositionId} asset id`);
-    requireText(asset.localPath, `${manifest.compositionId}/${asset.id} local asset path`);
-    requireText(asset.purpose, `${manifest.compositionId}/${asset.id} asset purpose`);
-    if (/^https?:\/\//i.test(asset.localPath)) {
-      throw new Error(`${manifest.compositionId}/${asset.id} asset must use a local path.`);
-    }
+  requireText(manifest.assets.manifestPath, `${manifest.compositionId} asset manifest path`);
+  if (
+    /^https?:\/\//i.test(manifest.assets.manifestPath) ||
+    manifest.assets.manifestPath.startsWith("/") ||
+    manifest.assets.manifestPath.includes("..")
+  ) {
+    throw new Error(`${manifest.compositionId} asset manifest must use a repository-local path.`);
   }
 
   const sourcePaths = new Set(manifest.sourceFiles.map((sourceFile) => sourceFile.path));
   for (const requiredPath of [
     manifest.narration.scriptPath,
     manifest.narration.audioMetadataPath,
+    manifest.assets.manifestPath,
     manifest.validationModule,
     manifest.render.metadataPath,
     manifest.publishingCopyPath,
@@ -262,6 +262,7 @@ export const assertProducerSampleManifest = (manifest: ProducerSampleManifest): 
   }
   for (const requiredKind of [
     "manifest",
+    "asset-manifest",
     "validation",
     "cover",
     "render-metadata",

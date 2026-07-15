@@ -9,18 +9,28 @@ import path from "node:path";
 const read = (file) => readFileSync(file, "utf8");
 const packageJson = JSON.parse(read("package.json"));
 
-for (const command of ["producer:scaffold", "producer:render", "smoke:producer-os"]) {
+for (const command of [
+  "producer:scaffold",
+  "producer:assets",
+  "producer:preflight",
+  "producer:render",
+  "smoke:producer-os",
+]) {
   assert(packageJson.scripts[command], `Missing Phase 4 command: ${command}`);
 }
 
 for (const file of [
   "scripts/producer-scaffold.mjs",
   "scripts/lib/producer-render.ts",
+  "scripts/lib/producer-assets/index.ts",
   "scripts/render-producer-sample.mjs",
+  "scripts/preflight-producer-assets.mjs",
   "src/remotion/producer-samples/scaffold/SampleName/manifest.ts",
   "src/remotion/producer-samples/scaffold/SampleName/cover.tsx",
   "src/remotion/producer-samples/scaffold/SampleName/render-metadata.json",
   "src/remotion/producer-samples/scaffold/SampleName/publishing.md",
+  "src/remotion/producer-samples/scaffold/SampleName/assets.supply.json",
+  "src/remotion/producer-samples/scaffold/SampleName/assets.manifest.json",
 ]) {
   assert(existsSync(file), `Missing Phase 4 surface: ${file}`);
 }
@@ -61,6 +71,24 @@ assert(
   "Every existing finished sample must be classified as a frozen reference.",
 );
 assert.doesNotThrow(() => assertProducerSampleManifest(sampleNameManifest));
+assert.equal(
+  sampleNameManifest.assets.manifestPath,
+  "src/remotion/SampleName/assets.manifest.json",
+);
+
+for (const [file, planner] of [
+  ["scripts/render-producer-review-frames.mjs", "buildProducerReviewFrameJobs"],
+  ["scripts/render-producer-sample.mjs", "buildProducerRenderJobs"],
+]) {
+  const source = read(file);
+  const preflightIndex = source.indexOf("preflightProducerAssets");
+  const plannerIndex = source.lastIndexOf(planner);
+  assert(preflightIndex >= 0, `${file} must invoke Producer asset preflight.`);
+  assert(
+    preflightIndex < plannerIndex,
+    `${file} must preflight maintained assets before planning render jobs.`,
+  );
+}
 
 const renderJobs = buildProducerRenderJobs({ manifest: sampleNameManifest });
 assert.deepEqual(
@@ -101,17 +129,24 @@ try {
     "validation.ts",
     "render-metadata.json",
     "publishing.md",
+    "assets.supply.json",
+    "assets.manifest.json",
   ]) {
     assert(existsSync(path.join(destination, filename)), `Scaffold output missing ${filename}.`);
   }
   const generatedManifest = read(path.join(destination, "manifest.ts"));
   const generatedVideo = read(path.join(destination, "PhaseFourFixture.tsx"));
   const generatedGenerator = read(path.join(destination, "generate.mjs"));
+  const generatedAssetSupply = read(path.join(destination, "assets.supply.json"));
+  const generatedAssetManifest = read(path.join(destination, "assets.manifest.json"));
   assert(generatedManifest.includes('compositionId: "PhaseFourFixture"'));
   assert(generatedManifest.includes('slug: "phase-four-fixture"'));
   assert(generatedManifest.includes('from "../producer-samples/manifest"'));
   assert(generatedVideo.includes('from "../standalone-video"'));
   assert(generatedGenerator.includes('from "../../../scripts/lib/producer-audio/index.js"'));
+  assert(generatedAssetSupply.includes('"compositionId": "PhaseFourFixture"'));
+  assert(generatedAssetSupply.includes('"slug": "phase-four-fixture"'));
+  assert(generatedAssetManifest.includes('"compositionId": "PhaseFourFixture"'));
   assert(!generatedManifest.includes("SampleName"));
 } finally {
   rmSync(scaffoldRoot, { recursive: true, force: true });

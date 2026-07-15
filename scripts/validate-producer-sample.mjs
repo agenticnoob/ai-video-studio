@@ -25,6 +25,7 @@ const compileSources = [
   "scripts/lib/producer-audio/types.ts",
   "scripts/lib/producer-audio/captions.ts",
   "src/remotion/producer-samples/manifest.ts",
+  "src/remotion/producer-samples/asset-manifest.ts",
 ];
 if (modulePath.endsWith(".ts")) compileSources.push(relativeModulePath);
 await execFileAsync("npx", [
@@ -37,6 +38,7 @@ await execFileAsync("npx", [
   "node",
   "--skipLibCheck",
   "--esModuleInterop",
+  "--resolveJsonModule",
   "--noEmit",
   "false",
   "--rootDir",

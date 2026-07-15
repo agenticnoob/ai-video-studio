@@ -22,7 +22,7 @@ assert(existsSync(absolute(inventoryPath)), `${inventoryPath} must exist`);
 const inventory = JSON.parse(read(inventoryPath));
 
 assert.equal(inventory.version, 1, "inventory version");
-assert.deepEqual(inventory.completedPhases, [0, 1, 2, 3, 4], "completed roadmap phases");
+assert.deepEqual(inventory.completedPhases, [0, 1, 2, 3, 4, 5], "completed roadmap phases");
 const completedPhases = new Set(inventory.completedPhases);
 assert.equal(
   inventory.authority.skill,
@@ -89,6 +89,7 @@ const activeDocs = [
   "docs/REMOTION_COMPONENT_LIBRARY.md",
   "docs/REMOTION_PRIMITIVES.md",
   "docs/PRODUCER_PROMOTION_GATE.md",
+  "docs/PRODUCER_ASSET_CONTRACT.md",
   "docs/superpowers/README.md",
 ];
 const requiredAuthority = [
@@ -117,17 +118,42 @@ for (const docPath of activeDocs) {
 assert(read("docs/FINAL_PRODUCT_GOAL.md").includes("only supported production flow"));
 assert(read("docs/ITERATION_STATUS.md").includes("Phase 0"));
 assert(read("docs/ITERATION_STATUS.md").includes("Phase 4"));
+assert(read("docs/ITERATION_STATUS.md").includes("Phase 5"));
+assert(read("docs/ITERATION_STATUS.md").includes("Phase 6"));
 assert(read("docs/VISUAL_RECIPE_ROADMAP.md").includes("Superseded"));
 
 const packageJson = JSON.parse(read("package.json"));
 for (const command of [
   "producer:scaffold",
+  "producer:assets",
+  "producer:preflight",
   "producer:validate",
   "producer:stills",
   "producer:render",
   "smoke:producer-os",
+  "smoke:producer-assets",
 ]) {
   assert(packageJson.scripts[command], `package.json must expose ${command}`);
+}
+for (const phase5Path of [
+  "src/remotion/producer-samples/asset-manifest.ts",
+  "scripts/lib/producer-assets/index.ts",
+  "scripts/producer-assets.mjs",
+  "scripts/preflight-producer-assets.mjs",
+  "docs/PRODUCER_ASSET_CONTRACT.md",
+  "public/assets/library/README.md",
+]) {
+  assert(existsSync(absolute(phase5Path)), `Phase 5 path must exist: ${phase5Path}`);
+}
+for (const primitivePath of [
+  "src/remotion/primitives/cinematic/KenBurns.tsx",
+  "src/remotion/primitives/cinematic/ParallaxPan.tsx",
+  "src/remotion/primitives/cinematic/ZoomPulse.tsx",
+]) {
+  assert(
+    !/https?:\/\//i.test(read(primitivePath)),
+    `${primitivePath} must not use a remote default.`,
+  );
 }
 for (const phase4Path of [
   "scripts/producer-scaffold.mjs",

@@ -42,7 +42,10 @@ adapters, scripts, configuration, and current provider documentation.
 Remotion Studio, CLI rendering, and the Docker `producer` service are the
 supported runtime surfaces. Phase 4 consolidated the Producer OS around one
 strict future manifest, executable scaffold, validation, review-frame, and
-render entrypoints. Phase 5 existing-asset supply is next and has not started.
+render entrypoints. Phase 5 adds strict asset manifests, manual/URL
+localization, checksum, provenance/license/media metadata, FFmpeg
+normalization, and preflight before maintained still/render execution. Phase 6
+Remotion capability core is next and has not started.
 
 Existing finished compositions remain frozen read-only references. Historical
 `provider: "f5-tts"` metadata in their generated audio files stays truthful; it
@@ -54,6 +57,8 @@ does not authorize new F5 generation.
   frame-driven motion.
 - Use local or localized images, videos, screenshots, SVG, audio, fonts,
   Lottie, Rive, GLB/glTF, textures, and user-supplied files.
+- Record every visible non-code asset in a `ProducerAssetManifest` and pass
+  `producer:preflight` before representative stills.
 - Attempt real source capture when evidence is needed. If capture fails, record
   why and build an honest code-rendered information graphic.
 - Generate new narration with VoxCPM only.
@@ -76,6 +81,7 @@ Supporting references:
 
 - `docs/REMOTION_COMPONENT_LIBRARY.md`
 - `docs/PRODUCER_PROMOTION_GATE.md`
+- `docs/PRODUCER_ASSET_CONTRACT.md`
 - `docs/providers/voxcpm.md`
 - `docs/architecture/agent-producer-only-removal-inventory.json`
 
@@ -83,10 +89,13 @@ Supporting references:
 
 ```bash
 npm run producer:scaffold -- --name <CompositionName> --slug <slug>
+npm run producer:assets -- --manifest <supply-plan-json>
+npm run producer:preflight -- --composition <composition-id>
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
 npm run producer:render -- --composition <composition-id>
 npm run smoke:producer-os
+npm run smoke:producer-assets
 npm run smoke:producer-audio-direct-voxcpm
 npm run smoke:producer-audio-tools
 npm run smoke:agent-producer-web-removal
@@ -94,7 +103,7 @@ npm run smoke:agent-producer-architecture
 npm run smoke:skill-alignment
 ```
 
-New maintained samples declare a strict manifest under their dedicated
+New maintained samples declare a strict sample manifest and asset manifest under their dedicated
 composition folder and enter the single registry only after video, cover, and
 validation registration are ready. Current registry entries describe finished
 compositions as `frozen-reference`; they are discovery metadata, not migration

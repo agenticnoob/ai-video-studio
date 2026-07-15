@@ -14,67 +14,72 @@ The implementation sequence is defined by
 
 ## Current Milestone
 
-Phase 4 — consolidate Agent Producer OS — is complete.
+Phase 5 — existing asset supply system — is complete.
 
 Phase 0 authority reset, Phase 1 direct VoxCPM runtime, Phase 2 F5 removal,
-and Phase 3 Web product removal remain complete. Phase 5 existing-asset supply
-is next and has not started.
+Phase 3 Web product removal, and Phase 4 Producer OS consolidation remain
+complete. Phase 6 Remotion capability core is next and has not started.
 
-## Implemented Phase 4 Boundary
+## Implemented Phase 5 Boundary
 
-- replaced recipe/template productization values with Producer-owned promotion
-  targets: primitive, block, effect, transition, and style profile
-- classified every current finished registry entry as `frozen-reference`
-- added a strict `maintained` manifest contract for future compositions,
-  including production brief, VoxCPM narration, local assets, validation,
-  review frames, render metadata, two Remotion Still covers, publishing copy,
-  and promotion evidence
-- added `producer:scaffold` to create the complete dedicated source skeleton
-- kept one registry and exposed maintained entries separately without inventing
-  an unfinished real sample
-- composed existing audio, manifest, registration, and artifact checks through
-  `producer:validate`
-- retained the manifest-driven `producer:stills` review-frame entrypoint
-- added `producer:render` for MP4, final metadata, and both code-rendered covers
-- preserved every finished composition and all local/private/generated artifact
-  boundaries
+- added a strict `ProducerAssetManifest` with local path, source, license,
+  optional attribution, SHA-256, byte size, media metadata, and minimum media
+  requirements
+- added deterministic parsing/serialization with explicit rejection of image-
+  or video-generation model, prompt, seed, and workflow fields
+- added manual-file and HTTP(S) URL localization without persisting private
+  source paths
+- added screenshot/capture-compatible source records through normal image asset
+  provenance instead of a fabricated screenshot type
+- added SHA-256 duplicate detection, SVG/Lottie parsing, ffprobe image/video/
+  audio metadata, and FFmpeg H.264/yuv420p/CFR/AAC normalization
+- added `producer:assets` and `producer:preflight`
+- made maintained validation agree with the asset manifest and made maintained
+  still/render entrypoints preflight before planning or spawning render jobs
+- added `public/assets/library/` and ignored
+  `public/generated/<slug>/assets/` conventions
+- removed remote default images from Ken Burns, Parallax Pan, and Zoom Pulse;
+  their no-asset state is an honest deterministic code fallback
+- preserved every finished composition, frozen registry entry, historical
+  narration metadata, and local/private/generated artifact boundary
 
 ## Verification
 
 RED evidence:
 
-- the pre-Phase 4 `smoke:producer-sample-manifest` passed its manifest stage,
-  then exited 1 because the old promotion smoke still required recipe/template
-  decisions that active Producer-only docs correctly omitted
-- the new `smoke:producer-os` exited 1 with
-  `Missing Phase 4 command: producer:scaffold` before implementation
+- the initial Docker `smoke:producer-assets` exited 1 with
+  `Missing Phase 5 surface: src/remotion/producer-samples/asset-manifest.ts`
+- after the contract existed, the same smoke exited 1 with
+  `Producer primitives must not contain remote default assets`
+- the Producer OS smoke exited 1 with
+  `scripts/render-producer-review-frames.mjs must invoke Producer asset preflight`
 
 GREEN evidence:
 
-- Phase 4 OS, manifest, promotion, validation, review-frame, architecture,
-  skill, direct VoxCPM, and standalone focused smokes pass
-- the scaffold smoke creates and inspects an isolated `/tmp` sample and removes
-  it without touching `src/remotion/Root.tsx`
-- Docker TypeScript, Remotion bundle build, and composition listing pass
-- changed-file ESLint and Prettier, shell/Compose syntax, forbidden/frozen/
-  artifact scans, and `git diff --check` pass
+- focused asset, Producer OS, and validation smokes pass
+- asset smoke uses real manual and mocked URL inputs, real SHA-256, real SVG
+  metadata, tamper/missing/undersized/license/attribution/duplicate failures,
+  and a real FFmpeg-normalized H.264/yuv420p/CFR/AAC fixture
+- direct scaffold asset preflight passes
+- an isolated Remotion fixture renders the three code fallbacks at frame 45;
+  visual inspection confirms three visible panels with no blank or overlap
+- full Docker-first and changed-file verification is recorded in the Phase 5
+  plan execution record and final handoff
 
-Repository-wide Docker lint reports 39 historical errors plus 2 ignored
-generated warnings, all outside the Phase 4 changed-file set. Phase 4 does not
-claim a clean whole-repository lint gate.
+Repository-wide Docker lint retains the documented historical baseline unless
+the final fresh run proves otherwise. Phase 5 does not claim unrelated lint
+cleanup.
 
-No representative still was rendered because no registered composition or
-finished render code changed. The new cover is a future scaffold component;
-its first real sample must register both Stills, render them, and inspect them.
-
-VoxCPM provider documentation, `.env.example`, and Docker Compose remain
-unchanged: Phase 4 composes the existing direct provider and `producer` service
-instead of adding a provider, environment variable, or service boundary.
+VoxCPM provider docs, `.env.example`, Compose, Remotion versions, Root
+registrations, and frozen compositions remain unchanged because Phase 5 adds
+only the Producer-owned existing-asset boundary.
 
 ## Current Commands
 
 ```bash
 npm run producer:scaffold -- --name <CompositionName> --slug <slug>
+npm run producer:assets -- --manifest <supply-plan-json>
+npm run producer:preflight -- --composition <composition-id>
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
 npm run producer:render -- --composition <composition-id>
@@ -82,9 +87,9 @@ npm run producer:render -- --composition <composition-id>
 
 ## Next Bounded Slice
 
-Phase 5 — existing asset supply system — is next. It has not started. Its
-future plan owns localization, checksums, provenance, licenses, media metadata,
-and preflight; none of those capabilities were pulled into Phase 4.
+Phase 6 — Remotion capability core — is next. It has not started. Its version
+gate, official effects/transitions/layout dependencies, text fitting, shared
+presets, and capability showcase were not pulled into Phase 5.
 
 ## Frozen History
 

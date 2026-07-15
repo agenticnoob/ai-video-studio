@@ -20,12 +20,16 @@ The committed sample folder should contain:
 - `generate.mjs` using the shared `scripts/lib/producer-audio/` functions
 - `validation.ts` exporting `producerValidationInput`
 - `manifest.ts` exporting a strict maintained sample contract
+- `assets.supply.json` declaring manual/URL localization inputs
+- `assets.manifest.json` storing strict local provenance, license, checksum, and media metadata
 - `cover.tsx` exporting code-driven 16:9 and 9:16 cover components
 - `render-metadata.json` for MP4 metadata and chapter timing
 - `publishing.md` for approved publishing copy
 
 Do not copy a completed sample's TTS request, duration, metadata, or validation
 logic. Adapt the scaffold's `generate.mjs` and `validation.ts` instead.
+Do not run `assets.supply.json` from the template folder itself; run the
+tokenized copy under the dedicated composition after scaffolding.
 
 Generated screenshots, generated narration audio, and rendered videos stay local-only:
 
@@ -46,6 +50,8 @@ code-rendered Stills in `src/remotion/Root.tsx`:
 Then run:
 
 ```bash
+npm run producer:assets -- --manifest src/remotion/<SampleName>/assets.supply.json
+npm run producer:preflight -- --composition <composition-id>
 npm run producer:validate -- --module src/remotion/<SampleName>/validation.ts
 npm run producer:stills -- --composition <composition-id>
 npm run producer:render -- --composition <composition-id>

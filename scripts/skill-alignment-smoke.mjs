@@ -74,10 +74,16 @@ assertIncludes(
 );
 for (const required of [
   "npm run producer:scaffold",
+  "npm run producer:assets",
+  "npm run producer:preflight",
   "npm run producer:validate",
   "npm run producer:stills",
   "npm run producer:render",
   "strict maintained manifest",
+  "ProducerAssetManifest",
+  "docs/PRODUCER_ASSET_CONTRACT.md",
+  "public/assets/library/",
+  "public/generated/<slug>/assets/",
   "frozen-reference",
   "scripts/lib/producer-audio/",
   "existing finished samples are read-only references",

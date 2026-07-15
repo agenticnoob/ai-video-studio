@@ -18,6 +18,8 @@ and architecture guards. There is no supported Web route smoke surface.
 | Producer validation | `lib/producer-validation.ts` | Hard-failure manifest/composition checks. |
 | Review frames | `lib/producer-review-frames.ts` | Deterministic frame planning. |
 | Sample scaffold | `producer-scaffold.mjs` | Creates the strict maintained future source skeleton. |
+| Asset supply | `lib/producer-assets/`, `producer-assets.mjs` | Localizes manual/URL media, checksums, probes, and normalizes. |
+| Asset preflight | `preflight-producer-assets.mjs` | Fails before maintained still/render jobs on invalid assets. |
 | Unified render | `lib/producer-render.ts`, `render-producer-sample.mjs` | Plans/runs MP4, metadata, and two code-rendered covers. |
 | Architecture guards | `agent-producer-*-smoke.mjs`, `skill-alignment-smoke.mjs` | Product boundary checks. |
 
@@ -34,6 +36,7 @@ references. Do not use them as future Producer scaffolds.
 - Direct VoxCPM runtime failures must fail closed without a provider fallback.
 - Keep private voices and generated media out of source control.
 - Treat registry entries marked `frozen-reference` as discovery metadata only.
+- Keep `ProducerAssetManifest` output deterministic and free of private source paths.
 
 ## ANTI-PATTERNS
 
@@ -48,5 +51,6 @@ references. Do not use them as future Producer scaffolds.
 ```bash
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:agent-producer-web-removal'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:producer-audio-tools'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:producer-assets'
 git diff --check
 ```

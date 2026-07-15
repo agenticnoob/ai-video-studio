@@ -1,11 +1,16 @@
 import { sampleNameAudio } from "./audio.generated";
+import sampleNameAssetManifestJson from "./assets.manifest.json";
 import { sampleNameManifest } from "./manifest";
 import { sampleNameNarrationBeats } from "./script";
 import { SAMPLE_NAME_COMPOSITION_ID } from "./types";
+import type { ProducerAssetManifest } from "../../asset-manifest";
+
+const sampleNameAssetManifest = sampleNameAssetManifestJson as ProducerAssetManifest;
 
 export const producerValidationInput = {
   compositionId: SAMPLE_NAME_COMPOSITION_ID,
   manifest: sampleNameManifest,
+  assetManifest: sampleNameAssetManifest,
   beats: sampleNameNarrationBeats.map((beat) => ({
     id: beat.sceneId,
     narrationRequired: true as const,

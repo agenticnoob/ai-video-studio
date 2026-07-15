@@ -9,7 +9,7 @@ type KenBurnsProps = {
 };
 
 const KenBurns: FC<KenBurnsProps> = ({
-  imageUrl = "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba",
+  imageUrl,
   scale = 1.5,
   translateX = -50,
   translateY = -30,
@@ -33,16 +33,28 @@ const KenBurns: FC<KenBurnsProps> = ({
         overflow: "hidden",
       }}
     >
-      <Img
-        alt=""
-        src={imageUrl}
-        style={{
-          height: "100%",
-          objectFit: "cover",
-          transform: `scale(${1 + (scale - 1) * progress}) translate(${translateX * progress}px, ${translateY * progress}px)`,
-          width: "100%",
-        }}
-      />
+      {imageUrl ? (
+        <Img
+          alt=""
+          src={imageUrl}
+          style={{
+            height: "100%",
+            objectFit: "cover",
+            transform: `scale(${1 + (scale - 1) * progress}) translate(${translateX * progress}px, ${translateY * progress}px)`,
+            width: "100%",
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            background:
+              "radial-gradient(circle at 68% 28%, rgba(250,204,21,0.72), transparent 24%), linear-gradient(135deg, #172554 0%, #0f766e 48%, #020617 100%)",
+            height: "100%",
+            transform: `scale(${1 + (scale - 1) * progress}) translate(${translateX * progress}px, ${translateY * progress}px)`,
+            width: "100%",
+          }}
+        />
+      )}
     </div>
   );
 };

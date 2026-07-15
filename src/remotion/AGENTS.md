@@ -29,6 +29,7 @@ src/remotion/
 | Visual primitives | `primitives/`, `catalog/` | Inventory before adding local components. |
 | Producer runtime | `standalone-video/` | Future timing, captions, audio, canvas profiles. |
 | Producer Sample OS | `producer-samples/` | Strict future manifests, scaffold, frozen-reference metadata, and blocks. |
+| Existing asset contract | `producer-samples/asset-manifest.ts` | Local manifest type used by Phase 5 preflight. |
 | Frozen recipe compatibility | `recipes/blocks/`, `recipes/timing/` | Do not extend for future work. |
 
 ## CONVENTIONS
@@ -36,6 +37,7 @@ src/remotion/
 - Load `.agents/skills/remotion-best-practices/SKILL.md` before render edits.
 - Keep motion frame-driven with Remotion APIs.
 - Use fixed composition bounds and deterministic local assets.
+- Keep every maintained non-code asset manifest-backed and preflighted before stills.
 - Build topic data, narration, and scene order inside the dedicated
   composition.
 - Use `standalone-video/caption-types` for future Producer captions.

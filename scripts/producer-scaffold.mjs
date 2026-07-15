@@ -44,7 +44,8 @@ const replaceTokens = (source) =>
     .replaceAll("sample-name", slug)
     .replaceAll('"../../../standalone-video', '"../standalone-video')
     .replaceAll('"../../../../../scripts', '"../../../scripts')
-    .replaceAll('"../../manifest"', '"../producer-samples/manifest"');
+    .replaceAll('"../../manifest"', '"../producer-samples/manifest"')
+    .replaceAll('"../../asset-manifest"', '"../producer-samples/asset-manifest"');
 
 await mkdir(destinationRoot, { recursive: true });
 for (const filename of await readdir(templateRoot)) {

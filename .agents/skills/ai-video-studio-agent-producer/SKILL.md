@@ -16,6 +16,9 @@ topic -> research/existing assets -> narration/VoxCPM -> component inventory
 -> Remotion `<Still>` covers -> publishing notes
 ```
 
+Roadmap status: Phase 5 existing-asset supply is complete. Phase 6 Remotion
+capability core is next and has not started.
+
 ## Skill Stack
 
 - Use this skill as the workflow authority.
@@ -105,6 +108,11 @@ Allowed assets include user-supplied files, real screenshots, licensed stock
 media, open-source media, local images/video/SVG/audio/fonts, Lottie, Rive,
 GLB/glTF, HDRI, and textures.
 
+Every visible non-code asset in a maintained sample must map to a strict
+`ProducerAssetManifest` described by `docs/PRODUCER_ASSET_CONTRACT.md`. Use
+`public/assets/library/` for reusable reviewed media and
+`public/generated/<slug>/assets/` for ignored composition-local working media.
+
 For remote sources:
 
 1. Test one representative URL before automating a capture batch.
@@ -112,8 +120,15 @@ For remote sources:
 3. Localize formal render assets before rendering.
 4. Keep remote URLs out of committed render-critical components.
 
+Create/localize the declared supply plan, then run preflight before stills:
+
+```bash
+npm run producer:assets -- --manifest <supply-plan-json>
+npm run producer:preflight -- --composition <composition-id>
+```
+
 Store captured/localized working media under ignored paths such as
-`public/generated/<slug>/` or `out/<slug>/`. Do not commit generated audio,
+`public/generated/<slug>/assets/` or `out/<slug>/`. Do not commit generated audio,
 captures, stills, covers, or MP4 files unless the user explicitly requests it.
 
 ### 3. Evidence Rules
@@ -254,6 +269,11 @@ Use shared tools for deterministic work in future samples:
 
 - create a strict maintained manifest and dedicated composition scaffold:
   `npm run producer:scaffold -- --name <CompositionName> --slug <slug>`
+- localize manual/URL assets and write checksum/provenance/license metadata:
+  `npm run producer:assets -- --manifest <supply-plan-json>`
+- fail closed on missing, corrupt, duplicate, undersized, unlicensed, remote,
+  or non-normalized media before stills:
+  `npm run producer:preflight -- --composition <composition-id>`
 - direct VoxCPM transport, audio processing, caption timing, and scene recovery:
   `scripts/lib/producer-audio/`
 - focused audio verification: `npm run smoke:producer-audio-direct-voxcpm` and
@@ -267,15 +287,16 @@ Every new maintained sample uses the strict maintained manifest contract under
 `src/remotion/producer-samples/`. Existing registry entries are
 `frozen-reference` metadata for finished compositions and must not be migrated
 or regenerated. A future sample is not complete until its manifest names its
-VoxCPM narration, local assets, validation module, review frames, render
+VoxCPM narration, a strict `ProducerAssetManifest`, validation module, review frames, render
 metadata, two Remotion Still cover ids, and publishing copy.
 
 The agent owns research, narration structure, visual metaphor, asset choice,
 scene composition, motion and sound design, still/MP4 inspection, creative
 revision, and promotion judgment.
 
-Tools own request execution, caption cleanup, measured duration, metadata,
-artifact checks, registration checks, and review-frame command execution.
+Tools own request execution, caption cleanup, measured duration, asset
+localization, checksum/media/license preflight, metadata, artifact checks,
+registration checks, and review-frame command execution.
 
 ## Production Pitfalls
 
@@ -320,6 +341,7 @@ closing a production slice:
 ```bash
 npm run smoke:agent-producer-architecture
 npm run smoke:skill-alignment
+npm run smoke:producer-assets
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npx tsc --noEmit --pretty false'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run lint'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run build'

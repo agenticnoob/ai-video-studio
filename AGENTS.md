@@ -31,8 +31,10 @@ repository contains `.codegraph/`.
 - The Docker `producer` service owns Studio and Docker-first verification.
 - Phase 4 completed the strict maintained sample manifest plus executable
   scaffold, validation, review-frame, and render command chain.
-- Existing Producer registry entries are `frozen-reference` metadata; Phase 5
-  existing-asset supply is next and has not started.
+- Phase 5 completed strict asset manifests, manual/URL localization, checksum,
+  provenance/license/media metadata, FFmpeg normalization, and preflight.
+- Existing Producer registry entries remain `frozen-reference` metadata; Phase
+  6 Remotion capability core is next and has not started.
 - Historical caption/storyboard contracts and `recipes/blocks` plus
   `recipes/timing` remain only for frozen composition compatibility.
 
@@ -50,6 +52,8 @@ repository contains `.codegraph/`.
 | Visual inventory | `docs/REMOTION_COMPONENT_LIBRARY.md`, `src/remotion/catalog/` |
 | Shared runtime | `src/remotion/standalone-video/` |
 | Producer sample OS | `src/remotion/producer-samples/` |
+| Asset contract | `docs/PRODUCER_ASSET_CONTRACT.md` |
+| Asset runtime | `scripts/lib/producer-assets/` |
 | Mechanical validation | `scripts/lib/producer-validation.ts` |
 | Review-frame planning | `scripts/lib/producer-review-frames.ts` |
 
@@ -61,6 +65,8 @@ repository contains `.codegraph/`.
 - Keep creative judgment with the agent; automate only deterministic production
   operations and hard-failure checks.
 - Use code and manifest-backed existing assets only.
+- Run maintained assets through `producer:assets` and `producer:preflight`
+  before representative stills.
 - Attempt real capture for source-backed evidence. If capture is unavailable,
   record the reason outside the frame and use an honest code-rendered
   information graphic.
@@ -91,6 +97,7 @@ npm run smoke:agent-producer-architecture
 npm run smoke:agent-producer-web-removal
 npm run smoke:skill-alignment
 npm run smoke:producer-os
+npm run smoke:producer-assets
 npm run smoke:producer-audio-direct-voxcpm
 npm run smoke:producer-audio-tools
 npm run producer:validate -- --module <validation-module>
@@ -98,9 +105,9 @@ npm run producer:stills -- --composition <composition-id>
 ```
 
 Future sample command order starts with
-`npm run producer:scaffold -- --name <CompositionName> --slug <slug>` and ends
-with `npm run producer:render -- --composition <composition-id>` after
-validation and representative still review.
+`npm run producer:scaffold -- --name <CompositionName> --slug <slug>`, then
+asset supply/preflight, validation, and representative still review, and ends
+with `npm run producer:render -- --composition <composition-id>`.
 
 Current full checks are Docker-first:
 

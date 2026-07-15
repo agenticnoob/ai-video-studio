@@ -11,7 +11,8 @@ const valueFor = (flag) => {
   return index >= 0 ? process.argv[index + 1] : undefined;
 };
 const compositionId = valueFor("--composition");
-if (!compositionId) throw new Error("Usage: npm run producer:stills -- --composition <id> [--scale 0.5] [--dry-run]");
+if (!compositionId)
+  throw new Error("Usage: npm run producer:stills -- --composition <id> [--scale 0.5] [--dry-run]");
 const scale = Number(valueFor("--scale") ?? "0.5");
 if (!(scale > 0)) throw new Error("--scale must be a positive number.");
 const dryRun = process.argv.includes("--dry-run");
@@ -22,25 +23,93 @@ const { execFile } = await import("node:child_process");
 const { promisify } = await import("node:util");
 const execFileAsync = promisify(execFile);
 await execFileAsync("rm", ["-rf", buildRoot]);
-await execFileAsync("npx", ["tsc", "--target", "es2022", "--module", "commonjs", "--moduleResolution", "node", "--skipLibCheck", "--esModuleInterop", "--noEmit", "false", "--outDir", buildRoot, "scripts/lib/producer-review-frames.ts", "src/remotion/producer-samples/manifest.ts"]);
-const { buildProducerReviewFrameJobs } = await import(pathToFileURL(path.join(buildRoot, "scripts/lib/producer-review-frames.js")).href);
+await execFileAsync("npx", [
+  "tsc",
+  "--target",
+  "es2022",
+  "--module",
+  "commonjs",
+  "--moduleResolution",
+  "node",
+  "--skipLibCheck",
+  "--esModuleInterop",
+  "--noEmit",
+  "false",
+  "--outDir",
+  buildRoot,
+  "scripts/lib/producer-review-frames.ts",
+  "scripts/lib/producer-assets/index.ts",
+  "scripts/lib/producer-assets/types.ts",
+  "scripts/lib/producer-assets/serialize.ts",
+  "scripts/lib/producer-assets/metadata.ts",
+  "scripts/lib/producer-assets/localize.ts",
+  "scripts/lib/producer-assets/preflight.ts",
+  "src/remotion/producer-samples/asset-manifest.ts",
+  "src/remotion/producer-samples/manifest.ts",
+]);
+const { buildProducerReviewFrameJobs } = await import(
+  pathToFileURL(path.join(buildRoot, "scripts/lib/producer-review-frames.js")).href
+);
+const { preflightProducerAssets, readProducerAssetManifest } = await import(
+  pathToFileURL(path.join(buildRoot, "scripts/lib/producer-assets/index.js")).href
+);
 
 let manifest;
 if (registryModule) {
   const absoluteRegistryModule = path.resolve(registryModule);
   let importPath = absoluteRegistryModule;
   if (absoluteRegistryModule.endsWith(".ts")) {
-    await execFileAsync("npx", ["tsc", "--target", "es2022", "--module", "commonjs", "--moduleResolution", "node", "--skipLibCheck", "--esModuleInterop", "--noEmit", "false", "--outDir", buildRoot, registryModule, "src/remotion/producer-samples/manifest.ts"]);
+    await execFileAsync("npx", [
+      "tsc",
+      "--target",
+      "es2022",
+      "--module",
+      "commonjs",
+      "--moduleResolution",
+      "node",
+      "--skipLibCheck",
+      "--esModuleInterop",
+      "--noEmit",
+      "false",
+      "--outDir",
+      buildRoot,
+      registryModule,
+      "src/remotion/producer-samples/manifest.ts",
+    ]);
     importPath = path.join(buildRoot, registryModule.replace(/\.ts$/, ".js"));
   }
   const imported = await import(pathToFileURL(importPath).href);
   manifest = imported.fixtureProducerManifest ?? imported.manifest;
 } else {
-  await execFileAsync("npx", ["tsc", "--target", "es2022", "--module", "commonjs", "--moduleResolution", "node", "--skipLibCheck", "--esModuleInterop", "--noEmit", "false", "--outDir", buildRoot, "src/remotion/producer-samples/registry.ts", "src/remotion/producer-samples/manifest.ts"]);
-  const registry = await import(pathToFileURL(path.join(buildRoot, "src/remotion/producer-samples/registry.js")).href);
+  await execFileAsync("npx", [
+    "tsc",
+    "--target",
+    "es2022",
+    "--module",
+    "commonjs",
+    "--moduleResolution",
+    "node",
+    "--skipLibCheck",
+    "--esModuleInterop",
+    "--noEmit",
+    "false",
+    "--outDir",
+    buildRoot,
+    "src/remotion/producer-samples/registry.ts",
+    "src/remotion/producer-samples/manifest.ts",
+  ]);
+  const registry = await import(
+    pathToFileURL(path.join(buildRoot, "src/remotion/producer-samples/registry.js")).href
+  );
   manifest = registry.getProducerSampleManifestByCompositionId(compositionId);
 }
-if (!manifest || manifest.compositionId !== compositionId) throw new Error(`Unknown producer sample composition: ${compositionId}`);
+if (!manifest || manifest.compositionId !== compositionId)
+  throw new Error(`Unknown producer sample composition: ${compositionId}`);
+
+if (manifest.sampleStatus === "maintained") {
+  const assetManifest = await readProducerAssetManifest(path.resolve(manifest.assets.manifestPath));
+  await preflightProducerAssets({ manifest: assetManifest });
+}
 
 const jobs = buildProducerReviewFrameJobs({ manifest, scale });
 for (const job of jobs) {
@@ -49,7 +118,9 @@ for (const job of jobs) {
   await mkdir(path.dirname(job.outputPath), { recursive: true });
   await new Promise((resolve, reject) => {
     const child = spawn("npx", job.args, { stdio: "inherit" });
-    child.on("exit", (code) => (code === 0 ? resolve() : reject(new Error(`Remotion still failed with exit code ${code}.`))));
+    child.on("exit", (code) =>
+      code === 0 ? resolve() : reject(new Error(`Remotion still failed with exit code ${code}.`)),
+    );
   });
   console.log(job.outputPath);
 }

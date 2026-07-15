@@ -4,10 +4,15 @@ import {
   assertProducerSampleManifest,
   type ProducerSampleManifest,
 } from "../../src/remotion/producer-samples/manifest";
+import {
+  assertProducerAssetManifest,
+  type ProducerAssetManifest,
+} from "../../src/remotion/producer-samples/asset-manifest";
 
 export type ProducerValidationInput = {
   readonly compositionId: string;
   readonly manifest?: ProducerSampleManifest;
+  readonly assetManifest?: ProducerAssetManifest;
   readonly beats: readonly ProducerNarrationBeat[];
   readonly tracks: readonly ProducerAudioTrack[];
   readonly scenes: readonly { readonly id: string; readonly durationInFrames: number }[];
@@ -101,6 +106,18 @@ export const validateProducerSample = async (input: ProducerValidationInput): Pr
       throw new Error(`${input.compositionId} does not match its Producer manifest.`);
     }
     if (input.manifest.sampleStatus === "maintained") {
+      if (!input.assetManifest) {
+        throw new Error(`${input.compositionId} must include its Producer asset manifest.`);
+      }
+      assertProducerAssetManifest(input.assetManifest);
+      if (
+        input.assetManifest.compositionId !== input.manifest.compositionId ||
+        input.assetManifest.slug !== input.manifest.slug
+      ) {
+        throw new Error(
+          `${input.compositionId} asset manifest does not match its sample manifest.`,
+        );
+      }
       for (const registrationId of [
         input.manifest.compositionId,
         input.manifest.render.cover16x9CompositionId,

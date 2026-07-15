@@ -7,11 +7,7 @@ type ZoomPulseProps = {
   minScale?: number;
 };
 
-const ZoomPulse: FC<ZoomPulseProps> = ({
-  imageUrl = "https://images.pexels.com/photos/1726310/pexels-photo-1726310.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  maxScale = 1.1,
-  minScale = 1,
-}) => {
+const ZoomPulse: FC<ZoomPulseProps> = ({ imageUrl, maxScale = 1.1, minScale = 1 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const cycle = (frame % Math.max(fps * 4, 1)) / Math.max(fps * 4, 1);
@@ -33,16 +29,28 @@ const ZoomPulse: FC<ZoomPulseProps> = ({
         overflow: "hidden",
       }}
     >
-      <Img
-        alt="Zoom Pulse"
-        src={imageUrl}
-        style={{
-          height: "100%",
-          objectFit: "cover",
-          transform: `scale(${minScale + (maxScale - minScale) * eased})`,
-          width: "100%",
-        }}
-      />
+      {imageUrl ? (
+        <Img
+          alt="Zoom Pulse"
+          src={imageUrl}
+          style={{
+            height: "100%",
+            objectFit: "cover",
+            transform: `scale(${minScale + (maxScale - minScale) * eased})`,
+            width: "100%",
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            background:
+              "radial-gradient(circle at 50% 45%, rgba(192,132,252,0.88), transparent 22%), repeating-radial-gradient(circle at 50% 45%, #312e81 0 18px, #0f172a 20px 42px)",
+            height: "100%",
+            transform: `scale(${minScale + (maxScale - minScale) * eased})`,
+            width: "100%",
+          }}
+        />
+      )}
     </div>
   );
 };

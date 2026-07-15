@@ -101,6 +101,7 @@ Historical template-centered guidance is preserved in
 `docs/archive/2026-07-15-pre-producer-only-remotion-component-library.md`.
 
 Phase 4 exposes the deterministic operating chain through `producer:scaffold`,
-`producer:validate`, `producer:stills`, and `producer:render`. Phase 5 asset
-supply and its provenance/license schema remain outside this component
-inventory until implemented.
+`producer:validate`, `producer:stills`, and `producer:render`. Phase 5 adds the
+strict `ProducerAssetManifest`, `producer:assets`, and `producer:preflight`;
+components still receive only local paths and never own acquisition or license
+decisions. Phase 6 Remotion capability core is next and has not started.

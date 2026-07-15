@@ -7,10 +7,7 @@ type ParallaxPanProps = {
   scale?: number;
 };
 
-const getTranslate = (
-  direction: NonNullable<ParallaxPanProps["direction"]>,
-  progress: number
-) => {
+const getTranslate = (direction: NonNullable<ParallaxPanProps["direction"]>, progress: number) => {
   if (direction === "left-right") {
     return { x: -20 * progress, y: 0 };
   }
@@ -23,11 +20,7 @@ const getTranslate = (
   return { x: 0, y: -20 + 20 * progress };
 };
 
-const ParallaxPan: FC<ParallaxPanProps> = ({
-  direction = "left-right",
-  imageUrl = "https://images.pexels.com/photos/1644724/pexels-photo-1644724.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-  scale = 1.2,
-}) => {
+const ParallaxPan: FC<ParallaxPanProps> = ({ direction = "left-right", imageUrl, scale = 1.2 }) => {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
   const cycleFrame = frame % Math.max(durationInFrames, 1);
@@ -50,16 +43,28 @@ const ParallaxPan: FC<ParallaxPanProps> = ({
         overflow: "hidden",
       }}
     >
-      <Img
-        alt="Parallax Pan"
-        src={imageUrl}
-        style={{
-          height: "100%",
-          objectFit: "cover",
-          transform: `translate(${translate.x}%, ${translate.y}%) scale(${scale})`,
-          width: "100%",
-        }}
-      />
+      {imageUrl ? (
+        <Img
+          alt="Parallax Pan"
+          src={imageUrl}
+          style={{
+            height: "100%",
+            objectFit: "cover",
+            transform: `translate(${translate.x}%, ${translate.y}%) scale(${scale})`,
+            width: "100%",
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            background:
+              "linear-gradient(115deg, rgba(34,211,238,0.82), transparent 34%), radial-gradient(circle at 72% 64%, rgba(244,114,182,0.78), transparent 25%), #111827",
+            height: "100%",
+            transform: `translate(${translate.x}%, ${translate.y}%) scale(${scale})`,
+            width: "100%",
+          }}
+        />
+      )}
     </div>
   );
 };
