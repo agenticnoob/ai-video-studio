@@ -101,7 +101,16 @@ Historical template-centered guidance is preserved in
 `docs/archive/2026-07-15-pre-producer-only-remotion-component-library.md`.
 
 Phase 4 exposes the deterministic operating chain through `producer:scaffold`,
-`producer:validate`, `producer:stills`, and `producer:render`. Phase 5 adds the
+`producer:validate`, `producer:stills`, and `producer:render`. Phase 5 added the
 strict `ProducerAssetManifest`, `producer:assets`, and `producer:preflight`;
 components still receive only local paths and never own acquisition or license
-decisions. Phase 6 Remotion capability core is next and has not started.
+decisions. Phase 6 version gate is complete: current Remotion dependencies are
+exact `4.0.489`, above the selected `roughenEdges()` minimum of `4.0.487`.
+Phase 6 capability implementation has not started.
+
+The next capability slice may not mix package versions. npm currently exposes
+`@remotion/transitions` only through `4.0.477`, and that package depends on
+Remotion internals at exact `4.0.477`. Until a supported aligned release exists
+or the authority is explicitly revised with verified compatibility evidence,
+effects, transitions, layout utilities, presets, text fitting, and the
+capability showcase remain uninstalled and unimplemented.

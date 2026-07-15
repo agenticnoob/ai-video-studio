@@ -16,8 +16,9 @@ topic -> research/existing assets -> narration/VoxCPM -> component inventory
 -> Remotion `<Still>` covers -> publishing notes
 ```
 
-Roadmap status: Phase 5 existing-asset supply is complete. Phase 6 Remotion
-capability core is next and has not started.
+Roadmap status: Phase 5 existing-asset supply is complete. The Phase 6 version
+gate is complete with every currently installed Remotion package exact
+`4.0.489`. Phase 6 capability implementation has not started.
 
 ## Skill Stack
 
@@ -29,6 +30,10 @@ capability core is next and has not started.
   `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md`
   before final VoxCPM narration, voice-clone text, control instructions, or
   expression tags.
+- Run `npm run smoke:remotion-version-gate` before Phase 6 capability work.
+  Do not add mixed Remotion versions: npm currently publishes
+  `@remotion/transitions` only through `4.0.477`, while the verified installed
+  closure is exact `4.0.489`.
 
 ## Start Here
 
@@ -278,6 +283,7 @@ Use shared tools for deterministic work in future samples:
   `scripts/lib/producer-audio/`
 - focused audio verification: `npm run smoke:producer-audio-direct-voxcpm` and
   `npm run smoke:producer-audio-tools`
+- exact Remotion dependency boundary: `npm run smoke:remotion-version-gate`
 - mechanical validation: `npm run producer:validate -- --module <validation-module>`
 - manifest-driven review stills: `npm run producer:stills -- --composition <composition-id>`
 - metadata-bundled MP4 and both code-rendered covers:
@@ -342,6 +348,7 @@ closing a production slice:
 npm run smoke:agent-producer-architecture
 npm run smoke:skill-alignment
 npm run smoke:producer-assets
+npm run smoke:remotion-version-gate
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npx tsc --noEmit --pretty false'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run lint'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run build'

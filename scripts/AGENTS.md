@@ -21,6 +21,7 @@ and architecture guards. There is no supported Web route smoke surface.
 | Asset supply | `lib/producer-assets/`, `producer-assets.mjs` | Localizes manual/URL media, checksums, probes, and normalizes. |
 | Asset preflight | `preflight-producer-assets.mjs` | Fails before maintained still/render jobs on invalid assets. |
 | Unified render | `lib/producer-render.ts`, `render-producer-sample.mjs` | Plans/runs MP4, metadata, and two code-rendered covers. |
+| Remotion version gate | `remotion-version-gate-smoke.mjs` | Requires exact `4.0.489` for the installed Remotion closure and keeps capability packages absent. |
 | Architecture guards | `agent-producer-*-smoke.mjs`, `skill-alignment-smoke.mjs` | Product boundary checks. |
 
 Older composition-specific generators and smokes are frozen maintenance
@@ -37,6 +38,8 @@ references. Do not use them as future Producer scaffolds.
 - Keep private voices and generated media out of source control.
 - Treat registry entries marked `frozen-reference` as discovery metadata only.
 - Keep `ProducerAssetManifest` output deterministic and free of private source paths.
+- Keep every installed Remotion package at exact `4.0.489`; do not mix the
+  upstream-lagging `@remotion/transitions@4.0.477` closure into this baseline.
 
 ## ANTI-PATTERNS
 
@@ -52,5 +55,6 @@ references. Do not use them as future Producer scaffolds.
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:agent-producer-web-removal'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:producer-audio-tools'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:producer-assets'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:remotion-version-gate'
 git diff --check
 ```

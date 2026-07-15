@@ -109,7 +109,12 @@ are complete. A strict maintained manifest plus asset manifest, manual/URL
 localization, checksum/provenance/license/media metadata, FFmpeg normalization,
 preflight, validation, review-frame, and unified render commands now own every
 future composition. Current registry entries remain `frozen-reference`. Phase
-6 Remotion capability core is next and has not started.
+6 version gate is complete: all currently installed Remotion packages are
+exact `4.0.489` and the retained render surface is verified. Phase 6 capability
+implementation has not started; effects, transitions, layout utilities, text
+fitting, presets, and the showcase remain absent. npm currently publishes
+`@remotion/transitions` only through `4.0.477`, so mixed-version installation is
+not an accepted workaround.
 
 ## Supporting Authorities
 

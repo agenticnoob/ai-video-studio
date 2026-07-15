@@ -23,6 +23,19 @@ const inventory = JSON.parse(read(inventoryPath));
 
 assert.equal(inventory.version, 1, "inventory version");
 assert.deepEqual(inventory.completedPhases, [0, 1, 2, 3, 4, 5], "completed roadmap phases");
+assert.deepEqual(
+  inventory.completedPhaseSlices,
+  [
+    {
+      phase: 6,
+      slice: "version-gate",
+      status: "complete",
+      reason:
+        "All currently installed Remotion packages are locked to exact 4.0.489 and verified before capability packages are admitted.",
+    },
+  ],
+  "completed roadmap phase slices",
+);
 const completedPhases = new Set(inventory.completedPhases);
 assert.equal(
   inventory.authority.skill,
@@ -120,6 +133,10 @@ assert(read("docs/ITERATION_STATUS.md").includes("Phase 0"));
 assert(read("docs/ITERATION_STATUS.md").includes("Phase 4"));
 assert(read("docs/ITERATION_STATUS.md").includes("Phase 5"));
 assert(read("docs/ITERATION_STATUS.md").includes("Phase 6"));
+assert(read("docs/ITERATION_STATUS.md").includes("Phase 6 version gate is complete."));
+assert(
+  read("docs/ITERATION_STATUS.md").includes("Phase 6 capability implementation has not started."),
+);
 assert(read("docs/VISUAL_RECIPE_ROADMAP.md").includes("Superseded"));
 
 const packageJson = JSON.parse(read("package.json"));
@@ -132,6 +149,7 @@ for (const command of [
   "producer:render",
   "smoke:producer-os",
   "smoke:producer-assets",
+  "smoke:remotion-version-gate",
 ]) {
   assert(packageJson.scripts[command], `package.json must expose ${command}`);
 }

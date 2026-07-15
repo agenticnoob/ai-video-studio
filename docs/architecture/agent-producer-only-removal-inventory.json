@@ -1,6 +1,14 @@
 {
   "version": 1,
   "completedPhases": [0, 1, 2, 3, 4, 5],
+  "completedPhaseSlices": [
+    {
+      "phase": 6,
+      "slice": "version-gate",
+      "status": "complete",
+      "reason": "All currently installed Remotion packages are locked to exact 4.0.489 and verified before capability packages are admitted."
+    }
+  ],
   "decisionDate": "2026-07-15",
   "authority": {
     "skill": ".agents/skills/ai-video-studio-agent-producer/",

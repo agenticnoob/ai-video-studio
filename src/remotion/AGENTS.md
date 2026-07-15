@@ -38,6 +38,9 @@ src/remotion/
 - Keep motion frame-driven with Remotion APIs.
 - Use fixed composition bounds and deterministic local assets.
 - Keep every maintained non-code asset manifest-backed and preflighted before stills.
+- Keep the installed Remotion dependency closure exact at `4.0.489` and run
+  `smoke:remotion-version-gate` before capability work. Phase 6 effects,
+  transitions, layout utilities, presets, and showcase code have not started.
 - Build topic data, narration, and scene order inside the dedicated
   composition.
 - Use `standalone-video/caption-types` for future Producer captions.
@@ -56,5 +59,6 @@ src/remotion/
 ```bash
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npx tsc --noEmit --pretty false'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npx remotion compositions src/remotion/index.ts'
+npm run smoke:remotion-version-gate
 npm run producer:stills -- --composition <composition-id>
 ```

@@ -21,6 +21,13 @@ or voiceover work, load `rules/subtitles.md`; for long pauses or audio gaps,
 load `rules/silence-detection.md`; for dense information scenes, load
 `rules/video-layout.md`.
 
+The current repository version gate locks every installed `remotion` and
+`@remotion/*` package to exact `4.0.489`. Run
+`npm run smoke:remotion-version-gate` before capability work. Do not install a
+mixed dependency closure: npm currently publishes `@remotion/transitions` only
+through `4.0.477`, whose internal Remotion dependencies are exact `4.0.477`.
+Phase 6 capability packages and showcase code have not been admitted yet.
+
 ## New project setup
 
 When in an empty folder or workspace with no existing Remotion project, scaffold one using:
@@ -121,7 +128,7 @@ Assets can be also referenced as remote URLs:
 import { Video } from "@remotion/media";
 
 export const MyComposition = () => {
-  return <Video src="https://remotion.media/video.mp4" />
+  return <Video src="https://remotion.media/video.mp4" />;
 };
 ```
 
@@ -150,7 +157,7 @@ export const Subtitle = () => {
 };
 
 const Main = () => {
-  const {fps} = useVideoConfig();
+  const { fps } = useVideoConfig();
 
   return (
     <AbsoluteFill>
@@ -165,7 +172,7 @@ const Main = () => {
       </Sequence>
     </AbsoluteFill>
   );
-}
+};
 ```
 
 The width, height, fps, and duration of a video is defined in `src/Root.tsx`:
@@ -194,9 +201,10 @@ Metadata can also be calculated dynamically:
 import { Composition, CalculateMetadataFunction } from "remotion";
 import { MyComposition, MyCompositionProps } from "./MyComposition";
 
-const calculateMetadata: CalculateMetadataFunction<
-  MyCompositionProps
-> = async ({ props, abortSignal }) => {
+const calculateMetadata: CalculateMetadataFunction<MyCompositionProps> = async ({
+  props,
+  abortSignal,
+}) => {
   const data = await fetch(`https://api.example.com/video/${props.videoId}`, {
     signal: abortSignal,
   }).then((res) => res.json());

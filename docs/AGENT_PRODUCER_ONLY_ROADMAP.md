@@ -1,6 +1,7 @@
 # Agent Producer-Only Roadmap
 
-Status: Phase 0 through Phase 5 complete; Phase 6 has not started.
+Status: Phase 0 through Phase 5 complete; the Phase 6 version gate is complete;
+Phase 6 capability implementation has not started.
 
 Decision date: 2026-07-15.
 
@@ -720,10 +721,12 @@ Implementation evidence:
   with deterministic code fallbacks verified through an isolated Remotion still
 - focused asset/OS/validation and full Docker-first verification are recorded
   in `docs/superpowers/plans/2026-07-16-agent-producer-assets-phase-5.md`
-- Phase 6 dependency upgrades, effects/transitions/layout utilities, text fit,
-  capability presets, and showcase work remain unstarted
+- the Phase 6 version gate is complete; effects/transitions/layout utilities,
+  text fit, capability presets, and showcase work remain unstarted
 
 ## 11. Phase 6 - Remotion Capability Core
+
+Status: version gate complete; capability implementation has not started.
 
 ### Goal
 
@@ -732,6 +735,8 @@ as a React timeline.
 
 ### Version gate
 
+Status: complete and verified on 2026-07-16.
+
 Before adding packages:
 
 - identify the minimum version for selected APIs
@@ -739,6 +744,29 @@ Before adding packages:
 - remove the caret from `@remotion/three`
 - verify Docker typecheck, lint, build, composition list, and representative
   stills before capability work
+
+Version-gate result:
+
+- the selected API floor is Remotion `4.0.487`, required by
+  `roughenEdges()`; `paper()` requires `4.0.486`, while `createEffect()` and
+  `pixelate()` require `4.0.479`
+- every currently installed direct and lockfile `remotion` / `@remotion/*`
+  package is exact `4.0.489`; the previous `@remotion/three` caret is removed
+- the same non-frozen primitive fallback fixture is rendered and reviewed
+  before and after the upgrade; no finished composition is rendered or changed
+- focused version, architecture, skill, Producer OS, asset, validation, and
+  review checks plus Docker-first gates are recorded in
+  `docs/superpowers/plans/2026-07-16-remotion-version-gate-phase-6.md`
+- `@remotion/effects`, `@remotion/transitions`, `@remotion/layout-utils`,
+  `@remotion/light-leaks`, presets, text fitting, and the capability showcase
+  remain absent
+- `@remotion/transitions` remains published only through `4.0.477` on npm and
+  depends on exact `4.0.477` Remotion internals; mixed versions, npm overrides,
+  and lowering the capability target are not accepted workarounds
+
+The next capability slice has not started. It must first obtain a supported
+exact-version resolution for transitions or explicitly revise this authority
+using verified compatibility evidence.
 
 Official references:
 
