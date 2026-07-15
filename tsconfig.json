@@ -29,5 +29,11 @@
     "remotion/webpack-override.mjs",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "remotion.config.ts", "scripts-tmp-*.mjs", "scripts-tmp-*.ts"]
+  "exclude": [
+    "node_modules",
+    "public/generated",
+    "remotion.config.ts",
+    "scripts-tmp-*.mjs",
+    "scripts-tmp-*.ts"
+  ]
 }

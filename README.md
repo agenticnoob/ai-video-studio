@@ -32,17 +32,18 @@ still, and render surfaces.
 
 ## Current Transition
 
-Legacy Web and F5 code remains on disk while the phased removal roadmap is
-executed. It is unsupported and must not be used for new work.
+The legacy Web video product remains on disk while the phased removal roadmap
+is executed. It is unsupported and must not be used for new work.
 
 The direct VoxCPM Producer runtime under `scripts/lib/producer-audio/` now owns
 future narration transport, PCM WAV processing, duration-derived captions, and
-scene recovery without starting Next. Phase 2 still owns F5 deletion and Phase
-3 still owns the Web product line; neither deletion phase is part of Phase 1.
+scene recovery without starting Next. Phase 2 removed the F5 narration service,
+adapters, scripts, configuration, and current provider documentation.
+Phase 3 still owns the unsupported Web product line and has not started.
 
 Existing finished compositions remain frozen read-only references. Historical
-`provider: "f5-tts"` metadata in their generated audio files stays truthful;
-it does not authorize new F5 generation.
+`provider: "f5-tts"` metadata in their generated audio files stays truthful; it
+does not authorize new F5 generation.
 
 ## Production Rules
 

@@ -11,7 +11,6 @@ const rendererSource = readFileSync(
   "src/remotion/AiConceptsForBeginners/AiConceptsForBeginners.tsx",
   "utf8",
 );
-const generatorSource = readFileSync("scripts/generate-ai-concepts-for-beginners.mjs", "utf8");
 const scriptModule = await import("../src/remotion/AiConceptsForBeginners/script.js");
 const dataModule = await import("../src/remotion/AiConceptsForBeginners/data.js");
 const audioModule = await import("../src/remotion/AiConceptsForBeginners/audio.generated.js");
@@ -74,12 +73,6 @@ assert(
   !rendererSource.includes("animation:") && !rendererSource.includes("transition:"),
   "Render-critical CSS animation and transition styles are forbidden.",
 );
-assert(
-  generatorSource.includes('provider: process.env.TTS_PROVIDER || "voxcpm"') &&
-    generatorSource.includes("voiceClone"),
-  "The generator must use the VoxCPM voice-clone path by default.",
-);
-
 const scenes = dataModule.aiConceptsForBeginnersData.scenes;
 const tracks = audioModule.aiConceptsForBeginnersAudio;
 assert(scenes.length === 13, "Expected thirteen educational scenes.");

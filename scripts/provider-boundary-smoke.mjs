@@ -82,6 +82,34 @@ const assertTtsRequestRejectsLegacyProvider = (schema) => {
   }
 };
 
+const assertTtsRequestRejectsRemovedF5Provider = (schema) => {
+  for (const provider of ["f5", "f5-tts"]) {
+    const result = schema.safeParse({
+      plan: {
+        title: "Provider boundary",
+        brief: "Provider boundary",
+        language: "zh",
+        segments: [
+          {
+            id: "segment-1",
+            order: 1,
+            purpose: "Say hello",
+            templateId: "spotlight",
+            templateReason: "A focused card is enough for this smoke.",
+            narration: { text: "你好，这是 VoxCPM 的测试。" },
+            visualBrief: "Show a focused card.",
+          },
+        ],
+      },
+      provider,
+      segmentId: "segment-1",
+    });
+    if (result.success) {
+      fail(`ttsRequestSchema accepted removed provider ${provider}.`);
+    }
+  }
+};
+
 const assertVoxcpmProviderIsAccepted = (schema) => {
   const result = schema.safeParse({
     mode: "brief",
@@ -130,10 +158,11 @@ const run = async () => {
 
   assertLegacyProviderIsRejected(stagedGenerateRequestSchema);
   assertTtsRequestRejectsLegacyProvider(ttsRequestSchema);
+  assertTtsRequestRejectsRemovedF5Provider(ttsRequestSchema);
   assertVoxcpmProviderIsAccepted(stagedGenerateRequestSchema);
   assertTtsRequestAcceptsVoxcpmProvider(ttsRequestSchema);
 
-  withoutEnv(["TTS_PROVIDER", "AI_VIDEO_STUDIO_TTS_PROVIDER", "F5_TTS_BASE_URL"], () => {
+  withoutEnv(["TTS_PROVIDER", "AI_VIDEO_STUDIO_TTS_PROVIDER"], () => {
     const provider = readTtsProviderId();
     if (provider !== "voxcpm") {
       fail(`Expected default TTS provider voxcpm, received ${provider}.`);
@@ -145,12 +174,25 @@ const run = async () => {
       readTtsProviderId();
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      if (!message.includes("f5-tts, voxcpm")) {
+      if (!message.includes("voxcpm")) {
         fail(`Expected supported-provider error, received: ${message}`);
       }
       return;
     }
     fail('readTtsProviderId accepted TTS_PROVIDER="minimax".');
+  });
+
+  await withEnv({ TTS_PROVIDER: "f5-tts" }, () => {
+    try {
+      readTtsProviderId();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (!message.includes("voxcpm")) {
+        fail(`Expected removed-provider error, received: ${message}`);
+      }
+      return;
+    }
+    fail('readTtsProviderId accepted removed provider "f5-tts".');
   });
 
   await withEnv({ TTS_PROVIDER: "voxcpm" }, () => {
@@ -204,9 +246,8 @@ const run = async () => {
     }
   });
 
-  const { createVoiceReferenceId, writeVoiceReferenceFile } = await import(
-    "../src/lib/tts/voice-references.js"
-  );
+  const { createVoiceReferenceId, writeVoiceReferenceFile } =
+    await import("../src/lib/tts/voice-references.js");
 
   const referenceId = createVoiceReferenceId("wav");
   await writeVoiceReferenceFile({
@@ -224,23 +265,12 @@ const run = async () => {
   });
 
   if (voiceCloneSelection.provider !== "voxcpm") {
-    fail(`Expected voice clone to preserve provider voxcpm, received ${voiceCloneSelection.provider}.`);
+    fail(
+      `Expected voice clone to preserve provider voxcpm, received ${voiceCloneSelection.provider}.`,
+    );
   }
   if (!voiceCloneSelection.voiceCloneReference) {
     fail("Expected voice clone selection to include a resolved reference.");
-  }
-
-  const explicitF5CloneSelection = await resolveTtsProvider({
-    provider: "f5-tts",
-    voiceClone: {
-      enabled: true,
-      referenceId,
-      referenceText: "This is the reference text.",
-    },
-  });
-
-  if (explicitF5CloneSelection.provider !== "f5-tts") {
-    fail(`Expected explicit f5-tts clone provider, received ${explicitF5CloneSelection.provider}.`);
   }
 
   await withEnv({ VOXCPM_TTS_BASE_URL: "" }, async () => {

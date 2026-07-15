@@ -13,13 +13,9 @@ const rendererSource = readFileSync(
   "src/remotion/AiDailyNewsBrief20260708/AiDailyNewsBrief20260708.tsx",
   "utf8",
 );
-const generatorSource = readFileSync(
-  "scripts/generate-ai-daily-news-brief-2026-07-08.mjs",
-  "utf8",
-);
-
 const dataModule = await import("../src/remotion/AiDailyNewsBrief20260708/data.js");
 const audioModule = await import("../src/remotion/AiDailyNewsBrief20260708/audio.generated.js");
+const scriptModule = await import("../src/remotion/AiDailyNewsBrief20260708/script.js");
 const typesModule = await import("../src/remotion/AiDailyNewsBrief20260708/types.js");
 
 const {
@@ -30,8 +26,12 @@ const {
   AI_DAILY_NEWS_BRIEF_20260708_PROFILE_ID,
 } = typesModule;
 const { aiDailyNewsBrief20260708Data } = dataModule;
+const serializedData = JSON.stringify(aiDailyNewsBrief20260708Data);
+const serializedScript = JSON.stringify(scriptModule.aiDailyNewsBrief20260708NarrationBeats);
 const { aiDailyNewsBrief20260708Audio } = audioModule;
-const audioBySceneId = new Map(aiDailyNewsBrief20260708Audio.map((track) => [track.sceneId, track]));
+const audioBySceneId = new Map(
+  aiDailyNewsBrief20260708Audio.map((track) => [track.sceneId, track]),
+);
 
 assert(
   AI_DAILY_NEWS_BRIEF_20260708_COMPOSITION_ID === "AiDailyNewsBrief20260708",
@@ -136,8 +136,7 @@ for (const asset of aiDailyNewsBrief20260708Data.assets.evidenceAssets) {
     `${asset.id} should use the local generated asset prefix.`,
   );
   assert(
-    asset.captureStatus === "captured-screenshot" ||
-      asset.captureStatus === "source-card-fallback",
+    asset.captureStatus === "captured-screenshot" || asset.captureStatus === "source-card-fallback",
     `${asset.id} should declare capture status.`,
   );
   if (asset.captureStatus === "source-card-fallback") {
@@ -179,13 +178,6 @@ assert(
   !aiDailyNewsBrief20260708Audio.some((track) => track.provider === "local-silent-fallback"),
   "AI daily news brief must not use local silent fallback audio.",
 );
-assert(
-  generatorSource.includes("voiceClone") &&
-    generatorSource.includes("AI_DAILY_NEWS_BRIEF_VOICE_REFERENCE_AUDIO") &&
-    generatorSource.includes("AI_DAILY_NEWS_BRIEF_VOICE_REFERENCE_TEXT"),
-  "AI daily news brief generator should pass voiceClone using the local reference voice.",
-);
-
 const gpt56Audio = audioBySceneId.get("gpt56");
 assert(gpt56Audio, "gpt56 should have generated audio metadata.");
 assert(
@@ -245,13 +237,11 @@ for (const [sceneId, primitiveName] of [
   );
 }
 
-for (const requiredPhrase of [
-  "受限预览走向更广泛发布",
-  "白宫否认需要政府批准",
-  "Reuters",
-  "OpenAI",
-]) {
-  assert(generatorSource.includes(requiredPhrase), `Generator should include phrase: ${requiredPhrase}`);
+for (const requiredPhrase of ["受限预览", "白宫方面也否认", "OpenAI"]) {
+  assert(
+    serializedData.includes(requiredPhrase) || serializedScript.includes(requiredPhrase),
+    `Frozen data or script should include phrase: ${requiredPhrase}`,
+  );
 }
 
 const requiredFiles = [
@@ -261,7 +251,6 @@ const requiredFiles = [
   "src/remotion/AiDailyNewsBrief20260708/script.ts",
   "src/remotion/AiDailyNewsBrief20260708/data.ts",
   "src/remotion/AiDailyNewsBrief20260708/audio.generated.ts",
-  "scripts/generate-ai-daily-news-brief-2026-07-08.mjs",
 ];
 
 for (const requiredFile of requiredFiles) {

@@ -1,6 +1,6 @@
 # Agent Producer-Only Roadmap
 
-Status: Phase 0 and Phase 1 complete; Phase 2 has not started.
+Status: Phase 0 through Phase 2 complete; Phase 3 has not started.
 
 Decision date: 2026-07-15.
 
@@ -378,9 +378,11 @@ Implementation evidence:
 - a second live run reused both scene records without invoking its request
   callback
 - changed-file lint, Prettier, forbidden scans, and `git diff --check` pass
-- Phase 2 F5 files and Phase 3 Web routes remain untouched
+- Phase 2 provider files and Phase 3 Web routes remained untouched in Phase 1
 
 ## 7. Phase 2 - Remove F5 Generation Completely
+
+Status: complete and verified on 2026-07-16.
 
 ### Goal
 
@@ -422,6 +424,25 @@ composition metadata as historical truth.
 - the only allowed active-tree `f5-tts` matches are frozen composition metadata
   documented by an explicit allowlist
 - old compositions still list successfully when their assets are present
+
+Implementation evidence:
+
+- runtime service, helper scripts, compose overlays, application and Producer
+  adapters, package commands, old executable generator entrypoints, and current
+  provider/handoff docs are removed
+- retained Web TTS and staged smoke code accepts VoxCPM only while Phase 3
+  remains responsible for deleting the Web product line
+- environment templates, base/prod Compose topology, and production wrappers
+  contain no removed-provider service or configuration
+- architecture and provider-boundary RED checks failed on the old state and
+  pass after deletion
+- direct VoxCPM, Producer audio tooling, Producer validation, skill alignment,
+  and affected frozen-composition contract smokes pass
+- Docker typecheck, build, and Remotion composition listing pass
+- changed-file ESLint and Prettier, shell and Compose config checks, the Phase 2
+  forbidden scan, artifact/frozen-boundary review, and `git diff --check` pass
+- repository-wide lint remains at the pre-existing 75-error and 2-warning
+  baseline; no changed Phase 2 file appears in that failure set
 
 ## 8. Phase 3 - Remove The Web Video Product Line
 

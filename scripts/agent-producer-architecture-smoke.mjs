@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import console from "node:console";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
@@ -11,11 +12,18 @@ const actions = new Set(["retain", "extract-then-delete", "delete", "archive", "
 
 const absolute = (relativePath) => path.join(root, relativePath);
 const read = (relativePath) => readFileSync(absolute(relativePath), "utf8");
+const trackedPaths = (pathspec) =>
+  execFileSync("git", ["ls-files", "--", pathspec], { cwd: root, encoding: "utf8" })
+    .trim()
+    .split("\n")
+    .filter((relativePath) => relativePath && existsSync(absolute(relativePath)));
 
 assert(existsSync(absolute(inventoryPath)), `${inventoryPath} must exist`);
 const inventory = JSON.parse(read(inventoryPath));
 
 assert.equal(inventory.version, 1, "inventory version");
+assert.deepEqual(inventory.completedPhases, [0, 1, 2], "completed roadmap phases");
+const completedPhases = new Set(inventory.completedPhases);
 assert.equal(
   inventory.authority.skill,
   ".agents/skills/ai-video-studio-agent-producer/",
@@ -49,7 +57,15 @@ for (const category of categories) {
     assert.equal(typeof entry.reason, "string", `${entry.id} reason`);
     assert(entry.reason.length >= 12, `${entry.id} reason must be specific`);
     if (entry.pathKind === "path") {
-      assert(existsSync(absolute(entry.path)), `${entry.id} path must exist: ${entry.path}`);
+      if (entry.action === "delete" && completedPhases.has(entry.phase)) {
+        assert.equal(
+          trackedPaths(entry.path).length,
+          0,
+          `${entry.id} must have no tracked path: ${entry.path}`,
+        );
+      } else {
+        assert(existsSync(absolute(entry.path)), `${entry.id} path must exist: ${entry.path}`);
+      }
     }
   }
 }
@@ -115,6 +131,64 @@ for (const phrase of [
     !producerSkill.includes(phrase),
     `Agent Producer skill must not include ${JSON.stringify(phrase)}`,
   );
+}
+
+const phase2DeletedPaths = [
+  "services/f5-tts",
+  "scripts/f5-tts",
+  "docker-compose.f5.yml",
+  "docker-compose.f5.gpu.yml",
+  "scripts/f5-tts-next-smoke.sh",
+  "scripts/f5-tts-real.sh",
+  "scripts/f5-tts-smoke.sh",
+  "scripts/f5-tts-staged-smoke.mjs",
+  "scripts/lib/producer-audio/providers/f5.ts",
+  "src/lib/tts/f5.ts",
+  "docs/HANDOFF_F5_TTS_CAPTIONS.md",
+  "docs/providers/f5-tts-service-plan.md",
+  "docs/providers/f5-tts.md",
+  "scripts/generate-ai-concepts-for-beginners.mjs",
+  "scripts/generate-ai-daily-news-brief-2026-07-08.mjs",
+  "scripts/generate-ai-daily-news-brief-2026-07-09.mjs",
+  "scripts/generate-ai-news-strategic-brief-2026-07-09.mjs",
+  "scripts/generate-openai-hardware-news-brief.mjs",
+  "scripts/generate-pixelrag-chinese-standalone.mjs",
+  "scripts/generate-uv-open-source-brief.mjs",
+  "scripts/generate-world-cup-betting-analysis.mjs",
+];
+for (const deletedPath of phase2DeletedPaths) {
+  assert.equal(
+    trackedPaths(deletedPath).length,
+    0,
+    `Phase 2 path must have no tracked files: ${deletedPath}`,
+  );
+}
+
+const phase2RuntimeFiles = [
+  ".env.example",
+  "docker-compose.yml",
+  "docker-compose.prod.yml",
+  "package.json",
+  "scripts/prod.sh",
+  "scripts/prod-build.sh",
+  "scripts/staged-live-smoke.mjs",
+  "scripts/lib/producer-audio/types.ts",
+  "src/lib/tts/config.ts",
+  "src/lib/tts/synthesis.ts",
+];
+const forbiddenPhase2RuntimePatterns = [
+  ["F5 environment key", /F5_TTS_/],
+  ["F5 provider literal", /["']f5-tts["']/],
+  ["F5 provider import", /(?:from|import\()["'][^"']*\/f5["']/],
+  ["F5 Producer request planner", /createF5ProducerRequestPlan/],
+  ["F5 synthesis", /synthesizeF5Speech/],
+  ["F5 config reader", /readF5TtsConfig/],
+];
+for (const sourcePath of phase2RuntimeFiles) {
+  const source = read(sourcePath);
+  for (const [label, pattern] of forbiddenPhase2RuntimePatterns) {
+    assert(!pattern.test(source), `${sourcePath} must not contain ${label}`);
+  }
 }
 
 const futureProducerAudioPaths = [
@@ -193,24 +267,10 @@ const legacyDocs = [
   "docs/superpowers/specs/2026-06-22-asset-aware-recipes-phase-5-design.md",
   "docs/superpowers/specs/2026-06-22-planner-recipe-selection-phase-4-design.md",
 ];
-const f5RemovalBanner = [
-  "> Removal target: F5 generation is unsupported. This historical document is",
-  "> retained only until Roadmap Phase 2 deletes F5 services, adapters, scripts,",
-  "> configuration, and current documentation. Do not follow these instructions.",
-].join("\n");
-
 for (const sourcePath of legacyDocs) {
   const archivedPath = path.join("docs/archive/web-product", path.basename(sourcePath));
   assert(!existsSync(absolute(sourcePath)), `${sourcePath} must move out of active docs`);
   assert(existsSync(absolute(archivedPath)), `${archivedPath} must exist`);
-}
-
-for (const f5Doc of [
-  "docs/HANDOFF_F5_TTS_CAPTIONS.md",
-  "docs/providers/f5-tts-service-plan.md",
-  "docs/providers/f5-tts.md",
-]) {
-  assert(read(f5Doc).includes(f5RemovalBanner), `${f5Doc} must include the removal banner`);
 }
 
 console.log("Agent Producer architecture inventory smoke passed.");

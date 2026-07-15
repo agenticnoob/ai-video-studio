@@ -22,7 +22,9 @@ repository contains `.codegraph/`.
 - Remotion Studio and CLI are the preview, still, and render surfaces.
 - Existing finished compositions and their generated provider metadata are
   frozen read-only references.
-- Legacy Web/F5 code still exists during the migration but is unsupported.
+- Legacy Web code still exists during the migration but is unsupported.
+- The F5 narration service, adapters, scripts, config, and current provider docs
+  were removed in Phase 2.
 - The direct VoxCPM Producer runtime under `scripts/lib/producer-audio/` owns
   future narration without starting Next or using a repository HTTP route.
 
@@ -64,7 +66,7 @@ repository contains `.codegraph/`.
 - Do not invoke Web prompt generation, `VideoProject`, storyboard planning,
   segment regeneration, editor export, progress APIs, or Lambda rendering for
   new work.
-- Do not generate, configure, select, or fall back to F5.
+- Do not restore F5, a second narration provider, or a fallback path.
 - Do not invoke image generation or video generation for scenes, evidence,
   textures, backgrounds, covers, or promotional assets.
 - Do not modify or regenerate frozen compositions merely to adopt new tooling.

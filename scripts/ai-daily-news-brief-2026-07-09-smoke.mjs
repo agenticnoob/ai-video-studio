@@ -13,10 +13,9 @@ const rendererSource = readFileSync(
   "src/remotion/AiDailyNewsBrief20260709/AiDailyNewsBrief20260709.tsx",
   "utf8",
 );
-const generatorSource = readFileSync("scripts/generate-ai-daily-news-brief-2026-07-09.mjs", "utf8");
-
 const dataModule = await import("../src/remotion/AiDailyNewsBrief20260709/data.js");
 const audioModule = await import("../src/remotion/AiDailyNewsBrief20260709/audio.generated.js");
+const scriptModule = await import("../src/remotion/AiDailyNewsBrief20260709/script.js");
 const typesModule = await import("../src/remotion/AiDailyNewsBrief20260709/types.js");
 
 const {
@@ -27,6 +26,8 @@ const {
   AI_DAILY_NEWS_BRIEF_20260709_PROFILE_ID,
 } = typesModule;
 const { aiDailyNewsBrief20260709Data } = dataModule;
+const serializedData = JSON.stringify(aiDailyNewsBrief20260709Data);
+const serializedScript = JSON.stringify(scriptModule.aiDailyNewsBrief20260709NarrationBeats);
 const { aiDailyNewsBrief20260709Audio } = audioModule;
 const audioBySceneId = new Map(
   aiDailyNewsBrief20260709Audio.map((track) => [track.sceneId, track]),
@@ -217,12 +218,6 @@ for (let index = 1; index < gpt56Audio.captions.cues.length; index += 1) {
   );
 }
 
-assert(
-  generatorSource.includes("voiceClone") &&
-    generatorSource.includes("AI_DAILY_NEWS_BRIEF_20260709_VOICE_REFERENCE_AUDIO") &&
-    generatorSource.includes("AI_DAILY_NEWS_BRIEF_20260709_VOICE_REFERENCE_TEXT"),
-  "AI daily news brief 2026-07-09 generator should pass voiceClone using the local reference voice.",
-);
 for (const requiredPhrase of [
   "GPT-5.6",
   "Meta Iris",
@@ -233,8 +228,8 @@ for (const requiredPhrase of [
   "硬资产",
 ]) {
   assert(
-    generatorSource.includes(requiredPhrase),
-    `Generator should include phrase: ${requiredPhrase}`,
+    serializedData.includes(requiredPhrase) || serializedScript.includes(requiredPhrase),
+    `Frozen data or script should include phrase: ${requiredPhrase}`,
   );
 }
 
@@ -245,7 +240,6 @@ const requiredFiles = [
   "src/remotion/AiDailyNewsBrief20260709/script.ts",
   "src/remotion/AiDailyNewsBrief20260709/data.ts",
   "src/remotion/AiDailyNewsBrief20260709/audio.generated.ts",
-  "scripts/generate-ai-daily-news-brief-2026-07-09.mjs",
 ];
 
 for (const requiredFile of requiredFiles) {

@@ -8,7 +8,7 @@ const SHOULD_RENDER = ["1", "true", "yes", "on"].includes(
   (process.env.STAGED_LIVE_SMOKE_RENDER || "").toLowerCase(),
 );
 
-const requiredEnv = ["DEEPSEEK_API_KEY", "F5_TTS_BASE_URL"];
+const requiredEnv = ["DEEPSEEK_API_KEY", "VOXCPM_TTS_BASE_URL"];
 
 const fail = (message) => {
   throw new Error(message);
@@ -90,8 +90,8 @@ const assertSegmentNarration = async (segment) => {
   if (!audio) {
     fail(`Missing narration audio for ${segment.id}`);
   }
-  if (audio.provider !== "f5-tts") {
-    fail(`Expected ${segment.id} provider f5-tts, received ${audio.provider}`);
+  if (audio.provider !== "voxcpm") {
+    fail(`Expected ${segment.id} provider voxcpm, received ${audio.provider}`);
   }
   if (typeof audio.src !== "string" || !audio.src.startsWith("/api/tts/assets/")) {
     fail(`Unexpected ${segment.id} audio src: ${audio.src}`);
@@ -125,8 +125,8 @@ const assertDiagnostics = (diagnostics, segmentCount) => {
   if (diagnostics.captionSegmentCount < 1) {
     fail("Expected diagnostics.captionSegmentCount >= 1");
   }
-  if (!diagnostics.narrationProviders?.includes("f5-tts")) {
-    fail(`Expected diagnostics.narrationProviders to include f5-tts`);
+  if (!diagnostics.narrationProviders?.includes("voxcpm")) {
+    fail(`Expected diagnostics.narrationProviders to include voxcpm`);
   }
 };
 
@@ -177,9 +177,9 @@ const run = async () => {
     method: "POST",
     body: JSON.stringify({
       mode: "brief",
-      provider: "f5-tts",
+      provider: "voxcpm",
       brief:
-        "Explain how a local AI video studio turns a brief into storyboard planning, F5 narration, template compilation, preview, and export. Show the workflow, a terminal smoke check, and a delivery recap.",
+        "Explain how a local AI video studio turns a brief into storyboard planning, VoxCPM narration, template compilation, preview, and export. Show the workflow, a terminal smoke check, and a delivery recap.",
     }),
   });
 
@@ -188,8 +188,9 @@ const run = async () => {
     fail("Response did not include project.segments");
   }
   assertDiagnostics(body.diagnostics, segments.length);
-  const expandedTechnicalExplainerRecipeSectionCount =
-    assertTechnicalExplainerRecipeSections(body.project);
+  const expandedTechnicalExplainerRecipeSectionCount = assertTechnicalExplainerRecipeSections(
+    body.project,
+  );
 
   for (const segment of segments) {
     await assertSegmentNarration(segment);

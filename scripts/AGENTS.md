@@ -18,13 +18,11 @@ Actions workflow.
 | Metadata-bundled render | `render-video.sh` | Render mp4 + JSON metadata to `out/<slug>/`. |
 | Prod start | `prod.sh`, `prod-build.sh` | Requires `.env.prod`; uses `web-prod`. |
 | Remotion browser | `ensure-remotion-browser.mjs` | Container startup preflight. |
-| Real F5 runtime | `f5-tts-real.sh` | GPU overlay and real model mode. |
 | TTS: HermesInnerLandscape | `generate-hermes-tts.mjs` | VoxCPM voice-design per-scene TTS for 6-scene AI consciousness video. |
 | TTS: RawThoughtMirror v1 | `generate-raw-thought-tts.mjs` | VoxCPM voice-design per-scene TTS for raw-thought monologue v1. |
 | TTS: RawThoughtMirror v2 | `generate-raw-thought-tts-v2.mjs` | VoxCPM LYY voice-clone per-scene TTS for cinematic v2. |
 | TTS: AiConceptsRedefined | `generate-ai-concepts-redefined-tts.mjs` | VoxCPM LYY voice-clone per-scene TTS for 41-scene conceptual explainer. |
 | TTS: AiDailyNews20260714 | `generate-ai-daily-news-20260714-tts-clone.mjs` | VoxCPM LYY voice-clone per-scene TTS for 8-scene daily news briefing. |
-| F5 smoke | `f5-tts-smoke.sh`, `f5-tts-next-smoke.sh`, `f5-tts-staged-smoke.mjs` | Direct, Next adapter, staged checks. |
 | Staged live | `staged-live-smoke.mjs` | `/api/generate/staged` route check. |
 | Planner/draft smokes | `planner-recipe-manifest-smoke.mjs`, `storyboard-*.mjs` | Boundary regressions. |
 | Recipe smokes | `recipe-*.mjs`, `technical-explainer-template-smoke.mjs` | Visual recipe/template checks. |
@@ -38,7 +36,7 @@ Actions workflow.
 - Source-level smoke checks may assert forbidden snippets when they guard a
   real product boundary.
 - Route-level smokes should make runtime/environment assumptions explicit.
-- Use contract-smoke F5 mode for route checks unless real GPU mode is the task.
+- Use the direct Producer VoxCPM smokes for narration runtime checks.
 
 ## ANTI-PATTERNS
 

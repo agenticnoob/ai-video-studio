@@ -55,8 +55,8 @@ surfaces before adding new abstractions:
 - existing finished samples are read-only references. Do not migrate,
   regenerate, reformat, or modify them merely to adopt new tooling.
 - Historical F5-generated audio and provider metadata may remain attached to
-  frozen compositions, but never generate, configure, select, or fall back to
-  F5 for new work.
+  frozen compositions, but never restore F5, a second provider, or a fallback
+  path for new work.
 - Do not invoke Web generation, an editor workflow, a planner, segment
   regeneration, Web export, image generation, or video generation.
 
@@ -156,8 +156,8 @@ Let measured narration duration own scene timing.
 
 Required narration must fail closed on connection, timeout, reference,
 response-format, empty-audio, or measured-duration errors. Do not select a
-provider, upload a private reference, fall back to F5, or present a silent WAV
-as completed narration.
+provider, upload a private reference, fall back to F5 or another provider, or
+present a silent WAV as completed narration.
 
 ### 5. Assemble The Dedicated Composition
 

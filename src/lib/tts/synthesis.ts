@@ -2,7 +2,6 @@ import type { SegmentCaptions } from "../caption-schema";
 import { runWithConcurrencyLimit } from "../concurrency-limits";
 import type { NarrationAudioFormat } from "../narration-asset-schema";
 import type { TtsProviderId } from "./config";
-import { synthesizeF5Speech } from "./f5";
 import { synthesizeVoxcpmSpeech } from "./voxcpm";
 
 export type SegmentNarrationSynthesisRequest = {
@@ -30,11 +29,5 @@ export type SegmentNarrationSynthesisResult = {
 export const synthesizeSegmentNarration = async (
   request: SegmentNarrationSynthesisRequest,
 ): Promise<SegmentNarrationSynthesisResult> => {
-  return runWithConcurrencyLimit("tts", async () => {
-    if (request.provider === "voxcpm") {
-      return synthesizeVoxcpmSpeech(request);
-    }
-
-    return synthesizeF5Speech(request);
-  });
+  return runWithConcurrencyLimit("tts", async () => synthesizeVoxcpmSpeech(request));
 };

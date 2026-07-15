@@ -55,7 +55,8 @@ These concepts are not supported product surfaces:
 - selected-segment regeneration
 - product upload/binding and editor workflows
 - Web progress, render, export, or Lambda routes
-- F5 generation, selection, service, adapter, or fallback
+- F5 generation, selection, service, adapter, fallback, or restoration; Phase 2
+  removed these executable surfaces
 - provider-neutral narration selection
 - image generation or video generation
 
@@ -80,10 +81,10 @@ Existing finished compositions remain read-only references.
 - Do not migrate or regenerate them solely to adopt new tooling.
 - Keep committed source and generated-audio metadata truthful.
 - Historical `provider: "f5-tts"` metadata is allowed in frozen
-  `audio.generated.ts` files.
+  `audio.generated.ts` files and must remain truthful.
 - Existing local F5-generated audio may still play when available.
 - No current command, service, adapter, config, documentation, or Skill may
-  generate new F5 audio after the removal phases complete.
+  restore F5 or another narration fallback.
 
 ## Ownership Boundary
 
@@ -101,8 +102,8 @@ review, revisions, and promotion decisions.
 The direct VoxCPM Producer runtime under `scripts/lib/producer-audio/` owns
 future narration transport, punctuation splitting, PCM silence trim and WAV
 concatenation, measured duration, captions, local output, and scene recovery.
-It runs without Next. Phase 2 still owns F5 deletion and Phase 3 still owns the
-unsupported Web product line.
+It runs without Next. Phase 2 alternate-provider deletion is complete. Phase 3
+still owns the unsupported Web product line and has not started.
 
 ## Supporting Authorities
 

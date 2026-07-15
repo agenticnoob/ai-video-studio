@@ -45,15 +45,6 @@ export type ProducerVoxcpmRequestPlan =
       readonly referenceAudioPath?: string;
     });
 
-/**
- * Transitional Phase 2 compatibility for the retained F5 adapter file only.
- * Future Producer code uses ProducerVoxcpmRequestPlan instead.
- */
-export type ProducerAudioRequestPlan = {
-  readonly provider: string;
-  readonly body: Record<string, unknown>;
-};
-
 export type ProducerAudioTrack = {
   readonly sceneId: string;
   readonly narration: string;

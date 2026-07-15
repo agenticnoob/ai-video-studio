@@ -13,13 +13,9 @@ const rendererSource = readFileSync(
   "src/remotion/AiNewsStrategicBrief20260709/AiNewsStrategicBrief20260709.tsx",
   "utf8",
 );
-const generatorSource = readFileSync(
-  "scripts/generate-ai-news-strategic-brief-2026-07-09.mjs",
-  "utf8",
-);
-
 const dataModule = await import("../src/remotion/AiNewsStrategicBrief20260709/data.js");
 const audioModule = await import("../src/remotion/AiNewsStrategicBrief20260709/audio.generated.js");
+const scriptModule = await import("../src/remotion/AiNewsStrategicBrief20260709/script.js");
 const typesModule = await import("../src/remotion/AiNewsStrategicBrief20260709/types.js");
 
 const {
@@ -30,6 +26,8 @@ const {
   AI_NEWS_STRATEGIC_BRIEF_20260709_PROFILE_ID,
 } = typesModule;
 const { aiNewsStrategicBrief20260709Data } = dataModule;
+const serializedData = JSON.stringify(aiNewsStrategicBrief20260709Data);
+const serializedScript = JSON.stringify(scriptModule.aiNewsStrategicBrief20260709NarrationBeats);
 const { aiNewsStrategicBrief20260709Audio } = audioModule;
 const audioBySceneId = new Map(
   aiNewsStrategicBrief20260709Audio.map((track) => [track.sceneId, track]),
@@ -192,13 +190,6 @@ assert(
   !aiNewsStrategicBrief20260709Audio.some((track) => track.provider === "local-silent-fallback"),
   "AI strategic news brief must not use local silent fallback audio.",
 );
-assert(
-  generatorSource.includes("voiceClone") &&
-    generatorSource.includes("AI_NEWS_STRATEGIC_BRIEF_VOICE_REFERENCE_AUDIO") &&
-    generatorSource.includes("AI_NEWS_STRATEGIC_BRIEF_VOICE_REFERENCE_TEXT"),
-  "AI strategic news brief generator should pass voiceClone using the local reference voice.",
-);
-
 const gpt56Audio = audioBySceneId.get("gpt56");
 assert(gpt56Audio, "gpt56 should have generated audio metadata.");
 assert(
@@ -243,7 +234,9 @@ if (!modelGateHasCapturedScreenshot) {
     "替代来源卡",
   ]) {
     assert(
-      !rendererSource.includes(forbiddenPhrase) && !generatorSource.includes(forbiddenPhrase),
+      !rendererSource.includes(forbiddenPhrase) &&
+        !serializedData.includes(forbiddenPhrase) &&
+        !serializedScript.includes(forbiddenPhrase),
       `strategic brief must not show fallback/source-card wording: ${forbiddenPhrase}`,
     );
   }
@@ -263,15 +256,10 @@ for (const [sceneId, primitiveName] of [
   );
 }
 
-for (const requiredPhrase of [
-  "23 天 AI 新闻主线",
-  "前沿模型访问权被安全化",
-  "AI 数据中心把电力变成关键变量",
-  "来源索引",
-]) {
+for (const requiredPhrase of ["23 天里", "前沿模型访问权", "AI 数据中心开始影响"]) {
   assert(
-    generatorSource.includes(requiredPhrase),
-    `Generator should include phrase: ${requiredPhrase}`,
+    serializedData.includes(requiredPhrase) || serializedScript.includes(requiredPhrase),
+    `Frozen data or script should include phrase: ${requiredPhrase}`,
   );
 }
 
@@ -282,7 +270,6 @@ const requiredFiles = [
   "src/remotion/AiNewsStrategicBrief20260709/script.ts",
   "src/remotion/AiNewsStrategicBrief20260709/data.ts",
   "src/remotion/AiNewsStrategicBrief20260709/audio.generated.ts",
-  "scripts/generate-ai-news-strategic-brief-2026-07-09.mjs",
 ];
 
 for (const requiredFile of requiredFiles) {

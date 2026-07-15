@@ -13,8 +13,6 @@ const rendererSource = readFileSync(
   "src/remotion/OpenAiHardwareNewsBrief/OpenAiHardwareNewsBrief.tsx",
   "utf8",
 );
-const generatorSource = readFileSync("scripts/generate-openai-hardware-news-brief.mjs", "utf8");
-
 const dataModule = await import("../src/remotion/OpenAiHardwareNewsBrief/data.js");
 const audioModule = await import("../src/remotion/OpenAiHardwareNewsBrief/audio.generated.js");
 const typesModule = await import("../src/remotion/OpenAiHardwareNewsBrief/types.js");
@@ -105,7 +103,10 @@ for (const asset of openAiHardwareNewsBriefData.assets.evidenceAssets) {
 }
 
 for (const scene of openAiHardwareNewsBriefData.scenes) {
-  assert(scene.audioFile.startsWith("generated/openai-hardware-news-brief/"), `${scene.id} audio prefix`);
+  assert(
+    scene.audioFile.startsWith("generated/openai-hardware-news-brief/"),
+    `${scene.id} audio prefix`,
+  );
   assert(scene.captions?.language === "zh-CN", `${scene.id} captions should be Chinese.`);
   assert(scene.durationInFrames >= 120, `${scene.id} duration is too short.`);
   assert(scene.primitiveMap.length >= 3, `${scene.id} should record visual component inventory.`);
@@ -120,32 +121,6 @@ for (const scene of openAiHardwareNewsBriefData.scenes) {
   );
 }
 
-const forbiddenEnglishSourceCardPhrases = [
-  "Technology press connected",
-  "Final specs and availability remain unconfirmed",
-  "Shortcut hardware context",
-  "reported early talks",
-  "Sources: The Verge",
-  "Source: The Guardian",
-  "Source: Work Louder",
-];
-
-for (const phrase of forbiddenEnglishSourceCardPhrases) {
-  assert(!generatorSource.includes(phrase), `Source card generator still contains English phrase: ${phrase}`);
-}
-
-for (const requiredChinesePhrase of [
-  "多家科技媒体把 OpenAI Developers 的预告",
-  "最终规格、价格和供货信息",
-  "报道来源：The Verge / Business Insider",
-  "据 The Guardian 报道",
-]) {
-  assert(
-    generatorSource.includes(requiredChinesePhrase),
-    `Source card generator should include Chinese copy: ${requiredChinesePhrase}`,
-  );
-}
-
 const requiredFiles = [
   "src/remotion/OpenAiHardwareNewsBrief/OpenAiHardwareNewsBrief.tsx",
   "src/remotion/OpenAiHardwareNewsBrief/index.ts",
@@ -153,7 +128,6 @@ const requiredFiles = [
   "src/remotion/OpenAiHardwareNewsBrief/script.ts",
   "src/remotion/OpenAiHardwareNewsBrief/data.ts",
   "src/remotion/OpenAiHardwareNewsBrief/audio.generated.ts",
-  "scripts/generate-openai-hardware-news-brief.mjs",
 ];
 
 for (const requiredFile of requiredFiles) {

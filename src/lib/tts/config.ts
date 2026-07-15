@@ -1,18 +1,7 @@
-import type { NarrationAudioFormat } from "../narration-asset-schema";
 import { TtsConfigError } from "./errors";
 
-export const DEFAULT_F5_TTS_FORMAT: NarrationAudioFormat = "wav";
-
-export const ttsProviderIds = ["f5-tts", "voxcpm"] as const;
+export const ttsProviderIds = ["voxcpm"] as const;
 export type TtsProviderId = (typeof ttsProviderIds)[number];
-
-export type F5TtsConfig = {
-  baseUrl: string;
-  endpoint: string;
-  voiceId?: string;
-  format: NarrationAudioFormat;
-  referenceAudioPath?: string;
-};
 
 export type VoxcpmCloneMode = "clone" | "clone_with_prompt";
 
@@ -68,20 +57,6 @@ const readVoxcpmCloneModeEnv = (): VoxcpmCloneMode => {
   throw new TtsConfigError("VOXCPM_TTS_CLONE_MODE must be one of: clone, clone_with_prompt.");
 };
 
-const readNarrationAudioFormatEnv = (
-  name: string,
-  fallback: NarrationAudioFormat,
-): NarrationAudioFormat => {
-  const rawValue = (process.env[name] ?? "").trim().toLowerCase();
-  if (!rawValue) {
-    return fallback;
-  }
-  if (rawValue === "mp3" || rawValue === "wav" || rawValue === "aac" || rawValue === "m4a") {
-    return rawValue;
-  }
-  throw new TtsConfigError(`${name} must be one of: mp3, wav, aac, m4a.`);
-};
-
 export const readTtsProviderId = (): TtsProviderId => {
   const rawValue = (
     (process.env.TTS_PROVIDER ?? "").trim() ||
@@ -91,40 +66,11 @@ export const readTtsProviderId = (): TtsProviderId => {
   if (!rawValue) {
     return "voxcpm";
   }
-  if (rawValue === "f5" || rawValue === "f5-tts") {
-    return "f5-tts";
-  }
   if (rawValue === "voxcpm" || rawValue === "voxcpm-tts") {
     return "voxcpm";
   }
 
-  throw new TtsConfigError("TTS_PROVIDER must be one of: f5-tts, voxcpm.");
-};
-
-export const readF5TtsConfig = (): F5TtsConfig => {
-  const rawBaseUrl = (process.env.F5_TTS_BASE_URL ?? "").trim();
-  if (!rawBaseUrl) {
-    throw new TtsConfigError("F5_TTS_BASE_URL is not configured.");
-  }
-  if (!/^https?:\/\//.test(rawBaseUrl)) {
-    throw new TtsConfigError("F5_TTS_BASE_URL must start with http:// or https://.");
-  }
-
-  const baseUrl = rawBaseUrl.replace(/\/$/, "");
-  const rawEndpoint = (process.env.F5_TTS_ENDPOINT ?? "").trim();
-  const endpoint = rawEndpoint
-    ? /^https?:\/\//.test(rawEndpoint)
-      ? rawEndpoint
-      : `${baseUrl}/${rawEndpoint.replace(/^\/+/, "")}`
-    : `${baseUrl}/synthesize`;
-
-  return {
-    baseUrl,
-    endpoint,
-    voiceId: (process.env.F5_TTS_VOICE_ID ?? "").trim() || undefined,
-    format: readNarrationAudioFormatEnv("F5_TTS_FORMAT", DEFAULT_F5_TTS_FORMAT),
-    referenceAudioPath: (process.env.F5_TTS_REFERENCE_AUDIO ?? "").trim() || undefined,
-  };
+  throw new TtsConfigError("TTS_PROVIDER must be voxcpm.");
 };
 
 export const readVoxcpmTtsConfig = (): VoxcpmTtsConfig => {

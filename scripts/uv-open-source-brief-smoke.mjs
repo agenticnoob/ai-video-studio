@@ -31,11 +31,14 @@ const componentSource = readFileSync(
   "utf8",
 );
 const evidenceLensSource = readFileSync(
-  path.join(process.cwd(), "src", "remotion", "producer-samples", "evidence-lens", "evidence-lens.tsx"),
-  "utf8",
-);
-const generatorSource = readFileSync(
-  path.join(process.cwd(), "scripts", "generate-uv-open-source-brief.mjs"),
+  path.join(
+    process.cwd(),
+    "src",
+    "remotion",
+    "producer-samples",
+    "evidence-lens",
+    "evidence-lens.tsx",
+  ),
   "utf8",
 );
 const scriptSource = readFileSync(
@@ -71,7 +74,10 @@ if (uvOpenSourceBriefData.contentFamily !== "project-intro") {
 if (uvOpenSourceBriefData.topic.repo.fullName !== "astral-sh/uv") {
   fail("uv open-source brief should be about astral-sh/uv.");
 }
-if (uvOpenSourceBriefData.topic.repo.stars < 86000 || uvOpenSourceBriefData.topic.repo.forks < 3200) {
+if (
+  uvOpenSourceBriefData.topic.repo.stars < 86000 ||
+  uvOpenSourceBriefData.topic.repo.forks < 3200
+) {
   fail("uv GitHub adoption facts look stale or missing.");
 }
 if (uvOpenSourceBriefData.topic.latestRelease.tag !== "0.11.26") {
@@ -129,7 +135,9 @@ if (!componentSource.includes('targetDescription: "uv docs definition text"')) {
   fail("UvOpenSourceBrief docs screenshot focus should name the actual definition text target.");
 }
 if (!componentSource.includes('targetDescription: "GitHub release title and date"')) {
-  fail("UvOpenSourceBrief release screenshot focus should name the actual release title/date target.");
+  fail(
+    "UvOpenSourceBrief release screenshot focus should name the actual release title/date target.",
+  );
 }
 if (!componentSource.includes("../producer-samples/evidence-lens")) {
   fail("UvOpenSourceBrief should consume the shared Evidence Lens block.");
@@ -152,17 +160,26 @@ if (componentSource.includes("const readableScreenshotFilter")) {
 if (!evidenceLensSource.includes("readableScreenshotFilter")) {
   fail("Evidence Lens should own the readable screenshot backdrop filter.");
 }
-if (componentSource.includes("rgba(7,19,15,0.94)") || componentSource.includes("rgba(7,19,15,0.66)")) {
-  fail("UvOpenSourceBrief should not cover screenshot evidence with a heavy full-frame foreground mask.");
+if (
+  componentSource.includes("rgba(7,19,15,0.94)") ||
+  componentSource.includes("rgba(7,19,15,0.66)")
+) {
+  fail(
+    "UvOpenSourceBrief should not cover screenshot evidence with a heavy full-frame foreground mask.",
+  );
 }
 if (componentSource.includes("const TransparentOverlayPanel")) {
   fail("UvOpenSourceBrief should not keep a sample-local transparent overlay panel.");
 }
 if (!componentSource.includes("EvidenceOverlayPanel")) {
-  fail("UvOpenSourceBrief should layer shared semi-transparent overlays over evidence screenshots.");
+  fail(
+    "UvOpenSourceBrief should layer shared semi-transparent overlays over evidence screenshots.",
+  );
 }
 if (componentSource.includes("scale: interpolate(frame")) {
-  fail("UvOpenSourceBrief should delegate screenshot zoom motion to the shared Evidence Lens block.");
+  fail(
+    "UvOpenSourceBrief should delegate screenshot zoom motion to the shared Evidence Lens block.",
+  );
 }
 if (!evidenceLensSource.includes("scale: interpolate(")) {
   fail("Evidence Lens should use frame-driven zoom for screenshot focus.");
@@ -187,9 +204,6 @@ if (!componentSource.includes("interpolate(")) {
 }
 if (componentSource.includes("animation:") || componentSource.includes("transition:")) {
   fail("UvOpenSourceBrief should not use CSS animation or transition styles.");
-}
-if (!generatorSource.includes('process.env.NEXT_ORIGIN || "http://web:3000"')) {
-  fail("UvOpenSourceBrief generator should default to the compose service origin for TTS.");
 }
 if (!scriptSource.includes("order: 1")) {
   fail("UvOpenSourceBrief TTS storyboard probe should use one-based segment order.");
