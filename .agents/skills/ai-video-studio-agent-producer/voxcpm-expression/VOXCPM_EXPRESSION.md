@@ -20,8 +20,8 @@ Choose the upstream model mode before preparing text or references:
   adjust delivery. **controllable clone does not require a transcript upstream**.
 - `high-fidelity-clone`: use when speaker fidelity matters most. **Hi-Fi clone requires an exact transcript** for the reference audio, and **control instructions are ignored by Hi-Fi clone**.
 
-The current repo `/api/tts` adapter does not expose every upstream mode
-one-to-one. Read `Repo Adapter Contract` before building a request.
+The direct Producer runtime exposes all three approved modes one-to-one. Read
+`Producer Direct Runtime Contract` before building a request.
 
 ## Reference Audio Rules
 
@@ -49,13 +49,13 @@ Guidance:
 - `cfg_value`: controls conditioning strength. Start from the repo default `2`;
   raise carefully when delivery ignores conditioning, lower if speech becomes
   forced or unstable.
-| `inference_timesteps`: quality/latency tradeoff. Start from `10`; increase for
+  | `inference_timesteps`: quality/latency tradeoff. Start from `10`; increase for
   difficult lines only after text and reference quality are sound.
-| `normalize`: normally `true`; disable only when preserving input loudness is
+  | `normalize`: normally `true`; disable only when preserving input loudness is
   more important than consistent output level.
-| `denoise`: normally `false`; enable for a genuinely noisy reference, not as a
+  | `denoise`: normally `false`; enable for a genuinely noisy reference, not as a
   substitute for choosing a clean reference.
-| `retry_badcase`: normally `true`; it asks upstream to retry obvious bad cases.
+  | `retry_badcase`: normally `true`; it asks upstream to retry obvious bad cases.
   Disable only for deterministic diagnosis or when repeated retries hide a
   reproducible failure.
 
@@ -100,39 +100,38 @@ create punctuation spam or giant unbroken sentences.
 - Fix awkward text, reference quality, or mode before compensating with extreme
   parameter values.
 
-## Repo Adapter Contract
+## Producer Direct Runtime Contract
 
-Official VoxCPM model behavior and this repository's adapter behavior are
+Official VoxCPM model behavior and this repository's Producer behavior are
 separate contracts.
 
 Upstream VoxCPM provides audio generation modes and request parameters. It does
-not provide the per-line timestamps used by this project. In this repo,
-**punctuation splitting, silence trimming, WAV concatenation, and
-duration-derived captions are repo adapter behavior** rather than upstream
-timestamps.
+not provide project caption timestamps. VoxCPM returns audio/wav and exposes no per-line timestamps.
 
-The current adapter:
+In this repository, **punctuation splitting, silence trimming, WAV
+concatenation, and duration-derived captions are Producer runtime behavior**.
+The runtime lives under `scripts/lib/producer-audio/` and calls VoxCPM directly:
 
-- VoxCPM returns audio/wav in the current service integration
-- exposes plain `/tts` plus `clone` / `clone_with_prompt` compatibility through
-  the repo `/api/tts` request shape
-- requires uploaded `voiceClone.referenceId` and `referenceText` together, even
-  though controllable clone does not require a transcript upstream
-- maps Hi-Fi-compatible clone to exact prompt text and ignores control
-- splits narration on punctuation, trims PCM silence per chunk, concatenates
-  WAV chunks, measures real duration, and derives caption cues from measured
-  chunk durations
-- returns `audio/wav`; there are no per-line timestamps in the current adapter
+- `voice-design` sends JSON to the configured plain endpoint and prefixes the
+  compact control instruction to each punctuation-sized request.
+- `controllable-clone` sends multipart audio directly and does not require a
+  transcript.
+- `high-fidelity-clone` reads exact prompt audio/transcript files plus the
+  optional timbre reference and sends multipart data; control is absent.
 
-When the repo request shape cannot represent an upstream mode, report a repo
-adapter limitation. Do not describe it as a VoxCPM model limitation.
+Private references must be files under ignored `voices/clone/`. Audio,
+progress, and summary output stays under `public/generated/<slug>/audio/`.
+Progress is saved after each completed scene id and reused only when the plan
+fingerprint and WAV both match. Required narration must fail closed; explicit
+silence is a separate manifest decision.
 
 ## Agent Producer Integration
 
 1. Select mode and reference strategy.
 2. Write final TTS text and separate clean display text.
-3. Use `scripts/lib/producer-audio/` through the sample generator rather than
-   duplicating request, caption, metadata, duration, or summary logic.
+3. Use the direct runtime in `scripts/lib/producer-audio/` through the sample
+   generator rather than duplicating request, caption, metadata, duration,
+   progress, or summary logic.
 4. Generate audio before locking Remotion scene duration.
 5. Run `npm run producer:validate -- --module <validation-module>`.
 6. Run `npm run producer:stills -- --composition <composition-id>`.
@@ -145,24 +144,24 @@ adapter limitation. Do not describe it as a VoxCPM model limitation.
 
 Each `voice-design` API call generates a **random** voice. Seven scenes = up to
 seven different speakers. For multi-scene consistency:
+
 1. Generate the first scene with voice-design using a good control instruction.
 2. Save the output `.wav` as the reference audio.
 3. Re-generate remaining scenes with `controllable-clone` mode using that
    reference, so timbre is preserved across all scenes.
 
-### Control instruction format in the repo adapter
+### Control instruction format in the Producer runtime
 
-Upstream VoxCPM requires control instructions as a parenthesized prefix in the
-`text` field:
+Upstream VoxCPM requires voice-design control instructions as a parenthesized
+prefix in the `text` field:
+
 ```
 "(Warm male narrator, friendly and clear)写代码的你，有没有遇到过这种情况……"
 ```
 
-The repo `/api/tts` adapter's `globalStyle` / `narration.tone` fields are NOT
-automatically injected as `(xxx)` wrappers. Custom generation scripts must
-concatenate the control instruction manually into the `text` field before
-sending to `/api/tts`. Without this, voice-design will use an empty/default
-control, producing a less predictable voice.
+Pass `control` to `createVoxcpmProducerRequestPlan`; the direct runtime adds the
+parenthesized prefix exactly once per punctuation-sized voice-design request.
+Do not put the instruction in `displayText`.
 
 ### Per-scene audio vs combined audio
 

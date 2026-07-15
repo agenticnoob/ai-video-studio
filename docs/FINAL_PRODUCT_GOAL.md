@@ -96,11 +96,13 @@ The agent owns research, factual judgment, narration structure, visual
 metaphor, asset choice, scene composition, motion and sound design, visual
 review, revisions, and promotion decisions.
 
-## Current Transition Constraint
+## Current Runtime Boundary
 
-The shared Producer audio helper still calls Next `/api/tts`. Roadmap Phase 1
-must provide and verify a direct VoxCPM Producer runtime before Phase 2 removes
-F5 and Phase 3 removes the Web product line.
+The direct VoxCPM Producer runtime under `scripts/lib/producer-audio/` owns
+future narration transport, punctuation splitting, PCM silence trim and WAV
+concatenation, measured duration, captions, local output, and scene recovery.
+It runs without Next. Phase 2 still owns F5 deletion and Phase 3 still owns the
+unsupported Web product line.
 
 ## Supporting Authorities
 

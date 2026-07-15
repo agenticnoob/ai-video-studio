@@ -4,62 +4,68 @@ Upstream authority: VoxCPM 2 Usage Guide,
 `https://voxcpm.readthedocs.io/zh-cn/latest/usage_guide.html`.
 
 Use `.agents/skills/ai-video-studio-agent-producer/` for the production flow and
-`.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md` for mode, text, expression,
-and quality decisions.
+`.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md`
+for mode, text, expression, and quality decisions.
 
 ## Official Model Modes
 
-- `voice-design`: no reference audio; parenthesized control instruction can
+- `voice-design`: no reference audio; a parenthesized control instruction can
   design a voice, but independent calls are not guaranteed to keep one random
   speaker identity.
 - `controllable-clone`: reference audio preserves timbre and control can adjust
-  speed/emotion/style. A transcript is not required upstream.
-- `high-fidelity-clone`: requires reference audio plus an exact transcript;
-  control instructions are ignored.
+  speed, emotion, and style. A transcript is not required upstream or by the
+  direct Producer runtime.
+- `high-fidelity-clone`: requires prompt audio plus an exact transcript;
+  control instructions are ignored. An optional same-speaker reference audio
+  file can provide the separate timbre anchor.
 
 Prefer clean single-speaker reference audio around 5–30 seconds.
 
-## Parameters
+## Producer Direct Runtime Contract
 
-- `cfg_value`: conditioning strength; start at `2`.
-- `inference_timesteps`: quality/latency tradeoff; start at `10`.
-- `normalize`: default `true`.
-- `denoise`: default `false`; use only for noisy reference audio.
-- `retry_badcase`: default `true`; retries obvious bad generations.
-
-Tune reference quality, mode, text, and punctuation before changing parameters.
-
-## Repo Adapter Contract
-
-The repo adapter is not the complete upstream VoxCPM API.
+The Producer-owned implementation is `scripts/lib/producer-audio/`:
 
 ```txt
-Agent Producer generator
-  -> scripts/lib/producer-audio/ VoxCPM request plan
-  -> POST /api/tts provider="voxcpm"
-  -> current /tts, /clone, or /clone_with_prompt compatibility
-  -> punctuation-split chunk synthesis
-  -> PCM silence trimming + WAV concatenation
-  -> measured duration + duration-derived captions
+ProducerNarrationBeat[]
+  -> explicit VoxCPM mode plan
+  -> direct JSON or multipart VoxCPM requests
+  -> punctuation-sized audio/wav chunks
+  -> PCM leading/trailing silence trim
+  -> ordered compatible WAV concatenation
+  -> measured duration and clean display captions
+  -> public/generated/<slug>/audio/<scene-id>.wav
+  -> per-scene progress + deterministic metadata/duration/summary
 ```
 
-Punctuation splitting, silence trimming, WAV concatenation, and caption timing
-are repository adapter behavior. VoxCPM does not return the per-line timestamps
-used by this project.
+Request shapes:
 
-The current uploaded-reference `/api/tts` schema requires `referenceId` and
-`referenceText` together. Therefore it cannot directly express upstream
-controllable clone without a transcript. Report this as a repo adapter
-limitation, not a VoxCPM limitation. Hi-Fi-compatible clone requires exact
-reference text and ignores control.
+- `voice-design` -> JSON to the plain endpoint
+- `controllable-clone` -> multipart to the controllable clone endpoint with
+  `reference_audio`
+- `high-fidelity-clone` -> multipart to the high-fidelity endpoint with
+  `prompt_audio`, exact `prompt_text`, and `reference_audio`
+
+The runtime reads private audio and transcript files directly from ignored
+`voices/clone/`. Paths outside that directory fail before any request. It does
+not upload a reference through another application process.
+
+Punctuation splitting, silence trimming, WAV concatenation, measured duration,
+and duration-derived caption cues are repository Producer behavior, not model
+timestamps. Spoken `ttsText` may contain sparse expression tags and control;
+visible `displayText` must stay clean and keep matching punctuation boundaries.
+
+Progress is saved after every completed scene id. Recovery requires the same
+request fingerprint and an existing output WAV. Required narration fails
+closed on connection, timeout, reference, response-format, empty/silent audio,
+format incompatibility, or duration errors. There is no provider fallback.
 
 ## Runtime And Config
 
-- `TTS_PROVIDER=voxcpm`
 - `VOXCPM_TTS_BASE_URL=http://192.168.50.6:8810`
-- `VOXCPM_TTS_CLONE_MODE=clone_with_prompt`
-- `VOXCPM_TTS_CLONE_ENDPOINT=` optional override
-- `VOXCPM_TTS_CONTROL=` optional control
+- `VOXCPM_TTS_ENDPOINT=` optional plain endpoint override
+- `VOXCPM_TTS_CONTROLLABLE_CLONE_ENDPOINT=` optional controllable endpoint override
+- `VOXCPM_TTS_HIGH_FIDELITY_CLONE_ENDPOINT=` optional high-fidelity endpoint override
+- `VOXCPM_TTS_CLONE_ENDPOINT=` accepted as the historical high-fidelity endpoint override
 - `VOXCPM_TTS_CFG_VALUE=2`
 - `VOXCPM_TTS_INFERENCE_TIMESTEPS=10`
 - `VOXCPM_TTS_NORMALIZE=true`
@@ -67,19 +73,21 @@ reference text and ignores control.
 - `VOXCPM_TTS_RETRY_BADCASE=true`
 - `VOXCPM_TTS_SAVE=false`
 - `VOXCPM_TTS_FILENAME_PREFIX=ai-video-studio`
+- `VOXCPM_TTS_TIMEOUT_MS=180000`
 
-The local service exposes `GET /health`, `GET /ready`, `POST /tts`, `POST
-/clone`, and `POST /clone_with_prompt`. Use `docker-compose.voxcpm.yml` or
-`scripts/producer-voxcpm.sh` when Docker bridge networking cannot reach a
-host-loopback service.
+The default service endpoints are the plain, controllable clone, and
+high-fidelity clone paths exposed by the local VoxCPM service. Docker bridge
+networking can use `docker-compose.voxcpm.yml` or
+`scripts/producer-voxcpm.sh` when it cannot reach a host-loopback service.
 
 ## Validation
 
 ```bash
-npm run smoke:skill-alignment
-npm run smoke:voxcpm-clone-adapter
+npm run smoke:producer-audio-direct-voxcpm
 npm run smoke:producer-audio-tools
+npm run smoke:agent-producer-architecture
+npm run smoke:skill-alignment
 ```
 
-Generated audio, captions, summaries, stills, and MP4 remain local-only under
-ignored `public/generated/` and `out/` paths.
+Generated audio, progress, summaries, captions, stills, and MP4 remain
+local-only under ignored `public/generated/` and `out/` paths.

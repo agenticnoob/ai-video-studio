@@ -39,6 +39,14 @@
         "reason": "Only supported narration provider documentation."
       },
       {
+        "id": "producer-audio",
+        "path": "scripts/lib/producer-audio",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 1,
+        "reason": "Producer-owned direct VoxCPM transport, audio processing, captions, and recovery runtime."
+      },
+      {
         "id": "remotion-root",
         "path": "src/remotion/Root.tsx",
         "pathKind": "path",
@@ -161,6 +169,14 @@
         "reason": "Unsupported Producer F5 request-plan adapter."
       },
       {
+        "id": "tts-api",
+        "path": "src/app/api/tts",
+        "pathKind": "path",
+        "action": "delete",
+        "phase": 3,
+        "reason": "Web-only TTS route after the direct Producer VoxCPM runtime removed its final Producer caller."
+      },
+      {
         "id": "web-generate-routes",
         "path": "src/app/api/generate",
         "pathKind": "path",
@@ -258,22 +274,6 @@
       }
     ],
     "shared": [
-      {
-        "id": "producer-audio",
-        "path": "scripts/lib/producer-audio",
-        "pathKind": "path",
-        "action": "extract-then-delete",
-        "phase": 1,
-        "reason": "Retain VoxCPM processing while removing HTTP and F5 branches."
-      },
-      {
-        "id": "tts-api",
-        "path": "src/app/api/tts",
-        "pathKind": "path",
-        "action": "extract-then-delete",
-        "phase": 1,
-        "reason": "Producer currently depends on this route until direct VoxCPM exists."
-      },
       {
         "id": "caption-schema",
         "path": "src/lib/caption-schema.ts",

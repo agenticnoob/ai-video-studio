@@ -136,6 +136,9 @@ Let measured narration duration own scene timing.
 
 - Read the VoxCPM expression guidance before finalizing TTS text.
 - Keep spoken `ttsText` separate from visible `displayText`.
+- Use the direct VoxCPM Producer runtime in `scripts/lib/producer-audio/`.
+- Select one explicit mode: `voice-design`, `controllable-clone`, or
+  `high-fidelity-clone`.
 - Use punctuation-split synthesis for punctuation-sized beats.
 - Trim leading and trailing silence from every returned chunk.
 - Keep returned chunks trimmed and concatenated into one WAV per scene.
@@ -145,13 +148,16 @@ Let measured narration duration own scene timing.
 - Fail closed when narration is required. Silence is allowed only when the
   sample manifest explicitly declares narration absent.
 - Keep private reference audio and exact transcripts under ignored
-  `voices/clone/` paths.
+  `voices/clone/` paths and read them directly from disk.
+- Write audio, progress, and summary files under
+  `public/generated/<slug>/audio/`.
+- Save progress after each completed scene id. A retry reuses a scene only when
+  its request fingerprint matches and its WAV still exists.
 
-For current multi-scene work, use an existing direct VoxCPM sample script and
-the repository's established `clone_with_prompt` behavior. The shared
-`scripts/lib/producer-audio/` library is transitional because its request path
-still reaches `/api/tts`; Roadmap Phase 1 replaces that boundary. Do not copy
-its provider-selection or HTTP-route dependency into a new sample.
+Required narration must fail closed on connection, timeout, reference,
+response-format, empty-audio, or measured-duration errors. Do not select a
+provider, upload a private reference, fall back to F5, or present a silent WAV
+as completed narration.
 
 ### 5. Assemble The Dedicated Composition
 
@@ -246,7 +252,10 @@ actually changes.
 
 Use shared tools for deterministic work in future samples:
 
-- transitional audio processing: `scripts/lib/producer-audio/`
+- direct VoxCPM transport, audio processing, caption timing, and scene recovery:
+  `scripts/lib/producer-audio/`
+- focused audio verification: `npm run smoke:producer-audio-direct-voxcpm` and
+  `npm run smoke:producer-audio-tools`
 - mechanical validation: `npm run producer:validate -- --module <validation-module>`
 - manifest-driven review stills: `npm run producer:stills -- --composition <composition-id>`
 - metadata-bundled render: `./scripts/render-video.sh <composition-id> <slug> <metadata-json>`

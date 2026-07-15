@@ -117,6 +117,54 @@ for (const phrase of [
   );
 }
 
+const futureProducerAudioPaths = [
+  "scripts/lib/producer-audio/index.ts",
+  "scripts/lib/producer-audio/types.ts",
+  "scripts/lib/producer-audio/config.ts",
+  "scripts/lib/producer-audio/captions.ts",
+  "scripts/lib/producer-audio/wav.ts",
+  "scripts/lib/producer-audio/progress.ts",
+  "scripts/lib/producer-audio/providers/voxcpm.ts",
+  "scripts/lib/producer-audio/request.ts",
+  "scripts/lib/producer-audio/run.ts",
+  "src/remotion/producer-samples/scaffold/SampleName/generate.mjs",
+  "src/remotion/producer-samples/scaffold/SampleName/validation.ts",
+];
+const forbiddenFutureProducerAudioPatterns = [
+  ["NEXT_ORIGIN", /NEXT_ORIGIN/],
+  ["AI_VIDEO_STUDIO_ORIGIN", /AI_VIDEO_STUDIO_ORIGIN/],
+  ["repository /api/tts", /\/api\/tts/],
+  ["F5 request planning", /createF5ProducerRequestPlan/],
+  ["F5 provider export", /providers\/f5/],
+  ["provider selection", /TTS_PROVIDER/],
+  ["origin request argument", /\borigin\s*:/],
+  ["legacy fallback policy", /fallbackPolicy|fallbackReasons|explicit-silence-fallback/],
+  ["configurable expected provider", /expectedProvider/],
+];
+
+for (const sourcePath of futureProducerAudioPaths) {
+  const source = read(sourcePath);
+  for (const [label, pattern] of forbiddenFutureProducerAudioPatterns) {
+    assert(!pattern.test(source), `${sourcePath} must not contain ${label}`);
+  }
+}
+
+const inventoryEntry = (id) => {
+  for (const [category, entries] of Object.entries(inventory.categories)) {
+    const entry = entries.find((candidate) => candidate.id === id);
+    if (entry) return { category, entry };
+  }
+  return undefined;
+};
+const producerAudioInventory = inventoryEntry("producer-audio");
+assert.equal(producerAudioInventory?.category, "producerOwned");
+assert.equal(producerAudioInventory?.entry.action, "retain");
+assert.equal(producerAudioInventory?.entry.phase, 1);
+const ttsApiInventory = inventoryEntry("tts-api");
+assert.equal(ttsApiInventory?.category, "webF5Only");
+assert.equal(ttsApiInventory?.entry.action, "delete");
+assert.equal(ttsApiInventory?.entry.phase, 3);
+
 const legacyDocs = [
   "docs/AGENT_PLATFORM_DESIGN.md",
   "docs/FUTURE_DIRECTION_NOTES.md",

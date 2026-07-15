@@ -27,6 +27,59 @@ export const cleanProducerDisplayText = (text: string | undefined): string =>
     .replace(/\s+/g, " ")
     .trim();
 
+const DECIMAL_POINT = "\u0000DECIMAL_POINT\u0000";
+
+export const splitProducerNarrationText = (text: string): string[] => {
+  const normalized = text.replace(/\s+/g, " ").trim();
+  if (!normalized) return [];
+  const protectedText = normalized.replace(/(?<=\d)\.(?=\d)/g, DECIMAL_POINT);
+  return (protectedText.match(/[^,，.。!?！？;；:：]+[,，.。!?！？;；:：]?/g) ?? [protectedText])
+    .map((chunk) => chunk.replaceAll(DECIMAL_POINT, ".").trim())
+    .filter(Boolean);
+};
+
+export const buildProducerCaptionCues = ({
+  chunkDurationsInSeconds,
+  displayChunks,
+  durationInFrames,
+  language,
+  fps = 30,
+}: {
+  readonly chunkDurationsInSeconds: readonly number[];
+  readonly displayChunks: readonly string[];
+  readonly durationInFrames: number;
+  readonly language?: string;
+  readonly fps?: number;
+}): SegmentCaptions => {
+  if (displayChunks.length === 0 || displayChunks.length !== chunkDurationsInSeconds.length) {
+    throw new Error("Producer caption punctuation chunks must match measured audio chunks.");
+  }
+  if (durationInFrames < displayChunks.length) {
+    throw new Error("Measured narration duration is too short for its caption chunks.");
+  }
+
+  let cursor = 0;
+  const cues = displayChunks.map((text, index) => {
+    const remainingCues = displayChunks.length - index;
+    const remainingFrames = durationInFrames - cursor;
+    const measuredFrames = Math.max(1, Math.round((chunkDurationsInSeconds[index] ?? 0) * fps));
+    const duration =
+      index === displayChunks.length - 1
+        ? remainingFrames
+        : Math.min(measuredFrames, remainingFrames - (remainingCues - 1));
+    const cue = {
+      id: `caption-${index + 1}`,
+      text: cleanProducerDisplayText(text),
+      startFrame: cursor,
+      durationInFrames: duration,
+    };
+    cursor += duration;
+    return cue;
+  });
+
+  return { ...(language ? { language } : {}), cues };
+};
+
 export const normalizeProducerCaptions = ({
   captions,
   displayText,

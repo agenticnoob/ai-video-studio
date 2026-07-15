@@ -23,8 +23,8 @@ repository contains `.codegraph/`.
 - Existing finished compositions and their generated provider metadata are
   frozen read-only references.
 - Legacy Web/F5 code still exists during the migration but is unsupported.
-- The shared Producer audio helper still depends on Next `/api/tts`; Phase 1
-  must replace it before F5 or Web deletion.
+- The direct VoxCPM Producer runtime under `scripts/lib/producer-audio/` owns
+  future narration without starting Next or using a repository HTTP route.
 
 ## Where To Look
 
@@ -79,6 +79,8 @@ Use the smallest focused checks first:
 ```bash
 npm run smoke:agent-producer-architecture
 npm run smoke:skill-alignment
+npm run smoke:producer-audio-direct-voxcpm
+npm run smoke:producer-audio-tools
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
 ```
@@ -93,8 +95,8 @@ docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm
 git diff --check
 ```
 
-When render code changes, add representative stills and inspect them. Phase 0
-documentation changes do not require re-rendering frozen compositions.
+When render code changes, add representative stills and inspect them. Audio
+runtime changes do not require re-rendering frozen compositions.
 
 ## Completion Summary
 

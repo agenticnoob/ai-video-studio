@@ -1,6 +1,6 @@
 # Iteration Status
 
-Last updated: 2026-07-15
+Last updated: 2026-07-16
 
 ## Current Authority
 
@@ -14,49 +14,58 @@ The implementation sequence is defined by
 
 ## Current Milestone
 
-Phase 0 — authority reset and deletion inventory is implemented.
+Phase 1 — direct VoxCPM Producer runtime is complete.
 
-The Producer-only Roadmap is committed at `d09f4e0`, and its Phase 0
-implementation plan is committed at `9a58704`.
+Phase 0 authority reset remains complete. Phase 1 runtime code, focused smokes,
+future scaffold migration, architecture guards, current documentation, Docker
+validation, changed-file lint/format, forbidden scans, and a live two-scene
+VoxCPM run are verified.
 
-Runtime deletion has not started. The current tree still contains unsupported
-Web and F5 code, and the shared Producer audio helper still depends on Next
-`/api/tts`.
+## Implemented Phase 1 Boundary
 
-## Phase 0 Deliverables
+- Producer-owned three-mode direct VoxCPM transport
+- private reference audio/transcript reads from ignored `voices/clone/`
+- punctuation splitting, PCM silence trim, WAV concatenation, and measured duration
+- clean duration-derived captions with separate `ttsText` and `displayText`
+- per-scene progress, fingerprint validation, and failed-batch recovery
+- fail-closed required narration and explicit intentional-silence policy
+- deterministic generated audio metadata, duration constant, and summary
+- future scaffold and architecture guard without an application origin
 
-- machine-readable keep/extract/delete inventory
-- executable architecture alignment smoke
-- compact Producer-only README, AGENTS, goal, status, and roadmap entry docs
-- Agent Producer Skill without Web, F5 generation, image generation, video
-  generation, or generated evidence-card guidance
-- archived Web/Planner product documentation
-- explicit removal banners on current F5 documents pending Phase 2 deletion
+Legacy F5 and Web code remains unsupported and untouched for Phase 2 and Phase
+3. Frozen compositions and historical provider metadata remain read-only.
 
 ## Verification
 
-Passed with fresh evidence:
+Passed with fresh evidence during implementation:
 
+- `npm run smoke:producer-audio-direct-voxcpm`
+- `npm run smoke:producer-audio-tools`
+- `npm run smoke:producer-validation`
 - `npm run smoke:agent-producer-architecture`
 - `npm run smoke:skill-alignment`
 - Docker `npx tsc --noEmit --pretty false`
 - Docker `npm run build`
-- Docker `npx remotion compositions src/remotion/index.ts`
-- Docker Prettier check for all changed current files
-- active-document forbidden-guidance scan
+- changed-file ESLint
+- changed-file Prettier check
+- future Producer forbidden-dependency scan
 - `git diff --check`
 
-Repository-wide `npm run lint` remains non-zero because of 75 pre-existing
-errors in old Producer generation/capture scripts and `BeyondLanguage`, plus 2
-warnings under ignored `public/generated/`. The new architecture smoke's two
-initial `no-undef` errors were fixed and no changed file remains in the final
-lint error list. This existing lint debt is outside the documentation-only
-Phase 0 scope and must not be described as a passing full-repository lint gate.
+The configured VoxCPM service returned health HTTP 200. With Next absent from
+the flow, a local-only two-scene high-fidelity clone run produced measured WAV
+durations of 2.458958 and 2.841063 seconds, totaling 159 frames. A second run
+reused both scene records while its request callback was configured to fail,
+proving file-backed recovery. All live artifacts remain ignored under
+`public/generated/phase1-direct-voxcpm-live-smoke/`.
+
+Repository-wide `npm run lint` is not a passing gate: the known baseline remains
+75 existing errors plus 2 ignored generated warnings. Phase 1 added no
+changed-file lint errors.
 
 ## Next Bounded Slice
 
-Create and execute the Phase 1 direct VoxCPM Producer runtime plan. Do not start
-F5 or Web deletion before the direct VoxCPM replacement passes independently.
+Phase 2 F5 deletion is the next Roadmap slice, but it has not started. Stop at
+the Phase 1 boundary and create a separate Phase 2 plan before any deletion.
 
 ## Frozen History
 

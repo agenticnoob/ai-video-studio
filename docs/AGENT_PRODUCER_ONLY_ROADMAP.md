@@ -1,6 +1,6 @@
 # Agent Producer-Only Roadmap
 
-Status: approved design roadmap; implementation has not started.
+Status: Phase 0 and Phase 1 complete; Phase 2 has not started.
 
 Decision date: 2026-07-15.
 
@@ -264,6 +264,8 @@ Classify every touched module as one of:
 
 ## 5. Phase 0 - Authority Reset And Deletion Inventory
 
+Status: complete.
+
 ### Goal
 
 Make this roadmap the only forward-looking repository plan and define the
@@ -298,6 +300,8 @@ exact survival/deletion boundary before implementation removal begins.
 - `git diff --check` passes
 
 ## 6. Phase 1 - Direct VoxCPM Producer Runtime
+
+Status: complete and verified on 2026-07-16.
 
 ### Why this precedes Web removal
 
@@ -363,6 +367,18 @@ ProducerNarrationBeat[]
 - captions are clean, ordered, and within measured track duration
 - the generated audio is readable through `staticFile()`
 - no future-sample generator contains `NEXT_ORIGIN` or `/api/tts`
+
+Implementation evidence:
+
+- focused direct-client, batch recovery, validation, architecture, and skill
+  smokes pass
+- Docker typecheck and build pass
+- a live two-scene high-fidelity clone run completed without Next and produced
+  measured WAV durations
+- a second live run reused both scene records without invoking its request
+  callback
+- changed-file lint, Prettier, forbidden scans, and `git diff --check` pass
+- Phase 2 F5 files and Phase 3 Web routes remain untouched
 
 ## 7. Phase 2 - Remove F5 Generation Completely
 

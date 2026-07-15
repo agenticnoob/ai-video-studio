@@ -6,43 +6,64 @@ export type ProducerValidationInput = {
   readonly beats: readonly ProducerNarrationBeat[];
   readonly tracks: readonly ProducerAudioTrack[];
   readonly scenes: readonly { readonly id: string; readonly durationInFrames: number }[];
-  readonly expectedProvider: string;
   readonly scenePaddingFrames: number;
   readonly artifactPaths: readonly string[];
   readonly registeredCompositionIds: readonly string[];
-  readonly fallbackReasons: readonly string[];
   readonly isIgnoredPath: (path: string) => Promise<boolean>;
 };
 
 export const validateProducerAudioAlignment = (input: ProducerValidationInput): void => {
-  const beatIds = new Set(input.beats.map((beat) => beat.id));
+  const beatById = new Map(input.beats.map((beat) => [beat.id, beat]));
   const trackIds = new Set(input.tracks.map((track) => track.sceneId));
-  for (const beatId of Array.from(beatIds)) {
+  for (const beatId of Array.from(beatById.keys())) {
     if (!trackIds.has(beatId)) throw new Error(`Missing audio id: ${beatId}.`);
   }
   for (const trackId of Array.from(trackIds)) {
-    if (!beatIds.has(trackId)) throw new Error(`Extra audio id: ${trackId}.`);
+    if (!beatById.has(trackId)) throw new Error(`Extra audio id: ${trackId}.`);
   }
 
   for (const track of input.tracks) {
+    const beat = beatById.get(track.sceneId);
+    if (!beat) continue;
     if (!(track.durationInFrames > 0) || !(track.durationInSeconds > 0)) {
       throw new Error(`${track.sceneId} must have positive duration.`);
     }
-    if (track.provider !== input.expectedProvider && track.provider !== "explicit-silence-fallback") {
-      throw new Error(`${track.sceneId} provider mismatch: expected ${input.expectedProvider}, got ${track.provider}.`);
-    }
-    if (track.provider === "explicit-silence-fallback" && input.fallbackReasons.length === 0) {
-      throw new Error(`${track.sceneId} uses a fallback provider without an explicit fallback reason.`);
+
+    if (beat.narrationRequired === false) {
+      if (
+        track.audioFile ||
+        track.provider !== undefined ||
+        track.format !== undefined ||
+        track.narration ||
+        track.captions.cues.length > 0
+      ) {
+        throw new Error(
+          `${track.sceneId} is intentionally silent and must not contain narration audio.`,
+        );
+      }
+      if (track.durationInFrames !== beat.durationInFrames) {
+        throw new Error(`${track.sceneId} silent duration must match its declared duration.`);
+      }
+    } else {
+      if (track.provider !== "voxcpm" || track.format !== "wav") {
+        throw new Error(`${track.sceneId} must use direct VoxCPM WAV narration.`);
+      }
+      if (!track.audioFile.trim())
+        throw new Error(`${track.sceneId} must include a narration audio file.`);
     }
 
     let previousEnd = 0;
     for (const cue of track.captions.cues) {
       const cueEnd = cue.startFrame + cue.durationInFrames;
       if (cue.startFrame < previousEnd || cueEnd > track.durationInFrames) {
-        throw new Error(`${track.sceneId} caption cue range is unordered or outside audio duration.`);
+        throw new Error(
+          `${track.sceneId} caption cue range is unordered or outside audio duration.`,
+        );
       }
       if (cleanProducerDisplayText(cue.text) !== cue.text || /^\s*\(/.test(cue.text)) {
-        throw new Error(`${track.sceneId} display caption contains a control instruction or non-language tag.`);
+        throw new Error(
+          `${track.sceneId} display caption contains a control instruction or non-language tag.`,
+        );
       }
       previousEnd = cueEnd;
     }

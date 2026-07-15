@@ -35,9 +35,10 @@ still, and render surfaces.
 Legacy Web and F5 code remains on disk while the phased removal roadmap is
 executed. It is unsupported and must not be used for new work.
 
-The shared Producer audio helper currently calls Next `/api/tts`. Roadmap
-Phase 1 replaces that dependency with a direct VoxCPM Producer runtime before
-Phase 2 removes F5 and Phase 3 removes the Web product line.
+The direct VoxCPM Producer runtime under `scripts/lib/producer-audio/` now owns
+future narration transport, PCM WAV processing, duration-derived captions, and
+scene recovery without starting Next. Phase 2 still owns F5 deletion and Phase
+3 still owns the Web product line; neither deletion phase is part of Phase 1.
 
 Existing finished compositions remain frozen read-only references. Historical
 `provider: "f5-tts"` metadata in their generated audio files stays truthful;
@@ -80,6 +81,8 @@ Supporting references:
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
 ./scripts/render-video.sh <composition-id> <slug> <metadata-json>
+npm run smoke:producer-audio-direct-voxcpm
+npm run smoke:producer-audio-tools
 npm run smoke:agent-producer-architecture
 npm run smoke:skill-alignment
 ```

@@ -26,7 +26,9 @@ export const updateProducerDurationConstant = ({
   const pattern = new RegExp(`export const ${escapedName} = \\d+;`, "g");
   const matches = source.match(pattern) ?? [];
   if (matches.length !== 1) {
-    throw new Error(`Expected exactly one numeric assignment for ${constantName}; found ${matches.length}.`);
+    throw new Error(
+      `Expected exactly one numeric assignment for ${constantName}; found ${matches.length}.`,
+    );
   }
   return source.replace(pattern, `export const ${constantName} = ${durationInFrames};`);
 };
@@ -34,16 +36,17 @@ export const updateProducerDurationConstant = ({
 export const buildProducerAudioSummary = ({
   compositionId,
   tracks,
-  fallbackReasons,
 }: {
   readonly compositionId: string;
   readonly tracks: readonly ProducerAudioTrack[];
-  readonly fallbackReasons: readonly string[];
-}): ProducerAudioSummary => ({
-  compositionId,
-  providers: Array.from(new Set(tracks.map((track) => track.provider))).sort(),
-  sceneCount: tracks.length,
-  totalDurationInFrames: tracks.reduce((total, track) => total + track.durationInFrames, 0),
-  usedFallback: fallbackReasons.length > 0,
-  fallbackReasons,
-});
+}): ProducerAudioSummary => {
+  const narratedSceneCount = tracks.filter((track) => track.provider === "voxcpm").length;
+  return {
+    compositionId,
+    providers: narratedSceneCount > 0 ? ["voxcpm"] : [],
+    sceneCount: tracks.length,
+    narratedSceneCount,
+    silentSceneCount: tracks.length - narratedSceneCount,
+    totalDurationInFrames: tracks.reduce((total, track) => total + track.durationInFrames, 0),
+  };
+};

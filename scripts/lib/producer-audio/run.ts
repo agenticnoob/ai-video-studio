@@ -1,29 +1,37 @@
+import { access, mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
+
 import { cleanProducerDisplayText, normalizeProducerCaptions } from "./captions";
 import {
   buildProducerAudioSummary,
   serializeProducerAudioMetadata,
   updateProducerDurationConstant,
 } from "./metadata";
+import {
+  createProducerAudioFingerprint,
+  loadProducerAudioProgress,
+  writeProducerAudioProgress,
+  type ProducerAudioProgressScene,
+} from "./progress";
 import type { ProducerNarrationAsset } from "./request";
 import type {
-  ProducerAudioFallbackPolicy,
-  ProducerAudioRequestPlan,
   ProducerAudioSummary,
   ProducerAudioTrack,
+  ProducerNarratedBeat,
   ProducerNarrationBeat,
+  ProducerVoxcpmRequestPlan,
 } from "./types";
 
 export type RunProducerAudioGenerationConfig = {
   readonly compositionId: string;
   readonly beats: readonly ProducerNarrationBeat[];
-  readonly createRequestPlan: (beat: ProducerNarrationBeat) => ProducerAudioRequestPlan;
+  readonly createRequestPlan: (beat: ProducerNarratedBeat) => ProducerVoxcpmRequestPlan;
   readonly requestNarration: (input: {
-    readonly beat: ProducerNarrationBeat;
-    readonly plan: ProducerAudioRequestPlan;
+    readonly beat: ProducerNarratedBeat;
+    readonly plan: ProducerVoxcpmRequestPlan;
   }) => Promise<ProducerNarrationAsset>;
-  readonly fallbackPolicy: ProducerAudioFallbackPolicy;
-  readonly fallbackDurationInFrames?: number;
   readonly fps?: number;
+  readonly progressDestination?: string;
   readonly metadata: {
     readonly header: string;
     readonly exportName: string;
@@ -37,7 +45,6 @@ export type RunProducerAudioGenerationConfig = {
   };
   readonly summaryDestination?: string;
   readonly writeOutputs?: boolean;
-  readonly writeTextFile?: (path: string, content: string) => Promise<void>;
 };
 
 export type RunProducerAudioGenerationResult = {
@@ -48,56 +55,134 @@ export type RunProducerAudioGenerationResult = {
   readonly summarySource: string;
 };
 
+const outputExists = async (outputPath: string): Promise<boolean> => {
+  try {
+    await access(outputPath);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const writeText = async (destination: string, content: string): Promise<void> => {
+  await mkdir(path.dirname(destination), { recursive: true });
+  await writeFile(destination, content, "utf8");
+};
+
+const validateNarrationAsset = (asset: ProducerNarrationAsset, sceneId: string): void => {
+  if (asset.provider !== "voxcpm") throw new Error(`${sceneId} must use direct VoxCPM narration.`);
+  if (asset.format !== "wav") throw new Error(`${sceneId} direct VoxCPM narration must be WAV.`);
+  if (!asset.audioSrc.trim() || !asset.outputPath.trim()) {
+    throw new Error(`${sceneId} direct VoxCPM narration is missing its audio path.`);
+  }
+  if (!(asset.durationInFrames > 0) || !(asset.durationInSeconds > 0)) {
+    throw new Error(`${sceneId} direct VoxCPM narration must have positive measured duration.`);
+  }
+};
+
 export const runProducerAudioGeneration = async (
   config: RunProducerAudioGenerationConfig,
 ): Promise<RunProducerAudioGenerationResult> => {
-  const tracks: ProducerAudioTrack[] = [];
-  const fallbackReasons: string[] = [];
   const fps = config.fps ?? 30;
-
+  if (!Number.isFinite(fps) || fps <= 0) throw new Error("Producer audio fps must be positive.");
+  const sceneIds = new Set<string>();
   for (const beat of config.beats) {
-    const plan = config.createRequestPlan(beat);
-    let narration: ProducerNarrationAsset;
-    try {
-      narration = await config.requestNarration({ beat, plan });
-    } catch (error) {
-      if (config.fallbackPolicy === "forbid") {
-        throw error;
-      }
-      const durationInFrames = config.fallbackDurationInFrames ?? fps * 3;
-      const reason = `${beat.id}: ${error instanceof Error ? error.message : String(error)}`;
-      fallbackReasons.push(reason);
-      narration = {
-        audioSrc: "",
-        captions: { cues: [] },
-        durationInFrames,
-        durationInSeconds: durationInFrames / fps,
-        provider: "explicit-silence-fallback",
-      };
-    }
-
-    const displayText = cleanProducerDisplayText(beat.displayText ?? beat.ttsText);
-    tracks.push({
-      sceneId: beat.id,
-      narration: displayText,
-      audioFile: narration.audioSrc,
-      captions: normalizeProducerCaptions({
-        captions: narration.captions,
-        displayText,
-        durationInFrames: narration.durationInFrames,
-      }),
-      durationInFrames: narration.durationInFrames,
-      durationInSeconds: narration.durationInSeconds,
-      provider: narration.provider,
-      ...(narration.format ? { format: narration.format } : {}),
-    });
+    if (sceneIds.has(beat.id))
+      throw new Error(`Duplicate Producer narration scene id: ${beat.id}.`);
+    sceneIds.add(beat.id);
   }
 
-  const summary = buildProducerAudioSummary({
+  const previousProgress = await loadProducerAudioProgress({
     compositionId: config.compositionId,
-    tracks,
-    fallbackReasons,
+    destination: config.progressDestination,
   });
+  const progressByScene = new Map(previousProgress.scenes.map((scene) => [scene.sceneId, scene]));
+  const completedScenes = new Map<string, ProducerAudioProgressScene>();
+  const tracks: ProducerAudioTrack[] = [];
+
+  const persistCompleted = async (): Promise<void> => {
+    await writeProducerAudioProgress({
+      destination: config.progressDestination,
+      progress: {
+        version: 1,
+        compositionId: config.compositionId,
+        scenes: config.beats
+          .map((beat) => completedScenes.get(beat.id))
+          .filter((scene): scene is ProducerAudioProgressScene => Boolean(scene)),
+      },
+    });
+  };
+
+  for (const beat of config.beats) {
+    if (beat.narrationRequired === false) {
+      if (!Number.isInteger(beat.durationInFrames) || beat.durationInFrames <= 0) {
+        throw new Error(`${beat.id} explicit silence requires positive durationInFrames.`);
+      }
+      const track: ProducerAudioTrack = {
+        sceneId: beat.id,
+        narration: "",
+        audioFile: "",
+        captions: { cues: [] },
+        durationInFrames: beat.durationInFrames,
+        durationInSeconds: beat.durationInFrames / fps,
+      };
+      tracks.push(track);
+      completedScenes.set(beat.id, {
+        sceneId: beat.id,
+        fingerprint: createProducerAudioFingerprint(beat),
+        outputPath: "",
+        track,
+      });
+      await persistCompleted();
+      continue;
+    }
+
+    const plan = config.createRequestPlan(beat);
+    const fingerprint = createProducerAudioFingerprint(plan);
+    const previous = progressByScene.get(beat.id);
+    let track: ProducerAudioTrack | undefined;
+    if (
+      previous?.fingerprint === fingerprint &&
+      previous.outputPath &&
+      previous.track.provider === "voxcpm" &&
+      previous.track.audioFile &&
+      (await outputExists(previous.outputPath))
+    ) {
+      track = previous.track;
+    }
+
+    if (!track) {
+      const narration = await config.requestNarration({ beat, plan });
+      validateNarrationAsset(narration, beat.id);
+      const displayText = cleanProducerDisplayText(beat.displayText ?? beat.ttsText);
+      track = {
+        sceneId: beat.id,
+        narration: displayText,
+        audioFile: narration.audioSrc,
+        captions: normalizeProducerCaptions({
+          captions: narration.captions,
+          displayText,
+          durationInFrames: narration.durationInFrames,
+        }),
+        durationInFrames: narration.durationInFrames,
+        durationInSeconds: narration.durationInSeconds,
+        provider: "voxcpm",
+        format: "wav",
+      };
+      completedScenes.set(beat.id, {
+        sceneId: beat.id,
+        fingerprint,
+        outputPath: narration.outputPath,
+        track,
+      });
+    } else {
+      completedScenes.set(beat.id, previous as ProducerAudioProgressScene);
+    }
+    tracks.push(track);
+    await persistCompleted();
+  }
+
+  const summary = buildProducerAudioSummary({ compositionId: config.compositionId, tracks });
   const metadataSource = serializeProducerAudioMetadata({ ...config.metadata, tracks });
   const durationSource = updateProducerDurationConstant({
     ...config.duration,
@@ -106,15 +191,18 @@ export const runProducerAudioGeneration = async (
   const summarySource = `${JSON.stringify(summary, null, 2)}\n`;
 
   if (config.writeOutputs) {
-    if (!config.writeTextFile) {
-      throw new Error("writeTextFile is required when writeOutputs is true.");
+    if (
+      !config.metadata.destination ||
+      !config.duration.destination ||
+      !config.summaryDestination
+    ) {
+      throw new Error(
+        "All Producer audio output destinations are required when writeOutputs is true.",
+      );
     }
-    if (!config.metadata.destination || !config.duration.destination || !config.summaryDestination) {
-      throw new Error("All output destinations are required when writeOutputs is true.");
-    }
-    await config.writeTextFile(config.metadata.destination, metadataSource);
-    await config.writeTextFile(config.duration.destination, durationSource);
-    await config.writeTextFile(config.summaryDestination, summarySource);
+    await writeText(config.metadata.destination, metadataSource);
+    await writeText(config.duration.destination, durationSource);
+    await writeText(config.summaryDestination, summarySource);
   }
 
   return { tracks, summary, metadataSource, durationSource, summarySource };

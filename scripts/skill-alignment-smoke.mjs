@@ -83,6 +83,15 @@ for (const required of [
   "Remotion `<Still>`",
   "honest code-rendered information graphic",
   "VoxCPM is the only supported narration provider",
+  "direct VoxCPM Producer runtime",
+  "voice-design",
+  "controllable-clone",
+  "high-fidelity-clone",
+  "voices/clone/",
+  "public/generated/<slug>/audio/",
+  "scene id",
+  "fail closed",
+  "displayText",
 ])
   assertIncludes(producerSkill, required, "Agent Producer skill");
 for (const forbidden of [
@@ -92,6 +101,11 @@ for (const forbidden of [
   "image_generate",
   "generated source-card",
   "recipe/template promotion",
+  "use an existing direct VoxCPM sample script",
+  "/api/tts",
+  "NEXT_ORIGIN",
+  "uploaded reference id",
+  "TTS_PROVIDER",
 ])
   assertNotIncludes(producerSkill, forbidden, "Agent Producer skill");
 
@@ -109,7 +123,12 @@ for (const required of [
   "high-fidelity-clone",
   "5–30 seconds",
   "retry_badcase",
-  "Repo Adapter Contract",
+  "Producer Direct Runtime Contract",
+  "scripts/lib/producer-audio/",
+  "voices/clone/",
+  "public/generated/<slug>/audio/",
+  "scene id",
+  "fail closed",
   "controllable clone does not require a transcript upstream",
   "Hi-Fi clone requires an exact transcript",
   "control instructions are ignored by Hi-Fi clone",
@@ -117,9 +136,16 @@ for (const required of [
   assertIncludes(voxcpmSkill, required, "VoxCPM skill");
 assertIncludesWords(
   voxcpmSkill,
-  "punctuation splitting, silence trimming, WAV concatenation, and duration-derived captions are repo adapter behavior",
+  "punctuation splitting, silence trimming, WAV concatenation, and duration-derived captions are Producer runtime behavior",
   "VoxCPM skill",
 );
+for (const forbidden of [
+  "Repo Adapter Contract",
+  "/api/tts",
+  "uploaded reference id",
+  "TTS_PROVIDER",
+])
+  assertNotIncludes(voxcpmSkill, forbidden, "VoxCPM skill");
 
 const voxcpmDoc = read("docs/providers/voxcpm.md");
 for (const required of [
@@ -127,10 +153,15 @@ for (const required of [
   "controllable-clone",
   "high-fidelity-clone",
   "VOXCPM_TTS_RETRY_BADCASE=true",
-  "Repo Adapter Contract",
+  "Producer Direct Runtime Contract",
+  "scripts/lib/producer-audio/",
+  "voices/clone/",
+  "public/generated/<slug>/audio/",
 ]) {
   assertIncludes(voxcpmDoc, required, "VoxCPM provider doc");
 }
+for (const forbidden of ["Repo Adapter Contract", "/api/tts", "NEXT_ORIGIN", "TTS_PROVIDER"])
+  assertNotIncludes(voxcpmDoc, forbidden, "VoxCPM provider doc");
 
 const remotionSkill = read(".agents/skills/remotion-best-practices/SKILL.md");
 assertIncludes(remotionSkill, "AI Video Studio Agent Producer", "Remotion skill");
