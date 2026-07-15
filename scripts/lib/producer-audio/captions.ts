@@ -1,4 +1,4 @@
-import type { SegmentCaptions } from "../../../src/lib/caption-schema";
+import type { SegmentCaptions } from "../../../src/remotion/standalone-video/caption-types";
 
 const supportedNonLanguageTags = [
   "laughing",

@@ -310,14 +310,11 @@ closing a production slice:
 ```bash
 npm run smoke:agent-producer-architecture
 npm run smoke:skill-alignment
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit --pretty false'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npx tsc --noEmit --pretty false'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run lint'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run build'
 git diff --check
 ```
-
-The Docker service name is transitional until Roadmap Phase 3. Do not treat it
-as authorization to use the Web video product.
 
 ## Handoff Summary
 

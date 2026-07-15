@@ -22,11 +22,15 @@ repository contains `.codegraph/`.
 - Remotion Studio and CLI are the preview, still, and render surfaces.
 - Existing finished compositions and their generated provider metadata are
   frozen read-only references.
-- Legacy Web code still exists during the migration but is unsupported.
+- Phase 3 removed the legacy Web video product, Next packaging, planner,
+  templates, editor, and Web generation/render routes.
 - The F5 narration service, adapters, scripts, config, and current provider docs
   were removed in Phase 2.
 - The direct VoxCPM Producer runtime under `scripts/lib/producer-audio/` owns
   future narration without starting Next or using a repository HTTP route.
+- The Docker `producer` service owns Studio and Docker-first verification.
+- Historical caption/storyboard contracts and `recipes/blocks` plus
+  `recipes/timing` remain only for frozen composition compatibility.
 
 ## Where To Look
 
@@ -80,6 +84,7 @@ Use the smallest focused checks first:
 
 ```bash
 npm run smoke:agent-producer-architecture
+npm run smoke:agent-producer-web-removal
 npm run smoke:skill-alignment
 npm run smoke:producer-audio-direct-voxcpm
 npm run smoke:producer-audio-tools
@@ -90,10 +95,10 @@ npm run producer:stills -- --composition <composition-id>
 Current full checks are Docker-first:
 
 ```bash
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit --pretty false'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion compositions src/remotion/index.ts'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npx tsc --noEmit --pretty false'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run lint'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run build'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npx remotion compositions src/remotion/index.ts'
 git diff --check
 ```
 

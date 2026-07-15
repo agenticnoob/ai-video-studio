@@ -1,4 +1,4 @@
-import type { SegmentCaptions } from "../../../../lib/caption-schema";
+import type { SegmentCaptions } from "../../../standalone-video/caption-types";
 import type { ProducerAudioTrack } from "../../../../../scripts/lib/producer-audio";
 import type {
   StandaloneCanvasProfileId,

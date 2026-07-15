@@ -1,14 +1,10 @@
 import { z } from "zod";
 
-import {
-  getPlannerRecipeIdsForTemplate,
-  registeredTemplateIds,
-  type TemplateId,
-} from "./template-registry";
+import { registeredTemplateIds } from "./template-registry";
 
 export const MAX_STORYBOARD_SEGMENTS = 6;
 
-export const templateIdSchema = z.enum(registeredTemplateIds as [TemplateId, ...TemplateId[]]);
+export const templateIdSchema = z.enum(registeredTemplateIds);
 
 export const storyboardNarrationPlanSchema = z
   .object({
@@ -73,29 +69,6 @@ export const storyboardPlanSchema = z
         });
       }
       orders.add(segment.order);
-
-      const recipeHints = segment.recipeHints ?? [];
-      if (recipeHints.length > 0) {
-        const allowedRecipeIds = getPlannerRecipeIdsForTemplate(segment.templateId);
-        if (allowedRecipeIds.length === 0) {
-          ctx.addIssue({
-            code: "custom",
-            message: `Template "${segment.templateId}" does not support planner recipe hints.`,
-            path: ["segments", index, "recipeHints"],
-          });
-        }
-
-        for (let hintIndex = 0; hintIndex < recipeHints.length; hintIndex++) {
-          const hint = recipeHints[hintIndex];
-          if (!allowedRecipeIds.includes(hint.recipeId)) {
-            ctx.addIssue({
-              code: "custom",
-              message: `Recipe "${hint.recipeId}" is not registered for template "${segment.templateId}".`,
-              path: ["segments", index, "recipeHints", hintIndex, "recipeId"],
-            });
-          }
-        }
-      }
     }
 
     for (let expectedOrder = 1; expectedOrder <= plan.segments.length; expectedOrder++) {

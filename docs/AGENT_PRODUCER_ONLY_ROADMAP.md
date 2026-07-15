@@ -1,6 +1,6 @@
 # Agent Producer-Only Roadmap
 
-Status: Phase 0 through Phase 2 complete; Phase 3 has not started.
+Status: Phase 0 through Phase 3 complete; Phase 4 has not started.
 
 Decision date: 2026-07-15.
 
@@ -446,6 +446,8 @@ Implementation evidence:
 
 ## 8. Phase 3 - Remove The Web Video Product Line
 
+Status: complete and verified on 2026-07-16.
+
 ### Goal
 
 Delete every video-generation, editing, regeneration, product-asset, progress,
@@ -530,6 +532,25 @@ not expose generation, upload, editing, TTS, or export actions.
 - Remotion Studio and local CLI rendering remain functional
 - retained read-only catalogs, if any, have no business-logic dependency on the
   deleted product line
+
+Implementation evidence:
+
+- the Next application, Web UI/hooks/routes, Lambda path, project/template
+  runtime, planner/compiler, RecipeShowcase, and Web deployment/config surface
+  are removed
+- package dependencies and scripts now expose Remotion Studio/CLI and direct
+  Producer tools without Next, AI SDK, Player, or Lambda product dependencies
+- Docker now has one `producer` service for Studio and Docker-first checks
+- future Producer captions use `standalone-video/caption-types`; narrow
+  storyboard, caption, recipe-block, and recipe-timing paths remain only for
+  frozen composition compatibility
+- focused RED failed on 16 tracked `src/app` files; the same Phase 3 smoke,
+  architecture/skill/audio/validation/review smokes, Docker typecheck, build,
+  and composition listing pass after removal
+- finished compositions, historical generated metadata, ignored voice/audio,
+  `public/generated`, and `out` remain unchanged
+- repository-wide lint retains the documented historical baseline; Phase 3
+  does not claim a clean whole-repository lint gate
 
 ## 9. Phase 4 - Consolidate Agent Producer OS
 
@@ -914,22 +935,17 @@ Every implementation phase runs:
 6. `git diff --check`
 7. phase-specific forbidden-reference scans
 
-### 15.2 Transitional commands
+### 15.2 Current Docker commands
 
-Until the Web service is removed, Docker remains the current source of type
-truth:
+Docker remains the current source of type truth:
 
 ```bash
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit --pretty false'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'
-npx remotion compositions src/remotion/index.ts
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npx tsc --noEmit --pretty false'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run lint'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run build'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npx remotion compositions src/remotion/index.ts'
 git diff --check
 ```
-
-Phase 3 replaces `web` with a producer/render-oriented service name and updates
-all current docs and commands in the same slice. Do not leave `web` as a
-misleading container name after the Web product is gone.
 
 ### 15.3 Target final commands
 

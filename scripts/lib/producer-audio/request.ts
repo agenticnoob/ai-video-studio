@@ -1,7 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-import type { SegmentCaptions } from "../../../src/lib/caption-schema";
+import type { SegmentCaptions } from "../../../src/remotion/standalone-video/caption-types";
 import { buildProducerCaptionCues, splitProducerNarrationText } from "./captions";
 import { readProducerVoxcpmConfig, type ProducerVoxcpmConfig } from "./config";
 import type { ProducerVoxcpmRequestPlan } from "./types";

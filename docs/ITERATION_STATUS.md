@@ -14,66 +14,77 @@ The implementation sequence is defined by
 
 ## Current Milestone
 
-Phase 2 — remove F5 generation completely — is complete and verified.
+Phase 3 — remove the Web video product line — is complete and verified.
 
-Phase 0 authority reset and Phase 1 direct VoxCPM runtime remain complete.
-Phase 3 Web product removal has not started.
+Phase 0 authority reset, Phase 1 direct VoxCPM runtime, and Phase 2 F5 removal
+remain complete. Phase 4 Producer OS consolidation is next and has not started.
 
-## Implemented Phase 2 Boundary
+## Implemented Phase 3 Boundary
 
-- removed the tracked runtime service, helper tree, Docker overlays, direct,
-  Next-adapter, real-runtime, and staged smoke entrypoints
-- removed the application adapter and unused Producer request-plan adapter
-- collapsed retained Web TTS provider config, request schema, selection, and
-  synthesis to VoxCPM only
-- removed alternate-provider environment keys, package commands, compose
-  forwarding, production wrapper dependencies, and current provider/handoff
-  documentation
-- removed obsolete one-off generation entrypoints for frozen samples while
-  preserving their compositions and historical generated metadata unchanged
-- kept `/api/tts`, staged generation, Web rendering, planner/template code,
-  and UI for the separate Phase 3 deletion owner
-- preserved ignored private model, voice, audio, generated, and render files
+- removed the Next application, Web APIs, generation/editor UI and hooks,
+  Lambda routes, planner/compiler, staged generation, template system,
+  `ProjectVideo`, `ScriptedVideo`, `SpotlightVideo`, and
+  `RecipeShowcase`
+- removed Web-only render, progress, upload, TTS, provider, and project
+  contracts plus their focused smokes and one-off Web TTS generators
+- removed Next, AI SDK, Remotion Player/Lambda, Web utility dependencies,
+  production deployment files, and Web package scripts
+- replaced `web`/`studio`/`render` Compose services with one
+  Remotion-oriented `producer` service
+- moved future Producer caption typing into
+  `src/remotion/standalone-video/caption-types.ts`
+- reduced `src/lib/storyboard-plan-schema.ts` and
+  `src/lib/template-registry.ts` to frozen compatibility contracts
+- retained `src/lib/caption-schema.ts`, `src/remotion/recipes/blocks/`, and
+  `src/remotion/recipes/timing/` only because frozen compositions import them
+- preserved all finished compositions, historical provider metadata, ignored
+  private voice/audio/model data, `public/generated/`, and `out/`
 
 ## Verification
 
 RED evidence:
 
-- the Phase 2 architecture guard failed because `services/f5-tts` was still a
-  tracked runtime boundary
-- the provider-boundary smoke failed because the old request schema still
-  accepted the removed provider
+- `npm run smoke:agent-producer-web-removal` exited 1 because `src/app`
+  still contained 16 tracked files
 
 GREEN evidence:
 
+- `npm run smoke:agent-producer-web-removal`
 - `npm run smoke:agent-producer-architecture`
-- `npm run smoke:provider-boundary`
-- `npm run smoke:producer-audio-direct-voxcpm`
-- `npm run smoke:producer-audio-tools`
-- `npm run smoke:producer-validation`
 - `npm run smoke:skill-alignment`
-- affected frozen-composition contract smokes
+- direct VoxCPM and Producer audio tooling smokes
+- Producer validation and review-frame smokes
+- standalone runtime and affected frozen-composition contract smokes
 - Docker `npx tsc --noEmit --pretty false`
 - Docker `npm run build`
 - Docker `npx remotion compositions src/remotion/index.ts`
 - changed-file ESLint and Prettier
-- production shell syntax and base/prod Compose config checks
-- Phase 2 forbidden scan, artifact/frozen-boundary review, and
-  `git diff --check`
+- Compose config, shell syntax, Phase 3 forbidden scan, frozen/artifact review,
+  and `git diff --check`
 
-The first Docker typecheck correctly exposed an ignored local artifact under
-`public/generated/` as being inside the TypeScript source scan. `tsconfig.json`
-now excludes that already-local-only artifact boundary; the artifact itself was
-not changed or deleted, and the repeated typecheck and build pass.
+The first Docker typecheck exposed that frozen `TimelineProgressBlock` still
+imports `recipes/timing`. CodeGraph confirmed seven frozen composition
+consumers, so the timing helper was restored byte-for-byte and recorded as
+historical compatibility rather than weakening or editing frozen callers.
 
-Repository-wide Docker lint was re-run and remains at the historical 75 errors
-plus 2 ignored generated warnings. No changed Phase 2 file appears in that
-failure set, so this phase does not claim a clean full lint gate.
+Repository-wide Docker lint now reports 41 errors plus 2 ignored generated
+warnings, down from the Phase 2 baseline of 75 plus 2 because the deleted Web
+closure owned 34 of those errors. No changed Phase 3 file appears in the
+remaining error set, so this phase does not claim a clean whole-repository lint
+gate.
+
+An additional unchanged baseline was confirmed after the required gate:
+`smoke:producer-sample-manifest` passes its manifest check, then the bundled
+promotion-gate check fails because its old enum still requires “promote to
+recipe/template” while the active promotion doc forbids those choices.
+`scripts/producer-promotion-gate-smoke.mjs`, the manifest, and
+`docs/PRODUCER_PROMOTION_GATE.md` are unchanged from HEAD. Phase 4 owns this
+transitional Producer Sample OS migration; `smoke:evidence-lens` still passes.
 
 ## Next Bounded Slice
 
-After the Phase 2 closure commit, Phase 3 Web video product removal is next.
-Phase 3 has not started and requires a separate plan.
+Phase 4 — consolidate Agent Producer OS — is next. Phase 4 has not started and
+requires a separate plan.
 
 ## Frozen History
 

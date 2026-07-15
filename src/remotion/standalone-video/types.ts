@@ -1,4 +1,4 @@
-import type { SegmentCaptions } from "../../lib/caption-schema";
+import type { SegmentCaptions } from "./caption-types";
 
 export type StandaloneCanvasProfileId = "landscape-16x9" | "portrait-9x16";
 

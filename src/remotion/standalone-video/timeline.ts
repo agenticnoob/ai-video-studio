@@ -1,4 +1,4 @@
-import type { SegmentCaptionCue, SegmentCaptions } from "../../lib/caption-schema";
+import type { SegmentCaptionCue, SegmentCaptions } from "./caption-types";
 import type { StandaloneTimedScene } from "./types";
 
 type StandaloneSceneTimingOptions = {

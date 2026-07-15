@@ -92,6 +92,7 @@ for (const required of [
   "scene id",
   "fail closed",
   "displayText",
+  "docker compose run --rm producer",
 ])
   assertIncludes(producerSkill, required, "Agent Producer skill");
 for (const forbidden of [
@@ -106,8 +107,25 @@ for (const forbidden of [
   "NEXT_ORIGIN",
   "uploaded reference id",
   "TTS_PROVIDER",
+  "docker compose run --rm web",
+  "node_modules/next",
 ])
   assertNotIncludes(producerSkill, forbidden, "Agent Producer skill");
+
+const primitiveReference = read(
+  ".agents/skills/ai-video-studio-agent-producer/remotion-primitives/REMOTION_PRIMITIVES.md",
+);
+for (const forbidden of [
+  "src/templates/",
+  "LLM-visible parameters",
+  "template implementation schema",
+])
+  assertNotIncludes(primitiveReference, forbidden, "Producer primitive reference");
+assertIncludes(
+  primitiveReference,
+  "Agent Producer Development Rule",
+  "Producer primitive reference",
+);
 
 const voxcpmSkill = read(
   ".agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md",

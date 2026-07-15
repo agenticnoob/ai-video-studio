@@ -1,82 +1,58 @@
 # REMOTION KNOWLEDGE BASE
 
-**Generated:** 2026-07-13 16:00:00 +0800
-
 ## OVERVIEW
 
-`src/remotion` is the deterministic rendering surface. It turns structured
-`VideoProject` and template implementation data into preview/export frames; it
-is not a place for planner/provider logic.
+`src/remotion` is the deterministic Agent Producer rendering surface.
+Supported new work is a dedicated composition; there is no shared Web project
+preview/export composition or planner-selected template runtime.
 
 ## STRUCTURE
 
 ```txt
 src/remotion/
 |-- index.ts                  # Remotion entry
-|-- Root.tsx                  # composition registry
-|-- ProjectVideo/             # shared project preview/export composition
-|-- RecipeShowcase/           # visual-quality preview composition
-|-- recipes/                  # reusable recipe blocks/motion/timing
-|-- primitives/               # lower-level visual primitives
-|-- ScriptedVideo/            # scripted-template renderer
-|-- SpotlightVideo/           # spotlight-template renderer
-|-- GitTutorialForDevs/       # Agent Producer Git tutorial composition
-|-- HermesInnerLandscape/    # Agent Producer abstract AI consciousness video
-|-- RawThoughtMirror/        # Agent Producer cinematic raw-thought monologue
-|-- AiConceptsRedefined/     # Agent Producer conceptual explainer (41 scenes)
-|-- AiDailyNews20260714/     # Agent Producer AI daily news briefing (8 scenes)
-|-- BeyondLanguage/          # Agent Producer AI language limitations explainer (61 scenes)
-|-- standalone-samples/       # reference-only standalone compositions
-|-- standalone-video/         # reusable production skeleton
-`-- producer-samples/          # sample manifest, registry, shared blocks
+|-- Root.tsx                  # dedicated/frozen composition registry
+|-- primitives/               # maintained visual primitives
+|-- catalog/                  # Agent-facing primitive discovery
+|-- standalone-video/         # Producer timing/audio/caption/canvas runtime
+|-- producer-samples/         # future sample manifest, scaffold, and blocks
+|-- recipes/blocks/           # frozen composition compatibility only
+|-- recipes/timing/           # direct dependency of frozen recipe blocks
+|-- standalone-samples/       # frozen reference compositions
+`-- <CompositionName>/        # purpose-built dedicated compositions
 ```
-
 ## WHERE TO LOOK
 
 | Task | Location | Notes |
 | --- | --- | --- |
-| Composition registry | `Root.tsx` | Add/adjust Studio compositions here. |
-| Project render path | `ProjectVideo/ProjectVideo.tsx` | Narration, media, segments, captions. |
-| Captions | `ProjectVideo/ProjectCaptionLayers.tsx` | Shared segment-caption rendering. |
-| Narration audio | `ProjectVideo/ProjectNarrationLayers.tsx` | Segment audio with buffering pause. |
-| Recipe timing | `recipes/timing/` | Duration-aware beat helpers. |
-| Recipe blocks | `recipes/blocks/` | Terminal, metric, workflow, timeline, diff. |
-| Recipe transitions | `recipes/motion/` | Subject-motion transitions. |
-| General primitives | `primitives/` | Reusable visual pieces. |
+| Composition registry | `Root.tsx` | Register dedicated compositions and Stills. |
+| Visual primitives | `primitives/`, `catalog/` | Inventory before adding local components. |
+| Producer runtime | `standalone-video/` | Future timing, captions, audio, canvas profiles. |
+| Producer Sample OS | `producer-samples/` | Maintained manifests, scaffold, and blocks. |
+| Frozen recipe compatibility | `recipes/blocks/`, `recipes/timing/` | Do not extend for future work. |
 
 ## CONVENTIONS
 
-- Consult `.agents/skills/remotion-best-practices/SKILL.md` before editing
-  render code or template-internal animation components.
-- Keep motion frame-driven with `useCurrentFrame()`, `interpolate()`,
-  `spring()`, `<Sequence>`, `<Series>`, and Remotion transition primitives.
-- Use stable dimensions and fixed composition bounds; avoid layout shift from
-  dynamic text, hover states, or loading labels.
-- Use Remotion media components (`<Img>`, `<Audio>`, `<Video>`) and
-  `staticFile()` for public assets where applicable.
-- `ProjectVideo` must stay the shared preview/export surface for assembled
-  projects.
-- Captions are flattened from segment-local narration cues; templates should
-  leave caption rendering to shared layers.
-- Recipe primitives should be deterministic, duration-aware, and reusable by
-  template internals without changing `VideoProject`.
+- Load `.agents/skills/remotion-best-practices/SKILL.md` before render edits.
+- Keep motion frame-driven with Remotion APIs.
+- Use fixed composition bounds and deterministic local assets.
+- Build topic data, narration, and scene order inside the dedicated
+  composition.
+- Use `standalone-video/caption-types` for future Producer captions.
+- Treat finished compositions and historical recipe helpers as read-only.
 
 ## ANTI-PATTERNS
 
-- Do not use CSS animations, CSS transitions, or Tailwind animation utilities
-  for render-critical motion.
-- Do not add planner/provider/LLM logic here.
-- Do not create placeholder narration audio in Remotion preview fixtures.
-- Do not hide generated narration or captions inside template implementation
-  renderers.
-- Do not widen recipe work into browser visual review, automatic repair loops,
-  or generated TSX execution unless explicitly requested.
+- Do not restore `ProjectVideo`, `VideoProject`, `src/templates`, a
+  planner/compiler, or RecipeShowcase.
+- Do not use CSS animation, CSS transitions, or wall-clock timers.
+- Do not add provider/LLM logic to render code.
+- Do not fabricate source captures or generate scene imagery.
 
 ## VALIDATION
 
 ```bash
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:recipe-showcase-preview'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:recipe-timing'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run smoke:staged-fixtures'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion still src/remotion/index.ts TechnicalExplainerTemplatePreview /workspace/out/<name>.png --frame=<frame> --scale=0.5'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npx tsc --noEmit --pretty false'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npx remotion compositions src/remotion/index.ts'
+npm run producer:stills -- --composition <composition-id>
 ```

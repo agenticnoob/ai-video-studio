@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "completedPhases": [0, 1, 2],
+  "completedPhases": [0, 1, 2, 3],
   "decisionDate": "2026-07-15",
   "authority": {
     "skill": ".agents/skills/ai-video-studio-agent-producer/",
@@ -267,11 +267,11 @@
       },
       {
         "id": "web-project-contracts",
-        "path": "src/lib/{project-*,storyboard-*,staged-*,template-registry.ts}",
+        "path": "src/lib/{project-*,storyboard-plan-draft-*,staged-*,deepseek/**}",
         "pathKind": "glob",
         "action": "delete",
         "phase": 3,
-        "reason": "Unsupported Web project, planner, and staged-generation contracts."
+        "reason": "Unsupported Web project, planner draft/compiler, DeepSeek, and staged-generation contracts."
       }
     ],
     "shared": [
@@ -279,15 +279,15 @@
         "id": "caption-schema",
         "path": "src/lib/caption-schema.ts",
         "pathKind": "path",
-        "action": "extract-then-delete",
+        "action": "retain",
         "phase": 3,
-        "reason": "Producer captions need a Web-independent contract."
+        "reason": "Frozen compositions retain the historical schema while Producer captions moved to standalone-video."
       },
       {
         "id": "captions",
         "path": "src/lib/captions.ts",
         "pathKind": "path",
-        "action": "extract-then-delete",
+        "action": "delete",
         "phase": 3,
         "reason": "Retain only caption helpers used by Producer."
       },
@@ -295,7 +295,7 @@
         "id": "narration-schema",
         "path": "src/lib/narration-asset-schema.ts",
         "pathKind": "path",
-        "action": "extract-then-delete",
+        "action": "delete",
         "phase": 3,
         "reason": "Retain only Producer narration metadata fields."
       },
@@ -303,17 +303,17 @@
         "id": "render-project",
         "path": "src/lib/render-project.ts",
         "pathKind": "path",
-        "action": "extract-then-delete",
+        "action": "delete",
         "phase": 3,
         "reason": "Preserve CLI renderer needs without VideoProject contracts."
       },
       {
-        "id": "recipe-visuals",
-        "path": "src/remotion/recipes",
+        "id": "recipe-motion",
+        "path": "src/remotion/recipes/motion",
         "pathKind": "path",
-        "action": "extract-then-delete",
+        "action": "delete",
         "phase": 3,
-        "reason": "Promote proven Producer blocks before deleting planner recipes."
+        "reason": "Unsupported planner recipe transition layer after RecipeShowcase removal."
       },
       {
         "id": "package-topology",
@@ -327,7 +327,7 @@
         "id": "environment-template",
         "path": ".env.example",
         "pathKind": "path",
-        "action": "extract-then-delete",
+        "action": "retain",
         "phase": 2,
         "reason": "Remove F5 and Web keys while preserving VoxCPM and render configuration."
       },
@@ -335,12 +335,28 @@
         "id": "docker-topology",
         "path": "docker-compose.yml",
         "pathKind": "path",
-        "action": "extract-then-delete",
+        "action": "retain",
         "phase": 3,
         "reason": "Replace Web service naming while preserving local Remotion tooling."
       }
     ],
     "historicalDependency": [
+      {
+        "id": "historical-storyboard-contracts",
+        "path": "src/lib/{storyboard-plan-schema.ts,template-registry.ts}",
+        "pathKind": "glob",
+        "action": "preserve-history",
+        "phase": 3,
+        "reason": "Frozen composition scripts still parse or type their historical storyboard metadata."
+      },
+      {
+        "id": "historical-recipe-runtime",
+        "path": "src/remotion/recipes/{blocks,timing}",
+        "pathKind": "glob",
+        "action": "preserve-history",
+        "phase": 3,
+        "reason": "Frozen compositions directly import recipe blocks and the blocks retain their timing dependency."
+      },
       {
         "id": "historical-f5-metadata",
         "path": "src/remotion/**/audio.generated.ts",

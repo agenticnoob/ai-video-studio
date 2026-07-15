@@ -2,7 +2,7 @@
 
 Copy `SampleName/` to `src/remotion/<SampleName>/` when starting a maintained Agent Producer sample.
 After copying, update scaffold-relative imports so they point from the new
-sample folder to `../standalone-video` and `../../lib/caption-schema`.
+sample folder to `../standalone-video` and its Producer-owned `caption-types` contract.
 
 The committed sample folder should contain:
 

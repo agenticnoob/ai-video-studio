@@ -60,8 +60,9 @@ These concepts are not supported product surfaces:
 - provider-neutral narration selection
 - image generation or video generation
 
-Their remaining code is transitional and owned by later Roadmap deletion
-phases. Presence on disk does not make a path supported.
+Phase 3 removed their active runtime, UI, route, package, template, and planner
+surfaces. Narrow historical types and recipe helpers remain only where frozen
+compositions still import them.
 
 ## Visual Boundary
 
@@ -102,8 +103,10 @@ review, revisions, and promotion decisions.
 The direct VoxCPM Producer runtime under `scripts/lib/producer-audio/` owns
 future narration transport, punctuation splitting, PCM silence trim and WAV
 concatenation, measured duration, captions, local output, and scene recovery.
-It runs without Next. Phase 2 alternate-provider deletion is complete. Phase 3
-still owns the unsupported Web product line and has not started.
+It runs without Next. Phase 2 alternate-provider deletion and Phase 3 Web
+product removal are complete. Remotion Studio, CLI, and the Docker
+`producer` service are the supported runtime boundary. Phase 4 Producer OS
+consolidation is next and has not started.
 
 ## Supporting Authorities
 

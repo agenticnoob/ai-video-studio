@@ -36,8 +36,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /workspace
 
-ENV NEXT_TELEMETRY_DISABLED=1 \
-    NPM_CONFIG_UPDATE_NOTIFIER=false \
+ENV NPM_CONFIG_UPDATE_NOTIFIER=false \
     NPM_CONFIG_FUND=false \
     NPM_CONFIG_CACHE=/npm-cache
 

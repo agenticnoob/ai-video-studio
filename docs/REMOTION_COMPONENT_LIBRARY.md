@@ -35,8 +35,10 @@ narration, and one-off scene arrangements remain composition-local.
 | dedicated composition | topic data, narration, scene order, and local arrangement |
 | Agent Producer Skill | selection rules and production workflow |
 
-`src/remotion/recipes/` is transitional. Phase 3 must extract proven Producer
-visuals before deleting planner-facing recipe infrastructure.
+`src/remotion/recipes/blocks/` and `recipes/timing/` remain frozen
+compatibility for finished compositions. Future Producer work must use
+`producer-samples/`, `standalone-video/`, primitives, or sample-local code
+instead of extending those historical paths.
 
 ## Component Contract
 

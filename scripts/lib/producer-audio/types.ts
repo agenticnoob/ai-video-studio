@@ -1,4 +1,4 @@
-import type { SegmentCaptions } from "../../../src/lib/caption-schema";
+import type { SegmentCaptions } from "../../../src/remotion/standalone-video/caption-types";
 
 export type ProducerVoxcpmMode = "voice-design" | "controllable-clone" | "high-fidelity-clone";
 

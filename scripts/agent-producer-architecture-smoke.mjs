@@ -22,7 +22,7 @@ assert(existsSync(absolute(inventoryPath)), `${inventoryPath} must exist`);
 const inventory = JSON.parse(read(inventoryPath));
 
 assert.equal(inventory.version, 1, "inventory version");
-assert.deepEqual(inventory.completedPhases, [0, 1, 2], "completed roadmap phases");
+assert.deepEqual(inventory.completedPhases, [0, 1, 2, 3], "completed roadmap phases");
 const completedPhases = new Set(inventory.completedPhases);
 assert.equal(
   inventory.authority.skill,
@@ -167,14 +167,10 @@ for (const deletedPath of phase2DeletedPaths) {
 const phase2RuntimeFiles = [
   ".env.example",
   "docker-compose.yml",
-  "docker-compose.prod.yml",
   "package.json",
-  "scripts/prod.sh",
-  "scripts/prod-build.sh",
-  "scripts/staged-live-smoke.mjs",
   "scripts/lib/producer-audio/types.ts",
-  "src/lib/tts/config.ts",
-  "src/lib/tts/synthesis.ts",
+  "scripts/lib/producer-audio/config.ts",
+  "scripts/lib/producer-audio/providers/voxcpm.ts",
 ];
 const forbiddenPhase2RuntimePatterns = [
   ["F5 environment key", /F5_TTS_/],

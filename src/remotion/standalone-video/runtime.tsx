@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import { Audio, Sequence, staticFile, useCurrentFrame } from "remotion";
-import type { SegmentCaptions } from "../../lib/caption-schema";
+import type { SegmentCaptions } from "./caption-types";
 import { buildStandaloneSceneStartFrames, getActiveStandaloneCaption } from "./timeline";
 import type { StandaloneTimedScene } from "./types";
 

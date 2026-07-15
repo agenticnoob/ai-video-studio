@@ -58,8 +58,8 @@ mkdir -p "out/$SLUG"
 
 # === 1. Render MP4 ===
 echo "=== Rendering $COMPOSITION_ID → out/$SLUG/$SLUG.mp4 ==="
-docker compose run --rm web bash -lc "
-  [ -d /workspace/node_modules/next ] || npm install
+docker compose run --rm producer bash -lc "
+  [ -d /workspace/node_modules/remotion ] || npm install
   npx remotion render src/remotion/index.ts $COMPOSITION_ID /workspace/out/$SLUG/$SLUG.mp4
 "
 echo "=== Render complete ==="

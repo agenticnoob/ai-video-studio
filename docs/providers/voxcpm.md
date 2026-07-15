@@ -79,6 +79,16 @@ The default service endpoints are the plain, controllable clone, and
 high-fidelity clone paths exposed by the local VoxCPM service. Docker bridge
 networking can use `docker-compose.voxcpm.yml` or
 `scripts/producer-voxcpm.sh` when it cannot reach a host-loopback service.
+The wrapper exposes only a direct readiness probe, arbitrary Producer
+container commands, and status:
+
+```bash
+./scripts/producer-voxcpm.sh ready
+./scripts/producer-voxcpm.sh run npm run smoke:producer-audio-tools
+./scripts/producer-voxcpm.sh status
+```
+
+It does not start Next or proxy narration through a repository HTTP route.
 
 ## Validation
 

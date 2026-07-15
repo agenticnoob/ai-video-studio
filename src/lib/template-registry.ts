@@ -1,28 +1,13 @@
-export {
-  buildPlannerRecipeManifest,
-  buildPlannerRecipeManifestPrompt,
-  buildPlannerTemplateManifest,
-  buildPlannerTemplateManifestPrompt,
-  buildTemplateImplementationPrompt,
-  buildTemplatePreservationPrompt,
-  buildTemplateRevisionPrompt,
-  buildTemplateSelectionPrompt,
-  getTemplateDefinition,
-  getTemplateLabel,
-  getPlannerRecipeIdsForTemplate,
-  registeredTemplateIds,
+export const SCRIPTED_TEMPLATE_ID = "scripted" as const;
+export const SPOTLIGHT_TEMPLATE_ID = "spotlight" as const;
+export const STATS_DASHBOARD_TEMPLATE_ID = "stats-dashboard" as const;
+export const TECHNICAL_EXPLAINER_TEMPLATE_ID = "technical-explainer" as const;
+
+export const registeredTemplateIds = [
   SCRIPTED_TEMPLATE_ID,
   SPOTLIGHT_TEMPLATE_ID,
   STATS_DASHBOARD_TEMPLATE_ID,
   TECHNICAL_EXPLAINER_TEMPLATE_ID,
-  templateDefinitions,
-  templateIds,
-  templateSegmentJsonSchemas,
-  videoSegmentSchemaVariants,
-} from "../templates/registry";
+] as const;
 
-export type {
-  PlannerRecipeManifestEntry,
-  PlannerTemplateManifestEntry,
-  TemplateId,
-} from "../templates/registry";
+export type TemplateId = (typeof registeredTemplateIds)[number];

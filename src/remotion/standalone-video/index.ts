@@ -8,6 +8,12 @@ export {
   type StandaloneContentFamily,
   type StandaloneTimedScene,
 } from "./types";
+export type {
+  ProducerCaptionCue,
+  ProducerCaptions,
+  SegmentCaptionCue,
+  SegmentCaptions,
+} from "./caption-types";
 export {
   buildStandaloneSceneStartFrames,
   buildStandaloneSceneStartMap,

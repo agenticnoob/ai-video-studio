@@ -30,16 +30,18 @@ New videos are purpose-built compositions under
 `src/remotion/<CompositionName>/`. Remotion Studio and CLI are the preview,
 still, and render surfaces.
 
-## Current Transition
+## Current Runtime
 
-The legacy Web video product remains on disk while the phased removal roadmap
-is executed. It is unsupported and must not be used for new work.
+Phase 3 removed the legacy Web generation/editor product, its APIs, templates,
+planner/compiler path, Next packaging, and Web deployment surface.
 
 The direct VoxCPM Producer runtime under `scripts/lib/producer-audio/` now owns
 future narration transport, PCM WAV processing, duration-derived captions, and
 scene recovery without starting Next. Phase 2 removed the F5 narration service,
 adapters, scripts, configuration, and current provider documentation.
-Phase 3 still owns the unsupported Web product line and has not started.
+Remotion Studio, CLI rendering, and the Docker `producer` service are the
+supported runtime surfaces. Phase 4 Producer OS consolidation is next and has
+not started.
 
 Existing finished compositions remain frozen read-only references. Historical
 `provider: "f5-tts"` metadata in their generated audio files stays truthful; it
@@ -84,6 +86,7 @@ npm run producer:stills -- --composition <composition-id>
 ./scripts/render-video.sh <composition-id> <slug> <metadata-json>
 npm run smoke:producer-audio-direct-voxcpm
 npm run smoke:producer-audio-tools
+npm run smoke:agent-producer-web-removal
 npm run smoke:agent-producer-architecture
 npm run smoke:skill-alignment
 ```
@@ -91,14 +94,11 @@ npm run smoke:skill-alignment
 Current Docker validation remains:
 
 ```bash
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx tsc --noEmit --pretty false'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run lint'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npm run build'
-docker compose run --rm web bash -lc '[ -d /workspace/node_modules/next ] || npm install; npx remotion compositions src/remotion/index.ts'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npx tsc --noEmit --pretty false'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run lint'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run build'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npx remotion compositions src/remotion/index.ts'
 ```
-
-The `web` service name is transitional. Phase 3 replaces it with a
-Producer/render-oriented topology.
 
 ## Local Artifact Boundary
 
