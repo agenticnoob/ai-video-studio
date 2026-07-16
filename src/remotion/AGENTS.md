@@ -59,6 +59,9 @@ src/remotion/
   local dynamic media or sound-design surfaces.
 - Run `smoke:producer-style-profile-sample-contract` and record a validated
   `styleProfileId` before implementing a new maintained composition.
+- Keep `TcpHandshakeEditorial` and `TcpHandshakeTerminal` as the maintained
+  real proofs for `editorial-tech` and `retro-terminal`; Phase 8 is complete.
+  Phase 9 has not started.
 - Build topic data, narration, and scene order inside the dedicated
   composition.
 - Use `standalone-video/caption-types` for future Producer captions.

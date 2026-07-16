@@ -1,5 +1,7 @@
 import type { MaintainedProducerSampleManifest, ProducerSampleManifest } from "./manifest";
 import { agentProducerMediaSoundProofManifest } from "../AgentProducerMediaSoundProof/manifest";
+import { tcpHandshakeEditorialManifest } from "../TcpHandshakeEditorial/manifest";
+import { tcpHandshakeTerminalManifest } from "../TcpHandshakeTerminal/manifest";
 
 export const producerSampleManifests = [
   {
@@ -686,6 +688,8 @@ export const producerSampleManifests = [
     ],
   },
   agentProducerMediaSoundProofManifest,
+  tcpHandshakeEditorialManifest,
+  tcpHandshakeTerminalManifest,
 ] as const satisfies readonly ProducerSampleManifest[];
 
 export const getProducerSampleManifestByCompositionId = (

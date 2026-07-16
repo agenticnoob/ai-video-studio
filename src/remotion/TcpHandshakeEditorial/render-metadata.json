@@ -1,0 +1,10 @@
+{
+  "title": "TCP 三次握手：Editorial Tech 解释版",
+  "description": "用三条报文解释 SYN、SYN-ACK 与 ACK 如何确认双向序列号并建立 TCP 连接。",
+  "fps": 30,
+  "chapters": [
+    { "name": "客户端发送 SYN", "sceneId": "syn" },
+    { "name": "服务端回复 SYN-ACK", "sceneId": "syn-ack" },
+    { "name": "客户端发送 ACK", "sceneId": "ack" }
+  ]
+}

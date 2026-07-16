@@ -66,12 +66,13 @@ official native-video fallback when LAN HTTP Studio does not expose WebCodecs
 `editorial-tech`, `comic-anime`, `cinematic-3d`, `retro-terminal`,
 `documentary-media`, and `hand-drawn-explainer`. The six code-only inventory
 fixtures use the same message but visibly different composition, motion,
-texture, media, Three.js, caption, and sound policies. Phase 8 remains in
-progress. Phase 8B style-profile sample contract is complete. Future scaffolds
+texture, media, Three.js, caption, and sound policies.
+Phase 8B style-profile sample contract is complete. Future scaffolds
 require an explicit validated profile id without retrofitting the completed
-Phase 7 proof. Phase 8B real-composition proof has not started. It must prove
-at least two profiles in new real dedicated compositions. Phase 9 has not
-started.
+Phase 7 proof. `TcpHandshakeEditorial` and `TcpHandshakeTerminal` now prove
+`editorial-tech` and `retro-terminal` on identical narration/facts through
+real VoxCPM, strict assets, reviewed stills/covers, and H.264/AAC renders.
+Phase 8 is complete. Phase 9 has not started.
 
 Existing finished compositions remain frozen read-only references. Historical
 `provider: "f5-tts"` metadata in their generated audio files stays truthful; it

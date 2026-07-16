@@ -49,6 +49,9 @@ references. Do not use them as future Producer scaffolds.
   `producer:assets` and `producer:preflight` before maintained stills.
 - Require `producer:scaffold --style-profile <profile-id>` for every future
   maintained sample; never retrofit the completed Phase 7 proof.
+- Keep `TcpHandshakeEditorial` and `TcpHandshakeTerminal` as the maintained
+  Phase 8 profile proofs; their generated narration, assets, stills, covers,
+  and MP4s stay ignored. Phase 8 is complete. Phase 9 has not started.
 
 ## ANTI-PATTERNS
 

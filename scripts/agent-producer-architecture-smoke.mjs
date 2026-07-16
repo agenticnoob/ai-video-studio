@@ -22,7 +22,11 @@ assert(existsSync(absolute(inventoryPath)), `${inventoryPath} must exist`);
 const inventory = JSON.parse(read(inventoryPath));
 
 assert.equal(inventory.version, 1, "inventory version");
-assert.deepEqual(inventory.completedPhases, [0, 1, 2, 3, 4, 5, 6, 7], "completed roadmap phases");
+assert.deepEqual(
+  inventory.completedPhases,
+  [0, 1, 2, 3, 4, 5, 6, 7, 8],
+  "completed roadmap phases",
+);
 assert.deepEqual(
   inventory.completedPhaseSlices,
   [
@@ -67,6 +71,13 @@ assert.deepEqual(
       status: "complete",
       reason:
         "Future Producer scaffolds now require one validated style-profile id while the completed Phase 7 maintained proof and every frozen composition remain unchanged.",
+    },
+    {
+      phase: 8,
+      slice: "style-profile-real-compositions",
+      status: "complete",
+      reason:
+        "Two real dedicated TCP-handshake compositions apply editorial-tech and retro-terminal to identical facts and pass VoxCPM narration, asset preflight, validation, reviewed still/cover, MP4, and ffprobe gates.",
     },
   ],
   "completed roadmap phase slices",
@@ -188,9 +199,8 @@ assert(
 assert(
   read("docs/ITERATION_STATUS.md").includes("Phase 8B style-profile sample contract is complete."),
 );
-assert(
-  read("docs/ITERATION_STATUS.md").includes("Phase 8B real-composition proof has not started."),
-);
+assert(read("docs/ITERATION_STATUS.md").includes("Phase 8 is complete."));
+assert(read("docs/ITERATION_STATUS.md").includes("Phase 9 has not started."));
 assert(read("docs/VISUAL_RECIPE_ROADMAP.md").includes("Superseded"));
 
 const packageJson = JSON.parse(read("package.json"));
@@ -208,6 +218,7 @@ for (const command of [
   "smoke:producer-media-sound",
   "smoke:producer-style-profiles",
   "smoke:producer-style-profile-sample-contract",
+  "smoke:producer-style-profile-real-compositions",
 ]) {
   assert(packageJson.scripts[command], `package.json must expose ${command}`);
 }
@@ -227,6 +238,16 @@ for (const phase8bContractPath of [
   assert(
     existsSync(absolute(phase8bContractPath)),
     `Phase 8B contract path must exist: ${phase8bContractPath}`,
+  );
+}
+for (const phase8bProofPath of [
+  "scripts/producer-style-profile-real-compositions-smoke.mjs",
+  "src/remotion/TcpHandshakeEditorial/manifest.ts",
+  "src/remotion/TcpHandshakeTerminal/manifest.ts",
+]) {
+  assert(
+    existsSync(absolute(phase8bProofPath)),
+    `Phase 8B proof path must exist: ${phase8bProofPath}`,
   );
 }
 for (const phase7Path of [

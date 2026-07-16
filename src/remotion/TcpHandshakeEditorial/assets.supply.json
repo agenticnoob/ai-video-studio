@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "compositionId": "TcpHandshakeEditorial",
+  "slug": "tcp-handshake-editorial",
+  "outputManifestPath": "src/remotion/TcpHandshakeEditorial/assets.manifest.json",
+  "assets": [
+    {
+      "id": "narration-syn",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for TCP SYN.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/tcp-handshake-editorial/audio/syn.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "narration-syn.wav" }
+    },
+    {
+      "id": "narration-syn-ack",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for TCP SYN-ACK.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/tcp-handshake-editorial/audio/syn-ack.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "narration-syn-ack.wav" }
+    },
+    {
+      "id": "narration-ack",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for TCP ACK.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/tcp-handshake-editorial/audio/ack.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "narration-ack.wav" }
+    },
+    {
+      "id": "editorial-bgm",
+      "kind": "audio",
+      "purpose": "Measured low pulse for editorial narration.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "sound": { "role": "bgm", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 1 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/tcp-handshake-editorial/inputs/editorial-bgm.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "editorial-bgm.wav" }
+    },
+    {
+      "id": "editorial-ambience",
+      "kind": "audio",
+      "purpose": "Quiet system-room ambience for editorial space.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "sound": { "role": "ambience", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 1 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/tcp-handshake-editorial/inputs/editorial-ambience.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "editorial-ambience.wav" }
+    },
+    {
+      "id": "soft-whoosh",
+      "kind": "audio",
+      "purpose": "Editorial fade transition sound.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "sound": { "role": "sfx", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 0.3 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/tcp-handshake-editorial/inputs/soft-whoosh.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "soft-whoosh.wav" }
+    },
+    {
+      "id": "node-confirm",
+      "kind": "audio",
+      "purpose": "Sparse node confirmation sound.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "sound": { "role": "sfx", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 0.2 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/tcp-handshake-editorial/inputs/node-confirm.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "node-confirm.wav" }
+    },
+    {
+      "id": "tcp-editorial-diagram",
+      "kind": "svg",
+      "purpose": "Repo-authored TCP handshake evidence diagram.",
+      "source": { "provider": "repo-authored", "license": "CC0-1.0" },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "scripts/fixtures/producer-style-profile-proofs/tcp-editorial-diagram.svg"
+      },
+      "destination": { "scope": "composition", "fileName": "tcp-editorial-diagram.svg" },
+      "requirements": { "minWidth": 1280, "minHeight": 720 }
+    }
+  ]
+}

@@ -1,0 +1,198 @@
+{
+  "version": 1,
+  "compositionId": "TcpHandshakeTerminal",
+  "slug": "tcp-handshake-terminal",
+  "assets": [
+    {
+      "id": "narration-syn",
+      "kind": "audio",
+      "localPath": "public/generated/tcp-handshake-terminal/assets/narration-syn.wav",
+      "purpose": "Direct VoxCPM narration for TCP SYN.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "6d33d4e0d057c9df3a2532523bc5189f6b84ac8b06921e7aac4cf4248826754e",
+        "sizeInBytes": 650832
+      },
+      "media": {
+        "durationInSeconds": 6.779042,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-syn-ack",
+      "kind": "audio",
+      "localPath": "public/generated/tcp-handshake-terminal/assets/narration-syn-ack.wav",
+      "purpose": "Direct VoxCPM narration for TCP SYN-ACK.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "67bd14314c595f4d51895c15c922c476bcbd61ab7869a4e41862116b60374937",
+        "sizeInBytes": 729902
+      },
+      "media": {
+        "durationInSeconds": 7.602688,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-ack",
+      "kind": "audio",
+      "localPath": "public/generated/tcp-handshake-terminal/assets/narration-ack.wav",
+      "purpose": "Direct VoxCPM narration for TCP ACK.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "77d1328cad6cff236f791dfec11392821a986f5335fefc99465217843278b94c",
+        "sizeInBytes": 689142
+      },
+      "media": {
+        "durationInSeconds": 7.178104,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "terminal-bgm",
+      "kind": "audio",
+      "localPath": "public/generated/tcp-handshake-terminal/assets/terminal-bgm.wav",
+      "purpose": "Clocked sequence bed for terminal rhythm.",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "5a9b3fffd511d9b976d2c468771a8c08dc709ac777e40d64957341bd18aed667",
+        "sizeInBytes": 2880078
+      },
+      "media": {
+        "durationInSeconds": 30,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "bgm",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 1
+      }
+    },
+    {
+      "id": "terminal-ambience",
+      "kind": "audio",
+      "localPath": "public/generated/tcp-handshake-terminal/assets/terminal-ambience.wav",
+      "purpose": "Low electronic room tone.",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "152a8d51ec7dcdf1a646c543b481ffdcfbf40f15d96e197a82fedf6ea0f2a5ad",
+        "sizeInBytes": 2880078
+      },
+      "media": {
+        "durationInSeconds": 30,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "ambience",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 1
+      }
+    },
+    {
+      "id": "signal-sweep",
+      "kind": "audio",
+      "localPath": "public/generated/tcp-handshake-terminal/assets/signal-sweep.wav",
+      "purpose": "Signal wipe transition sound.",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "ea1f800f015f12619571dcf55106379d298711da8aeb04e612e8b3a5c94c8515",
+        "sizeInBytes": 40398
+      },
+      "media": {
+        "durationInSeconds": 0.42,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "sfx",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 0.3
+      }
+    },
+    {
+      "id": "key-confirm",
+      "kind": "audio",
+      "localPath": "public/generated/tcp-handshake-terminal/assets/key-confirm.wav",
+      "purpose": "Terminal confirmation key chirp.",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "0ff99279b0b87ab20fb6045fc377d6dcb7c155b9e39fe36af69ea34934ecdb01",
+        "sizeInBytes": 17358
+      },
+      "media": {
+        "durationInSeconds": 0.18,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "sfx",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 0.2
+      }
+    },
+    {
+      "id": "tcp-terminal-packet",
+      "kind": "svg",
+      "localPath": "public/generated/tcp-handshake-terminal/assets/tcp-terminal-packet.svg",
+      "purpose": "Repo-authored terminal packet and state evidence graphic.",
+      "source": {
+        "provider": "repo-authored",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "d600f146bd18c8ed06049cd9d19d7cddeb5d8c5ba32aa9fa9540098231b44eb6",
+        "sizeInBytes": 920
+      },
+      "media": {
+        "width": 1280,
+        "height": 720,
+        "codec": "svg"
+      },
+      "requirements": {
+        "minWidth": 1280,
+        "minHeight": 720
+      }
+    }
+  ]
+}

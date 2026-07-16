@@ -1,9 +1,8 @@
 # Agent Producer-Only Roadmap
 
-Status: Phase 0 through Phase 7 complete. Phase 8 is in progress: Phase 8A
-style-profile contract and capability-showcase fixtures are complete, and the
-Phase 8B style-profile sample contract is complete. Phase 8B real-composition
-proof has not started. Phase 9 has not started.
+Status: Phase 0 through Phase 8 complete. Phase 8A style-profile contract and
+capability-showcase fixtures, the Phase 8B sample contract, and the two-real-
+composition proof are complete. Phase 8 is complete. Phase 9 has not started.
 
 Decision date: 2026-07-15.
 
@@ -891,8 +890,8 @@ Official references:
 
 ## 13. Phase 8 - Code-Driven Style Profiles
 
-Status: in progress. Phase 8A and the Phase 8B sample-contract slice are
-complete. Phase 8B real-composition proof has not started.
+Status: complete. Phase 8A and both Phase 8B slices are complete. Phase 8 is
+complete. Phase 9 has not started.
 
 ### Goal
 
@@ -920,8 +919,9 @@ Status: complete.
 
 ### Phase 8B - Real Dedicated-Composition Proof
 
-Status: in progress. Phase 8B style-profile sample contract is complete. Phase
-8B real-composition proof has not started.
+Status: complete. Phase 8B style-profile sample contract is complete. The
+real-composition proof is also complete. Phase 8 is complete. Phase 9 has not
+started.
 
 - `producer:scaffold` requires `--style-profile <profile-id>` and writes the
   validated selection into a strict profiled maintained manifest
@@ -929,13 +929,13 @@ Status: in progress. Phase 8B style-profile sample contract is complete. Phase
   field and is not retrofitted
 - `smoke:producer-style-profile-sample-contract` guards the forward-only
   selection boundary
-
-- create at least two new real dedicated compositions using different profiles
-- route both through normal VoxCPM narration, asset preflight, validation,
+- `TcpHandshakeEditorial` and `TcpHandshakeTerminal` apply `editorial-tech` and
+  `retro-terminal` to identical Chinese narration and TCP-handshake facts
+- both route through normal VoxCPM narration, asset preflight, validation,
   representative still review, code-rendered covers, MP4, and ffprobe gates
-- prove profile choice changes visual, motion, texture, media, and audible sound
+- the proof confirms profile choice changes visual, motion, texture, media, and audible sound
   language in production rather than only in inventory fixtures
-- add explicit style-profile selection to the future maintained-sample boundary
+- explicit style-profile selection is part of the future maintained-sample boundary
   without retrofitting or editing completed/frozen compositions
 
 ### Initial profiles

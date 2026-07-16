@@ -152,8 +152,10 @@ Phase 8A adds `getProducerStyleProfile()` with six profile ids:
 composition, motion, texture, media, Three.js, captions, and sound; it does not
 generate scenes or select a template. Six code-only pages in
 `AgentProducerCapabilityShowcase` prove the inventory boundary. Run
-`npm run smoke:producer-style-profiles` before selection. Phase 8 remains in
-progress until Phase 8B proves at least two profiles in new real dedicated
-compositions. Phase 8B style-profile sample contract is complete. New
+`npm run smoke:producer-style-profiles` before selection.
+Phase 8B style-profile sample contract is complete. New
 scaffolds must record one validated profile id; the completed Phase 7 proof is
-not retrofitted. Phase 8B real-composition proof has not started.
+not retrofitted. `TcpHandshakeEditorial` and `TcpHandshakeTerminal` prove
+`editorial-tech` and `retro-terminal` with identical facts, real VoxCPM,
+strict assets, reviewed stills/covers, and H.264/AAC renders.
+Phase 8 is complete. Phase 9 has not started.

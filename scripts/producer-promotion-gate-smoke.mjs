@@ -51,9 +51,14 @@ for (const candidate of evidenceLensCandidates) {
 }
 
 for (const manifest of producerSampleManifests) {
+  const maintainedIds = new Set([
+    "AgentProducerMediaSoundProof",
+    "TcpHandshakeEditorial",
+    "TcpHandshakeTerminal",
+  ]);
   assert.equal(
     manifest.sampleStatus,
-    manifest.compositionId === "AgentProducerMediaSoundProof" ? "maintained" : "frozen-reference",
+    maintainedIds.has(manifest.compositionId) ? "maintained" : "frozen-reference",
     `${manifest.compositionId} must keep its explicit maintained or frozen status.`,
   );
   for (const candidate of manifest.promotionCandidates) {

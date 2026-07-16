@@ -28,14 +28,35 @@ Phase 8A style-profile contract and showcase is complete.
 
 Phase 8B style-profile sample contract is complete.
 
-Phase 8B real-composition proof has not started.
+Phase 8B real-composition proof is complete.
+
+Phase 8 is complete. Phase 9 has not started.
 
 Phase 0 authority reset, Phase 1 direct VoxCPM runtime, Phase 2 F5 removal,
 Phase 3 Web product removal, and Phase 4 Producer OS consolidation remain
 complete. Phase 5 existing asset supply, Phase 6 capability core, and Phase 7
-dynamic media/sound also remain complete. Phase 8 is in progress after the
-Phase 8A contract/showcase and Phase 8B sample-contract slices. The Phase 8B
-real-composition proof and Phase 9 have not started.
+dynamic media/sound also remain complete. Phase 8 is complete after its
+contract/showcase, sample-contract, and two-real-composition proof slices.
+Phase 9 has not started.
+
+## Implemented Phase 8B Real-Composition Proof
+
+- added `TcpHandshakeEditorial` and `TcpHandshakeTerminal` as maintained,
+  dedicated compositions using `editorial-tech` and `retro-terminal`
+- kept their three Chinese narration/display beats identical while changing
+  composition, motion, texture, SVG media treatment, captions, BGM, ambience,
+  transition SFX, and cover language through the selected profiles
+- generated six real direct VoxCPM narration tracks with no provider fallback;
+  localized seven audio assets plus one SVG per composition through strict
+  asset manifests and preflight
+- registered both videos and four code-rendered cover Stills without modifying
+  the completed Phase 7 proof or any frozen composition
+- reviewed six stable representative frames and four covers; same-frame A/B
+  SHA-256 checks were deterministic
+- rendered 658-frame and 646-frame 1920x1080 H.264/AAC MP4s; full decode and
+  ffprobe passed at 30 fps with mean audio levels of -22.2 dB and -23.0 dB
+- generated narration, localized assets, screenshots, covers, MP4s, and private
+  voice inputs remain ignored and uncommitted
 
 ## Implemented Phase 8B Sample Contract Boundary
 
@@ -268,14 +289,14 @@ npm run smoke:remotion-version-gate
 npm run smoke:remotion-capabilities
 npm run smoke:producer-media-sound
 npm run smoke:producer-style-profile-sample-contract
+npm run smoke:producer-style-profile-real-compositions
 npm run producer:media-sound-fixtures
 ```
 
 ## Next Bounded Phase
 
-Phase 8B real-composition proof has not started. It is the next bounded slice
-and must prove at least two different profiles in two new dedicated
-compositions before Phase 8 can be marked complete. Phase 9 has not started.
+Phase 8 is complete. Phase 9 quality gates and final cleanup is the next
+bounded phase. Phase 9 has not started.
 
 ## Frozen History
 

@@ -10,6 +10,10 @@ const {
 } = await import("../src/remotion/producer-samples/index.js");
 
 const rootSource = readFileSync("src/remotion/Root.tsx", "utf8");
+const phaseEightProfiles = new Map([
+  ["TcpHandshakeEditorial", "editorial-tech"],
+  ["TcpHandshakeTerminal", "retro-terminal"],
+]);
 
 const expectedCompositionIds = [
   "OpenAiHardwareNewsBrief",
@@ -153,7 +157,7 @@ for (const manifest of producerSampleManifests) {
   if (manifest.compositionId === "AgentProducerMediaSoundProof") {
     assert(
       manifest.sampleStatus === "maintained",
-      "The Phase 7 proof must be the single maintained Producer sample.",
+      "The Phase 7 proof must remain a maintained Producer sample.",
     );
     assertIgnoredPath(manifest.localArtifactRoot);
     assert(
@@ -164,6 +168,26 @@ for (const manifest of producerSampleManifests) {
       !("styleProfileId" in manifest),
       "The completed Phase 7 proof must not be retrofitted with a style profile.",
     );
+  } else if (phaseEightProfiles.has(manifest.compositionId)) {
+    assert(
+      manifest.sampleStatus === "maintained",
+      `${manifest.compositionId} must remain a maintained Phase 8 proof.`,
+    );
+    assert(
+      manifest.styleProfileId === phaseEightProfiles.get(manifest.compositionId),
+      `${manifest.compositionId} must keep its selected style profile.`,
+    );
+    assertIgnoredPath(manifest.localArtifactRoot);
+    for (const marker of [
+      manifest.compositionId,
+      `${manifest.compositionId}Cover16x9`,
+      `${manifest.compositionId}Cover9x16`,
+    ]) {
+      assert(
+        rootSource.includes(marker),
+        `${manifest.compositionId} must keep Root marker ${marker}.`,
+      );
+    }
   } else {
     assert(
       manifest.sampleStatus === "frozen-reference",

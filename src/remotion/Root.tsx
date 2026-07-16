@@ -11,6 +11,26 @@ import {
   AgentProducerMediaSoundProofCover9x16,
 } from "./AgentProducerMediaSoundProof";
 import {
+  TCP_HANDSHAKE_EDITORIAL_COMPOSITION_ID,
+  TCP_HANDSHAKE_EDITORIAL_DURATION_IN_FRAMES,
+  TCP_HANDSHAKE_EDITORIAL_FPS,
+  TCP_HANDSHAKE_EDITORIAL_HEIGHT,
+  TCP_HANDSHAKE_EDITORIAL_WIDTH,
+  TcpHandshakeEditorial,
+  TcpHandshakeEditorialCover16x9,
+  TcpHandshakeEditorialCover9x16,
+} from "./TcpHandshakeEditorial";
+import {
+  TCP_HANDSHAKE_TERMINAL_COMPOSITION_ID,
+  TCP_HANDSHAKE_TERMINAL_DURATION_IN_FRAMES,
+  TCP_HANDSHAKE_TERMINAL_FPS,
+  TCP_HANDSHAKE_TERMINAL_HEIGHT,
+  TCP_HANDSHAKE_TERMINAL_WIDTH,
+  TcpHandshakeTerminal,
+  TcpHandshakeTerminalCover16x9,
+  TcpHandshakeTerminalCover9x16,
+} from "./TcpHandshakeTerminal";
+import {
   REMOTION_CAPABILITY_SHOWCASE_COMPOSITION_ID,
   REMOTION_CAPABILITY_SHOWCASE_DURATION_IN_FRAMES,
   REMOTION_CAPABILITY_SHOWCASE_FPS,
@@ -213,6 +233,46 @@ export const RemotionRoot: FC = () => {
         <Still
           id="AgentProducerMediaSoundProofCover9x16"
           component={AgentProducerMediaSoundProofCover9x16}
+          width={1080}
+          height={1920}
+        />
+        <Composition
+          id={TCP_HANDSHAKE_EDITORIAL_COMPOSITION_ID}
+          component={TcpHandshakeEditorial}
+          durationInFrames={TCP_HANDSHAKE_EDITORIAL_DURATION_IN_FRAMES}
+          fps={TCP_HANDSHAKE_EDITORIAL_FPS}
+          width={TCP_HANDSHAKE_EDITORIAL_WIDTH}
+          height={TCP_HANDSHAKE_EDITORIAL_HEIGHT}
+        />
+        <Still
+          id="TcpHandshakeEditorialCover16x9"
+          component={TcpHandshakeEditorialCover16x9}
+          width={1920}
+          height={1080}
+        />
+        <Still
+          id="TcpHandshakeEditorialCover9x16"
+          component={TcpHandshakeEditorialCover9x16}
+          width={1080}
+          height={1920}
+        />
+        <Composition
+          id={TCP_HANDSHAKE_TERMINAL_COMPOSITION_ID}
+          component={TcpHandshakeTerminal}
+          durationInFrames={TCP_HANDSHAKE_TERMINAL_DURATION_IN_FRAMES}
+          fps={TCP_HANDSHAKE_TERMINAL_FPS}
+          width={TCP_HANDSHAKE_TERMINAL_WIDTH}
+          height={TCP_HANDSHAKE_TERMINAL_HEIGHT}
+        />
+        <Still
+          id="TcpHandshakeTerminalCover16x9"
+          component={TcpHandshakeTerminalCover16x9}
+          width={1920}
+          height={1080}
+        />
+        <Still
+          id="TcpHandshakeTerminalCover9x16"
+          component={TcpHandshakeTerminalCover9x16}
           width={1080}
           height={1920}
         />

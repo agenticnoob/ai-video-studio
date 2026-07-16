@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "completedPhases": [0, 1, 2, 3, 4, 5, 6, 7],
+  "completedPhases": [0, 1, 2, 3, 4, 5, 6, 7, 8],
   "completedPhaseSlices": [
     {
       "phase": 6,
@@ -37,6 +37,12 @@
       "slice": "style-profile-sample-contract",
       "status": "complete",
       "reason": "Future Producer scaffolds now require one validated style-profile id while the completed Phase 7 maintained proof and every frozen composition remain unchanged."
+    },
+    {
+      "phase": 8,
+      "slice": "style-profile-real-compositions",
+      "status": "complete",
+      "reason": "Two real dedicated TCP-handshake compositions apply editorial-tech and retro-terminal to identical facts and pass VoxCPM narration, asset preflight, validation, reviewed still/cover, MP4, and ffprobe gates."
     }
   ],
   "decisionDate": "2026-07-15",
@@ -228,6 +234,22 @@
         "action": "retain",
         "phase": 7,
         "reason": "Maintained proof source for local media and sound design; generated binaries remain ignored."
+      },
+      {
+        "id": "style-profile-editorial-proof",
+        "path": "src/remotion/TcpHandshakeEditorial",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 8,
+        "reason": "Maintained real-composition proof for the editorial-tech style profile; generated binaries remain ignored."
+      },
+      {
+        "id": "style-profile-terminal-proof",
+        "path": "src/remotion/TcpHandshakeTerminal",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 8,
+        "reason": "Maintained real-composition proof for the retro-terminal style profile; generated binaries remain ignored."
       }
     ],
     "webF5Only": [

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" rx="40" fill="#0b1d2b"/>
+  <g fill="none" stroke="#55dcff" stroke-width="5">
+    <rect x="105" y="180" width="300" height="360" rx="34"/>
+    <rect x="875" y="180" width="300" height="360" rx="34"/>
+    <path d="M405 260 H875"/>
+    <path d="M875 360 H405" stroke="#ffcf5a"/>
+    <path d="M405 460 H875"/>
+  </g>
+  <g font-family="sans-serif" font-weight="700" text-anchor="middle">
+    <text x="255" y="335" font-size="52" fill="#f4fbff">CLIENT</text>
+    <text x="1025" y="335" font-size="52" fill="#f4fbff">SERVER</text>
+    <text x="640" y="235" font-size="34" fill="#55dcff">SYN</text>
+    <text x="640" y="335" font-size="34" fill="#ffcf5a">SYN-ACK</text>
+    <text x="640" y="435" font-size="34" fill="#55dcff">ACK</text>
+    <text x="640" y="620" font-size="32" fill="#9fb4c6">ESTABLISHED · 双向序列号已确认</text>
+  </g>
+</svg>

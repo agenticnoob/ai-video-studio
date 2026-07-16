@@ -53,8 +53,10 @@ repository contains `.codegraph/`.
   language, and six code-only inventory fixtures prove the visual boundary.
 - Phase 8B style-profile sample contract is complete. Every future scaffold
   requires an explicit validated profile id while the completed Phase 7 proof
-  remains unchanged. Phase 8B real-composition proof has not started. Phase 8
-  remains in progress, and Phase 9 has not started.
+  remains unchanged. `TcpHandshakeEditorial` and `TcpHandshakeTerminal` apply
+  `editorial-tech` and `retro-terminal` to identical facts with real VoxCPM,
+  strict assets, reviewed stills/covers, and H.264/AAC renders.
+  Phase 8 is complete. Phase 9 has not started.
 - Historical caption/storyboard contracts and `recipes/blocks` plus
   `recipes/timing` remain only for frozen composition compatibility.
 

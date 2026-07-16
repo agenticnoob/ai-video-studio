@@ -19,8 +19,8 @@ topic -> research/existing assets -> narration/VoxCPM -> component inventory
 Roadmap status: Phase 5 existing-asset supply, Phase 6 Remotion capability core,
 and Phase 7 dynamic media/sound are complete with every installed Remotion
 package exact `4.0.489`. Phase 8A style-profile contract and showcase are
-complete. Phase 8B style-profile sample contract is complete. Phase 8B
-real-composition proof has not started, so Phase 8 remains in progress.
+complete. Phase 8B style-profile sample contract and real-composition proof are
+complete. Phase 8 is complete. Phase 9 has not started.
 
 ## Skill Stack
 
@@ -116,8 +116,9 @@ primitives/blocks, effect intensity, transition, motion, media mix, Three.js,
 captions, BGM/SFX, and forbidden defaults. It is not a template, recipe,
 planner schema, universal scene DSL, or automatic composition builder. The
 agent still owns topic-specific structure and may keep a treatment sample-local.
-Phase 8B must prove at least two profiles in new real dedicated compositions;
-do not retrofit completed or frozen compositions for that evidence.
+`TcpHandshakeEditorial` and `TcpHandshakeTerminal` are the maintained real
+proofs for `editorial-tech` and `retro-terminal`; do not retrofit completed or
+frozen compositions for profile evidence.
 
 Phase 8B style-profile sample contract is complete. Before creating any new
 maintained composition, select one profile through Agent Producer judgment and
@@ -126,11 +127,12 @@ run:
 ```bash
 npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id>
 npm run smoke:producer-style-profile-sample-contract
+npm run smoke:producer-style-profile-real-compositions
 ```
 
 The generated `styleProfileId` records the constraint choice; it does not
 generate scene structure. The completed Phase 7 proof remains unchanged.
-Phase 8B real-composition proof has not started.
+Phase 8 is complete. Phase 9 has not started.
 
 ## Start Here
 

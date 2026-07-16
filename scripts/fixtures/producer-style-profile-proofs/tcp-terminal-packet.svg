@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#020806"/>
+  <g stroke="#173d27" stroke-width="2">
+    <path d="M0 80 H1280M0 160 H1280M0 240 H1280M0 320 H1280M0 400 H1280M0 480 H1280M0 560 H1280M0 640 H1280"/>
+    <path d="M80 0 V720M160 0 V720M240 0 V720M320 0 V720M400 0 V720M480 0 V720M560 0 V720M640 0 V720M720 0 V720M800 0 V720M880 0 V720M960 0 V720M1040 0 V720M1120 0 V720M1200 0 V720"/>
+  </g>
+  <g font-family="monospace" font-size="35" fill="#54ff88">
+    <text x="90" y="150">$ tcp.connect --target server:443</text>
+    <text x="90" y="250">TX  SYN      seq=100</text>
+    <text x="90" y="350">RX  SYN-ACK  seq=700 ack=101</text>
+    <text x="90" y="450">TX  ACK      ack=701</text>
+    <text x="90" y="570" fill="#ffcf4a">STATE  ESTABLISHED</text>
+  </g>
+  <rect x="88" y="602" width="21" height="42" fill="#54ff88"/>
+</svg>

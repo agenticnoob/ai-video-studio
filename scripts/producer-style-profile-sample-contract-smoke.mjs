@@ -92,8 +92,8 @@ assert(
   "Removal inventory must record the completed Phase 8B sample-contract slice.",
 );
 assert(
-  !inventory.completedPhases.includes(8),
-  "Phase 8 must remain incomplete until two real compositions pass production gates.",
+  inventory.completedPhases.includes(8),
+  "Phase 8 must be complete after two real compositions pass production gates.",
 );
 
 for (const docPath of [
@@ -111,10 +111,8 @@ for (const docPath of [
     source.includes("Phase 8B style-profile sample contract is complete."),
     `${docPath} must describe the completed Phase 8B contract slice.`,
   );
-  assert(
-    source.includes("Phase 8B real-composition proof has not started."),
-    `${docPath} must keep the two-real-composition proof unstarted.`,
-  );
+  assert(source.includes("Phase 8 is complete."), `${docPath} must mark Phase 8 complete.`);
+  assert(source.includes("Phase 9 has not started."), `${docPath} must keep Phase 9 unstarted.`);
 }
 
 const scaffoldRoot = mkdtempSync(path.join(os.tmpdir(), "producer-profile-contract-"));

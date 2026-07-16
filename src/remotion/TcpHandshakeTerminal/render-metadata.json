@@ -1,0 +1,10 @@
+{
+  "title": "TCP 三次握手：Retro Terminal 解释版",
+  "description": "用命令流和连接状态解释 SYN、SYN-ACK 与 ACK 如何建立 TCP 会话。",
+  "fps": 30,
+  "chapters": [
+    { "name": "TX SYN", "sceneId": "syn" },
+    { "name": "RX SYN-ACK", "sceneId": "syn-ack" },
+    { "name": "TX ACK", "sceneId": "ack" }
+  ]
+}

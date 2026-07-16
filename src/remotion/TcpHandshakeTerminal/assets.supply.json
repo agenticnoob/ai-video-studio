@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "compositionId": "TcpHandshakeTerminal",
+  "slug": "tcp-handshake-terminal",
+  "outputManifestPath": "src/remotion/TcpHandshakeTerminal/assets.manifest.json",
+  "assets": [
+    {
+      "id": "narration-syn",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for TCP SYN.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/tcp-handshake-terminal/audio/syn.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "narration-syn.wav" }
+    },
+    {
+      "id": "narration-syn-ack",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for TCP SYN-ACK.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/tcp-handshake-terminal/audio/syn-ack.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "narration-syn-ack.wav" }
+    },
+    {
+      "id": "narration-ack",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for TCP ACK.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/tcp-handshake-terminal/audio/ack.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "narration-ack.wav" }
+    },
+    {
+      "id": "terminal-bgm",
+      "kind": "audio",
+      "purpose": "Clocked sequence bed for terminal rhythm.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "sound": { "role": "bgm", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 1 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/tcp-handshake-terminal/inputs/terminal-bgm.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "terminal-bgm.wav" }
+    },
+    {
+      "id": "terminal-ambience",
+      "kind": "audio",
+      "purpose": "Low electronic room tone.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "sound": { "role": "ambience", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 1 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/tcp-handshake-terminal/inputs/terminal-ambience.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "terminal-ambience.wav" }
+    },
+    {
+      "id": "signal-sweep",
+      "kind": "audio",
+      "purpose": "Signal wipe transition sound.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "sound": { "role": "sfx", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 0.3 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/tcp-handshake-terminal/inputs/signal-sweep.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "signal-sweep.wav" }
+    },
+    {
+      "id": "key-confirm",
+      "kind": "audio",
+      "purpose": "Terminal confirmation key chirp.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "sound": { "role": "sfx", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 0.2 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/tcp-handshake-terminal/inputs/key-confirm.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "key-confirm.wav" }
+    },
+    {
+      "id": "tcp-terminal-packet",
+      "kind": "svg",
+      "purpose": "Repo-authored terminal packet and state evidence graphic.",
+      "source": { "provider": "repo-authored", "license": "CC0-1.0" },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "scripts/fixtures/producer-style-profile-proofs/tcp-terminal-packet.svg"
+      },
+      "destination": { "scope": "composition", "fileName": "tcp-terminal-packet.svg" },
+      "requirements": { "minWidth": 1280, "minHeight": 720 }
+    }
+  ]
+}
