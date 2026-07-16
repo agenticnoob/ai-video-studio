@@ -160,6 +160,10 @@ for (const manifest of producerSampleManifests) {
       rootSource.includes("AGENT_PRODUCER_MEDIA_SOUND_PROOF_COMPOSITION_ID"),
       "The Phase 7 maintained proof must remain registered in Root.",
     );
+    assert(
+      !("styleProfileId" in manifest),
+      "The completed Phase 7 proof must not be retrofitted with a style profile.",
+    );
   } else {
     assert(
       manifest.sampleStatus === "frozen-reference",
@@ -210,7 +214,8 @@ assert(
 );
 assert(
   scaffoldReadme.includes("npm run producer:scaffold") &&
-    scaffoldReadme.includes("npm run producer:render"),
+    scaffoldReadme.includes("npm run producer:render") &&
+    scaffoldReadme.includes("--style-profile"),
   "Scaffold README must route future samples through scaffold and render commands.",
 );
 assertIgnoredPath("out/");

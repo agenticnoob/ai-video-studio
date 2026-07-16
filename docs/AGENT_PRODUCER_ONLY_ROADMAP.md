@@ -1,8 +1,9 @@
 # Agent Producer-Only Roadmap
 
 Status: Phase 0 through Phase 7 complete. Phase 8 is in progress: Phase 8A
-style-profile contract and capability-showcase fixtures are complete; Phase 8B
-real-composition proof is next and has not started. Phase 9 has not started.
+style-profile contract and capability-showcase fixtures are complete, and the
+Phase 8B style-profile sample contract is complete. Phase 8B real-composition
+proof has not started. Phase 9 has not started.
 
 Decision date: 2026-07-15.
 
@@ -890,8 +891,8 @@ Official references:
 
 ## 13. Phase 8 - Code-Driven Style Profiles
 
-Status: in progress. Phase 8A is complete; Phase 8B is next and has not
-started.
+Status: in progress. Phase 8A and the Phase 8B sample-contract slice are
+complete. Phase 8B real-composition proof has not started.
 
 ### Goal
 
@@ -919,7 +920,15 @@ Status: complete.
 
 ### Phase 8B - Real Dedicated-Composition Proof
 
-Status: next and not started.
+Status: in progress. Phase 8B style-profile sample contract is complete. Phase
+8B real-composition proof has not started.
+
+- `producer:scaffold` requires `--style-profile <profile-id>` and writes the
+  validated selection into a strict profiled maintained manifest
+- the completed Phase 7 maintained proof remains compatible without a profile
+  field and is not retrofitted
+- `smoke:producer-style-profile-sample-contract` guards the forward-only
+  selection boundary
 
 - create at least two new real dedicated compositions using different profiles
 - route both through normal VoxCPM narration, asset preflight, validation,
@@ -1102,7 +1111,7 @@ git diff --check
 The final package exposes a compact production command set:
 
 ```bash
-npm run producer:scaffold -- --name <CompositionName> --slug <slug>
+npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id>
 npm run producer:audio -- --module <audio-config-module>
 npm run producer:assets -- --manifest <supply-plan-json>
 npm run producer:preflight -- --composition <composition-id>

@@ -60,7 +60,9 @@ specific profile is not considered proven for production merely because its
 isolated fixture renders. Phase 8B must prove at least two profiles in new real
 dedicated compositions with narration, asset preflight, still/cover review,
 sound, and MP4 evidence before Phase 8 is complete. Never retrofit a completed
-or frozen composition to manufacture promotion evidence.
+or frozen composition to manufacture promotion evidence. Phase 8B
+style-profile sample contract is complete: every future scaffold records one
+validated profile id. Phase 8B real-composition proof has not started.
 
 ## Documentation Hooks
 

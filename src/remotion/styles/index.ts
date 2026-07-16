@@ -6,6 +6,7 @@ export {
 export {
   assertProducerStyleProfiles,
   getProducerStyleProfile,
+  isProducerStyleProfileId,
   producerStyleProfileIds,
   producerStyleProfiles,
   type ProducerStyleBackground,

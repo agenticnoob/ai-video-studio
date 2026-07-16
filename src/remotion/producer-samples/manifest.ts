@@ -1,3 +1,5 @@
+import { isProducerStyleProfileId, type ProducerStyleProfileId } from "../styles/profile-ids";
+
 export const producerSampleCanvasProfiles = ["landscape-16x9", "portrait-9x16"] as const;
 
 export const producerSamplePromotionTargets = [
@@ -125,6 +127,7 @@ export type FrozenProducerSampleManifest = ProducerSampleManifestBase & {
 
 export type MaintainedProducerSampleManifest = ProducerSampleManifestBase & {
   readonly sampleStatus: "maintained";
+  readonly styleProfileId?: ProducerStyleProfileId;
   readonly productionBrief: {
     readonly audience: string;
     readonly publishingSurface: string;
@@ -154,6 +157,10 @@ export type MaintainedProducerSampleManifest = ProducerSampleManifestBase & {
     readonly cover9x16CompositionId: string;
   };
   readonly publishingCopyPath: string;
+};
+
+export type ProfiledMaintainedProducerSampleManifest = MaintainedProducerSampleManifest & {
+  readonly styleProfileId: ProducerStyleProfileId;
 };
 
 export type ProducerSampleManifest =
@@ -214,6 +221,10 @@ export const assertProducerSampleManifest = (manifest: ProducerSampleManifest): 
   }
 
   if (manifest.sampleStatus === "frozen-reference") return;
+
+  if (manifest.styleProfileId !== undefined && !isProducerStyleProfileId(manifest.styleProfileId)) {
+    throw new Error(`${manifest.compositionId} has an unsupported Producer style profile.`);
+  }
 
   requireText(manifest.productionBrief.audience, `${manifest.compositionId} audience`);
   requireText(

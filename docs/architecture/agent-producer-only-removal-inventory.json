@@ -31,6 +31,12 @@
       "slice": "style-profile-contract-showcase",
       "status": "complete",
       "reason": "Six typed Producer style profiles and deterministic code-only capability-showcase fixtures define visibly different composition, motion, texture, media, Three.js, caption, and sound languages; real dedicated-composition proof remains Phase 8B."
+    },
+    {
+      "phase": 8,
+      "slice": "style-profile-sample-contract",
+      "status": "complete",
+      "reason": "Future Producer scaffolds now require one validated style-profile id while the completed Phase 7 maintained proof and every frozen composition remain unchanged."
     }
   ],
   "decisionDate": "2026-07-15",

@@ -24,13 +24,15 @@ for (const relativePath of [
   assert(existsSync(path.join(root, relativePath)), `Missing Phase 8A surface: ${relativePath}`);
 }
 
+const profileIdSource = read("src/remotion/styles/profile-ids.ts");
 const profileSource = read("src/remotion/styles/profiles.ts");
+const profileContractSource = `${profileIdSource}\n${profileSource}`;
 const showcaseSource = read("src/remotion/capability-showcase/StyleProfileShowcase.tsx");
 const durationSource = read("src/remotion/capability-showcase/durations.ts");
 const capabilitySource = read("src/remotion/capability-showcase/RemotionCapabilityShowcase.tsx");
 
 for (const id of requiredProfileIds) {
-  assert(profileSource.includes(id), `Missing style profile: ${id}`);
+  assert(profileContractSource.includes(id), `Missing style profile: ${id}`);
 }
 for (const token of [
   "palette",
@@ -50,7 +52,7 @@ for (const token of [
   "getProducerStyleProfile",
   "assertProducerStyleProfiles",
 ]) {
-  assert(profileSource.includes(token), `Missing style-profile contract token: ${token}`);
+  assert(profileContractSource.includes(token), `Missing style-profile contract token: ${token}`);
 }
 for (const token of [
   "ThreeCanvas",

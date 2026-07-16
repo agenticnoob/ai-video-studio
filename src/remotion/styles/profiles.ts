@@ -2,17 +2,13 @@ import type { ProducerEffectPresetId } from "../effects";
 import type { ProducerMotionTreatmentId } from "../motion";
 import type { ProducerTransitionSfxRole } from "../sound";
 import type { ProducerTransitionPresetId } from "../transitions";
+import { producerStyleProfileIds, type ProducerStyleProfileId } from "./profile-ids";
 
-export const producerStyleProfileIds = [
-  "editorial-tech",
-  "comic-anime",
-  "cinematic-3d",
-  "retro-terminal",
-  "documentary-media",
-  "hand-drawn-explainer",
-] as const;
-
-export type ProducerStyleProfileId = (typeof producerStyleProfileIds)[number];
+export {
+  isProducerStyleProfileId,
+  producerStyleProfileIds,
+  type ProducerStyleProfileId,
+} from "./profile-ids";
 
 export type ProducerStylePalette = {
   readonly background: string;

@@ -1,4 +1,4 @@
-import type { MaintainedProducerSampleManifest } from "../../manifest";
+import type { ProfiledMaintainedProducerSampleManifest } from "../../manifest";
 
 export const sampleNameManifest = {
   sampleStatus: "maintained",
@@ -7,6 +7,7 @@ export const sampleNameManifest = {
   slug: "sample-name",
   contentFamily: "project-intro",
   canvasProfile: "landscape-16x9",
+  styleProfileId: "editorial-tech" /* STYLE_PROFILE_ID */,
   localArtifactRoot: "public/generated/sample-name/",
   ttsStatus: "planned",
   productionBrief: {
@@ -55,4 +56,4 @@ export const sampleNameManifest = {
     "Generated narration, review frames, covers, metadata, and MP4 stay local-only.",
     "Register the video and both cover Stills in Root before declaring the sample complete.",
   ],
-} as const satisfies MaintainedProducerSampleManifest;
+} as const satisfies ProfiledMaintainedProducerSampleManifest;

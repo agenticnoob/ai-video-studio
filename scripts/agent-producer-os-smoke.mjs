@@ -83,6 +83,7 @@ assert.equal(
   sampleNameManifest.assets.manifestPath,
   "src/remotion/SampleName/assets.manifest.json",
 );
+assert.equal(sampleNameManifest.styleProfileId, "editorial-tech");
 
 for (const [file, planner] of [
   ["scripts/render-producer-review-frames.mjs", "buildProducerReviewFrameJobs"],
@@ -139,6 +140,8 @@ try {
       "PhaseFourFixture",
       "--slug",
       "phase-four-fixture",
+      "--style-profile",
+      "retro-terminal",
       "--output-root",
       outputRoot,
     ],
@@ -164,6 +167,8 @@ try {
   const generatedAssetManifest = read(path.join(destination, "assets.manifest.json"));
   assert(generatedManifest.includes('compositionId: "PhaseFourFixture"'));
   assert(generatedManifest.includes('slug: "phase-four-fixture"'));
+  assert(generatedManifest.includes('styleProfileId: "retro-terminal"'));
+  assert(!generatedManifest.includes("STYLE_PROFILE_ID"));
   assert(generatedManifest.includes('from "../producer-samples/manifest"'));
   assert(generatedVideo.includes('from "../standalone-video"'));
   assert(generatedGenerator.includes('from "../../../scripts/lib/producer-audio/index.js"'));

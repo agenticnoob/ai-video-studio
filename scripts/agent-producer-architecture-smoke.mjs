@@ -61,6 +61,13 @@ assert.deepEqual(
       reason:
         "Six typed Producer style profiles and deterministic code-only capability-showcase fixtures define visibly different composition, motion, texture, media, Three.js, caption, and sound languages; real dedicated-composition proof remains Phase 8B.",
     },
+    {
+      phase: 8,
+      slice: "style-profile-sample-contract",
+      status: "complete",
+      reason:
+        "Future Producer scaffolds now require one validated style-profile id while the completed Phase 7 maintained proof and every frozen composition remain unchanged.",
+    },
   ],
   "completed roadmap phase slices",
 );
@@ -179,6 +186,9 @@ assert(
   ),
 );
 assert(
+  read("docs/ITERATION_STATUS.md").includes("Phase 8B style-profile sample contract is complete."),
+);
+assert(
   read("docs/ITERATION_STATUS.md").includes("Phase 8B real-composition proof has not started."),
 );
 assert(read("docs/VISUAL_RECIPE_ROADMAP.md").includes("Superseded"));
@@ -197,6 +207,7 @@ for (const command of [
   "smoke:remotion-version-gate",
   "smoke:producer-media-sound",
   "smoke:producer-style-profiles",
+  "smoke:producer-style-profile-sample-contract",
 ]) {
   assert(packageJson.scripts[command], `package.json must expose ${command}`);
 }
@@ -206,6 +217,17 @@ for (const phase8aPath of [
   "src/remotion/capability-showcase/StyleProfileShowcase.tsx",
 ]) {
   assert(existsSync(absolute(phase8aPath)), `Phase 8A path must exist: ${phase8aPath}`);
+}
+for (const phase8bContractPath of [
+  "scripts/producer-style-profile-sample-contract-smoke.mjs",
+  "src/remotion/styles/profile-ids.ts",
+  "src/remotion/producer-samples/manifest.ts",
+  "src/remotion/producer-samples/scaffold/SampleName/manifest.ts",
+]) {
+  assert(
+    existsSync(absolute(phase8bContractPath)),
+    `Phase 8B contract path must exist: ${phase8bContractPath}`,
+  );
 }
 for (const phase7Path of [
   "scripts/producer-media-sound-smoke.mjs",

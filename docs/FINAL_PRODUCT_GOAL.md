@@ -125,9 +125,10 @@ asset preflight, deterministic reviewed stills, covers, and an H.264/AAC
 render. Phase 8A is now complete with six typed code-driven profile contracts and six
 deterministic inventory fixtures. The profiles constrain composition, motion,
 texture, media, Three.js, captions, and sound rather than selecting a template
-or generating a scene. Phase 8 remains in progress: Phase 8B real-composition
-proof is next and has not started, so Phase 8 is not yet complete. Phase 9 has
-not started.
+or generating a scene. Phase 8B style-profile sample contract is complete.
+Future scaffolds require one validated profile id while the completed Phase 7
+proof remains unchanged. Phase 8B real-composition proof has not started.
+Phase 8 remains in progress and incomplete. Phase 9 has not started.
 
 ## Supporting Authorities
 

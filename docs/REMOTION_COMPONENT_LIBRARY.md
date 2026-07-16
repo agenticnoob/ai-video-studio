@@ -154,4 +154,6 @@ generate scenes or select a template. Six code-only pages in
 `AgentProducerCapabilityShowcase` prove the inventory boundary. Run
 `npm run smoke:producer-style-profiles` before selection. Phase 8 remains in
 progress until Phase 8B proves at least two profiles in new real dedicated
-compositions; Phase 8B has not started.
+compositions. Phase 8B style-profile sample contract is complete. New
+scaffolds must record one validated profile id; the completed Phase 7 proof is
+not retrofitted. Phase 8B real-composition proof has not started.

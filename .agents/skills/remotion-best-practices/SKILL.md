@@ -50,6 +50,12 @@ composition, motion, texture, media, Three.js, caption, and sound language; it
 must never become a color theme, template, recipe, planner schema, or automatic
 scene builder. Phase 8B real-composition proof has not started, so do not
 retrofit completed or frozen compositions to claim profile adoption.
+Phase 8B style-profile sample contract is complete. Every new maintained
+composition declares a validated `styleProfileId` through the required
+`producer:scaffold --style-profile` flag, then runs
+`npm run smoke:producer-style-profile-sample-contract`. This records a
+constraint choice only; the composition still owns its topic-specific scene
+design. Phase 8B real-composition proof has not started.
 
 ## New project setup
 

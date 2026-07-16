@@ -22,7 +22,7 @@ src/remotion/
 |-- sound/                    # Phase 7 soundtrack, envelopes, library, and SFX mapping
 |-- capability-showcase/      # complete isolated Agent Producer inventory composition
 |-- standalone-video/         # Producer timing/audio/caption/canvas runtime
-|-- producer-samples/         # future sample manifest, scaffold, and blocks
+|-- producer-samples/         # future sample manifest, profiled scaffold, and blocks
 |-- recipes/blocks/           # frozen composition compatibility only
 |-- recipes/timing/           # direct dependency of frozen recipe blocks
 |-- standalone-samples/       # frozen reference compositions
@@ -35,7 +35,7 @@ src/remotion/
 | Composition registry | `Root.tsx` | Register dedicated compositions and Stills. |
 | Visual primitives | `primitives/`, `catalog/` | Inventory before adding local components. |
 | Producer runtime | `standalone-video/` | Future timing, captions, audio, canvas profiles. |
-| Producer Sample OS | `producer-samples/` | Strict future manifests, scaffold, frozen-reference metadata, and blocks. |
+| Producer Sample OS | `producer-samples/` | Strict future manifests, mandatory style-profile scaffold selection, frozen-reference metadata, and blocks. |
 | Existing asset contract | `producer-samples/asset-manifest.ts` | Local manifest type used by Phase 5 preflight. |
 | Effect presets | `effects/` | `comic-print`, `cyber-scan`, `paper-grain`, and `pixel-grid`. |
 | Text fitting | `styles/fit-text.ts` | Guarded CJK-aware width/height/line fitting. |
@@ -57,6 +57,8 @@ src/remotion/
   Phase 6 effects, text layout, transitions, or canvas-source capabilities.
 - Run `smoke:producer-media-sound` and asset preflight before using Phase 7
   local dynamic media or sound-design surfaces.
+- Run `smoke:producer-style-profile-sample-contract` and record a validated
+  `styleProfileId` before implementing a new maintained composition.
 - Build topic data, narration, and scene order inside the dedicated
   composition.
 - Use `standalone-video/caption-types` for future Producer captions.
@@ -78,5 +80,6 @@ docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion
 npm run smoke:remotion-version-gate
 npm run smoke:remotion-capabilities
 npm run smoke:producer-media-sound
+npm run smoke:producer-style-profile-sample-contract
 npm run producer:stills -- --composition <composition-id>
 ```

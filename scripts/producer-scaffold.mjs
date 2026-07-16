@@ -11,15 +11,27 @@ const valueFor = (flag) => {
 
 const name = valueFor("--name");
 const slug = valueFor("--slug");
+const styleProfileId = valueFor("--style-profile");
 const outputRoot = valueFor("--output-root") ?? "src/remotion";
+const styleProfileIds = [
+  "editorial-tech",
+  "comic-anime",
+  "cinematic-3d",
+  "retro-terminal",
+  "documentary-media",
+  "hand-drawn-explainer",
+];
 
-if (!name || !slug) {
+if (!name || !slug || !styleProfileId) {
   throw new Error(
-    "Usage: npm run producer:scaffold -- --name <PascalCase> --slug <kebab-case> [--output-root <path>]",
+    "Usage: npm run producer:scaffold -- --name <PascalCase> --slug <kebab-case> --style-profile <profile-id> [--output-root <path>]",
   );
 }
 if (!/^[A-Z][A-Za-z0-9]*$/.test(name)) throw new Error("--name must be PascalCase.");
 if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) throw new Error("--slug must be kebab-case.");
+if (!styleProfileIds.includes(styleProfileId)) {
+  throw new Error(`--style-profile must be one of: ${styleProfileIds.join(", ")}.`);
+}
 
 const templateRoot = path.resolve("src/remotion/producer-samples/scaffold/SampleName");
 const destinationRoot = path.resolve(outputRoot, name);
@@ -42,6 +54,7 @@ const replaceTokens = (source) =>
     .replaceAll("SampleName", name)
     .replaceAll("sampleName", lowerCamelName)
     .replaceAll("sample-name", slug)
+    .replaceAll('"editorial-tech" /* STYLE_PROFILE_ID */', JSON.stringify(styleProfileId))
     .replaceAll('"../../../standalone-video', '"../standalone-video')
     .replaceAll('"../../../../../scripts', '"../../../scripts')
     .replaceAll('"../../manifest"', '"../producer-samples/manifest"')

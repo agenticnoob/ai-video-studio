@@ -19,8 +19,8 @@ topic -> research/existing assets -> narration/VoxCPM -> component inventory
 Roadmap status: Phase 5 existing-asset supply, Phase 6 Remotion capability core,
 and Phase 7 dynamic media/sound are complete with every installed Remotion
 package exact `4.0.489`. Phase 8A style-profile contract and showcase are
-complete. Phase 8 remains in progress; Phase 8B real-composition proof is next
-and has not started.
+complete. Phase 8B style-profile sample contract is complete. Phase 8B
+real-composition proof has not started, so Phase 8 remains in progress.
 
 ## Skill Stack
 
@@ -118,6 +118,19 @@ planner schema, universal scene DSL, or automatic composition builder. The
 agent still owns topic-specific structure and may keep a treatment sample-local.
 Phase 8B must prove at least two profiles in new real dedicated compositions;
 do not retrofit completed or frozen compositions for that evidence.
+
+Phase 8B style-profile sample contract is complete. Before creating any new
+maintained composition, select one profile through Agent Producer judgment and
+run:
+
+```bash
+npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id>
+npm run smoke:producer-style-profile-sample-contract
+```
+
+The generated `styleProfileId` records the constraint choice; it does not
+generate scene structure. The completed Phase 7 proof remains unchanged.
+Phase 8B real-composition proof has not started.
 
 ## Start Here
 
@@ -360,7 +373,7 @@ actually changes.
 Use shared tools for deterministic work in future samples:
 
 - create a strict maintained manifest and dedicated composition scaffold:
-  `npm run producer:scaffold -- --name <CompositionName> --slug <slug>`
+  `npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id>`
 - localize manual/URL assets and write checksum/provenance/license metadata:
   `npm run producer:assets -- --manifest <supply-plan-json>`
 - fail closed on missing, corrupt, duplicate, undersized, unlicensed, remote,
@@ -374,6 +387,8 @@ Use shared tools for deterministic work in future samples:
 - effects/text-layout capability boundary: `npm run smoke:remotion-capabilities`
 - dynamic-media and sound-design boundary: `npm run smoke:producer-media-sound`
 - style-profile contract and showcase boundary: `npm run smoke:producer-style-profiles`
+- future sample profile-selection boundary:
+  `npm run smoke:producer-style-profile-sample-contract`
 - mechanical validation: `npm run producer:validate -- --module <validation-module>`
 - manifest-driven review stills: `npm run producer:stills -- --composition <composition-id>`
 - metadata-bundled MP4 and both code-rendered covers:

@@ -51,8 +51,10 @@ repository contains `.codegraph/`.
 - Phase 8A style-profile contract and showcase are complete: six typed profiles
   change composition, motion, texture, media, Three.js, caption, and sound
   language, and six code-only inventory fixtures prove the visual boundary.
-  Phase 8 remains in progress; Phase 8B real-composition proof is next and has
-  not started. Phase 9 has not started.
+- Phase 8B style-profile sample contract is complete. Every future scaffold
+  requires an explicit validated profile id while the completed Phase 7 proof
+  remains unchanged. Phase 8B real-composition proof has not started. Phase 8
+  remains in progress, and Phase 9 has not started.
 - Historical caption/storyboard contracts and `recipes/blocks` plus
   `recipes/timing` remain only for frozen composition compatibility.
 
@@ -122,12 +124,13 @@ npm run smoke:remotion-version-gate
 npm run smoke:remotion-capabilities
 npm run smoke:producer-media-sound
 npm run smoke:producer-style-profiles
+npm run smoke:producer-style-profile-sample-contract
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
 ```
 
 Future sample command order starts with
-`npm run producer:scaffold -- --name <CompositionName> --slug <slug>`, then
+`npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id>`, then
 asset supply/preflight, validation, and representative still review, and ends
 with `npm run producer:render -- --composition <composition-id>`.
 

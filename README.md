@@ -67,8 +67,11 @@ official native-video fallback when LAN HTTP Studio does not expose WebCodecs
 `documentary-media`, and `hand-drawn-explainer`. The six code-only inventory
 fixtures use the same message but visibly different composition, motion,
 texture, media, Three.js, caption, and sound policies. Phase 8 remains in
-progress: Phase 8B must prove at least two profiles in new real dedicated
-compositions and has not started. Phase 9 has not started.
+progress. Phase 8B style-profile sample contract is complete. Future scaffolds
+require an explicit validated profile id without retrofitting the completed
+Phase 7 proof. Phase 8B real-composition proof has not started. It must prove
+at least two profiles in new real dedicated compositions. Phase 9 has not
+started.
 
 Existing finished compositions remain frozen read-only references. Historical
 `provider: "f5-tts"` metadata in their generated audio files stays truthful; it
@@ -111,7 +114,7 @@ Supporting references:
 ## Stable Producer Commands
 
 ```bash
-npm run producer:scaffold -- --name <CompositionName> --slug <slug>
+npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id>
 npm run producer:assets -- --manifest <supply-plan-json>
 npm run producer:preflight -- --composition <composition-id>
 npm run producer:validate -- --module <validation-module>
@@ -123,6 +126,7 @@ npm run smoke:remotion-version-gate
 npm run smoke:remotion-capabilities
 npm run smoke:producer-media-sound
 npm run smoke:producer-style-profiles
+npm run smoke:producer-style-profile-sample-contract
 npm run smoke:producer-audio-direct-voxcpm
 npm run smoke:producer-audio-tools
 npm run smoke:agent-producer-web-removal

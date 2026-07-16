@@ -65,6 +65,7 @@ const maintainedManifest = {
   slug: "fixture-producer-video",
   contentFamily: "tutorial",
   canvasProfile: "landscape-16x9",
+  styleProfileId: "editorial-tech",
   localArtifactRoot: "public/generated/fixture-producer-video/",
   ttsStatus: "planned",
   productionBrief: {
@@ -122,6 +123,19 @@ await assert.doesNotReject(() =>
       "FixtureProducerVideoCover9x16",
     ],
   }),
+);
+await assert.rejects(
+  () =>
+    validate({
+      manifest: { ...maintainedManifest, styleProfileId: "unknown-profile" },
+      assetManifest: maintainedAssetManifest,
+      registeredCompositionIds: [
+        "FixtureProducerVideo",
+        "FixtureProducerVideoCover16x9",
+        "FixtureProducerVideoCover9x16",
+      ],
+    }),
+  /style profile/i,
 );
 await assert.rejects(
   () =>

@@ -26,13 +26,30 @@ Phase 7 dynamic existing media and sound design is complete.
 
 Phase 8A style-profile contract and showcase is complete.
 
+Phase 8B style-profile sample contract is complete.
+
 Phase 8B real-composition proof has not started.
 
 Phase 0 authority reset, Phase 1 direct VoxCPM runtime, Phase 2 F5 removal,
 Phase 3 Web product removal, and Phase 4 Producer OS consolidation remain
 complete. Phase 5 existing asset supply, Phase 6 capability core, and Phase 7
 dynamic media/sound also remain complete. Phase 8 is in progress after the
-Phase 8A contract/showcase slice; Phase 8B and Phase 9 have not started.
+Phase 8A contract/showcase and Phase 8B sample-contract slices. The Phase 8B
+real-composition proof and Phase 9 have not started.
+
+## Implemented Phase 8B Sample Contract Boundary
+
+- extracted the six canonical profile ids into a lightweight module shared by
+  the Phase 8A registry and Producer sample contract
+- added a strict `ProfiledMaintainedProducerSampleManifest` for new samples
+  while retaining compatibility for the unchanged Phase 7 maintained proof
+- made `producer:scaffold` require `--style-profile <profile-id>` with no CLI
+  default and exact rejection of unsupported ids
+- tokenized the selected id into every generated future manifest and extended
+  Producer OS, manifest, validation, architecture, and skill guards
+- added `smoke:producer-style-profile-sample-contract` as the focused contract
+  gate; no real composition, registry record, Root registration, narration,
+  asset, cover, MP4, provider/config, or generated artifact was added
 
 ## Implemented Phase 8A Boundary
 
@@ -241,7 +258,7 @@ composition remains unchanged.
 ## Current Commands
 
 ```bash
-npm run producer:scaffold -- --name <CompositionName> --slug <slug>
+npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id>
 npm run producer:assets -- --manifest <supply-plan-json>
 npm run producer:preflight -- --composition <composition-id>
 npm run producer:validate -- --module <validation-module>
@@ -250,14 +267,15 @@ npm run producer:render -- --composition <composition-id>
 npm run smoke:remotion-version-gate
 npm run smoke:remotion-capabilities
 npm run smoke:producer-media-sound
+npm run smoke:producer-style-profile-sample-contract
 npm run producer:media-sound-fixtures
 ```
 
 ## Next Bounded Phase
 
-Phase 8B real-composition proof is next and has not started. It must prove at
-least two different profiles in two new dedicated compositions before Phase 8
-can be marked complete. Phase 9 has not started.
+Phase 8B real-composition proof has not started. It is the next bounded slice
+and must prove at least two different profiles in two new dedicated
+compositions before Phase 8 can be marked complete. Phase 9 has not started.
 
 ## Frozen History
 

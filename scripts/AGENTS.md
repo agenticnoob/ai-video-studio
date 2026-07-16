@@ -26,6 +26,7 @@ and architecture guards. There is no supported Web route smoke surface.
 | Capability fixture | `fixtures/remotion-capabilities/create-video-fixture.sh` | Creates one ignored FFmpeg-only local video for isolated canvas-effect review. |
 | Media/sound fixture | `fixtures/producer-media-sound/create-fixtures.sh` | Creates ignored local PNG/GIF/video/BGM/ambience/SFX proof inputs. |
 | Media/sound gate | `producer-media-sound-smoke.mjs` | Guards Phase 7 packages, modules, proof ownership, deterministic helpers, docs, and forbidden boundaries. |
+| Style-profile sample contract | `producer-style-profile-sample-contract-smoke.mjs` | Guards mandatory profile selection for future scaffolds while preserving the Phase 7 proof. |
 | Architecture guards | `agent-producer-*-smoke.mjs`, `skill-alignment-smoke.mjs` | Product boundary checks. |
 
 Older composition-specific generators and smokes are frozen maintenance
@@ -46,6 +47,8 @@ references. Do not use them as future Producer scaffolds.
   transitions and light leaks; do not add overrides or a mixed closure.
 - Keep capability and Phase 7 proof fixture media generated and ignored. Use
   `producer:assets` and `producer:preflight` before maintained stills.
+- Require `producer:scaffold --style-profile <profile-id>` for every future
+  maintained sample; never retrofit the completed Phase 7 proof.
 
 ## ANTI-PATTERNS
 
@@ -64,5 +67,6 @@ docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:remotion-version-gate'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:remotion-capabilities'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:producer-media-sound'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:producer-style-profile-sample-contract'
 git diff --check
 ```

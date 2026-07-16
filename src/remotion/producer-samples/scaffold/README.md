@@ -3,11 +3,14 @@
 Create a maintained Agent Producer sample with:
 
 ```bash
-npm run producer:scaffold -- --name <SampleName> --slug <sample-slug>
+npm run producer:scaffold -- --name <SampleName> --slug <sample-slug> --style-profile <profile-id>
 ```
 
 The command copies `SampleName/` to `src/remotion/<SampleName>/`, replaces all
-name tokens, and rewrites scaffold-relative imports for the dedicated folder.
+name and style-profile tokens, and rewrites scaffold-relative imports for the
+dedicated folder. Select the profile through Agent Producer judgment before
+scene implementation. The profile constrains the production language; it does
+not generate the topic-specific scene structure.
 
 The committed sample folder should contain:
 
