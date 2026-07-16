@@ -97,3 +97,58 @@ export const getProducerEffectPreset = ({
     }),
   ];
 };
+
+export const getProducerMediaEffectPreset = ({
+  id,
+  frame,
+}: {
+  readonly id: ProducerEffectPresetId;
+  readonly frame: number;
+}): EffectDescriptor<unknown>[] => {
+  if (!Number.isFinite(frame)) throw new Error("frame must be finite");
+
+  if (id === "comic-print") {
+    return [
+      halftone({ colorMode: "source", dotSize: 2, dotSpacing: 6, rotation: 6 }),
+      roughenEdges({ amount: 0.1, border: 6, scale: 0.05, seed: 231.2 }),
+    ];
+  }
+
+  if (id === "cyber-scan") {
+    return [
+      scanlines({
+        amount: 0.2,
+        spacing: 8,
+        thickness: 2,
+        offset: interpolate(frame, [0, 180], [0, 48], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        }),
+      }),
+    ];
+  }
+
+  if (id === "paper-grain") {
+    return [
+      paper({
+        amount: 0.28,
+        colorFront: "#f7f0df",
+        colorBack: "#b79d78",
+        contrast: 0.12,
+        roughness: 0.2,
+        fiber: 0.16,
+        seed: 17,
+        scale: 0.7,
+      }),
+    ];
+  }
+
+  return [
+    pixelate({
+      blockSize: interpolate(frame, [0, 60], [6, 3], {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      }),
+    }),
+  ];
+};

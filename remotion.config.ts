@@ -8,5 +8,6 @@ import { webpackOverride } from "./src/remotion/webpack-override.mjs";
 
 Config.setVideoImageFormat("jpeg");
 Config.setChromiumOpenGlRenderer("swangle");
+Config.setAllowHtmlInCanvasEnabled(true);
 
 Config.overrideWebpackConfig(webpackOverride);

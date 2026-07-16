@@ -16,7 +16,8 @@ src/remotion/
 |-- catalog/                  # Agent-facing primitive discovery
 |-- effects/                  # Phase 6A Producer-owned effect presets
 |-- styles/                   # Phase 6A measured text fitting
-|-- capability-showcase/      # isolated Agent Producer inventory composition
+|-- transitions/              # Phase 6B official presets and duration accounting
+|-- capability-showcase/      # complete isolated Agent Producer inventory composition
 |-- standalone-video/         # Producer timing/audio/caption/canvas runtime
 |-- producer-samples/         # future sample manifest, scaffold, and blocks
 |-- recipes/blocks/           # frozen composition compatibility only
@@ -35,6 +36,7 @@ src/remotion/
 | Existing asset contract | `producer-samples/asset-manifest.ts` | Local manifest type used by Phase 5 preflight. |
 | Effect presets | `effects/` | `comic-print`, `cyber-scan`, `paper-grain`, and `pixel-grid`. |
 | Text fitting | `styles/fit-text.ts` | Guarded CJK-aware width/height/line fitting. |
+| Transition presets | `transitions/` | Four official Producer presets and overlap-aware duration accounting. |
 | Capability inventory | `capability-showcase/` | `AgentProducerCapabilityShowcase`; not a template. |
 | Frozen recipe compatibility | `recipes/blocks/`, `recipes/timing/` | Do not extend for future work. |
 
@@ -46,8 +48,8 @@ src/remotion/
 - Keep every maintained non-code asset manifest-backed and preflighted before stills.
 - Keep the installed Remotion dependency closure exact at `4.0.489` and run
   `smoke:remotion-version-gate` and `smoke:remotion-capabilities` before using
-  Phase 6A effects or text layout. Phase 6B transitions and remaining showcase
-  coverage have not started.
+  Phase 6 effects, text layout, transitions, or canvas-source capabilities.
+  Phase 7 dynamic existing media and sound design has not started.
 - Build topic data, narration, and scene order inside the dedicated
   composition.
 - Use `standalone-video/caption-types` for future Producer captions.

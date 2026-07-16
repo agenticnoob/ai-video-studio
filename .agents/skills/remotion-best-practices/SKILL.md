@@ -21,14 +21,17 @@ or voiceover work, load `rules/subtitles.md`; for long pauses or audio gaps,
 load `rules/silence-detection.md`; for dense information scenes, load
 `rules/video-layout.md`.
 
-The current repository version gate locks every installed `remotion` and
-`@remotion/*` package to exact `4.0.489`. Phase 6A admits exact-version effects,
-layout utilities, `getProducerEffectPreset()`, `fitProducerText()`, and
+The current repository locks every installed `remotion` and `@remotion/*`
+package to exact `4.0.489`. Phase 6 provides Producer-owned effects, guarded
+text fitting, official transition presets and duration accounting through
+`getProducerEffectPreset()`, `getProducerMediaEffectPreset()`,
+`fitProducerText()`, `getProducerTransitionPreset()`, and
+`getProducerTransitionSeriesDuration()`. It also provides light-leak and
+film-burn treatment plus HTML/SVG/image/video canvas proofs through
 `AgentProducerCapabilityShowcase`. Run `npm run smoke:remotion-version-gate`
-and `npm run smoke:remotion-capabilities` before using them. Do not install a
-mixed dependency closure: npm currently publishes `@remotion/transitions` only
-through `4.0.477`, whose internal Remotion dependencies are exact `4.0.477`.
-Phase 6B transitions and remaining showcase coverage have not started.
+and `npm run smoke:remotion-capabilities` before using them. Keep the dependency
+closure uniform; Phase 7 dynamic existing media and sound design has not
+started.
 
 ## New project setup
 

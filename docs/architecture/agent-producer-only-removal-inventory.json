@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "completedPhases": [0, 1, 2, 3, 4, 5],
+  "completedPhases": [0, 1, 2, 3, 4, 5, 6],
   "completedPhaseSlices": [
     {
       "phase": 6,
@@ -13,6 +13,12 @@
       "slice": "effects-text-layout-foundation",
       "status": "complete",
       "reason": "Exact-version effects and layout utilities now provide Producer-owned visual presets, guarded Chinese text fitting, and an isolated capability showcase."
+    },
+    {
+      "phase": 6,
+      "slice": "transitions-showcase",
+      "status": "complete",
+      "reason": "Exact-version official transitions and light leaks now provide Producer-owned transition presets, duration accounting, cinematic treatment, and HTML/SVG/image/video canvas proofs."
     }
   ],
   "decisionDate": "2026-07-15",
@@ -140,6 +146,14 @@
         "action": "retain",
         "phase": 6,
         "reason": "Producer-owned deterministic Remotion effect preset factories."
+      },
+      {
+        "id": "producer-transitions",
+        "path": "src/remotion/transitions",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 6,
+        "reason": "Producer-owned official transition preset and overlap-duration factories."
       },
       {
         "id": "producer-styles",

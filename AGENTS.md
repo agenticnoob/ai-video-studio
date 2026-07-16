@@ -34,14 +34,14 @@ repository contains `.codegraph/`.
 - Phase 5 completed strict asset manifests, manual/URL localization, checksum,
   provenance/license/media metadata, FFmpeg normalization, and preflight.
 - Existing Producer registry entries remain `frozen-reference` metadata.
-- Phase 6 version gate and Phase 6A effects/text-layout foundation are complete:
-  every installed Remotion package is exact `4.0.489`; Producer-owned effect
-  presets, guarded Chinese text fitting, and an isolated capability showcase
-  are available. Phase 6 overall remains incomplete.
-- `@remotion/transitions` remains published only through `4.0.477`, which pins
-  Remotion internals to `4.0.477`; do not mix it into the `4.0.489` closure or
-  weaken the exact-version gate. Phase 6B transitions and remaining showcase
-  coverage have not started.
+- Phase 6 Remotion capability core is complete: every installed Remotion
+  package is exact `4.0.489`; Producer-owned effects, guarded Chinese text
+  fitting, official transition presets/timing, light-leak/film-burn treatment,
+  and HTML/SVG/image/video canvas proofs are available in the isolated
+  capability showcase.
+- `@remotion/transitions` and `@remotion/light-leaks` are exact `4.0.489` and
+  remain inside the uniform Remotion closure. Phase 7 dynamic existing media
+  and sound design is next and has not started.
 - Historical caption/storyboard contracts and `recipes/blocks` plus
   `recipes/timing` remain only for frozen composition compatibility.
 

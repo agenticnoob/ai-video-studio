@@ -18,15 +18,35 @@ Phase 6 version gate is complete.
 
 Phase 6A effects and text-layout foundation is complete.
 
-Phase 6 overall remains incomplete.
+Phase 6B transitions and remaining showcase coverage is complete.
 
-Phase 6B transitions and remaining showcase coverage have not started.
+Phase 6 Remotion capability core is complete.
+
+Phase 7 dynamic existing media and sound design has not started.
 
 Phase 0 authority reset, Phase 1 direct VoxCPM runtime, Phase 2 F5 removal,
 Phase 3 Web product removal, and Phase 4 Producer OS consolidation remain
-complete. Phase 5 existing asset supply also remains complete. Phase 6B is the
-next bounded slice, but its official transition dependency is still unavailable
-at the repository's exact Remotion version.
+complete. Phase 5 existing asset supply and Phase 6 capability core also remain
+complete. Phase 7 is the next bounded phase and has not started.
+
+## Implemented Phase 6B Boundary
+
+- installed exact `@remotion/transitions@4.0.489` and
+  `@remotion/light-leaks@4.0.489` without overrides or a mixed Remotion closure
+- added `editorial-fade`, `directional-slide`, `signal-wipe`, and
+  `cinematic-film-burn` Producer transition presets using official
+  presentations and `linearTiming()`
+- added guarded overlap-aware total-duration accounting based on each official
+  timing object's `getDurationInFrames()` result
+- expanded `AgentProducerCapabilityShowcase` to 610 frames with a 145-frame
+  transition sequence, separate light-leak overlay and film-burn proof, and
+  HTML/SVG/image/video canvas-effect coverage
+- enabled HTML-in-canvas explicitly, added source-preserving media effect
+  presets, and bound every interactive canvas source to its 120-frame page
+- added an FFmpeg-only ignored local video fixture; no generated media entered
+  source control and no Phase 7 reusable media block was introduced
+- preserved providers, environment/Compose configuration, Producer manifests,
+  and every frozen composition unchanged
 
 ## Implemented Phase 6A Boundary
 
@@ -41,7 +61,8 @@ at the repository's exact Remotion version.
 - enabled Chromium OpenGL `swangle`, the documented no-GPU backend, for
   Docker-reproducible WebGL effect rendering
 - did not add transitions, light leaks, custom shaders, HtmlInCanvas/CanvasImage
-  media proof, dynamic media, sound design, style profiles, or frozen migration
+  media proof, dynamic media, sound design, style profiles, or frozen migration;
+  those statements describe the completed Phase 6A slice only
 
 ## Implemented Phase 6 Version-Gate Boundary
 
@@ -55,10 +76,9 @@ at the repository's exact Remotion version.
   upgrade without modifying or rendering any finished composition
 - the version-gate slice itself did not install capability packages or add
   showcase code; Phase 6A subsequently admitted only effects and layout-utils
-- recorded the upstream blocker: npm currently publishes
-  `@remotion/transitions` only through `4.0.477`, whose own Remotion dependencies
-  are pinned to exact `4.0.477`; mixed versions and npm overrides are not an
-  accepted workaround
+- recorded the original stale-mirror blocker; the Phase 6B activation rerun
+  later verified exact `@remotion/transitions@4.0.489` and its aligned
+  dependencies through synchronized registry/package metadata
 
 ## Implemented Phase 5 Boundary
 
@@ -115,13 +135,22 @@ Phase 6A RED failed because `@remotion/effects` was absent rather than exact
 `4.0.489`. Fresh GREEN, render hashes, and Docker evidence are recorded in
 `docs/superpowers/plans/2026-07-16-remotion-effects-text-layout-phase-6a.md`.
 
+Phase 6B RED first failed because `@remotion/transitions` was absent rather
+than exact `4.0.489`; after activation, the expanded guard failed on the missing
+`cinematic-film-burn` contract and later on the incomplete inventory status.
+GREEN proves exact dependencies, four transition presets, executable duration
+arithmetic, a 610-frame registered composition, and deterministic duplicate
+stills for transition, light-leak, film-burn, and four-source canvas frames.
+Full evidence is recorded in
+`docs/superpowers/plans/2026-07-16-remotion-transitions-showcase-phase-6b.md`.
+
 Repository-wide Docker lint retains the freshly confirmed historical baseline
 of 39 errors and 2 warnings unless the final post-upgrade run proves otherwise.
-Phase 6A does not claim unrelated lint cleanup.
+Phase 6 does not claim unrelated lint cleanup.
 
 VoxCPM provider docs, `.env.example`, Compose, Producer sample manifests, and
-frozen compositions remain unchanged. Phase 6A adds only the isolated showcase
-registration to Root.
+frozen compositions remain unchanged. Phase 6B extends only the isolated
+showcase registration already added by Phase 6A.
 
 ## Current Commands
 
@@ -136,13 +165,12 @@ npm run smoke:remotion-version-gate
 npm run smoke:remotion-capabilities
 ```
 
-## Next Bounded Slice
+## Next Bounded Phase
 
-The next bounded slice is Phase 6B transitions and remaining showcase coverage.
-It has not started. Before it starts, `@remotion/transitions` must have a
-supported exact-version resolution; do not lower the Roadmap target, vendor a
-replacement, use overrides, or mix `4.0.477` into the verified `4.0.489`
-closure merely to proceed.
+The next bounded phase is Phase 7 dynamic existing media and sound design. It
+has not started. This Phase 6B delivery does not add the reusable local video
+block, animated media, Lottie/Rive, SFX library, music, ducking, or audio gates
+owned by Phase 7.
 
 ## Frozen History
 

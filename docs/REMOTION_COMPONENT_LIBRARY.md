@@ -109,7 +109,7 @@ strict `ProducerAssetManifest`, `producer:assets`, and `producer:preflight`;
 components still receive only local paths and never own acquisition or license
 decisions. Phase 6 version gate is complete: current Remotion dependencies are
 exact `4.0.489`, above the selected `roughenEdges()` minimum of `4.0.487`.
-Phase 6A effects and text-layout foundation is complete.
+Phase 6 Remotion capability core is complete.
 
 | Capability | Selection rule |
 | --- | --- |
@@ -118,15 +118,21 @@ Phase 6A effects and text-layout foundation is complete.
 | `paper-grain` | document and hand-drawn explainer beats |
 | `pixel-grid` | digital abstraction and state-change beats |
 | `fitProducerText()` | bounded Chinese or long copy that needs explicit width, height, line, and fit diagnostics |
+| `editorial-fade` | restrained editorial scene changes |
+| `directional-slide` | spatial progression with an explicit direction |
+| `signal-wipe` | system-state or signal handoffs |
+| `cinematic-film-burn` | deliberate high-energy cinematic chapter breaks |
+| `getProducerTransitionSeriesDuration()` | total duration for adjacent transition overlaps using official timing objects |
+| `getProducerMediaEffectPreset()` | source-preserving effects for HTML, SVG, image, and video canvas sources |
 
 Inspect `AgentProducerCapabilityShowcase` and run
 `npm run smoke:remotion-capabilities` before selecting these shared surfaces.
-They remain Producer capabilities, not style profiles or templates.
+They remain Producer capabilities, not style profiles or templates. Every
+Remotion package, including transitions and light leaks, is exact `4.0.489`.
+HTML-in-canvas rendering depends on
+`Config.setAllowHtmlInCanvasEnabled(true)` and the compatible Chromium runtime
+used by the Docker Producer; it is not a generic browser guarantee.
 
-The next capability slice may not mix package versions. npm currently exposes
-`@remotion/transitions` only through `4.0.477`, and that package depends on
-Remotion internals at exact `4.0.477`. Phase 6B remains blocked until a
-supported aligned release exists or the authority is revised with new verified
-compatibility evidence. Transitions, light-leak/film-burn completion,
-HtmlInCanvas/CanvasImage media proof, and transition-duration verification
-remain unimplemented.
+Phase 7 dynamic existing media and sound design is next and has not started.
+The showcase-local ignored FFmpeg fixture proves canvas video effects but is
+not the reusable Phase 7 video block.

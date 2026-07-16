@@ -24,13 +24,13 @@
 ## Current Repository Facts
 
 - Starting branch: `refactor/agent-producer-service`.
-- Starting commit: `35aea49 feat: add remotion effects and text layout foundation`.
+- Starting commit for this execution: `61763dd docs: plan remotion capability phase 6b`.
 - Starting tracked worktree: clean; ignored private/generated trees exist and must remain untouched and unstaged.
 - Phase 0 through Phase 5, the Phase 6 version gate, and Phase 6A are complete. Phase 6 overall is incomplete.
 - `AgentProducerCapabilityShowcase` currently contains two 90-frame pages: four effect presets and measured Chinese text fitting.
 - CodeGraph identifies `src/remotion/Root.tsx` and `src/remotion/capability-showcase/index.ts` as the showcase registration/call boundary; no production source imports a Producer transition module because it does not exist.
 - Every current direct and top-level lockfile Remotion package resolves to exact `4.0.489`.
-- Live npm evidence on 2026-07-16 reports `@remotion/transitions` latest as `4.0.477`; `@remotion/transitions@4.0.489` returns E404, and `4.0.477` depends exactly on `remotion`, `@remotion/shapes`, and `@remotion/paths` `4.0.477`.
+- Fresh activation evidence on 2026-07-16 confirms `@remotion/transitions@4.0.489` exists and depends exactly on `remotion`, `@remotion/shapes`, and `@remotion/paths` `4.0.489`. The default `registry.npmmirror.com` packument remains stale, while `registry-direct.npmmirror.com` exposes the synchronized package and tarball; use the direct mirror as a one-command registry override without changing repository or user npm configuration.
 - Live npm evidence reports `@remotion/light-leaks@4.0.489` exists and depends on `remotion@4.0.489`, but the Roadmap forbids starting Phase 6B piecemeal before the transition gate clears.
 - Focused Docker capability, version-gate, architecture, and skill-alignment smokes pass at the starting commit.
 - Repository-wide Docker lint has the documented historical baseline of 39 errors and 2 warnings; changed Phase 6B files must be clean.
@@ -125,13 +125,11 @@ npm view @remotion/transitions version versions --json
 npm view @remotion/transitions@4.0.489 version dependencies --json
 ```
 
-Required to continue: the second command exits `0`, reports version `4.0.489`, and every `remotion` / `@remotion/*` dependency is exact `4.0.489`.
+Required to continue: the second command exits `0`, reports version `4.0.489`, and every `remotion` / `@remotion/*` dependency is exact `4.0.489`. This execution uses `--registry=https://registry-direct.npmmirror.com/` because the configured default mirror is stale and the local proxy fails TLS to `registry.npmjs.org`; independent unpkg/jsDelivr package metadata matches the synchronized registry result.
 
-- [x] **Step 2: Stop on the current blocker**
+- [x] **Step 2: Record the cleared blocker and proceed**
 
-Actual 2026-07-16 result: latest is `4.0.477`; `4.0.489` returns `E404 No match found for version 4.0.489`; `4.0.477` pins `remotion`, `@remotion/shapes`, and `@remotion/paths` to exact `4.0.477`.
-
-Stop condition: do not execute Tasks 1-7, do not change Phase 6 active status, and do not install light-leaks alone. A later execution reruns Task 0 from live registry state before touching production files.
+Actual 2026-07-16 rerun: exact `4.0.489` returns successfully with an aligned dependency closure. Tasks 1-7 are now authorized; continue to forbid mixed versions, overrides, vendoring, or installing only a subset of Phase 6B.
 
 ### Task 1: Add And Observe The Phase 6B RED Guard
 
@@ -145,7 +143,7 @@ Stop condition: do not execute Tasks 1-7, do not change Phase 6 active status, a
 - Consumes: exact-version activation result from Task 0.
 - Produces: `npm run smoke:remotion-capabilities` assertions for the complete Phase 6B boundary.
 
-- [ ] **Step 1: Add failing assertions before dependencies or production surfaces**
+- [x] **Step 1: Add failing assertions before dependencies or production surfaces**
 
 Extend the existing smoke to require both direct dependencies at `4.0.489`, require the three transition source files, require `Config.setAllowHtmlInCanvasEnabled(true)`, and require the source tokens below:
 
@@ -167,7 +165,7 @@ for (const token of ["editorial-fade", "directional-slide", "signal-wipe", "line
 assert(read("remotion.config.ts").includes("Config.setAllowHtmlInCanvasEnabled(true)"));
 ```
 
-- [ ] **Step 2: Run Docker RED**
+- [x] **Step 2: Run Docker RED**
 
 Run:
 
@@ -185,7 +183,7 @@ Expected: exit `1` because `@remotion/transitions` is absent, not because of syn
 - Modify mechanically through npm: `package-lock.json`
 - Modify: `scripts/remotion-version-gate-smoke.mjs`
 
-- [ ] **Step 1: Add exact dependencies**
+- [x] **Step 1: Add exact dependencies**
 
 Patch `dependencies` with:
 
@@ -194,7 +192,7 @@ Patch `dependencies` with:
 "@remotion/transitions": "4.0.489"
 ```
 
-- [ ] **Step 2: Regenerate and verify the lock**
+- [x] **Step 2: Regenerate and verify the lock**
 
 Run:
 
@@ -205,7 +203,7 @@ docker compose run --rm producer node -e 'const names=["remotion","@remotion/tra
 
 Expected: every printed version is `4.0.489`; no nested `4.0.477` Remotion package exists.
 
-- [ ] **Step 3: Strengthen the version gate**
+- [x] **Step 3: Strengthen the version gate**
 
 Require transitions/light-leaks at exact `4.0.489` and remove the Phase 6A assertions that require those packages and `src/remotion/transitions/` to be absent. Keep the all-lock-entry exact-version loop unchanged.
 
@@ -221,7 +219,7 @@ Require transitions/light-leaks at exact `4.0.489` and remove the Phase 6A asser
 
 - Produces: `ProducerTransitionPresetId`, `producerTransitionPresets`, `getProducerTransitionPreset()`, and `getProducerTransitionSeriesDuration()`.
 
-- [ ] **Step 1: Implement three fixed official presets**
+- [x] **Step 1: Implement four fixed official presets**
 
 Use `fade()`, directional `slide()`, and `wipe()` presentations with `linearTiming({durationInFrames})`. Validate positive integer duration, return the presentation and timing together, and expose metadata with these exact ids and responsibilities:
 
@@ -229,7 +227,8 @@ Use `fade()`, directional `slide()`, and `wipe()` presentations with `linearTimi
 export type ProducerTransitionPresetId =
   | "editorial-fade"
   | "directional-slide"
-  | "signal-wipe";
+  | "signal-wipe"
+  | "cinematic-film-burn";
 
 export const producerTransitionPresets = [
   { id: "editorial-fade", label: "Editorial fade", useWhen: "Restrained editorial scene changes" },
@@ -238,7 +237,7 @@ export const producerTransitionPresets = [
 ] as const;
 ```
 
-- [ ] **Step 2: Implement total-duration arithmetic**
+- [x] **Step 2: Implement total-duration arithmetic**
 
 Use each timing object's official `getDurationInFrames({fps})` result:
 
@@ -270,7 +269,7 @@ export const getProducerTransitionSeriesDuration = ({
 
 Validate every scene duration as a positive integer and assert the result remains positive.
 
-- [ ] **Step 3: Export only the supported transition surface**
+- [x] **Step 3: Export only the supported transition surface**
 
 Re-export the four public names above. Do not export a scene DSL, SFX mapping, template, recipe, or style profile.
 
@@ -279,11 +278,15 @@ Re-export the four public names above. Do not export a scene DSL, SFX mapping, t
 **Files:**
 
 - Modify: `remotion.config.ts`
+- Modify: `package.json`
+- Modify: `src/remotion/effects/presets.ts`
+- Modify: `src/remotion/effects/index.ts`
 - Modify: `src/remotion/capability-showcase/RemotionCapabilityShowcase.tsx`
 - Modify: `src/remotion/capability-showcase/index.ts`
+- Create: `src/remotion/capability-showcase/durations.ts`
 - Create: `scripts/fixtures/remotion-capabilities/create-video-fixture.sh`
 
-- [ ] **Step 1: Enable the explicit HTML-in-canvas render flag**
+- [x] **Step 1: Enable the explicit HTML-in-canvas render flag**
 
 Add:
 
@@ -293,19 +296,19 @@ Config.setAllowHtmlInCanvasEnabled(true);
 
 Keep `Config.setChromiumOpenGlRenderer("swangle")` unchanged. Document that HTML-in-canvas requires the configured Chrome capability and is not a generic browser guarantee.
 
-- [ ] **Step 2: Add the transition timing page**
+- [x] **Step 2: Add the transition timing page**
 
 Render three 60-frame code-only scenes with 15-frame `editorial-fade` and 20-frame `signal-wipe` transitions. The page duration is exactly `60 + 60 + 60 - 15 - 20 = 145` frames, calculated by `getProducerTransitionSeriesDuration()` and used by both `TransitionSeries` and the showcase duration constant.
 
-- [ ] **Step 3: Add the cinematic overlay page**
+- [x] **Step 3: Add the cinematic overlay page**
 
-Use `TransitionSeries.Overlay` and `<LightLeak durationInFrames={30} seed={6} hueShift={18} />` between two code-only scenes. The overlay does not shorten the two 60-frame scene durations, so this page contributes exactly 120 frames.
+Use `TransitionSeries.Overlay` and `<LightLeak durationInFrames={30} seed={6} hueShift={18} />` between the first two code-only scenes, then a fixed 15-frame `cinematic-film-burn` transition into a third scene. The overlay does not shorten adjacent scenes, while the film-burn transition overlaps the second and third scenes, so this page contributes exactly `60 + 60 + 60 - 15 = 165` frames. This proves that light-leak and film-burn are separate official capabilities.
 
-- [ ] **Step 4: Add HTML, SVG, image, and local video canvas proofs**
+- [x] **Step 4: Add HTML, SVG, image, and local video canvas proofs**
 
-Use `HtmlInCanvas` with code-authored HTML and inline SVG children, and `CanvasImage` with `staticFile("fixtures/phase5-ui-screenshot.svg")`. Apply existing Producer effect descriptors. For the video proof, place `OffthreadVideo` with `staticFile("generated/agent-producer-capability-showcase/assets/canvas-video.mp4")` inside `HtmlInCanvas`; this remains showcase-local proof and does not create the Phase 7 reusable video block.
+Use one 120-frame page with `HtmlInCanvas` around code-authored HTML and inline SVG children, and `CanvasImage` with `staticFile("fixtures/phase5-ui-screenshot.svg")`. Apply source-preserving Producer media effect descriptors and bind each interactive canvas source to the full 120-frame page duration. For the video proof, place `OffthreadVideo` with `staticFile("generated/agent-producer-capability-showcase/assets/canvas-video.mp4")` inside `HtmlInCanvas`; this remains showcase-local proof and does not create the Phase 7 reusable video block. The complete showcase duration is exactly `90 + 90 + 145 + 165 + 120 = 610` frames.
 
-- [ ] **Step 5: Add the ignored local video-fixture generator**
+- [x] **Step 5: Add the ignored local video-fixture generator**
 
 The shell script runs:
 
@@ -318,7 +321,7 @@ The script creates no tracked artifact and has no model/provider dependency.
 
 ### Task 5: Turn RED Into GREEN And Prove Duration Behavior
 
-- [ ] **Step 1: Extend the focused smoke with executable duration assertions**
+- [x] **Step 1: Extend the focused smoke with executable duration assertions**
 
 Bundle/import the transition module using the repository's existing TypeScript execution pattern and assert:
 
@@ -335,7 +338,7 @@ getProducerTransitionSeriesDuration({
 
 Also assert invalid empty scenes, non-positive durations, and wrong transition counts throw.
 
-- [ ] **Step 2: Run focused GREEN smokes**
+- [x] **Step 2: Run focused GREEN smokes**
 
 ```bash
 docker compose run --rm producer bash -lc 'npm run smoke:remotion-capabilities && npm run smoke:remotion-version-gate && npm run smoke:agent-producer-architecture && npm run smoke:skill-alignment && npm run smoke:producer-os && npm run smoke:producer-assets && npm run smoke:producer-validation && npm run smoke:producer-review-frames'
@@ -343,21 +346,21 @@ docker compose run --rm producer bash -lc 'npm run smoke:remotion-capabilities &
 
 ### Task 6: Render Deterministic Representative Evidence
 
-- [ ] **Step 1: Generate only the ignored video fixture**
+- [x] **Step 1: Generate only the ignored video fixture**
 
 Run the fixture script inside the Producer container and confirm `git check-ignore` recognizes the output.
 
-- [ ] **Step 2: Render transition, overlay, and canvas pages twice**
+- [x] **Step 2: Render transition, overlay, film-burn, and canvas states twice**
 
-Render one active frame from each new page twice under `out/phase6b-capabilities/`. Compare SHA-256 pairs. Inspect for visible transition overlap, nonblank light leak, readable HTML/SVG/image content, a visible video frame, no clipping, and no overlap.
+Render one active transition frame, separate light-leak and film-burn frames, and one canvas-source frame twice under `out/phase6b-capabilities/`. Compare SHA-256 pairs. Inspect for visible transition overlap, nonblank light leak and film burn, readable HTML/SVG/image content, a visible video frame, no clipping, and no unintended overlap.
 
-- [ ] **Step 3: Prove registered total duration**
+- [x] **Step 3: Prove registered total duration**
 
 Run `npx remotion compositions src/remotion/index.ts` and confirm `AgentProducerCapabilityShowcase` reports the exact new duration constant derived from the page durations.
 
 ### Task 7: Docker-First Verification, Docs Alignment, And One Commit
 
-- [ ] **Step 1: Run Docker gates**
+- [x] **Step 1: Run Docker gates**
 
 ```bash
 docker compose run --rm producer bash -lc 'npx tsc --noEmit --pretty false'
@@ -369,15 +372,15 @@ git diff --check
 
 Typecheck, build, and composition listing must exit `0`. Report lint against the fresh historical baseline; do not claim unrelated cleanup.
 
-- [ ] **Step 2: Run changed-file and forbidden checks**
+- [x] **Step 2: Run changed-file and forbidden checks**
 
 Run ESLint on changed TS/TSX/MJS files, Prettier on every changed supported file, `bash -n` on the fixture script, JSON/Compose checks, and scans proving no remote URL, CSS animation/transition, image/video model, Web product, planner/template, provider fallback, generated artifact, private voice, secret, or frozen source entered the diff.
 
-- [ ] **Step 3: Align active authorities**
+- [x] **Step 3: Align active authorities**
 
-Mark Phase 6 and Phase 6B complete only after all GREEN evidence exists. Add Phase 6 to `completedPhases`, add a completed `transitions-showcase` slice, document the three transition ids and HTML-in-canvas notice, remove obsolete blocker language, and state Phase 7 is next and not started. Keep provider, asset contract, promotion gate, env, Compose, frozen sources, and `VISUAL_RECIPE_ROADMAP.md` unchanged unless verification finds a direct inconsistency.
+Mark Phase 6 and Phase 6B complete only after all GREEN evidence exists. Add Phase 6 to `completedPhases`, add a completed `transitions-showcase` slice, document the four transition ids and HTML-in-canvas notice, remove obsolete blocker language, and state Phase 7 is next and not started. Keep provider, asset contract, promotion gate, env, Compose, frozen sources, and `VISUAL_RECIPE_ROADMAP.md` unchanged unless verification finds a direct inconsistency.
 
-- [ ] **Step 4: Review and commit exactly one Phase 6B implementation**
+- [x] **Step 4: Review and commit exactly one Phase 6B implementation**
 
 Stage only the Phase 6B implementation, plan execution record, and aligned active docs. Confirm no ignored/private/media path is staged, then create:
 
@@ -389,13 +392,13 @@ Do not push. Stop before Phase 7.
 
 ## RED Check
 
-The first post-activation Docker `smoke:remotion-capabilities` must fail because the exact transition dependency and new surfaces are absent. The current npm E404 is an activation blocker, not the TDD RED; do not mutate production code merely to manufacture a later failure.
+The first post-activation Docker `smoke:remotion-capabilities` failed because the exact transition dependency was absent. After dependency activation, the expanded guard separately failed on the missing `cinematic-film-burn` contract. A final authority RED failed because Phase 6 had not yet been recorded complete. These were target-boundary failures rather than syntax, Docker, or unrelated baseline failures.
 
 ## GREEN Result Required
 
 - exact `4.0.489` transition/light-leak packages with no mixed lock entry
-- three Producer transition presets and official timing arithmetic
-- 145-frame transition example and overlay duration proof
+- four Producer transition presets and official timing arithmetic
+- 145-frame transition example plus separate light-leak overlay and film-burn duration proof
 - deterministic HTML/SVG/image/video canvas-effect review frames
 - Agent Producer skill selection rules and HTML-in-canvas runtime notice
 - focused smokes, Docker typecheck/build/composition listing, changed-file style checks, forbidden/frozen/artifact/secret scans, and `git diff --check`
@@ -419,7 +422,7 @@ Before activation, a plan-only documentation commit may record the verified bloc
 
 ## Stop Condition
 
-Current stop: `@remotion/transitions@4.0.489` is unavailable. Do not execute Tasks 1-7. On a future rerun, start at Task 0 and proceed only if the exact-version command exits `0` with an aligned dependency closure. After a successful Phase 6B commit, stop with Phase 7 explicitly unstarted.
+Current stop condition: after a successful Phase 6B commit, stop with Phase 7 explicitly unstarted. The previous package-publication stop no longer applies because the exact-version activation gate now passes.
 
 ## Plan Self-Review
 
@@ -431,5 +434,10 @@ Current stop: `@remotion/transitions@4.0.489` is unavailable. Do not execute Tas
 ## Execution Record
 
 - 2026-07-16 activation gate: blocked. Registry latest is `4.0.477`; exact `4.0.489` returns E404, and `4.0.477` pins three Remotion internals to exact `4.0.477`.
+- 2026-07-16 activation rerun: cleared. `registry-direct.npmmirror.com`, unpkg, and jsDelivr expose `@remotion/transitions@4.0.489`; its Remotion dependencies are exact `4.0.489`. The default mirror's packument is stale and direct TLS to `registry.npmjs.org` fails in this environment, so installation uses a command-local direct-mirror override without persisting npm configuration.
 - Starting focused baseline: Docker version-gate, capability, architecture, and skill-alignment smokes exit `0`.
-- Production execution: not started. No dependency, source, config, active-status, frozen, provider, or generated/private artifact change was made.
+- Production execution: dependencies, transition/media effect helpers, 610-frame isolated showcase, ignored FFmpeg fixture, focused guards, and active-doc alignment are implemented. Typecheck, build, composition listing, focused smokes, deterministic duplicate still hashes, and changed-file ESLint are GREEN; full lint remains at the historical 39-error/2-warning baseline. Provider, env, Compose, frozen compositions, and generated/private artifacts remain unchanged or untracked.
+- RED evidence: the first focused run exited `1` because `@remotion/transitions` was absent; the post-activation contract run exited `1` on missing `cinematic-film-burn`; the final authority guard exited `1` until inventory recorded Phase 6 complete.
+- GREEN focused evidence: capability, version, architecture, skill-alignment, Producer OS, assets, validation, and review-frame smokes all exit `0` in Docker.
+- Representative frames: frame 232 transition hash pair `a6ca34ba19c3ef0cdb8d4f2e56bc57dc3d1f629b5e8713c3e175f08f80941444`; frame 380 light-leak pair `6edcc70a1ce2b72503b6b307006ac4131c808bb60893e7e0f9767d645278896d`; frame 437 film-burn pair `783ad95cf49f5086c94a82d965630a276761a6171e6fa11fedd14c0db787c6e3`; frame 550 canvas-source pair `d9ca1d0ff4486fa86aa7d70b34dc035a2b62e48433e877a9a53ef76d9c5dae4e`. Visual review confirms effect visibility, readable source tiles, a visible local video frame, and no clipping.
+- Docker final gates: typecheck, build, and composition listing exit `0`; the showcase registers at 610 frames. Changed-file ESLint, Prettier, Bash syntax, JSON parse, Compose config, forbidden/source/status scans, and `git diff --check` exit `0`. Full lint reports only the unchanged historical 39 errors and 2 warnings.

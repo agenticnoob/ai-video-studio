@@ -1,8 +1,7 @@
 # Agent Producer-Only Roadmap
 
-Status: Phase 0 through Phase 5 complete; the Phase 6 version gate and Phase 6A
-effects/text-layout foundation are complete; Phase 6 overall remains incomplete
-and Phase 6B has not started.
+Status: Phase 0 through Phase 6 complete. Phase 7 dynamic existing media and
+sound design is next and has not started.
 
 Decision date: 2026-07-15.
 
@@ -727,8 +726,8 @@ Implementation evidence:
 
 ## 11. Phase 6 - Remotion Capability Core
 
-Status: version gate and Phase 6A effects/text-layout foundation complete;
-Phase 6B transitions and remaining showcase coverage have not started.
+Status: complete. The version gate, Phase 6A effects/text-layout foundation,
+and Phase 6B transitions/remaining showcase coverage are verified.
 
 ### Goal
 
@@ -759,17 +758,13 @@ Version-gate result:
 - focused version, architecture, skill, Producer OS, asset, validation, and
   review checks plus Docker-first gates are recorded in
   `docs/superpowers/plans/2026-07-16-remotion-version-gate-phase-6.md`
-- `@remotion/effects`, `@remotion/transitions`, `@remotion/layout-utils`,
-  `@remotion/light-leaks`, presets, text fitting, and the capability showcase
-  remain absent
-- `@remotion/transitions` remains published only through `4.0.477` on npm and
-  depends on exact `4.0.477` Remotion internals; mixed versions, npm overrides,
-  and lowering the capability target are not accepted workarounds
-
-Live npm evidence still reports the transition package conflict. This authority
-therefore splits capability implementation into an unblocked Phase 6A
-foundation and a blocked Phase 6B rather than mixing versions or lowering the
-target.
+- the gate intentionally admitted no capability package; Phase 6A and Phase 6B
+  subsequently added effects, layout, transitions, and light leaks at the same
+  exact `4.0.489`
+- the configured default mirror initially returned stale `4.0.477` transition
+  metadata; synchronized registry metadata and the installed lockfile later
+  verified `@remotion/transitions@4.0.489` with exact `4.0.489` Remotion
+  internals, without npm overrides or a mixed closure
 
 ### Phase 6A - Effects And Text-Layout Foundation
 
@@ -790,13 +785,20 @@ Status: complete and verified on 2026-07-16.
 
 ### Phase 6B - Transitions And Remaining Showcase Coverage
 
-Status: not started.
+Status: Phase 6B transitions and remaining showcase coverage complete and
+verified on 2026-07-16.
 
-Phase 6B retains `@remotion/transitions`, official transition timing and total
-duration accounting, transition presets, HtmlInCanvas/CanvasImage media proof,
-light-leak/film-burn completion, and the remaining capability-showcase coverage.
-It may not start until an exact-version transition resolution exists or this
-authority is revised again with new verified compatibility evidence.
+Phase 6B adds exact `@remotion/transitions@4.0.489` and
+`@remotion/light-leaks@4.0.489`, four Producer-owned transition preset ids,
+official transition timing and overlap-aware duration accounting, separate
+light-leak overlay and seeded film-burn proofs, and HTML/SVG/image/video canvas
+effects in the isolated capability showcase. `HtmlInCanvas` is explicitly
+enabled in Remotion config, and every interactive canvas source declares its
+full page duration.
+
+The supported transition ids are `editorial-fade`, `directional-slide`,
+`signal-wipe`, and `cinematic-film-burn`. The showcase-local generated test
+video remains ignored and does not create the reusable Phase 7 video block.
 
 Official references:
 
@@ -843,6 +845,8 @@ video template.
 - the Agent Producer skill can name and select each capability
 
 ## 12. Phase 7 - Dynamic Existing Media And Sound Design
+
+Status: not started.
 
 ### Goal
 

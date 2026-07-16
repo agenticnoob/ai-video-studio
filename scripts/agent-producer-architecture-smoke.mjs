@@ -22,7 +22,7 @@ assert(existsSync(absolute(inventoryPath)), `${inventoryPath} must exist`);
 const inventory = JSON.parse(read(inventoryPath));
 
 assert.equal(inventory.version, 1, "inventory version");
-assert.deepEqual(inventory.completedPhases, [0, 1, 2, 3, 4, 5], "completed roadmap phases");
+assert.deepEqual(inventory.completedPhases, [0, 1, 2, 3, 4, 5, 6], "completed roadmap phases");
 assert.deepEqual(
   inventory.completedPhaseSlices,
   [
@@ -39,6 +39,13 @@ assert.deepEqual(
       status: "complete",
       reason:
         "Exact-version effects and layout utilities now provide Producer-owned visual presets, guarded Chinese text fitting, and an isolated capability showcase.",
+    },
+    {
+      phase: 6,
+      slice: "transitions-showcase",
+      status: "complete",
+      reason:
+        "Exact-version official transitions and light leaks now provide Producer-owned transition presets, duration accounting, cinematic treatment, and HTML/SVG/image/video canvas proofs.",
     },
   ],
   "completed roadmap phase slices",
@@ -146,10 +153,10 @@ assert(
     "Phase 6A effects and text-layout foundation is complete.",
   ),
 );
-assert(read("docs/ITERATION_STATUS.md").includes("Phase 6 overall remains incomplete."));
+assert(read("docs/ITERATION_STATUS.md").includes("Phase 6 Remotion capability core is complete."));
 assert(
   read("docs/ITERATION_STATUS.md").includes(
-    "Phase 6B transitions and remaining showcase coverage have not started.",
+    "Phase 7 dynamic existing media and sound design has not started.",
   ),
 );
 assert(read("docs/VISUAL_RECIPE_ROADMAP.md").includes("Superseded"));

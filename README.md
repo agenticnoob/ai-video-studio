@@ -44,18 +44,17 @@ supported runtime surfaces. Phase 4 consolidated the Producer OS around one
 strict future manifest, executable scaffold, validation, review-frame, and
 render entrypoints. Phase 5 added strict asset manifests, manual/URL
 localization, checksum, provenance/license/media metadata, FFmpeg
-normalization, and preflight before maintained still/render execution. The
-Phase 6 version gate now locks every installed Remotion package to exact
-`4.0.489`. Phase 6A adds Producer-owned `comic-print`, `cyber-scan`,
-`paper-grain`, and `pixel-grid` effects, guarded Chinese text fitting, and the
-`AgentProducerCapabilityShowcase` inventory composition. Phase 6 overall
-remains incomplete.
+normalization, and preflight before maintained still/render execution. Phase 6
+is complete on one exact `4.0.489` Remotion closure. Producer-owned
+`comic-print`, `cyber-scan`, `paper-grain`, and `pixel-grid` effects, guarded
+Chinese text fitting, four official transition presets, duration accounting,
+light-leak/film-burn treatment, and HTML/SVG/image/video canvas-effect proofs
+are available through the isolated `AgentProducerCapabilityShowcase` inventory
+composition. The configured default npm mirror may expose stale transition
+metadata; the lockfile resolves `@remotion/transitions@4.0.489` without
+overrides or mixed versions.
 
-The capability slice must not mix unsupported versions: npm currently exposes
-`@remotion/transitions` only through `4.0.477`, whose dependency closure pins
-Remotion internals to `4.0.477`. Phase 6B transitions, light-leak/film-burn
-completion, HtmlInCanvas/CanvasImage media coverage, and transition-duration
-verification have not started.
+Phase 7 dynamic existing media and sound design is next and has not started.
 
 Existing finished compositions remain frozen read-only references. Historical
 `provider: "f5-tts"` metadata in their generated audio files stays truthful; it

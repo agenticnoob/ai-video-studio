@@ -109,13 +109,12 @@ are complete. A strict maintained manifest plus asset manifest, manual/URL
 localization, checksum/provenance/license/media metadata, FFmpeg normalization,
 preflight, validation, review-frame, and unified render commands now own every
 future composition. Current registry entries remain `frozen-reference`. Phase
-6 version gate is complete: all installed Remotion packages are exact
-`4.0.489`. Phase 6A effects and text-layout foundation is complete with four
-Producer-owned preset ids, guarded Chinese text fitting, and an isolated
-inventory showcase. Phase 6 overall remains incomplete. Phase 6B transitions
-and remaining showcase coverage have not started; npm still publishes
-`@remotion/transitions` only through `4.0.477`, so mixed-version installation is
-not an accepted workaround.
+6 Remotion capability core is complete on an exact `4.0.489` closure. Four
+Producer-owned effect ids, guarded Chinese text fitting, four official
+transition presets with calculated overlap duration, light-leak/film-burn
+treatment, and HTML/SVG/image/video canvas proofs are available through the
+isolated inventory showcase. No override or mixed Remotion version is present.
+Phase 7 dynamic existing media and sound design is next and has not started.
 
 ## Supporting Authorities
 

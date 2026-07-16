@@ -16,10 +16,9 @@ topic -> research/existing assets -> narration/VoxCPM -> component inventory
 -> Remotion `<Still>` covers -> publishing notes
 ```
 
-Roadmap status: Phase 5 existing-asset supply is complete. The Phase 6 version
-gate and Phase 6A effects/text-layout foundation are complete with every
-installed Remotion package exact `4.0.489`. Phase 6 overall remains incomplete;
-Phase 6B transitions and remaining showcase coverage have not started.
+Roadmap status: Phase 5 existing-asset supply and Phase 6 Remotion capability
+core are complete with every installed Remotion package exact `4.0.489`.
+Phase 7 dynamic existing media and sound design is next and has not started.
 
 ## Skill Stack
 
@@ -32,27 +31,39 @@ Phase 6B transitions and remaining showcase coverage have not started.
   before final VoxCPM narration, voice-clone text, control instructions, or
   expression tags.
 - Run `npm run smoke:remotion-version-gate` before Phase 6 capability work.
-  Use `getProducerEffectPreset()` and `fitProducerText()` only after inspecting
+  Use Phase 6 capabilities only after inspecting
   `AgentProducerCapabilityShowcase` and running
-  `npm run smoke:remotion-capabilities`. Do not add mixed Remotion versions:
-  npm currently publishes
-  `@remotion/transitions` only through `4.0.477`, while the verified installed
-  closure is exact `4.0.489`.
+  `npm run smoke:remotion-capabilities`. Do not add mixed Remotion versions;
+  transitions and light leaks are part of the exact `4.0.489` closure.
 
-## Phase 6A Capability Selection
+## Phase 6 Capability Selection
 
+- `getProducerEffectPreset()`: resolve one of the four code-only effect
+  treatments below for generated visual surfaces
 - `comic-print`: printed panels and editorial emphasis
 - `cyber-scan`: terminal, signal, and system-state beats
 - `paper-grain`: document and hand-drawn explainer beats
 - `pixel-grid`: digital abstraction and state-change beats
 - `fitProducerText()`: bounded Chinese or long copy that needs explicit width,
   height, line-count, and `fits` diagnostics
+- `editorial-fade`: restrained editorial scene changes
+- `directional-slide`: spatial progression with an explicit direction
+- `signal-wipe`: system-state or signal handoffs
+- `cinematic-film-burn`: a deliberate high-energy cinematic chapter break
+- `getProducerTransitionPreset()`: resolve one of the four official
+  presentation/timing pairs above
+- `getProducerTransitionSeriesDuration()`: calculate total duration from
+  adjacent scene overlaps using official timing objects
+- `getProducerMediaEffectPreset()`: source-preserving canvas effects for HTML,
+  SVG, image, or video content
 
 Import presets from `src/remotion/effects/` and text fitting from
-`src/remotion/styles/`. These are Producer-owned capabilities, not a template,
-recipe, or style-profile selection system. Phase 6B still owns transitions,
-light-leak/film-burn completion, HtmlInCanvas/CanvasImage media proof, and
-transition-duration verification.
+`src/remotion/styles/`; import transition presets and duration accounting from
+`src/remotion/transitions/`. These are Producer-owned capabilities, not a
+template, recipe, or style-profile selection system. HTML-in-canvas rendering
+requires `Config.setAllowHtmlInCanvasEnabled(true)` and the compatible Docker
+Producer Chromium runtime. The ignored showcase fixture does not authorize the
+reusable video block or sound-design work owned by unstarted Phase 7.
 
 ## Start Here
 
