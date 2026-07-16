@@ -33,6 +33,13 @@ assert.deepEqual(
       reason:
         "All currently installed Remotion packages are locked to exact 4.0.489 and verified before capability packages are admitted.",
     },
+    {
+      phase: 6,
+      slice: "effects-text-layout-foundation",
+      status: "complete",
+      reason:
+        "Exact-version effects and layout utilities now provide Producer-owned visual presets, guarded Chinese text fitting, and an isolated capability showcase.",
+    },
   ],
   "completed roadmap phase slices",
 );
@@ -135,7 +142,15 @@ assert(read("docs/ITERATION_STATUS.md").includes("Phase 5"));
 assert(read("docs/ITERATION_STATUS.md").includes("Phase 6"));
 assert(read("docs/ITERATION_STATUS.md").includes("Phase 6 version gate is complete."));
 assert(
-  read("docs/ITERATION_STATUS.md").includes("Phase 6 capability implementation has not started."),
+  read("docs/ITERATION_STATUS.md").includes(
+    "Phase 6A effects and text-layout foundation is complete.",
+  ),
+);
+assert(read("docs/ITERATION_STATUS.md").includes("Phase 6 overall remains incomplete."));
+assert(
+  read("docs/ITERATION_STATUS.md").includes(
+    "Phase 6B transitions and remaining showcase coverage have not started.",
+  ),
 );
 assert(read("docs/VISUAL_RECIPE_ROADMAP.md").includes("Superseded"));
 
@@ -149,9 +164,18 @@ for (const command of [
   "producer:render",
   "smoke:producer-os",
   "smoke:producer-assets",
+  "smoke:remotion-capabilities",
   "smoke:remotion-version-gate",
 ]) {
   assert(packageJson.scripts[command], `package.json must expose ${command}`);
+}
+for (const phase6aPath of [
+  "scripts/remotion-capabilities-smoke.mjs",
+  "src/remotion/effects/presets.ts",
+  "src/remotion/styles/fit-text.ts",
+  "src/remotion/capability-showcase/RemotionCapabilityShowcase.tsx",
+]) {
+  assert(existsSync(absolute(phase6aPath)), `Phase 6A path must exist: ${phase6aPath}`);
 }
 for (const phase5Path of [
   "src/remotion/producer-samples/asset-manifest.ts",

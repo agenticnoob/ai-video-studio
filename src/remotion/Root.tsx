@@ -1,5 +1,13 @@
 import type { FC } from "react";
-import { Composition } from "remotion";
+import { Composition, Folder } from "remotion";
+import {
+  REMOTION_CAPABILITY_SHOWCASE_COMPOSITION_ID,
+  REMOTION_CAPABILITY_SHOWCASE_DURATION_IN_FRAMES,
+  REMOTION_CAPABILITY_SHOWCASE_FPS,
+  REMOTION_CAPABILITY_SHOWCASE_HEIGHT,
+  REMOTION_CAPABILITY_SHOWCASE_WIDTH,
+  RemotionCapabilityShowcase,
+} from "./capability-showcase";
 import {
   getPixelRAGChineseStandaloneDuration,
   PixelRAGChineseStandaloneVideo,
@@ -169,6 +177,16 @@ import {
 export const RemotionRoot: FC = () => {
   return (
     <>
+      <Folder name="Agent-Producer-Inventory">
+        <Composition
+          id={REMOTION_CAPABILITY_SHOWCASE_COMPOSITION_ID}
+          component={RemotionCapabilityShowcase}
+          durationInFrames={REMOTION_CAPABILITY_SHOWCASE_DURATION_IN_FRAMES}
+          fps={REMOTION_CAPABILITY_SHOWCASE_FPS}
+          width={REMOTION_CAPABILITY_SHOWCASE_WIDTH}
+          height={REMOTION_CAPABILITY_SHOWCASE_HEIGHT}
+        />
+      </Folder>
       <Composition
         id={PIXELRAG_CHINESE_STANDALONE_COMPOSITION_ID}
         component={PixelRAGChineseStandaloneVideo}

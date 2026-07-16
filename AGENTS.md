@@ -34,12 +34,14 @@ repository contains `.codegraph/`.
 - Phase 5 completed strict asset manifests, manual/URL localization, checksum,
   provenance/license/media metadata, FFmpeg normalization, and preflight.
 - Existing Producer registry entries remain `frozen-reference` metadata.
-- Phase 6 version gate is complete: every currently installed Remotion package
-  is locked to exact `4.0.489` and the pre/post-upgrade fixture still is
-  verified. Phase 6 capability implementation has not started.
+- Phase 6 version gate and Phase 6A effects/text-layout foundation are complete:
+  every installed Remotion package is exact `4.0.489`; Producer-owned effect
+  presets, guarded Chinese text fitting, and an isolated capability showcase
+  are available. Phase 6 overall remains incomplete.
 - `@remotion/transitions` remains published only through `4.0.477`, which pins
   Remotion internals to `4.0.477`; do not mix it into the `4.0.489` closure or
-  weaken the exact-version gate.
+  weaken the exact-version gate. Phase 6B transitions and remaining showcase
+  coverage have not started.
 - Historical caption/storyboard contracts and `recipes/blocks` plus
   `recipes/timing` remain only for frozen composition compatibility.
 
@@ -106,6 +108,7 @@ npm run smoke:producer-assets
 npm run smoke:producer-audio-direct-voxcpm
 npm run smoke:producer-audio-tools
 npm run smoke:remotion-version-gate
+npm run smoke:remotion-capabilities
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
 ```

@@ -16,12 +16,32 @@ The implementation sequence is defined by
 
 Phase 6 version gate is complete.
 
+Phase 6A effects and text-layout foundation is complete.
+
+Phase 6 overall remains incomplete.
+
+Phase 6B transitions and remaining showcase coverage have not started.
+
 Phase 0 authority reset, Phase 1 direct VoxCPM runtime, Phase 2 F5 removal,
 Phase 3 Web product removal, and Phase 4 Producer OS consolidation remain
-complete. Phase 5 existing asset supply also remains complete. Phase 6
-capability implementation remains the next slice.
+complete. Phase 5 existing asset supply also remains complete. Phase 6B is the
+next bounded slice, but its official transition dependency is still unavailable
+at the repository's exact Remotion version.
 
-Phase 6 capability implementation has not started.
+## Implemented Phase 6A Boundary
+
+- installed `@remotion/effects` and `@remotion/layout-utils` at exact `4.0.489`
+  without introducing a mixed Remotion closure
+- added `getProducerEffectPreset()` with `comic-print`, `cyber-scan`,
+  `paper-grain`, and `pixel-grid` selection metadata and frame-driven inputs
+- added `fitProducerText()` with guarded geometry, CJK-aware line fitting,
+  width/height/line limits, and explicit `fits` diagnostics
+- added `AgentProducerCapabilityShowcase` as an isolated code-only inventory
+  composition under `Agent-Producer-Inventory` in Remotion Studio
+- enabled Chromium OpenGL `swangle`, the documented no-GPU backend, for
+  Docker-reproducible WebGL effect rendering
+- did not add transitions, light leaks, custom shaders, HtmlInCanvas/CanvasImage
+  media proof, dynamic media, sound design, style profiles, or frozen migration
 
 ## Implemented Phase 6 Version-Gate Boundary
 
@@ -33,8 +53,8 @@ Phase 6 capability implementation has not started.
   inventory, and capability-not-started boundaries
 - verified the existing non-frozen primitive fixture before and after the
   upgrade without modifying or rendering any finished composition
-- did not install effects, transitions, layout utilities, light leaks, presets,
-  text fitting, or a capability showcase
+- the version-gate slice itself did not install capability packages or add
+  showcase code; Phase 6A subsequently admitted only effects and layout-utils
 - recorded the upstream blocker: npm currently publishes
   `@remotion/transitions` only through `4.0.477`, whose own Remotion dependencies
   are pinned to exact `4.0.477`; mixed versions and npm overrides are not an
@@ -91,13 +111,17 @@ The Phase 6 version gate RED failed on the old `@remotion/cli` value
 recorded in
 `docs/superpowers/plans/2026-07-16-remotion-version-gate-phase-6.md`.
 
+Phase 6A RED failed because `@remotion/effects` was absent rather than exact
+`4.0.489`. Fresh GREEN, render hashes, and Docker evidence are recorded in
+`docs/superpowers/plans/2026-07-16-remotion-effects-text-layout-phase-6a.md`.
+
 Repository-wide Docker lint retains the freshly confirmed historical baseline
 of 39 errors and 2 warnings unless the final post-upgrade run proves otherwise.
-The version gate does not claim unrelated lint cleanup.
+Phase 6A does not claim unrelated lint cleanup.
 
-VoxCPM provider docs, `.env.example`, Compose, Root registrations, and frozen
-compositions remain unchanged. Phase 5 did not alter Remotion versions; only
-the bounded Phase 6 version gate moves the installed closure to `4.0.489`.
+VoxCPM provider docs, `.env.example`, Compose, Producer sample manifests, and
+frozen compositions remain unchanged. Phase 6A adds only the isolated showcase
+registration to Root.
 
 ## Current Commands
 
@@ -109,15 +133,15 @@ npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
 npm run producer:render -- --composition <composition-id>
 npm run smoke:remotion-version-gate
+npm run smoke:remotion-capabilities
 ```
 
 ## Next Bounded Slice
 
-The next bounded slice is Phase 6 capability implementation. It has not
-started. Official effects/transitions/layout dependencies, text fitting,
-shared presets, and the capability showcase remain absent. Before that slice
-starts, `@remotion/transitions` must have a supported exact-version resolution;
-do not lower the Roadmap target or mix `4.0.477` into the verified `4.0.489`
+The next bounded slice is Phase 6B transitions and remaining showcase coverage.
+It has not started. Before it starts, `@remotion/transitions` must have a
+supported exact-version resolution; do not lower the Roadmap target, vendor a
+replacement, use overrides, or mix `4.0.477` into the verified `4.0.489`
 closure merely to proceed.
 
 ## Frozen History

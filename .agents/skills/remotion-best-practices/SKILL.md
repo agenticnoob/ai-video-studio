@@ -22,11 +22,13 @@ load `rules/silence-detection.md`; for dense information scenes, load
 `rules/video-layout.md`.
 
 The current repository version gate locks every installed `remotion` and
-`@remotion/*` package to exact `4.0.489`. Run
-`npm run smoke:remotion-version-gate` before capability work. Do not install a
+`@remotion/*` package to exact `4.0.489`. Phase 6A admits exact-version effects,
+layout utilities, `getProducerEffectPreset()`, `fitProducerText()`, and
+`AgentProducerCapabilityShowcase`. Run `npm run smoke:remotion-version-gate`
+and `npm run smoke:remotion-capabilities` before using them. Do not install a
 mixed dependency closure: npm currently publishes `@remotion/transitions` only
 through `4.0.477`, whose internal Remotion dependencies are exact `4.0.477`.
-Phase 6 capability packages and showcase code have not been admitted yet.
+Phase 6B transitions and remaining showcase coverage have not started.
 
 ## New project setup
 

@@ -21,7 +21,8 @@ and architecture guards. There is no supported Web route smoke surface.
 | Asset supply | `lib/producer-assets/`, `producer-assets.mjs` | Localizes manual/URL media, checksums, probes, and normalizes. |
 | Asset preflight | `preflight-producer-assets.mjs` | Fails before maintained still/render jobs on invalid assets. |
 | Unified render | `lib/producer-render.ts`, `render-producer-sample.mjs` | Plans/runs MP4, metadata, and two code-rendered covers. |
-| Remotion version gate | `remotion-version-gate-smoke.mjs` | Requires exact `4.0.489` for the installed Remotion closure and keeps capability packages absent. |
+| Remotion version gate | `remotion-version-gate-smoke.mjs` | Requires exact `4.0.489` for the installed Remotion closure and keeps Phase 6B packages absent. |
+| Remotion capabilities | `remotion-capabilities-smoke.mjs` | Guards Phase 6A effects, text fitting, showcase, docs, and forbidden boundaries. |
 | Architecture guards | `agent-producer-*-smoke.mjs`, `skill-alignment-smoke.mjs` | Product boundary checks. |
 
 Older composition-specific generators and smokes are frozen maintenance
@@ -40,6 +41,8 @@ references. Do not use them as future Producer scaffolds.
 - Keep `ProducerAssetManifest` output deterministic and free of private source paths.
 - Keep every installed Remotion package at exact `4.0.489`; do not mix the
   upstream-lagging `@remotion/transitions@4.0.477` closure into this baseline.
+- Keep Phase 6A limited to effects/text layout; transitions and remaining
+  showcase coverage belong to the unstarted Phase 6B slice.
 
 ## ANTI-PATTERNS
 
@@ -56,5 +59,6 @@ docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:producer-audio-tools'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:producer-assets'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:remotion-version-gate'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:remotion-capabilities'
 git diff --check
 ```

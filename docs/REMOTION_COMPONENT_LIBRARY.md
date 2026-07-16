@@ -32,6 +32,9 @@ narration, and one-off scene arrangements remain composition-local.
 | `src/remotion/producer-samples/` | strict future manifests, scaffold, frozen-reference registry metadata, evidence-backed Producer blocks |
 | `src/remotion/standalone-video/` | timing, audio, captions, and canvas profiles |
 | `src/remotion/catalog/` | discovery metadata and review fixtures |
+| `src/remotion/effects/` | Producer-owned deterministic effect preset factories |
+| `src/remotion/styles/` | measured text fitting and layout diagnostics |
+| `src/remotion/capability-showcase/` | isolated Agent Producer capability inventory composition |
 | dedicated composition | topic data, narration, scene order, and local arrangement |
 | Agent Producer Skill | selection rules and production workflow |
 
@@ -106,11 +109,24 @@ strict `ProducerAssetManifest`, `producer:assets`, and `producer:preflight`;
 components still receive only local paths and never own acquisition or license
 decisions. Phase 6 version gate is complete: current Remotion dependencies are
 exact `4.0.489`, above the selected `roughenEdges()` minimum of `4.0.487`.
-Phase 6 capability implementation has not started.
+Phase 6A effects and text-layout foundation is complete.
+
+| Capability | Selection rule |
+| --- | --- |
+| `comic-print` | printed panels and editorial emphasis |
+| `cyber-scan` | terminal, signal, and system-state beats |
+| `paper-grain` | document and hand-drawn explainer beats |
+| `pixel-grid` | digital abstraction and state-change beats |
+| `fitProducerText()` | bounded Chinese or long copy that needs explicit width, height, line, and fit diagnostics |
+
+Inspect `AgentProducerCapabilityShowcase` and run
+`npm run smoke:remotion-capabilities` before selecting these shared surfaces.
+They remain Producer capabilities, not style profiles or templates.
 
 The next capability slice may not mix package versions. npm currently exposes
 `@remotion/transitions` only through `4.0.477`, and that package depends on
-Remotion internals at exact `4.0.477`. Until a supported aligned release exists
-or the authority is explicitly revised with verified compatibility evidence,
-effects, transitions, layout utilities, presets, text fitting, and the
-capability showcase remain uninstalled and unimplemented.
+Remotion internals at exact `4.0.477`. Phase 6B remains blocked until a
+supported aligned release exists or the authority is revised with new verified
+compatibility evidence. Transitions, light-leak/film-burn completion,
+HtmlInCanvas/CanvasImage media proof, and transition-duration verification
+remain unimplemented.

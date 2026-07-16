@@ -10,7 +10,9 @@
   "dependencies": {
     "@react-three/fiber": "^9.6.1",
     "@remotion/cli": "4.0.489",
+    "@remotion/effects": "4.0.489",
     "@remotion/google-fonts": "4.0.489",
+    "@remotion/layout-utils": "4.0.489",
     "@remotion/paths": "4.0.489",
     "@remotion/renderer": "4.0.489",
     "@remotion/shapes": "4.0.489",
@@ -53,6 +55,7 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "remotion:ensure-browser": "node scripts/ensure-remotion-browser.mjs",
+    "smoke:remotion-capabilities": "node scripts/remotion-capabilities-smoke.mjs",
     "smoke:remotion-version-gate": "node scripts/remotion-version-gate-smoke.mjs",
     "smoke:agent-producer-architecture": "node scripts/agent-producer-architecture-smoke.mjs",
     "smoke:agent-producer-web-removal": "node scripts/agent-producer-web-removal-smoke.mjs",

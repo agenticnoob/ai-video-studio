@@ -17,8 +17,9 @@ topic -> research/existing assets -> narration/VoxCPM -> component inventory
 ```
 
 Roadmap status: Phase 5 existing-asset supply is complete. The Phase 6 version
-gate is complete with every currently installed Remotion package exact
-`4.0.489`. Phase 6 capability implementation has not started.
+gate and Phase 6A effects/text-layout foundation are complete with every
+installed Remotion package exact `4.0.489`. Phase 6 overall remains incomplete;
+Phase 6B transitions and remaining showcase coverage have not started.
 
 ## Skill Stack
 
@@ -31,9 +32,27 @@ gate is complete with every currently installed Remotion package exact
   before final VoxCPM narration, voice-clone text, control instructions, or
   expression tags.
 - Run `npm run smoke:remotion-version-gate` before Phase 6 capability work.
-  Do not add mixed Remotion versions: npm currently publishes
+  Use `getProducerEffectPreset()` and `fitProducerText()` only after inspecting
+  `AgentProducerCapabilityShowcase` and running
+  `npm run smoke:remotion-capabilities`. Do not add mixed Remotion versions:
+  npm currently publishes
   `@remotion/transitions` only through `4.0.477`, while the verified installed
   closure is exact `4.0.489`.
+
+## Phase 6A Capability Selection
+
+- `comic-print`: printed panels and editorial emphasis
+- `cyber-scan`: terminal, signal, and system-state beats
+- `paper-grain`: document and hand-drawn explainer beats
+- `pixel-grid`: digital abstraction and state-change beats
+- `fitProducerText()`: bounded Chinese or long copy that needs explicit width,
+  height, line-count, and `fits` diagnostics
+
+Import presets from `src/remotion/effects/` and text fitting from
+`src/remotion/styles/`. These are Producer-owned capabilities, not a template,
+recipe, or style-profile selection system. Phase 6B still owns transitions,
+light-leak/film-burn completion, HtmlInCanvas/CanvasImage media proof, and
+transition-duration verification.
 
 ## Start Here
 
@@ -284,6 +303,7 @@ Use shared tools for deterministic work in future samples:
 - focused audio verification: `npm run smoke:producer-audio-direct-voxcpm` and
   `npm run smoke:producer-audio-tools`
 - exact Remotion dependency boundary: `npm run smoke:remotion-version-gate`
+- effects/text-layout capability boundary: `npm run smoke:remotion-capabilities`
 - mechanical validation: `npm run producer:validate -- --module <validation-module>`
 - manifest-driven review stills: `npm run producer:stills -- --composition <composition-id>`
 - metadata-bundled MP4 and both code-rendered covers:

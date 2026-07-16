@@ -37,37 +37,50 @@ for (const [lockPath, entry] of Object.entries(packageLock.packages)) {
   }
 }
 
-for (const name of [
-  "@remotion/effects",
-  "@remotion/layout-utils",
-  "@remotion/light-leaks",
-  "@remotion/transitions",
-]) {
-  assert(!(name in allDirectDependencies), `Capability package must remain absent: ${name}`);
+for (const name of ["@remotion/effects", "@remotion/layout-utils"]) {
+  assert.equal(
+    allDirectDependencies[name],
+    expectedVersion,
+    `Phase 6A package must be exactly ${expectedVersion}: ${name}`,
+  );
 }
 
-for (const relativePath of [
-  "src/remotion/effects",
-  "src/remotion/transitions",
-  "src/remotion/styles",
-  "src/remotion/capability-showcase",
-]) {
+for (const name of ["@remotion/light-leaks", "@remotion/transitions"]) {
+  assert(!(name in allDirectDependencies), `Future capability package must remain absent: ${name}`);
+}
+
+for (const relativePath of ["src/remotion/transitions"]) {
   assert(
     !existsSync(path.join(root, relativePath)),
-    `Capability path must remain absent: ${relativePath}`,
+    `Future capability path must remain absent: ${relativePath}`,
   );
 }
 
 const iterationStatus = read("docs/ITERATION_STATUS.md");
 const roadmap = read("docs/AGENT_PRODUCER_ONLY_ROADMAP.md");
 assert(iterationStatus.includes("Phase 6 version gate is complete."));
-assert(iterationStatus.includes("Phase 6 capability implementation has not started."));
+assert(iterationStatus.includes("Phase 6A effects and text-layout foundation is complete."));
+assert(iterationStatus.includes("Phase 6 overall remains incomplete."));
+assert(
+  iterationStatus.includes(
+    "Phase 6B transitions and remaining showcase coverage have not started.",
+  ),
+);
 assert(roadmap.includes("@remotion/transitions` remains published only through `4.0.477"));
 assert(
   inventory.completedPhaseSlices.some(
     (entry) => entry.phase === 6 && entry.slice === "version-gate" && entry.status === "complete",
   ),
   "Removal inventory must record the completed Phase 6 version gate",
+);
+assert(
+  inventory.completedPhaseSlices.some(
+    (entry) =>
+      entry.phase === 6 &&
+      entry.slice === "effects-text-layout-foundation" &&
+      entry.status === "complete",
+  ),
+  "Removal inventory must record the completed Phase 6A foundation",
 );
 
 console.log("Remotion version gate smoke passed.");

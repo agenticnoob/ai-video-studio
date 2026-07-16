@@ -103,6 +103,10 @@ for (const required of [
   "fail closed",
   "displayText",
   "docker compose run --rm producer",
+  "getProducerEffectPreset",
+  "fitProducerText",
+  "AgentProducerCapabilityShowcase",
+  "npm run smoke:remotion-capabilities",
 ])
   assertIncludes(producerSkill, required, "Agent Producer skill");
 for (const forbidden of [
@@ -196,6 +200,9 @@ assertIncludes(remotionSkill, "AI Video Studio Agent Producer", "Remotion skill"
 assertIncludes(remotionSkill, "rules/video-layout.md", "Remotion skill");
 assertIncludes(remotionSkill, "rules/subtitles.md", "Remotion skill");
 assertIncludes(remotionSkill, "rules/silence-detection.md", "Remotion skill");
+assertIncludes(remotionSkill, "getProducerEffectPreset", "Remotion skill");
+assertIncludes(remotionSkill, "fitProducerText", "Remotion skill");
+assertIncludes(remotionSkill, "AgentProducerCapabilityShowcase", "Remotion skill");
 
 for (const skillName of ["ai-video-studio-agent-producer"]) {
   const skillDir = `.agents/skills/${skillName}`;

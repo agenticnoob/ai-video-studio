@@ -7,6 +7,12 @@
       "slice": "version-gate",
       "status": "complete",
       "reason": "All currently installed Remotion packages are locked to exact 4.0.489 and verified before capability packages are admitted."
+    },
+    {
+      "phase": 6,
+      "slice": "effects-text-layout-foundation",
+      "status": "complete",
+      "reason": "Exact-version effects and layout utilities now provide Producer-owned visual presets, guarded Chinese text fitting, and an isolated capability showcase."
     }
   ],
   "decisionDate": "2026-07-15",
@@ -126,6 +132,30 @@
         "action": "retain",
         "phase": 5,
         "reason": "Active local asset, provenance, license, and render-safety contract."
+      },
+      {
+        "id": "producer-effects",
+        "path": "src/remotion/effects",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 6,
+        "reason": "Producer-owned deterministic Remotion effect preset factories."
+      },
+      {
+        "id": "producer-styles",
+        "path": "src/remotion/styles",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 6,
+        "reason": "Producer-owned measured text layout and overflow-prevention helpers."
+      },
+      {
+        "id": "capability-showcase",
+        "path": "src/remotion/capability-showcase",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 6,
+        "reason": "Isolated Agent Producer inventory composition for verified capabilities."
       }
     ],
     "webF5Only": [

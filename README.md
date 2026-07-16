@@ -45,14 +45,17 @@ strict future manifest, executable scaffold, validation, review-frame, and
 render entrypoints. Phase 5 added strict asset manifests, manual/URL
 localization, checksum, provenance/license/media metadata, FFmpeg
 normalization, and preflight before maintained still/render execution. The
-Phase 6 version gate now locks every currently installed Remotion package to
-exact `4.0.489` and verifies the retained render surface. Phase 6 capability
-implementation has not started.
+Phase 6 version gate now locks every installed Remotion package to exact
+`4.0.489`. Phase 6A adds Producer-owned `comic-print`, `cyber-scan`,
+`paper-grain`, and `pixel-grid` effects, guarded Chinese text fitting, and the
+`AgentProducerCapabilityShowcase` inventory composition. Phase 6 overall
+remains incomplete.
 
 The capability slice must not mix unsupported versions: npm currently exposes
 `@remotion/transitions` only through `4.0.477`, whose dependency closure pins
-Remotion internals to `4.0.477`. Effects, transitions, layout utilities, text
-fitting, presets, and the capability showcase remain uninstalled/unimplemented.
+Remotion internals to `4.0.477`. Phase 6B transitions, light-leak/film-burn
+completion, HtmlInCanvas/CanvasImage media coverage, and transition-duration
+verification have not started.
 
 Existing finished compositions remain frozen read-only references. Historical
 `provider: "f5-tts"` metadata in their generated audio files stays truthful; it
@@ -104,6 +107,7 @@ npm run producer:render -- --composition <composition-id>
 npm run smoke:producer-os
 npm run smoke:producer-assets
 npm run smoke:remotion-version-gate
+npm run smoke:remotion-capabilities
 npm run smoke:producer-audio-direct-voxcpm
 npm run smoke:producer-audio-tools
 npm run smoke:agent-producer-web-removal

@@ -1,7 +1,8 @@
 # Agent Producer-Only Roadmap
 
-Status: Phase 0 through Phase 5 complete; the Phase 6 version gate is complete;
-Phase 6 capability implementation has not started.
+Status: Phase 0 through Phase 5 complete; the Phase 6 version gate and Phase 6A
+effects/text-layout foundation are complete; Phase 6 overall remains incomplete
+and Phase 6B has not started.
 
 Decision date: 2026-07-15.
 
@@ -726,7 +727,8 @@ Implementation evidence:
 
 ## 11. Phase 6 - Remotion Capability Core
 
-Status: version gate complete; capability implementation has not started.
+Status: version gate and Phase 6A effects/text-layout foundation complete;
+Phase 6B transitions and remaining showcase coverage have not started.
 
 ### Goal
 
@@ -764,9 +766,37 @@ Version-gate result:
   depends on exact `4.0.477` Remotion internals; mixed versions, npm overrides,
   and lowering the capability target are not accepted workarounds
 
-The next capability slice has not started. It must first obtain a supported
-exact-version resolution for transitions or explicitly revise this authority
-using verified compatibility evidence.
+Live npm evidence still reports the transition package conflict. This authority
+therefore splits capability implementation into an unblocked Phase 6A
+foundation and a blocked Phase 6B rather than mixing versions or lowering the
+target.
+
+### Phase 6A - Effects And Text-Layout Foundation
+
+Status: complete and verified on 2026-07-16.
+
+- exact `@remotion/effects@4.0.489` and
+  `@remotion/layout-utils@4.0.489` join the uniform closure
+- `src/remotion/effects/` exposes four Producer-owned preset ids:
+  `comic-print`, `cyber-scan`, `paper-grain`, and `pixel-grid`
+- preset inputs are deterministic and frame-driven; no CSS animation,
+  wall-clock state, remote media, or generated visual is involved
+- `src/remotion/styles/fit-text.ts` wraps `fitTextOnNLines()` with input guards,
+  CJK-aware segmentation, height-derived font limits, and `fits` diagnostics
+- `AgentProducerCapabilityShowcase` proves the preset and text-layout surfaces
+  as an isolated Studio inventory composition, not a template or product flow
+- Chromium OpenGL uses `swangle`, the documented no-GPU backend, so Producer
+  Docker can render WebGL effects without a host GPU
+
+### Phase 6B - Transitions And Remaining Showcase Coverage
+
+Status: not started.
+
+Phase 6B retains `@remotion/transitions`, official transition timing and total
+duration accounting, transition presets, HtmlInCanvas/CanvasImage media proof,
+light-leak/film-burn completion, and the remaining capability-showcase coverage.
+It may not start until an exact-version transition resolution exists or this
+authority is revised again with new verified compatibility evidence.
 
 Official references:
 
