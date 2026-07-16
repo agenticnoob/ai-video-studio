@@ -70,7 +70,9 @@ the reusable Phase 7 media and sound surfaces.
 - `ProducerLocalVideo`: manifest-backed local video with explicit trim, loop,
   playback rate, crop, and volume behavior
 - `ProducerAnimatedImage`: local GIF/APNG/AVIF/WebP playback with explicit
-  geometry, fit, speed, and loop behavior
+  geometry, fit, speed, and loop behavior; GIF uses `@remotion/gif` so LAN HTTP
+  Studio does not depend on WebCodecs `ImageDecoder`, while the other formats
+  use Remotion `AnimatedImage`
 - `ProducerLottie`: local `staticFile()` Lottie loading with render delay and
   expression metadata checked during asset supply/preflight
 - `ProducerMotionTreatment`: fixed `camera-natural`, `typography-trail`,

@@ -33,11 +33,13 @@ dynamic media/sound also remain complete. Phase 8 has not started.
 
 ## Implemented Phase 7 Boundary
 
-- installed exact `@remotion/media`, `@remotion/lottie`, and
+- installed exact `@remotion/gif`, `@remotion/media`, `@remotion/lottie`, and
   `@remotion/motion-blur` `4.0.489` plus exact `lottie-web@5.13.0`; Rive remains
   unadmitted without an approved local `.riv` asset and real proof
-- added local Video, AnimatedImage, and Lottie blocks plus fixed CameraMotionBlur
-  and Trail treatments; all paths fail closed on remote/absolute/traversal input
+- added local Video, animated-image, and Lottie blocks plus fixed
+  CameraMotionBlur and Trail treatments; GIF uses `@remotion/gif` so LAN HTTP
+  Studio does not require WebCodecs `ImageDecoder`, while APNG/AVIF/WebP retain
+  `AnimatedImage`; all paths fail closed on remote/absolute/traversal input
 - added manifest-backed narration/BGM/ambience/SFX roles, deterministic bed
   fades and narration ducking, transition-SFX mappings, and local Audio rendering
 - extended asset supply/preflight with sound policy, FFmpeg peak and long-silence

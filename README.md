@@ -54,11 +54,14 @@ composition. The configured default npm mirror may expose stale transition
 metadata; the lockfile resolves `@remotion/transitions@4.0.489` without
 overrides or mixed versions.
 
-Phase 7 dynamic existing media and sound design is complete. Repo-owned
-local Video, AnimatedImage, Lottie, motion-blur/trail, soundtrack, ducking,
+Phase 7 dynamic existing media and sound design is complete. Repo-owned local
+Video, animated-image, Lottie, motion-blur/trail, soundtrack, ducking,
 transition-SFX, and audio-QC surfaces are proved by a maintained composition
 with real VoxCPM narration, strict asset preflight, reviewed stills/covers, and
-an H.264/AAC render. Phase 8 style profiles is next and has not started.
+an H.264/AAC render. GIF playback uses `@remotion/gif`, so LAN HTTP Studio does
+not require the secure-context-only WebCodecs `ImageDecoder`; other supported
+animated formats retain Remotion `AnimatedImage`. Phase 8 style profiles is
+next and has not started.
 
 Existing finished compositions remain frozen read-only references. Historical
 `provider: "f5-tts"` metadata in their generated audio files stays truthful; it

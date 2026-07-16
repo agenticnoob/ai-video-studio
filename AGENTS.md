@@ -40,9 +40,9 @@ repository contains `.codegraph/`.
   fitting, official transition presets/timing, light-leak/film-burn treatment,
   and HTML/SVG/image/video canvas proofs are available in the isolated
   capability showcase.
-- `@remotion/transitions`, `@remotion/light-leaks`, `@remotion/media`,
-  `@remotion/lottie`, and `@remotion/motion-blur` are exact `4.0.489` and remain
-  inside the uniform Remotion closure.
+- `@remotion/transitions`, `@remotion/light-leaks`, `@remotion/gif`,
+  `@remotion/media`, `@remotion/lottie`, and `@remotion/motion-blur` are exact
+  `4.0.489` and remain inside the uniform Remotion closure.
 - Phase 7 local media/motion/sound modules, asset audio-QC, and the maintained
   proof are complete with real VoxCPM narration, strict preflight, reviewed
   stills/covers, and an H.264/AAC render. Phase 8 is next and has not started.

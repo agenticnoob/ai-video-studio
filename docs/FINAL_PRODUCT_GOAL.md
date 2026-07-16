@@ -115,11 +115,13 @@ Producer-owned effect ids, guarded Chinese text fitting, four official
 transition presets with calculated overlap duration, light-leak/film-burn
 treatment, and HTML/SVG/image/video canvas proofs are available through the
 isolated inventory showcase. No override or mixed Remotion version is present.
-Phase 7 is complete with repo-owned local Video, AnimatedImage, Lottie,
+Phase 7 is complete with repo-owned local Video, animated-image, Lottie,
 motion-blur/trail, soundtrack, ducking, transition-SFX, and audio-quality
-surfaces. Its maintained proof includes real VoxCPM narration, strict asset
-preflight, deterministic reviewed stills, covers, and an H.264/AAC render.
-Phase 8 style profiles is next and has not started.
+surfaces. GIF uses exact `@remotion/gif` for LAN HTTP Studio compatibility;
+APNG/AVIF/WebP retain Remotion `AnimatedImage`. Its maintained proof includes
+real VoxCPM narration, strict asset preflight, deterministic reviewed stills,
+covers, and an H.264/AAC render. Phase 8 style profiles is next and has not
+started.
 
 ## Supporting Authorities
 

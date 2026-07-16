@@ -16,7 +16,12 @@ const allDirectDependencies = {
   ...packageJson.devDependencies,
 };
 
-for (const name of ["@remotion/media", "@remotion/lottie", "@remotion/motion-blur"]) {
+for (const name of [
+  "@remotion/gif",
+  "@remotion/media",
+  "@remotion/lottie",
+  "@remotion/motion-blur",
+]) {
   assert.equal(allDirectDependencies[name], "4.0.489", `${name} must be exact 4.0.489`);
 }
 assert.equal(allDirectDependencies["lottie-web"], "5.13.0", "lottie-web must be exact 5.13.0");
@@ -65,6 +70,8 @@ const mediaSource = [
   read("src/remotion/media/ProducerLottie.tsx"),
 ].join("\n");
 for (const token of [
+  "@remotion/gif",
+  "<Gif",
   "@remotion/media",
   "AnimatedImage",
   "@remotion/lottie",

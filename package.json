@@ -11,6 +11,7 @@
     "@react-three/fiber": "^9.6.1",
     "@remotion/cli": "4.0.489",
     "@remotion/effects": "4.0.489",
+    "@remotion/gif": "4.0.489",
     "@remotion/google-fonts": "4.0.489",
     "@remotion/layout-utils": "4.0.489",
     "@remotion/light-leaks": "4.0.489",

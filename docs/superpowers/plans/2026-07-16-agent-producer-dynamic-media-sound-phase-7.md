@@ -325,10 +325,14 @@ Stop after the Phase 7 commit and status verification. Phase 8 style profiles mu
   failed because a BGM id with an SFX role was accepted. The same Docker
   smokes now pass after adding policy propagation, FFmpeg peak/silence gates,
   Lottie expression inspection, and maintained role agreement.
-- Exact dependencies are installed at `4.0.489` for `@remotion/media`,
-  `@remotion/lottie`, and `@remotion/motion-blur`; `lottie-web` is exact
-  `5.13.0`; Rive remains absent. Docker TypeScript and Remotion composition
-  listing pass with the new proof and two Still registrations.
+- Exact dependencies are installed at `4.0.489` for `@remotion/gif`,
+  `@remotion/media`, `@remotion/lottie`, and `@remotion/motion-blur`;
+  `lottie-web` is exact `5.13.0`; Rive remains absent. A post-completion browser
+  regression reproduced missing WebCodecs `ImageDecoder` on LAN HTTP Studio;
+  `ProducerAnimatedImage` now routes GIF through `@remotion/gif` while retaining
+  `AnimatedImage` for APNG/AVIF/WebP. Docker TypeScript, the focused smoke, and
+  a fresh LAN HTTP Studio session pass with `ImageDecoder` still unavailable,
+  proving the fallback rather than changing browser security assumptions.
 - Ignored FFmpeg fixture generation is complete. `git check-ignore` confirms
   proof image/video inputs remain under ignored `public/generated/`.
 - Direct VoxCPM narration initially remained pending because `/ready` returned

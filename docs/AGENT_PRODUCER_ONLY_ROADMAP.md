@@ -865,7 +865,8 @@ Official references:
 ### Deliverables
 
 - local `<Video>` block with trim, loop, playback-rate, crop, and volume control
-- `AnimatedImage` block for supported existing animated files
+- animated-image block: GIF through `@remotion/gif` for LAN HTTP Studio, and
+  APNG/AVIF/WebP through Remotion `AnimatedImage`
 - Lottie block using local `staticFile()` data and metadata validation
 - Lottie fixture checks for expression-related flicker before promotion
 - Rive support only after an approved local `.riv` asset and real sample use

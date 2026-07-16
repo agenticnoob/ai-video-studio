@@ -36,7 +36,10 @@ closure uniform. Phase 7 Producer code uses `ProducerLocalVideo`,
 `ProducerSoundtrack` from the repo-owned media/motion/sound modules. Run
 `npm run smoke:producer-media-sound` and asset preflight before rendering a
 maintained sample; do not bypass these local-path and audio-QC guards with a
-remote media URL.
+remote media URL. `ProducerAnimatedImage` routes GIF through exact
+`@remotion/gif@4.0.489`, which works on LAN HTTP Studio without WebCodecs
+`ImageDecoder`; APNG/AVIF/WebP continue through Remotion `AnimatedImage` and
+therefore require a browser context that exposes that decoder.
 
 ## New project setup
 

@@ -1,4 +1,5 @@
 import type { CSSProperties, FC } from "react";
+import { Gif } from "@remotion/gif";
 import { AnimatedImage, staticFile, type AnimatedImageProps } from "remotion";
 
 import { assertProducerLocalMediaPath, requirePositiveFiniteMediaNumber } from "./local-path";
@@ -27,18 +28,27 @@ export const ProducerAnimatedImage: FC<ProducerAnimatedImageProps> = ({
   requirePositiveFiniteMediaNumber(height, "ProducerAnimatedImage height");
   requirePositiveFiniteMediaNumber(playbackRate, "ProducerAnimatedImage playbackRate");
 
-  return (
-    <AnimatedImage
-      fit={fit}
-      height={height}
-      loopBehavior={loopBehavior}
-      onError={(error) => {
-        throw error;
-      }}
-      playbackRate={playbackRate}
-      src={staticFile(src)}
-      style={{ ...style, height, width }}
-      width={width}
-    />
-  );
+  const resolvedSrc = staticFile(src);
+  const sharedProps = {
+    fit,
+    height,
+    onError: (error: Error) => {
+      throw error;
+    },
+    playbackRate,
+    src: resolvedSrc,
+    style: { ...style, height, width },
+    width,
+  };
+
+  if (src.toLowerCase().endsWith(".gif")) {
+    return (
+      <Gif
+        {...sharedProps}
+        loopBehavior={loopBehavior === "clear-after-finish" ? "unmount-after-finish" : loopBehavior}
+      />
+    );
+  }
+
+  return <AnimatedImage {...sharedProps} loopBehavior={loopBehavior} />;
 };
