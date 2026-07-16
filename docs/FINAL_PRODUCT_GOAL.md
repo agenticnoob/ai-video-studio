@@ -108,13 +108,18 @@ removal, Phase 4 Producer OS consolidation, and Phase 5 existing-asset supply
 are complete. A strict maintained manifest plus asset manifest, manual/URL
 localization, checksum/provenance/license/media metadata, FFmpeg normalization,
 preflight, validation, review-frame, and unified render commands now own every
-future composition. Current registry entries remain `frozen-reference`. Phase
+future composition. Every pre-Phase-7 registry entry remains
+`frozen-reference`; Phase 7 adds one maintained proof. Phase
 6 Remotion capability core is complete on an exact `4.0.489` closure. Four
 Producer-owned effect ids, guarded Chinese text fitting, four official
 transition presets with calculated overlap duration, light-leak/film-burn
 treatment, and HTML/SVG/image/video canvas proofs are available through the
 isolated inventory showcase. No override or mixed Remotion version is present.
-Phase 7 dynamic existing media and sound design is next and has not started.
+Phase 7 is complete with repo-owned local Video, AnimatedImage, Lottie,
+motion-blur/trail, soundtrack, ducking, transition-SFX, and audio-quality
+surfaces. Its maintained proof includes real VoxCPM narration, strict asset
+preflight, deterministic reviewed stills, covers, and an H.264/AAC render.
+Phase 8 style profiles is next and has not started.
 
 ## Supporting Authorities
 

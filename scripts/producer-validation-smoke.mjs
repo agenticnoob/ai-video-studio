@@ -14,7 +14,48 @@ const maintainedAssetManifest = {
   version: 1,
   compositionId: "FixtureProducerVideo",
   slug: "fixture-producer-video",
-  assets: [],
+  assets: [
+    {
+      id: "narration-audio",
+      kind: "audio",
+      localPath: "public/generated/fixture-producer-video/assets/narration.wav",
+      purpose: "Fixture narration.",
+      source: { provider: "voxcpm", license: "producer-generated-local" },
+      integrity: { sha256: "a".repeat(64), sizeInBytes: 1 },
+      media: { durationInSeconds: 1, sampleRate: 48000, codec: "pcm_s16le" },
+      sound: { role: "narration", maxAllowedPeakDb: -1, maxSilenceSeconds: 0.5 },
+    },
+    {
+      id: "bgm-audio",
+      kind: "audio",
+      localPath: "public/generated/fixture-producer-video/assets/bgm.wav",
+      purpose: "Fixture background music.",
+      source: { provider: "repo-fixture", license: "CC0-1.0" },
+      integrity: { sha256: "b".repeat(64), sizeInBytes: 1 },
+      media: { durationInSeconds: 1, sampleRate: 48000, codec: "pcm_s16le" },
+      sound: { role: "bgm", maxAllowedPeakDb: -1, maxSilenceSeconds: 0.5 },
+    },
+    {
+      id: "ambience-audio",
+      kind: "audio",
+      localPath: "public/generated/fixture-producer-video/assets/ambience.wav",
+      purpose: "Fixture ambience.",
+      source: { provider: "repo-fixture", license: "CC0-1.0" },
+      integrity: { sha256: "c".repeat(64), sizeInBytes: 1 },
+      media: { durationInSeconds: 1, sampleRate: 48000, codec: "pcm_s16le" },
+      sound: { role: "ambience", maxAllowedPeakDb: -1, maxSilenceSeconds: 0.5 },
+    },
+    {
+      id: "sfx-audio",
+      kind: "audio",
+      localPath: "public/generated/fixture-producer-video/assets/sfx.wav",
+      purpose: "Fixture sound effect.",
+      source: { provider: "repo-fixture", license: "CC0-1.0" },
+      integrity: { sha256: "d".repeat(64), sizeInBytes: 1 },
+      media: { durationInSeconds: 1, sampleRate: 48000, codec: "pcm_s16le" },
+      sound: { role: "sfx", maxAllowedPeakDb: -1, maxSilenceSeconds: 0.5 },
+    },
+  ],
 };
 
 const maintainedManifest = {
@@ -39,6 +80,13 @@ const maintainedManifest = {
     audioMetadataPath: "fixtures/audio.generated.ts",
   },
   assets: { manifestPath: "fixtures/assets.manifest.json" },
+  soundDesign: {
+    soundtrackModulePath: "fixtures/soundtrack.tsx",
+    narrationAssetIds: ["narration-audio"],
+    bgmAssetIds: ["bgm-audio"],
+    ambienceAssetIds: ["ambience-audio"],
+    sfxAssetIds: ["sfx-audio"],
+  },
   validationModule: "fixtures/validation.ts",
   render: {
     metadataPath: "fixtures/render-metadata.json",
@@ -56,6 +104,7 @@ const maintainedManifest = {
     { path: "fixtures/publishing.md", kind: "publishing-copy" },
     { path: "fixtures/manifest.ts", kind: "manifest" },
     { path: "fixtures/assets.manifest.json", kind: "asset-manifest" },
+    { path: "fixtures/soundtrack.tsx", kind: "soundtrack" },
     { path: "src/remotion/Root.tsx", kind: "root-registration" },
   ],
   promotionCandidates: [],
@@ -97,6 +146,22 @@ await assert.rejects(
       assetManifest: maintainedAssetManifest,
     }),
   /cover composition id/i,
+);
+await assert.rejects(
+  () =>
+    validate({
+      manifest: {
+        ...maintainedManifest,
+        soundDesign: { ...maintainedManifest.soundDesign, bgmAssetIds: ["sfx-audio"] },
+      },
+      assetManifest: maintainedAssetManifest,
+      registeredCompositionIds: [
+        "FixtureProducerVideo",
+        "FixtureProducerVideoCover16x9",
+        "FixtureProducerVideoCover9x16",
+      ],
+    }),
+  /bgm.*role/i,
 );
 await assert.rejects(
   () => validate({ tracks: fixtureProducerValidationInput.tracks.slice(1) }),

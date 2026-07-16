@@ -242,6 +242,160 @@ try {
       }),
     /undersized/i,
   );
+
+  const cleanAudioInputPath = path.join(rootDir, "inputs/clean-audio.wav");
+  execFileSync("ffmpeg", [
+    "-v",
+    "error",
+    "-y",
+    "-f",
+    "lavfi",
+    "-i",
+    "sine=frequency=440:sample_rate=48000:duration=2",
+    "-af",
+    "volume=0.25",
+    cleanAudioInputPath,
+  ]);
+  const cleanAudioManifest = await localizeProducerAssets({
+    rootDir,
+    plan: {
+      version: 1,
+      compositionId: "FixtureSoundAssets",
+      slug: "fixture-sound-assets",
+      outputManifestPath: "src/remotion/FixtureSoundAssets/assets.manifest.json",
+      assets: [
+        {
+          id: "clean-bgm",
+          kind: "audio",
+          purpose: "Verify a licensed local background-music asset.",
+          source: { provider: "repo-ffmpeg-fixture", license: "CC0-1.0" },
+          acquisition: { type: "manual", sourcePath: cleanAudioInputPath },
+          destination: { scope: "composition", fileName: "clean-bgm.wav" },
+          sound: { role: "bgm", maxAllowedPeakDb: -1, maxSilenceSeconds: 0.5 },
+        },
+      ],
+    },
+  });
+  assert.equal(cleanAudioManifest.assets[0].sound?.role, "bgm");
+  await assert.doesNotReject(() =>
+    preflightProducerAssets({ manifest: cleanAudioManifest, rootDir }),
+  );
+
+  const clippingAudioInputPath = path.join(rootDir, "inputs/clipping-audio.wav");
+  execFileSync("ffmpeg", [
+    "-v",
+    "error",
+    "-y",
+    "-f",
+    "lavfi",
+    "-i",
+    "sine=frequency=660:sample_rate=48000:duration=1",
+    "-af",
+    "volume=12",
+    clippingAudioInputPath,
+  ]);
+  const clippingManifest = await localizeProducerAssets({
+    rootDir,
+    plan: {
+      version: 1,
+      compositionId: "FixtureClippingAssets",
+      slug: "fixture-clipping-assets",
+      outputManifestPath: "src/remotion/FixtureClippingAssets/assets.manifest.json",
+      assets: [
+        {
+          id: "clipping-sfx",
+          kind: "audio",
+          purpose: "Prove peak and clipping failure.",
+          source: { provider: "repo-ffmpeg-fixture", license: "CC0-1.0" },
+          acquisition: { type: "manual", sourcePath: clippingAudioInputPath },
+          destination: { scope: "composition", fileName: "clipping-sfx.wav" },
+          sound: { role: "sfx", maxAllowedPeakDb: -1, maxSilenceSeconds: 0.5 },
+        },
+      ],
+    },
+  });
+  await assert.rejects(
+    () => preflightProducerAssets({ manifest: clippingManifest, rootDir }),
+    /peak.*clipp/i,
+  );
+
+  const longSilenceInputPath = path.join(rootDir, "inputs/long-silence.wav");
+  execFileSync("ffmpeg", [
+    "-v",
+    "error",
+    "-y",
+    "-f",
+    "lavfi",
+    "-t",
+    "0.4",
+    "-i",
+    "sine=frequency=330:sample_rate=48000",
+    "-f",
+    "lavfi",
+    "-t",
+    "1.2",
+    "-i",
+    "anullsrc=r=48000:cl=mono",
+    "-f",
+    "lavfi",
+    "-t",
+    "0.4",
+    "-i",
+    "sine=frequency=330:sample_rate=48000",
+    "-filter_complex",
+    "[0:a][1:a][2:a]concat=n=3:v=0:a=1,volume=0.25",
+    longSilenceInputPath,
+  ]);
+  const longSilenceManifest = await localizeProducerAssets({
+    rootDir,
+    plan: {
+      version: 1,
+      compositionId: "FixtureSilenceAssets",
+      slug: "fixture-silence-assets",
+      outputManifestPath: "src/remotion/FixtureSilenceAssets/assets.manifest.json",
+      assets: [
+        {
+          id: "long-silence-ambience",
+          kind: "audio",
+          purpose: "Prove long-silence failure.",
+          source: { provider: "repo-ffmpeg-fixture", license: "CC0-1.0" },
+          acquisition: { type: "manual", sourcePath: longSilenceInputPath },
+          destination: { scope: "composition", fileName: "long-silence.wav" },
+          sound: { role: "ambience", maxAllowedPeakDb: -1, maxSilenceSeconds: 0.5 },
+        },
+      ],
+    },
+  });
+  await assert.rejects(
+    () => preflightProducerAssets({ manifest: longSilenceManifest, rootDir }),
+    /silence/i,
+  );
+
+  const lottieInputPath = path.join(rootDir, "inputs/expression-free.json");
+  await writeFile(
+    lottieInputPath,
+    JSON.stringify({ v: "5.13.0", fr: 30, ip: 0, op: 60, w: 320, h: 180, layers: [] }),
+  );
+  const lottieManifest = await localizeProducerAssets({
+    rootDir,
+    plan: {
+      version: 1,
+      compositionId: "FixtureLottieAssets",
+      slug: "fixture-lottie-assets",
+      outputManifestPath: "src/remotion/FixtureLottieAssets/assets.manifest.json",
+      assets: [
+        {
+          id: "expression-free-lottie",
+          kind: "lottie",
+          purpose: "Prove deterministic expression metadata.",
+          source: { provider: "repo-authored", license: "CC0-1.0" },
+          acquisition: { type: "manual", sourcePath: lottieInputPath },
+          destination: { scope: "composition", fileName: "expression-free.json" },
+        },
+      ],
+    },
+  });
+  assert.equal(lottieManifest.assets[0].media?.hasExpressions, false);
 } finally {
   await rm(rootDir, { recursive: true, force: true });
 }

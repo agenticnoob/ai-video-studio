@@ -239,6 +239,7 @@ export const localizeProducerAssets = async ({
           source: request.source,
           integrity,
           ...(media ? { media } : {}),
+          ...(request.sound ? { sound: request.sound } : {}),
           ...(request.requirements ? { requirements: request.requirements } : {}),
         },
       });

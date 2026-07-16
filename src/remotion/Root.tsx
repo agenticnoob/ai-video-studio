@@ -1,5 +1,15 @@
 import type { FC } from "react";
-import { Composition, Folder } from "remotion";
+import { Composition, Folder, Still } from "remotion";
+import {
+  AGENT_PRODUCER_MEDIA_SOUND_PROOF_COMPOSITION_ID,
+  AGENT_PRODUCER_MEDIA_SOUND_PROOF_DURATION_IN_FRAMES,
+  AGENT_PRODUCER_MEDIA_SOUND_PROOF_FPS,
+  AGENT_PRODUCER_MEDIA_SOUND_PROOF_HEIGHT,
+  AGENT_PRODUCER_MEDIA_SOUND_PROOF_WIDTH,
+  AgentProducerMediaSoundProof,
+  AgentProducerMediaSoundProofCover16x9,
+  AgentProducerMediaSoundProofCover9x16,
+} from "./AgentProducerMediaSoundProof";
 import {
   REMOTION_CAPABILITY_SHOWCASE_COMPOSITION_ID,
   REMOTION_CAPABILITY_SHOWCASE_DURATION_IN_FRAMES,
@@ -185,6 +195,26 @@ export const RemotionRoot: FC = () => {
           fps={REMOTION_CAPABILITY_SHOWCASE_FPS}
           width={REMOTION_CAPABILITY_SHOWCASE_WIDTH}
           height={REMOTION_CAPABILITY_SHOWCASE_HEIGHT}
+        />
+        <Composition
+          id={AGENT_PRODUCER_MEDIA_SOUND_PROOF_COMPOSITION_ID}
+          component={AgentProducerMediaSoundProof}
+          durationInFrames={AGENT_PRODUCER_MEDIA_SOUND_PROOF_DURATION_IN_FRAMES}
+          fps={AGENT_PRODUCER_MEDIA_SOUND_PROOF_FPS}
+          width={AGENT_PRODUCER_MEDIA_SOUND_PROOF_WIDTH}
+          height={AGENT_PRODUCER_MEDIA_SOUND_PROOF_HEIGHT}
+        />
+        <Still
+          id="AgentProducerMediaSoundProofCover16x9"
+          component={AgentProducerMediaSoundProofCover16x9}
+          width={1920}
+          height={1080}
+        />
+        <Still
+          id="AgentProducerMediaSoundProofCover9x16"
+          component={AgentProducerMediaSoundProofCover9x16}
+          width={1080}
+          height={1920}
         />
       </Folder>
       <Composition

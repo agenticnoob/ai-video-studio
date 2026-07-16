@@ -1,0 +1,279 @@
+{
+  "version": 1,
+  "compositionId": "AgentProducerMediaSoundProof",
+  "slug": "agent-producer-media-sound-proof",
+  "assets": [
+    {
+      "id": "narration-open",
+      "kind": "audio",
+      "localPath": "public/generated/agent-producer-media-sound-proof/assets/narration-open.wav",
+      "purpose": "Direct VoxCPM narration for the opening scene.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "f14cee57ae3eb6999c19ba684a25b6c4754327931cb42227ed03418a7b3b5e13",
+        "sizeInBytes": 410018
+      },
+      "media": {
+        "durationInSeconds": 4.270562,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-media",
+      "kind": "audio",
+      "localPath": "public/generated/agent-producer-media-sound-proof/assets/narration-media.wav",
+      "purpose": "Direct VoxCPM narration for the local video scene.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "2634450320da6b70cf6bae5e0bad09339dab7b99ae029e0a61a3c086daf5d959",
+        "sizeInBytes": 644520
+      },
+      "media": {
+        "durationInSeconds": 6.713292,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-signal",
+      "kind": "audio",
+      "localPath": "public/generated/agent-producer-media-sound-proof/assets/narration-signal.wav",
+      "purpose": "Direct VoxCPM narration for the Lottie and sound scene.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "bf706a27218c47e154343a0f2ae81a9b67bfa1011a5fe8a6fce3bcf2a994a603",
+        "sizeInBytes": 694106
+      },
+      "media": {
+        "durationInSeconds": 7.229812,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "proof-bgm",
+      "kind": "audio",
+      "localPath": "public/generated/agent-producer-media-sound-proof/assets/bgm.wav",
+      "purpose": "Restrained synthetic bed used to prove narration ducking.",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "c9ad68febc8636a74e62698e11c376f65a55ab5e70e2fc9ef687ab71950b2793",
+        "sizeInBytes": 1152078
+      },
+      "media": {
+        "durationInSeconds": 12,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "bgm",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 1
+      }
+    },
+    {
+      "id": "proof-ambience",
+      "kind": "audio",
+      "localPath": "public/generated/agent-producer-media-sound-proof/assets/ambience.wav",
+      "purpose": "Low-level local ambience bed.",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "ddb7bc1ed50304d506a2aa51b531a9e6848fc72783a15baeb50eb421ab1585ed",
+        "sizeInBytes": 1152078
+      },
+      "media": {
+        "durationInSeconds": 12,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "ambience",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 1
+      }
+    },
+    {
+      "id": "soft-whoosh",
+      "kind": "audio",
+      "localPath": "public/generated/agent-producer-media-sound-proof/assets/soft-whoosh.wav",
+      "purpose": "Editorial fade transition sound.",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "b412beb685dbb981bc7fb46045fa9cece4ae51a9ae38c4ecacf5e5238cddd4db",
+        "sizeInBytes": 43278
+      },
+      "media": {
+        "durationInSeconds": 0.45,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "sfx",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 0.3
+      }
+    },
+    {
+      "id": "signal-sweep",
+      "kind": "audio",
+      "localPath": "public/generated/agent-producer-media-sound-proof/assets/signal-sweep.wav",
+      "purpose": "Signal wipe transition sound.",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "8bd35adfe7cc37205f7503c062c245f38bb3b25d1e743f16648ef23bf211311d",
+        "sizeInBytes": 34638
+      },
+      "media": {
+        "durationInSeconds": 0.36,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "sfx",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 0.25
+      }
+    },
+    {
+      "id": "proof-grid",
+      "kind": "image",
+      "localPath": "public/generated/agent-producer-media-sound-proof/assets/grid.png",
+      "purpose": "Local code-generated static image proof.",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "cbd1f1b8b4d7dc5db63c1ac7a2daeeaf942e6148752e5b472dc6875f619f4fa3",
+        "sizeInBytes": 13424
+      },
+      "media": {
+        "width": 1280,
+        "height": 720,
+        "codec": "png",
+        "pixelFormat": "rgb24"
+      },
+      "requirements": {
+        "minWidth": 1280,
+        "minHeight": 720
+      }
+    },
+    {
+      "id": "proof-animated-image",
+      "kind": "image",
+      "localPath": "public/generated/agent-producer-media-sound-proof/assets/signal.gif",
+      "purpose": "Local animated GIF proof.",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "6219ca8de338c0f428c21a73114bb171d9a0f662908cd83b5391d8ea6f85dfbb",
+        "sizeInBytes": 376795
+      },
+      "media": {
+        "width": 640,
+        "height": 360,
+        "codec": "gif",
+        "pixelFormat": "bgra"
+      },
+      "requirements": {
+        "minWidth": 640,
+        "minHeight": 360
+      }
+    },
+    {
+      "id": "proof-video",
+      "kind": "video",
+      "localPath": "public/generated/agent-producer-media-sound-proof/assets/local-video.mp4",
+      "purpose": "Local normalized H.264/AAC video proof.",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "63074d5395cde8387a5533d23f4e003c6736762dd2f6cd22f9354292f4e3605e",
+        "sizeInBytes": 1544349
+      },
+      "media": {
+        "width": 1280,
+        "height": 720,
+        "durationInSeconds": 4,
+        "fps": 30,
+        "codec": "h264",
+        "audioCodec": "aac",
+        "pixelFormat": "yuv420p",
+        "constantFrameRate": true
+      },
+      "requirements": {
+        "minWidth": 1280,
+        "minHeight": 720,
+        "minDurationInSeconds": 3.5
+      }
+    },
+    {
+      "id": "proof-lottie",
+      "kind": "lottie",
+      "localPath": "public/generated/agent-producer-media-sound-proof/assets/signal-orbit.json",
+      "purpose": "Expression-free local Lottie proof.",
+      "source": {
+        "provider": "repo-authored",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "16953c2e6529a7939480bc5e3d18305462341518d2cde04323a7b14215eed9e5",
+        "sizeInBytes": 2446
+      },
+      "media": {
+        "width": 640,
+        "height": 640,
+        "fps": 30,
+        "durationInSeconds": 4,
+        "codec": "lottie-json",
+        "hasExpressions": false
+      },
+      "requirements": {
+        "minWidth": 640,
+        "minHeight": 640,
+        "minDurationInSeconds": 3.5
+      }
+    }
+  ]
+}

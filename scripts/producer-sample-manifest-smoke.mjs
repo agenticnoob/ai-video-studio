@@ -150,10 +150,22 @@ for (const compositionId of expectedCompositionIds) {
 
 for (const manifest of producerSampleManifests) {
   assertProducerSampleManifest(manifest);
-  assert(
-    manifest.sampleStatus === "frozen-reference",
-    `${manifest.compositionId} must remain a frozen reference until a new maintained sample exists.`,
-  );
+  if (manifest.compositionId === "AgentProducerMediaSoundProof") {
+    assert(
+      manifest.sampleStatus === "maintained",
+      "The Phase 7 proof must be the single maintained Producer sample.",
+    );
+    assertIgnoredPath(manifest.localArtifactRoot);
+    assert(
+      rootSource.includes("AGENT_PRODUCER_MEDIA_SOUND_PROOF_COMPOSITION_ID"),
+      "The Phase 7 maintained proof must remain registered in Root.",
+    );
+  } else {
+    assert(
+      manifest.sampleStatus === "frozen-reference",
+      `${manifest.compositionId} must remain a frozen reference.`,
+    );
+  }
   for (const sourceFile of manifest.sourceFiles) {
     assert(
       existsSync(sourceFile.path),

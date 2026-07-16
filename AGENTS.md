@@ -33,15 +33,19 @@ repository contains `.codegraph/`.
   scaffold, validation, review-frame, and render command chain.
 - Phase 5 completed strict asset manifests, manual/URL localization, checksum,
   provenance/license/media metadata, FFmpeg normalization, and preflight.
-- Existing Producer registry entries remain `frozen-reference` metadata.
+- Every pre-Phase-7 Producer registry entry remains `frozen-reference`
+  metadata; Phase 7 adds one maintained proof only.
 - Phase 6 Remotion capability core is complete: every installed Remotion
   package is exact `4.0.489`; Producer-owned effects, guarded Chinese text
   fitting, official transition presets/timing, light-leak/film-burn treatment,
   and HTML/SVG/image/video canvas proofs are available in the isolated
   capability showcase.
-- `@remotion/transitions` and `@remotion/light-leaks` are exact `4.0.489` and
-  remain inside the uniform Remotion closure. Phase 7 dynamic existing media
-  and sound design is next and has not started.
+- `@remotion/transitions`, `@remotion/light-leaks`, `@remotion/media`,
+  `@remotion/lottie`, and `@remotion/motion-blur` are exact `4.0.489` and remain
+  inside the uniform Remotion closure.
+- Phase 7 local media/motion/sound modules, asset audio-QC, and the maintained
+  proof are complete with real VoxCPM narration, strict preflight, reviewed
+  stills/covers, and an H.264/AAC render. Phase 8 is next and has not started.
 - Historical caption/storyboard contracts and `recipes/blocks` plus
   `recipes/timing` remain only for frozen composition compatibility.
 
@@ -109,6 +113,7 @@ npm run smoke:producer-audio-direct-voxcpm
 npm run smoke:producer-audio-tools
 npm run smoke:remotion-version-gate
 npm run smoke:remotion-capabilities
+npm run smoke:producer-media-sound
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
 ```

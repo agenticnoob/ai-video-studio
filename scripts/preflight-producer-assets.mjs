@@ -28,6 +28,7 @@ const sources = [
   "scripts/lib/producer-assets/types.ts",
   "scripts/lib/producer-assets/serialize.ts",
   "scripts/lib/producer-assets/metadata.ts",
+  "scripts/lib/producer-assets/audio-quality.ts",
   "scripts/lib/producer-assets/localize.ts",
   "scripts/lib/producer-assets/preflight.ts",
 ];

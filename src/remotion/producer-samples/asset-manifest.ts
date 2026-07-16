@@ -12,6 +12,16 @@ export const producerAssetKinds = [
 
 export type ProducerAssetKind = (typeof producerAssetKinds)[number];
 
+export const producerSoundRoles = ["narration", "bgm", "ambience", "sfx"] as const;
+
+export type ProducerSoundRole = (typeof producerSoundRoles)[number];
+
+export type ProducerSoundAssetPolicy = {
+  readonly role: ProducerSoundRole;
+  readonly maxAllowedPeakDb: number;
+  readonly maxSilenceSeconds: number;
+};
+
 export type ProducerAsset = {
   readonly id: string;
   readonly kind: ProducerAssetKind;
@@ -40,7 +50,9 @@ export type ProducerAsset = {
     readonly pixelFormat?: string;
     readonly sampleRate?: number;
     readonly constantFrameRate?: boolean;
+    readonly hasExpressions?: boolean;
   };
+  readonly sound?: ProducerSoundAssetPolicy;
   readonly requirements?: {
     readonly minWidth?: number;
     readonly minHeight?: number;
@@ -145,6 +157,26 @@ const assertMedia = (
     requireText(media.codec, `${label}.media.codec`);
     requirePositive(media.sampleRate, `${label}.media.sampleRate`);
   }
+  if (kind === "lottie" && typeof media.hasExpressions !== "boolean") {
+    throw new Error(`${label}.media.hasExpressions must be boolean.`);
+  }
+};
+
+const assertSoundPolicy = (rawSound: unknown, kind: ProducerAssetKind, label: string): void => {
+  if (rawSound === undefined) return;
+  if (kind !== "audio") throw new Error(`${label}.sound is only valid for audio assets.`);
+  const sound = requireRecord(rawSound, `${label}.sound`);
+  if (!producerSoundRoles.includes(sound.role as ProducerSoundRole)) {
+    throw new Error(`${label}.sound.role must be narration, bgm, ambience, or sfx.`);
+  }
+  if (
+    typeof sound.maxAllowedPeakDb !== "number" ||
+    !Number.isFinite(sound.maxAllowedPeakDb) ||
+    sound.maxAllowedPeakDb > 0
+  ) {
+    throw new Error(`${label}.sound.maxAllowedPeakDb must be a finite non-positive number.`);
+  }
+  requirePositive(sound.maxSilenceSeconds, `${label}.sound.maxSilenceSeconds`);
 };
 
 export const assertProducerAssetManifest: (
@@ -208,6 +240,7 @@ export const assertProducerAssetManifest: (
     requirePositive(integrity.sizeInBytes, `${id}.integrity.sizeInBytes`);
 
     assertMedia(asset, kind, id);
+    assertSoundPolicy(asset.sound, kind, id);
     if (asset.requirements !== undefined) {
       const requirements = requireRecord(asset.requirements, `${id}.requirements`);
       for (const field of ["minWidth", "minHeight", "minDurationInSeconds"] as const) {

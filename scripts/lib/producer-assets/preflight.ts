@@ -11,6 +11,7 @@ import {
   defaultProducerAssetExecFile,
   probeProducerAssetMedia,
 } from "./metadata";
+import { assertProducerAudioQuality } from "./audio-quality";
 import { parseProducerAssetManifest } from "./serialize";
 import type { ProducerAssetExecFile, ProducerAssetMedia } from "./types";
 
@@ -33,7 +34,13 @@ const assertMediaMatches = (
   if (!closeEnough(recorded.durationInSeconds, current.durationInSeconds)) {
     throw new Error(`${asset.id} media duration does not match the asset manifest.`);
   }
-  for (const field of ["codec", "audioCodec", "pixelFormat", "constantFrameRate"] as const) {
+  for (const field of [
+    "codec",
+    "audioCodec",
+    "pixelFormat",
+    "constantFrameRate",
+    "hasExpressions",
+  ] as const) {
     if (recorded[field] !== current[field]) {
       throw new Error(`${asset.id} media ${field} does not match the asset manifest.`);
     }
@@ -97,6 +104,7 @@ export const preflightProducerAssets = async ({
     });
     assertMediaMatches(asset, currentMedia);
     assertRequirements(asset);
+    await assertProducerAudioQuality({ asset, filePath, execFileImpl });
     if (asset.kind === "video") {
       if (
         asset.media?.codec !== "h264" ||

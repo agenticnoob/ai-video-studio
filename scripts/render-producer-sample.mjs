@@ -43,6 +43,7 @@ await execFileAsync("npx", [
   "scripts/lib/producer-assets/types.ts",
   "scripts/lib/producer-assets/serialize.ts",
   "scripts/lib/producer-assets/metadata.ts",
+  "scripts/lib/producer-assets/audio-quality.ts",
   "scripts/lib/producer-assets/localize.ts",
   "scripts/lib/producer-assets/preflight.ts",
   "src/remotion/producer-samples/asset-manifest.ts",
@@ -71,7 +72,8 @@ if (manifest.sampleStatus === "maintained") {
   await preflightProducerAssets({ manifest: assetManifest });
 }
 
-const jobs = renderer.buildProducerRenderJobs({ manifest });
+const execution = existsSync("/.dockerenv") ? "producer-container" : "host";
+const jobs = renderer.buildProducerRenderJobs({ execution, manifest });
 for (const job of jobs) {
   console.log(`${dryRun ? "DRY RUN" : "RUN"}: ${job.command} ${job.args.join(" ")}`);
   if (dryRun) continue;

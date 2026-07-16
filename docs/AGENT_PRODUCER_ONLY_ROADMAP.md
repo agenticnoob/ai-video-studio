@@ -1,7 +1,7 @@
 # Agent Producer-Only Roadmap
 
-Status: Phase 0 through Phase 6 complete. Phase 7 dynamic existing media and
-sound design is next and has not started.
+Status: Phase 0 through Phase 7 complete. Phase 8 code-driven style profiles is
+next and has not started.
 
 Decision date: 2026-07-15.
 
@@ -846,7 +846,10 @@ video template.
 
 ## 12. Phase 7 - Dynamic Existing Media And Sound Design
 
-Status: not started.
+Status: complete. Producer-owned local media/motion/sound modules, strict
+sound/Lottie asset checks, and the maintained proof passed direct VoxCPM
+narration, asset preflight, representative still review, deterministic Lottie
+hash verification, cover rendering, and MP4/ffprobe verification.
 
 ### Goal
 

@@ -118,6 +118,28 @@ export const validateProducerSample = async (input: ProducerValidationInput): Pr
           `${input.compositionId} asset manifest does not match its sample manifest.`,
         );
       }
+      if (input.manifest.soundDesign) {
+        const assetsById = new Map(input.assetManifest.assets.map((asset) => [asset.id, asset]));
+        const roleGroups = [
+          ["narration", input.manifest.soundDesign.narrationAssetIds],
+          ["bgm", input.manifest.soundDesign.bgmAssetIds],
+          ["ambience", input.manifest.soundDesign.ambienceAssetIds],
+          ["sfx", input.manifest.soundDesign.sfxAssetIds],
+        ] as const;
+        for (const [role, assetIds] of roleGroups) {
+          for (const assetId of assetIds) {
+            const asset = assetsById.get(assetId);
+            if (!asset) {
+              throw new Error(`${input.compositionId} ${role} asset ${assetId} is missing.`);
+            }
+            if (asset.kind !== "audio" || asset.sound?.role !== role) {
+              throw new Error(
+                `${input.compositionId} ${role} asset ${assetId} must declare the matching sound role.`,
+              );
+            }
+          }
+        }
+      }
       for (const registrationId of [
         input.manifest.compositionId,
         input.manifest.render.cover16x9CompositionId,

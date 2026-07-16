@@ -36,6 +36,7 @@ export type ProducerSampleSourceFileKind =
   | "smoke"
   | "manifest"
   | "asset-manifest"
+  | "soundtrack"
   | "validation"
   | "cover"
   | "render-metadata"
@@ -138,6 +139,13 @@ export type MaintainedProducerSampleManifest = ProducerSampleManifestBase & {
   };
   readonly assets: {
     readonly manifestPath: string;
+  };
+  readonly soundDesign?: {
+    readonly soundtrackModulePath: string;
+    readonly narrationAssetIds: readonly string[];
+    readonly bgmAssetIds: readonly string[];
+    readonly ambienceAssetIds: readonly string[];
+    readonly sfxAssetIds: readonly string[];
   };
   readonly validationModule: string;
   readonly render: {
@@ -247,11 +255,29 @@ export const assertProducerSampleManifest = (manifest: ProducerSampleManifest): 
     throw new Error(`${manifest.compositionId} asset manifest must use a repository-local path.`);
   }
 
+  if (manifest.soundDesign) {
+    requireText(
+      manifest.soundDesign.soundtrackModulePath,
+      `${manifest.compositionId} soundtrack module path`,
+    );
+    for (const [role, assetIds] of Object.entries({
+      narration: manifest.soundDesign.narrationAssetIds,
+      bgm: manifest.soundDesign.bgmAssetIds,
+      ambience: manifest.soundDesign.ambienceAssetIds,
+      sfx: manifest.soundDesign.sfxAssetIds,
+    })) {
+      if (!Array.isArray(assetIds) || assetIds.some((assetId) => !assetId.trim())) {
+        throw new Error(`${manifest.compositionId} ${role} asset ids must be non-empty text.`);
+      }
+    }
+  }
+
   const sourcePaths = new Set(manifest.sourceFiles.map((sourceFile) => sourceFile.path));
   for (const requiredPath of [
     manifest.narration.scriptPath,
     manifest.narration.audioMetadataPath,
     manifest.assets.manifestPath,
+    ...(manifest.soundDesign ? [manifest.soundDesign.soundtrackModulePath] : []),
     manifest.validationModule,
     manifest.render.metadataPath,
     manifest.publishingCopyPath,
@@ -274,5 +300,11 @@ export const assertProducerSampleManifest = (manifest: ProducerSampleManifest): 
         `${manifest.compositionId} sourceFiles must include ${requiredKind} ownership.`,
       );
     }
+  }
+  if (
+    manifest.soundDesign &&
+    !manifest.sourceFiles.some((sourceFile) => sourceFile.kind === "soundtrack")
+  ) {
+    throw new Error(`${manifest.compositionId} sourceFiles must include soundtrack ownership.`);
   }
 };

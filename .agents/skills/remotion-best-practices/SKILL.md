@@ -14,7 +14,8 @@ Use this skills whenever you are dealing with Remotion code to obtain the domain
 When this repo is producing a dedicated Agent Producer video, combine these
 Remotion rules with `.agents/skills/ai-video-studio-agent-producer/`. For
 VoxCPM narration or voice clone work, also load
-`.agents/skills/ai-video-studio-voxcpm-expression/` before final TTS text.
+`.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md`
+before final TTS text.
 
 In this repo, let generated narration metadata own scene duration. For subtitle
 or voiceover work, load `rules/subtitles.md`; for long pauses or audio gaps,
@@ -30,8 +31,12 @@ text fitting, official transition presets and duration accounting through
 film-burn treatment plus HTML/SVG/image/video canvas proofs through
 `AgentProducerCapabilityShowcase`. Run `npm run smoke:remotion-version-gate`
 and `npm run smoke:remotion-capabilities` before using them. Keep the dependency
-closure uniform; Phase 7 dynamic existing media and sound design has not
-started.
+closure uniform. Phase 7 Producer code uses `ProducerLocalVideo`,
+`ProducerAnimatedImage`, `ProducerLottie`, `ProducerMotionTreatment`, and
+`ProducerSoundtrack` from the repo-owned media/motion/sound modules. Run
+`npm run smoke:producer-media-sound` and asset preflight before rendering a
+maintained sample; do not bypass these local-path and audio-QC guards with a
+remote media URL.
 
 ## New project setup
 

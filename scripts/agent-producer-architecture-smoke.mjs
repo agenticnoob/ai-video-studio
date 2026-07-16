@@ -22,7 +22,7 @@ assert(existsSync(absolute(inventoryPath)), `${inventoryPath} must exist`);
 const inventory = JSON.parse(read(inventoryPath));
 
 assert.equal(inventory.version, 1, "inventory version");
-assert.deepEqual(inventory.completedPhases, [0, 1, 2, 3, 4, 5, 6], "completed roadmap phases");
+assert.deepEqual(inventory.completedPhases, [0, 1, 2, 3, 4, 5, 6, 7], "completed roadmap phases");
 assert.deepEqual(
   inventory.completedPhaseSlices,
   [
@@ -46,6 +46,13 @@ assert.deepEqual(
       status: "complete",
       reason:
         "Exact-version official transitions and light leaks now provide Producer-owned transition presets, duration accounting, cinematic treatment, and HTML/SVG/image/video canvas proofs.",
+    },
+    {
+      phase: 7,
+      slice: "dynamic-existing-media-sound-design",
+      status: "complete",
+      reason:
+        "Producer-owned local dynamic media, motion treatments, sound design, audio quality gates, and one maintained proof passed real narration, preflight, deterministic still, cover, and MP4 verification.",
     },
   ],
   "completed roadmap phase slices",
@@ -156,8 +163,11 @@ assert(
 assert(read("docs/ITERATION_STATUS.md").includes("Phase 6 Remotion capability core is complete."));
 assert(
   read("docs/ITERATION_STATUS.md").includes(
-    "Phase 7 dynamic existing media and sound design has not started.",
+    "Phase 7 dynamic existing media and sound design is complete.",
   ),
+);
+assert(
+  read("docs/ITERATION_STATUS.md").includes("Phase 8 code-driven style profiles has not started."),
 );
 assert(read("docs/VISUAL_RECIPE_ROADMAP.md").includes("Superseded"));
 
@@ -173,8 +183,21 @@ for (const command of [
   "smoke:producer-assets",
   "smoke:remotion-capabilities",
   "smoke:remotion-version-gate",
+  "smoke:producer-media-sound",
 ]) {
   assert(packageJson.scripts[command], `package.json must expose ${command}`);
+}
+for (const phase7Path of [
+  "scripts/producer-media-sound-smoke.mjs",
+  "scripts/lib/producer-assets/audio-quality.ts",
+  "src/remotion/media/ProducerLocalVideo.tsx",
+  "src/remotion/media/ProducerAnimatedImage.tsx",
+  "src/remotion/media/ProducerLottie.tsx",
+  "src/remotion/motion/presets.tsx",
+  "src/remotion/sound/ProducerSoundtrack.tsx",
+  "src/remotion/AgentProducerMediaSoundProof/manifest.ts",
+]) {
+  assert(existsSync(absolute(phase7Path)), `Phase 7 path must exist: ${phase7Path}`);
 }
 for (const phase6aPath of [
   "scripts/remotion-capabilities-smoke.mjs",

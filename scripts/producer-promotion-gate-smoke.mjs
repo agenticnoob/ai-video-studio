@@ -53,8 +53,8 @@ for (const candidate of evidenceLensCandidates) {
 for (const manifest of producerSampleManifests) {
   assert.equal(
     manifest.sampleStatus,
-    "frozen-reference",
-    `${manifest.compositionId} is a finished frozen reference.`,
+    manifest.compositionId === "AgentProducerMediaSoundProof" ? "maintained" : "frozen-reference",
+    `${manifest.compositionId} must keep its explicit maintained or frozen status.`,
   );
   for (const candidate of manifest.promotionCandidates) {
     assert(

@@ -9,7 +9,7 @@ export type ProducerAssetAcquisition =
 
 export type ProducerAssetSupplyRequest = Pick<
   ProducerAsset,
-  "id" | "kind" | "purpose" | "source" | "requirements"
+  "id" | "kind" | "purpose" | "source" | "requirements" | "sound"
 > & {
   readonly acquisition: ProducerAssetAcquisition;
   readonly destination: {

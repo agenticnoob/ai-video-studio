@@ -1,6 +1,7 @@
 # Producer Asset Contract
 
-Status: active Phase 5 Agent Producer asset-supply contract.
+Status: active Phase 5 asset-supply contract with Phase 7 sound/Lottie quality
+extensions.
 
 `.agents/skills/ai-video-studio-agent-producer/` is the only supported
 video-production entrypoint.
@@ -41,6 +42,17 @@ Video localization normalizes formal assets to H.264, yuv420p, constant frame
 rate, and AAC when audio exists. Preflight recalculates checksums and probes
 metadata. Missing, corrupt, duplicate, undersized, unlicensed, incomplete-
 attribution, remote, or non-normalized assets fail before maintained stills.
+
+Audio assets used for sound design declare a `sound` policy with one explicit
+role (`narration`, `bgm`, `ambience`, or `sfx`), a non-positive peak limit, and
+a positive maximum silence duration. Preflight runs FFmpeg `volumedetect` and
+`silencedetect`; unreadable/non-finite peaks, peaks above policy, and long
+silence fail before stills or render.
+
+Lottie metadata records `hasExpressions`. Each local Lottie asset is admitted
+individually and expression behavior must be reviewed before promotion. The
+maintained Phase 7 proof uses an expression-free local JSON asset. Rive remains
+conditional on an approved local `.riv` asset and real sample evidence.
 
 If source capture is unavailable or unreadable, record the reason outside the
 frame and redesign the scene as an honest code-rendered information graphic.

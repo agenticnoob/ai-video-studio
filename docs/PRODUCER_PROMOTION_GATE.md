@@ -49,6 +49,8 @@ A promotion candidate records:
 4. Can it use code and manifest-backed existing assets only?
 5. Is motion deterministic and frame-driven?
 6. Will another Producer task know when to choose it?
+7. For Lottie/Rive or sound assets, did deterministic render and asset/audio
+   preflight pass with provenance and license metadata?
 
 Any “no” keeps the candidate sample-local.
 

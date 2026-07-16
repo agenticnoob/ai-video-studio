@@ -16,9 +16,9 @@ topic -> research/existing assets -> narration/VoxCPM -> component inventory
 -> Remotion `<Still>` covers -> publishing notes
 ```
 
-Roadmap status: Phase 5 existing-asset supply and Phase 6 Remotion capability
-core are complete with every installed Remotion package exact `4.0.489`.
-Phase 7 dynamic existing media and sound design is next and has not started.
+Roadmap status: Phase 5 existing-asset supply, Phase 6 Remotion capability core,
+and Phase 7 dynamic media/sound are complete with every installed Remotion
+package exact `4.0.489`. Phase 8 style profiles is next and has not started.
 
 ## Skill Stack
 
@@ -62,8 +62,29 @@ Import presets from `src/remotion/effects/` and text fitting from
 `src/remotion/transitions/`. These are Producer-owned capabilities, not a
 template, recipe, or style-profile selection system. HTML-in-canvas rendering
 requires `Config.setAllowHtmlInCanvasEnabled(true)` and the compatible Docker
-Producer Chromium runtime. The ignored showcase fixture does not authorize the
-reusable video block or sound-design work owned by unstarted Phase 7.
+Producer Chromium runtime. The ignored showcase fixture remains separate from
+the reusable Phase 7 media and sound surfaces.
+
+## Phase 7 Media And Sound Selection
+
+- `ProducerLocalVideo`: manifest-backed local video with explicit trim, loop,
+  playback rate, crop, and volume behavior
+- `ProducerAnimatedImage`: local GIF/APNG/AVIF/WebP playback with explicit
+  geometry, fit, speed, and loop behavior
+- `ProducerLottie`: local `staticFile()` Lottie loading with render delay and
+  expression metadata checked during asset supply/preflight
+- `ProducerMotionTreatment`: fixed `camera-natural`, `typography-trail`,
+  `icon-trail`, and `particle-trail` motion-blur/trail treatments
+- `ProducerSoundtrack`: local BGM, ambience, transition SFX, deterministic
+  fades, and narration-window ducking
+- `getProducerSoundLibrary()`: resolve only licensed, manifest-backed audio
+  entries with explicit narration/BGM/ambience/SFX roles
+
+Import these surfaces from `src/remotion/media/`, `src/remotion/motion/`, and
+`src/remotion/sound/`. Run `npm run smoke:producer-media-sound`, then
+`producer:assets` and `producer:preflight` before representative stills. Rive
+remains unadmitted until an approved local `.riv` asset is proved in a real
+maintained sample.
 
 ## Start Here
 
@@ -187,6 +208,9 @@ Let measured narration duration own scene timing.
 - Read the VoxCPM expression guidance before finalizing TTS text.
 - Keep spoken `ttsText` separate from visible `displayText`.
 - Use the direct VoxCPM Producer runtime in `scripts/lib/producer-audio/`.
+- Call the narration endpoint directly even when `/ready` reports a cold
+  `503/loading` state. The service unloads after 10 idle minutes and the first
+  real request reloads it automatically; `/ready` is diagnostic, not a gate.
 - Select one explicit mode: `voice-design`, `controllable-clone`, or
   `high-fidelity-clone`.
 - Use punctuation-split synthesis for punctuation-sized beats.
@@ -315,6 +339,7 @@ Use shared tools for deterministic work in future samples:
   `npm run smoke:producer-audio-tools`
 - exact Remotion dependency boundary: `npm run smoke:remotion-version-gate`
 - effects/text-layout capability boundary: `npm run smoke:remotion-capabilities`
+- dynamic-media and sound-design boundary: `npm run smoke:producer-media-sound`
 - mechanical validation: `npm run producer:validate -- --module <validation-module>`
 - manifest-driven review stills: `npm run producer:stills -- --composition <composition-id>`
 - metadata-bundled MP4 and both code-rendered covers:

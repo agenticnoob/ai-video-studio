@@ -79,6 +79,15 @@ The default service endpoints are the plain, controllable clone, and
 high-fidelity clone paths exposed by the local VoxCPM service. Docker bridge
 networking can use `docker-compose.voxcpm.yml` or
 `scripts/producer-voxcpm.sh` when it cannot reach a host-loopback service.
+
+The service unloads the model after 10 minutes without an inference request.
+In that idle state, `GET /ready` may return HTTP `503` with `status: "loading"`;
+this is a normal cold state, not a generation blocker. Send the real Producer
+request directly: the first `/tts`, `/clone`, or `/clone_with_prompt` request
+loads the model automatically and waits for inference. The default 180-second
+Producer request timeout includes this cold-start window. Treat `/ready` as a
+diagnostic observation only; do not require HTTP `200` before narration.
+
 The wrapper exposes only a direct readiness probe, arbitrary Producer
 container commands, and status:
 

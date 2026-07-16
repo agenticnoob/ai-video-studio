@@ -65,7 +65,23 @@ const probeLottie = async (filePath: string): Promise<ProducerAssetMedia> => {
   }
   const durationInSeconds = positiveNumber((outPoint - inPoint) / fps);
   if (!durationInSeconds) throw new Error("Lottie asset duration must be positive.");
-  return { width, height, fps, durationInSeconds, codec: "lottie-json" };
+  const hasExpressions = (value: unknown): boolean => {
+    if (Array.isArray(value)) return value.some(hasExpressions);
+    if (typeof value !== "object" || value === null) return false;
+    return Object.entries(value).some(
+      ([key, nested]) =>
+        (key === "x" && typeof nested === "string" && nested.trim().length > 0) ||
+        hasExpressions(nested),
+    );
+  };
+  return {
+    width,
+    height,
+    fps,
+    durationInSeconds,
+    codec: "lottie-json",
+    hasExpressions: hasExpressions(parsed),
+  };
 };
 
 type FfprobeStream = {

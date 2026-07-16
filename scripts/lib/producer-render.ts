@@ -14,10 +14,12 @@ export type ProducerRenderJob = {
 };
 
 export const buildProducerRenderJobs = ({
+  execution = "host",
   manifest,
   entrypoint = "src/remotion/index.ts",
   outputRoot = "out",
 }: {
+  readonly execution?: "host" | "producer-container";
   readonly manifest: ProducerSampleManifest;
   readonly entrypoint?: string;
   readonly outputRoot?: string;
@@ -41,6 +43,11 @@ export const buildProducerRenderJobs = ({
     sampleOutputRoot,
     `${maintainedManifest.slug}-cover-9x16.png`,
   );
+  const coverCommand = execution === "producer-container" ? "npx" : "docker";
+  const coverPrefix =
+    execution === "producer-container"
+      ? ["remotion", "still"]
+      : ["compose", "run", "--rm", "producer", "npx", "remotion", "still"];
 
   return [
     {
@@ -56,15 +63,9 @@ export const buildProducerRenderJobs = ({
     },
     {
       kind: "cover-16x9",
-      command: "docker",
+      command: coverCommand,
       args: [
-        "compose",
-        "run",
-        "--rm",
-        "producer",
-        "npx",
-        "remotion",
-        "still",
+        ...coverPrefix,
         entrypoint,
         maintainedManifest.render.cover16x9CompositionId,
         cover16x9Path,
@@ -73,15 +74,9 @@ export const buildProducerRenderJobs = ({
     },
     {
       kind: "cover-9x16",
-      command: "docker",
+      command: coverCommand,
       args: [
-        "compose",
-        "run",
-        "--rm",
-        "producer",
-        "npx",
-        "remotion",
-        "still",
+        ...coverPrefix,
         entrypoint,
         maintainedManifest.render.cover9x16CompositionId,
         cover9x16Path,

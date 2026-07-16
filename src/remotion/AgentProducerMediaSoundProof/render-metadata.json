@@ -1,0 +1,10 @@
+{
+  "title": "Agent Producer dynamic media and sound proof",
+  "description": "A local maintained proof for manifest-backed media, deterministic motion, narration ducking, ambience, and transition SFX.",
+  "fps": 30,
+  "chapters": [
+    { "name": "Manifest-backed media", "sceneId": "open" },
+    { "name": "Local video and ducking", "sceneId": "media" },
+    { "name": "Lottie and transition SFX", "sceneId": "signal" }
+  ]
+}

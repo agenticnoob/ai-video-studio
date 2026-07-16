@@ -14,6 +14,7 @@ export {
   probeProducerAssetMedia,
 } from "./metadata";
 export { preflightProducerAssets, readProducerAssetManifest } from "./preflight";
+export { analyzeProducerAudioQuality, assertProducerAudioQuality } from "./audio-quality";
 export { parseProducerAssetManifest, serializeProducerAssetManifest } from "./serialize";
 export type {
   ProducerAssetAcquisition,

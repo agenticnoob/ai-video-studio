@@ -54,7 +54,11 @@ composition. The configured default npm mirror may expose stale transition
 metadata; the lockfile resolves `@remotion/transitions@4.0.489` without
 overrides or mixed versions.
 
-Phase 7 dynamic existing media and sound design is next and has not started.
+Phase 7 dynamic existing media and sound design is complete. Repo-owned
+local Video, AnimatedImage, Lottie, motion-blur/trail, soundtrack, ducking,
+transition-SFX, and audio-QC surfaces are proved by a maintained composition
+with real VoxCPM narration, strict asset preflight, reviewed stills/covers, and
+an H.264/AAC render. Phase 8 style profiles is next and has not started.
 
 Existing finished compositions remain frozen read-only references. Historical
 `provider: "f5-tts"` metadata in their generated audio files stays truthful; it
@@ -107,6 +111,7 @@ npm run smoke:producer-os
 npm run smoke:producer-assets
 npm run smoke:remotion-version-gate
 npm run smoke:remotion-capabilities
+npm run smoke:producer-media-sound
 npm run smoke:producer-audio-direct-voxcpm
 npm run smoke:producer-audio-tools
 npm run smoke:agent-producer-web-removal

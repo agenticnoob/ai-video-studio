@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "compositionId": "AgentProducerMediaSoundProof",
+  "slug": "agent-producer-media-sound-proof",
+  "outputManifestPath": "src/remotion/AgentProducerMediaSoundProof/assets.manifest.json",
+  "assets": [
+    {
+      "id": "narration-open",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for the opening scene.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/agent-producer-media-sound-proof/audio/open.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "narration-open.wav" }
+    },
+    {
+      "id": "narration-media",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for the local video scene.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/agent-producer-media-sound-proof/audio/media.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "narration-media.wav" }
+    },
+    {
+      "id": "narration-signal",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for the Lottie and sound scene.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/agent-producer-media-sound-proof/audio/signal.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "narration-signal.wav" }
+    },
+    {
+      "id": "proof-bgm",
+      "kind": "audio",
+      "purpose": "Restrained synthetic bed used to prove narration ducking.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "sound": { "role": "bgm", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 1 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/agent-producer-media-sound-proof/inputs/bgm.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "bgm.wav" }
+    },
+    {
+      "id": "proof-ambience",
+      "kind": "audio",
+      "purpose": "Low-level local ambience bed.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "sound": { "role": "ambience", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 1 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/agent-producer-media-sound-proof/inputs/ambience.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "ambience.wav" }
+    },
+    {
+      "id": "soft-whoosh",
+      "kind": "audio",
+      "purpose": "Editorial fade transition sound.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "sound": { "role": "sfx", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 0.3 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/agent-producer-media-sound-proof/inputs/soft-whoosh.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "soft-whoosh.wav" }
+    },
+    {
+      "id": "signal-sweep",
+      "kind": "audio",
+      "purpose": "Signal wipe transition sound.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "sound": { "role": "sfx", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 0.25 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/agent-producer-media-sound-proof/inputs/signal-sweep.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "signal-sweep.wav" }
+    },
+    {
+      "id": "proof-grid",
+      "kind": "image",
+      "purpose": "Local code-generated static image proof.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/agent-producer-media-sound-proof/inputs/grid.png"
+      },
+      "destination": { "scope": "composition", "fileName": "grid.png" },
+      "requirements": { "minWidth": 1280, "minHeight": 720 }
+    },
+    {
+      "id": "proof-animated-image",
+      "kind": "image",
+      "purpose": "Local animated GIF proof.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/agent-producer-media-sound-proof/inputs/signal.gif"
+      },
+      "destination": { "scope": "composition", "fileName": "signal.gif" },
+      "requirements": { "minWidth": 640, "minHeight": 360 }
+    },
+    {
+      "id": "proof-video",
+      "kind": "video",
+      "purpose": "Local normalized H.264/AAC video proof.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/agent-producer-media-sound-proof/inputs/local-video.mp4"
+      },
+      "destination": { "scope": "composition", "fileName": "local-video.mp4" },
+      "requirements": { "minWidth": 1280, "minHeight": 720, "minDurationInSeconds": 3.5 }
+    },
+    {
+      "id": "proof-lottie",
+      "kind": "lottie",
+      "purpose": "Expression-free local Lottie proof.",
+      "source": { "provider": "repo-authored", "license": "CC0-1.0" },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "scripts/fixtures/producer-media-sound/lottie.json"
+      },
+      "destination": { "scope": "composition", "fileName": "signal-orbit.json" },
+      "requirements": { "minWidth": 640, "minHeight": 640, "minDurationInSeconds": 3.5 }
+    }
+  ]
+}

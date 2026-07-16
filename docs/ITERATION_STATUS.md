@@ -22,12 +22,38 @@ Phase 6B transitions and remaining showcase coverage is complete.
 
 Phase 6 Remotion capability core is complete.
 
-Phase 7 dynamic existing media and sound design has not started.
+Phase 7 dynamic existing media and sound design is complete.
+
+Phase 8 code-driven style profiles has not started.
 
 Phase 0 authority reset, Phase 1 direct VoxCPM runtime, Phase 2 F5 removal,
 Phase 3 Web product removal, and Phase 4 Producer OS consolidation remain
-complete. Phase 5 existing asset supply and Phase 6 capability core also remain
-complete. Phase 7 is the next bounded phase and has not started.
+complete. Phase 5 existing asset supply, Phase 6 capability core, and Phase 7
+dynamic media/sound also remain complete. Phase 8 has not started.
+
+## Implemented Phase 7 Boundary
+
+- installed exact `@remotion/media`, `@remotion/lottie`, and
+  `@remotion/motion-blur` `4.0.489` plus exact `lottie-web@5.13.0`; Rive remains
+  unadmitted without an approved local `.riv` asset and real proof
+- added local Video, AnimatedImage, and Lottie blocks plus fixed CameraMotionBlur
+  and Trail treatments; all paths fail closed on remote/absolute/traversal input
+- added manifest-backed narration/BGM/ambience/SFX roles, deterministic bed
+  fades and narration ducking, transition-SFX mappings, and local Audio rendering
+- extended asset supply/preflight with sound policy, FFmpeg peak and long-silence
+  checks, and Lottie expression metadata
+- added `AgentProducerMediaSoundProof` source, fixture generation, one maintained
+  registry entry, video registration, and two code-only cover Stills
+- generated fixture media and cover review artifacts stay ignored; existing
+  finished compositions and every frozen registry record remain unchanged
+- generated three real direct VoxCPM narration WAV files; the service's normal
+  idle-unloaded `503/loading` state was handled by calling narration directly,
+  which reloaded the model automatically without a provider fallback
+- localized 11 manifest assets and passed checksum, provenance/license,
+  media/Lottie metadata, peak, long-silence, and maintained-sample preflight
+- reviewed three representative frames and both covers, proved identical
+  Lottie-frame SHA-256 across duplicate renders, and rendered a 19.050667-second
+  1920x1080 30fps H.264 video with 48kHz stereo AAC audio
 
 ## Implemented Phase 6B Boundary
 
@@ -148,9 +174,9 @@ Repository-wide Docker lint retains the freshly confirmed historical baseline
 of 39 errors and 2 warnings unless the final post-upgrade run proves otherwise.
 Phase 6 does not claim unrelated lint cleanup.
 
-VoxCPM provider docs, `.env.example`, Compose, Producer sample manifests, and
-frozen compositions remain unchanged. Phase 6B extends only the isolated
-showcase registration already added by Phase 6A.
+VoxCPM provider docs now record the 10-minute idle unload and request-triggered
+reload contract. `.env.example` and Compose remain unchanged. Every frozen
+composition remains unchanged.
 
 ## Current Commands
 
@@ -163,14 +189,14 @@ npm run producer:stills -- --composition <composition-id>
 npm run producer:render -- --composition <composition-id>
 npm run smoke:remotion-version-gate
 npm run smoke:remotion-capabilities
+npm run smoke:producer-media-sound
+npm run producer:media-sound-fixtures
 ```
 
 ## Next Bounded Phase
 
-The next bounded phase is Phase 7 dynamic existing media and sound design. It
-has not started. This Phase 6B delivery does not add the reusable local video
-block, animated media, Lottie/Rive, SFX library, music, ducking, or audio gates
-owned by Phase 7.
+Phase 8 code-driven style profiles is next and has not started. This Phase 7
+delivery stops before any style-profile implementation.
 
 ## Frozen History
 

@@ -17,6 +17,9 @@ src/remotion/
 |-- effects/                  # Phase 6A Producer-owned effect presets
 |-- styles/                   # Phase 6A measured text fitting
 |-- transitions/              # Phase 6B official presets and duration accounting
+|-- media/                    # Phase 7 local Video, AnimatedImage, and Lottie blocks
+|-- motion/                   # Phase 7 fixed motion-blur and trail treatments
+|-- sound/                    # Phase 7 soundtrack, envelopes, library, and SFX mapping
 |-- capability-showcase/      # complete isolated Agent Producer inventory composition
 |-- standalone-video/         # Producer timing/audio/caption/canvas runtime
 |-- producer-samples/         # future sample manifest, scaffold, and blocks
@@ -37,6 +40,9 @@ src/remotion/
 | Effect presets | `effects/` | `comic-print`, `cyber-scan`, `paper-grain`, and `pixel-grid`. |
 | Text fitting | `styles/fit-text.ts` | Guarded CJK-aware width/height/line fitting. |
 | Transition presets | `transitions/` | Four official Producer presets and overlap-aware duration accounting. |
+| Dynamic media | `media/` | Local manifest-backed video, animated image, and Lottie rendering. |
+| Motion treatments | `motion/` | Fixed camera, typography, icon, and particle blur/trail ids. |
+| Sound design | `sound/` | Local role library, bed envelopes, ducking, soundtrack, and transition SFX. |
 | Capability inventory | `capability-showcase/` | `AgentProducerCapabilityShowcase`; not a template. |
 | Frozen recipe compatibility | `recipes/blocks/`, `recipes/timing/` | Do not extend for future work. |
 
@@ -49,7 +55,8 @@ src/remotion/
 - Keep the installed Remotion dependency closure exact at `4.0.489` and run
   `smoke:remotion-version-gate` and `smoke:remotion-capabilities` before using
   Phase 6 effects, text layout, transitions, or canvas-source capabilities.
-  Phase 7 dynamic existing media and sound design has not started.
+- Run `smoke:producer-media-sound` and asset preflight before using Phase 7
+  local dynamic media or sound-design surfaces.
 - Build topic data, narration, and scene order inside the dedicated
   composition.
 - Use `standalone-video/caption-types` for future Producer captions.
@@ -70,5 +77,6 @@ docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npx remotion compositions src/remotion/index.ts'
 npm run smoke:remotion-version-gate
 npm run smoke:remotion-capabilities
+npm run smoke:producer-media-sound
 npm run producer:stills -- --composition <composition-id>
 ```

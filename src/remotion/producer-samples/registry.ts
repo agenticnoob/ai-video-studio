@@ -1,4 +1,5 @@
 import type { MaintainedProducerSampleManifest, ProducerSampleManifest } from "./manifest";
+import { agentProducerMediaSoundProofManifest } from "../AgentProducerMediaSoundProof/manifest";
 
 export const producerSampleManifests = [
   {
@@ -684,6 +685,7 @@ export const producerSampleManifests = [
       "GitTagBar (10-tag command decoration) is sample-local and not yet promoted.",
     ],
   },
+  agentProducerMediaSoundProofManifest,
 ] as const satisfies readonly ProducerSampleManifest[];
 
 export const getProducerSampleManifestByCompositionId = (

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "completedPhases": [0, 1, 2, 3, 4, 5, 6],
+  "completedPhases": [0, 1, 2, 3, 4, 5, 6, 7],
   "completedPhaseSlices": [
     {
       "phase": 6,
@@ -19,6 +19,12 @@
       "slice": "transitions-showcase",
       "status": "complete",
       "reason": "Exact-version official transitions and light leaks now provide Producer-owned transition presets, duration accounting, cinematic treatment, and HTML/SVG/image/video canvas proofs."
+    },
+    {
+      "phase": 7,
+      "slice": "dynamic-existing-media-sound-design",
+      "status": "complete",
+      "reason": "Producer-owned local dynamic media, motion treatments, sound design, audio quality gates, and one maintained proof passed real narration, preflight, deterministic still, cover, and MP4 verification."
     }
   ],
   "decisionDate": "2026-07-15",
@@ -170,6 +176,38 @@
         "action": "retain",
         "phase": 6,
         "reason": "Isolated Agent Producer inventory composition for verified capabilities."
+      },
+      {
+        "id": "producer-media",
+        "path": "src/remotion/media",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 7,
+        "reason": "Producer-owned local Video, AnimatedImage, and Lottie rendering blocks."
+      },
+      {
+        "id": "producer-motion",
+        "path": "src/remotion/motion",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 7,
+        "reason": "Producer-owned fixed motion-blur and trail treatments."
+      },
+      {
+        "id": "producer-sound",
+        "path": "src/remotion/sound",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 7,
+        "reason": "Producer-owned manifest-backed sound library, envelopes, soundtrack, and transition SFX."
+      },
+      {
+        "id": "media-sound-proof",
+        "path": "src/remotion/AgentProducerMediaSoundProof",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 7,
+        "reason": "Maintained proof source for local media and sound design; generated binaries remain ignored."
       }
     ],
     "webF5Only": [

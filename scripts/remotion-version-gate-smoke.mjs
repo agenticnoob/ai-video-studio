@@ -42,11 +42,14 @@ for (const name of [
   "@remotion/layout-utils",
   "@remotion/light-leaks",
   "@remotion/transitions",
+  "@remotion/media",
+  "@remotion/lottie",
+  "@remotion/motion-blur",
 ]) {
   assert.equal(
     allDirectDependencies[name],
     expectedVersion,
-    `Phase 6 package must be exactly ${expectedVersion}: ${name}`,
+    `Maintained Remotion package must be exactly ${expectedVersion}: ${name}`,
   );
 }
 
@@ -60,9 +63,8 @@ const roadmap = read("docs/AGENT_PRODUCER_ONLY_ROADMAP.md");
 assert(iterationStatus.includes("Phase 6 version gate is complete."));
 assert(iterationStatus.includes("Phase 6A effects and text-layout foundation is complete."));
 assert(iterationStatus.includes("Phase 6 Remotion capability core is complete."));
-assert(
-  iterationStatus.includes("Phase 7 dynamic existing media and sound design has not started."),
-);
+assert(iterationStatus.includes("Phase 7 dynamic existing media and sound design is complete."));
+assert(iterationStatus.includes("Phase 8 code-driven style profiles has not started."));
 assert(roadmap.includes("Phase 6B transitions and remaining showcase coverage complete"));
 assert(
   inventory.completedPhaseSlices.some(

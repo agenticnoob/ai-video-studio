@@ -190,9 +190,7 @@ assert(
 const iterationStatus = read("docs/ITERATION_STATUS.md");
 assert(iterationStatus.includes("Phase 6A effects and text-layout foundation is complete."));
 assert(iterationStatus.includes("Phase 6 Remotion capability core is complete."));
-assert(
-  iterationStatus.includes("Phase 7 dynamic existing media and sound design has not started."),
-);
+assert(iterationStatus.includes("Phase 7 dynamic existing media and sound design is complete."));
 
 const producerSkill = read(".agents/skills/ai-video-studio-agent-producer/SKILL.md");
 for (const required of [

@@ -34,6 +34,9 @@ narration, and one-off scene arrangements remain composition-local.
 | `src/remotion/catalog/` | discovery metadata and review fixtures |
 | `src/remotion/effects/` | Producer-owned deterministic effect preset factories |
 | `src/remotion/styles/` | measured text fitting and layout diagnostics |
+| `src/remotion/media/` | local Video, AnimatedImage, and Lottie render blocks |
+| `src/remotion/motion/` | fixed CameraMotionBlur and Trail treatment selection |
+| `src/remotion/sound/` | manifest-backed sound library, envelopes, soundtrack, and transition-SFX mapping |
 | `src/remotion/capability-showcase/` | isolated Agent Producer capability inventory composition |
 | dedicated composition | topic data, narration, scene order, and local arrangement |
 | Agent Producer Skill | selection rules and production workflow |
@@ -124,6 +127,11 @@ Phase 6 Remotion capability core is complete.
 | `cinematic-film-burn` | deliberate high-energy cinematic chapter breaks |
 | `getProducerTransitionSeriesDuration()` | total duration for adjacent transition overlaps using official timing objects |
 | `getProducerMediaEffectPreset()` | source-preserving effects for HTML, SVG, image, and video canvas sources |
+| `ProducerLocalVideo` | local manifest-backed video that needs trim, loop, rate, crop, or volume control |
+| `ProducerAnimatedImage` | local supported animated image with explicit fit, speed, and loop behavior |
+| `ProducerLottie` | local expression-inspected Lottie JSON loaded through `staticFile()` |
+| `ProducerMotionTreatment` | fixed camera, typography, icon, or particle blur/trail treatment |
+| `ProducerSoundtrack` | explicit local BGM, ambience, transition SFX, fades, and narration ducking |
 
 Inspect `AgentProducerCapabilityShowcase` and run
 `npm run smoke:remotion-capabilities` before selecting these shared surfaces.
@@ -133,6 +141,7 @@ HTML-in-canvas rendering depends on
 `Config.setAllowHtmlInCanvasEnabled(true)` and the compatible Chromium runtime
 used by the Docker Producer; it is not a generic browser guarantee.
 
-Phase 7 dynamic existing media and sound design is next and has not started.
-The showcase-local ignored FFmpeg fixture proves canvas video effects but is
-not the reusable Phase 7 video block.
+Phase 7 dynamic existing media and sound design owns the reusable modules above
+and the maintained `AgentProducerMediaSoundProof`. The Phase 6 showcase-local
+ignored FFmpeg fixture remains a separate canvas-effect proof. Rive is not
+installed or claimed without an approved local `.riv` asset and real use.

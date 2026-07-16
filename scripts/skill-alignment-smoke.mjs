@@ -107,8 +107,19 @@ for (const required of [
   "fitProducerText",
   "AgentProducerCapabilityShowcase",
   "npm run smoke:remotion-capabilities",
+  "ProducerLocalVideo",
+  "ProducerAnimatedImage",
+  "ProducerLottie",
+  "ProducerSoundtrack",
+  "npm run smoke:producer-media-sound",
 ])
   assertIncludes(producerSkill, required, "Agent Producer skill");
+assertIncludesWords(
+  producerSkill,
+  "first real request reloads it automatically",
+  "Agent Producer skill",
+);
+assertIncludesWords(producerSkill, "`/ready` is diagnostic, not a gate", "Agent Producer skill");
 for (const forbidden of [
   "Use `VideoProject`",
   "TTS_PROVIDER=f5-tts",
@@ -189,6 +200,8 @@ for (const required of [
   "scripts/lib/producer-audio/",
   "voices/clone/",
   "public/generated/<slug>/audio/",
+  "unloads the model after 10 minutes",
+  "do not require HTTP `200` before narration",
 ]) {
   assertIncludes(voxcpmDoc, required, "VoxCPM provider doc");
 }

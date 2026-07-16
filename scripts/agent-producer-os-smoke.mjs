@@ -63,12 +63,20 @@ assert.deepEqual(
 );
 assert.equal(
   maintainedProducerSampleManifests.length,
-  0,
-  "No unfinished future sample is registered.",
+  1,
+  "Phase 7 must register exactly one maintained proof sample.",
 );
 assert(
-  producerSampleManifests.every((manifest) => manifest.sampleStatus === "frozen-reference"),
-  "Every existing finished sample must be classified as a frozen reference.",
+  maintainedProducerSampleManifests[0]?.compositionId === "AgentProducerMediaSoundProof",
+  "The Phase 7 proof must be the only maintained sample.",
+);
+assert(
+  producerSampleManifests.every(
+    (manifest) =>
+      manifest.compositionId === "AgentProducerMediaSoundProof" ||
+      manifest.sampleStatus === "frozen-reference",
+  ),
+  "Every pre-Phase-7 finished sample must remain a frozen reference.",
 );
 assert.doesNotThrow(() => assertProducerSampleManifest(sampleNameManifest));
 assert.equal(
@@ -94,6 +102,21 @@ const renderJobs = buildProducerRenderJobs({ manifest: sampleNameManifest });
 assert.deepEqual(
   renderJobs.map((job) => job.kind),
   ["video", "cover-16x9", "cover-9x16"],
+);
+const containerRenderJobs = buildProducerRenderJobs({
+  execution: "producer-container",
+  manifest: sampleNameManifest,
+});
+assert.deepEqual(
+  containerRenderJobs.slice(1).map((job) => job.command),
+  ["npx", "npx"],
+  "Producer-container cover renders must not start nested Docker jobs.",
+);
+const renderVideoSource = read("scripts/render-video.sh");
+assert(!renderVideoSource.includes("jq "), "Producer render must not depend on jq.");
+assert(
+  renderVideoSource.includes("/.dockerenv"),
+  "Producer render must execute Remotion directly inside its container.",
 );
 assert.deepEqual(
   renderJobs.flatMap((job) => job.outputPaths),

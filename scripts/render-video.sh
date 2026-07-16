@@ -42,11 +42,12 @@ if [ ! -f "$META_FILE" ]; then
   exit 1
 fi
 
-# Validate and extract metadata
-TITLE=$(jq -r '.title // empty' "$META_FILE")
-DESCRIPTION=$(jq -r '.description // empty' "$META_FILE")
-FPS=$(jq -r '.fps // 30' "$META_FILE")
-CHAPTERS_COUNT=$(jq '.chapters | length' "$META_FILE")
+# Validate metadata with the Node runtime already owned by the Producer image.
+TITLE=$(node -e '
+const fs = require("node:fs");
+const meta = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+process.stdout.write(typeof meta.title === "string" ? meta.title : "");
+' "$META_FILE")
 
 if [ -z "$TITLE" ]; then
   echo "Error: metadata JSON must contain 'title'"
@@ -58,10 +59,18 @@ mkdir -p "out/$SLUG"
 
 # === 1. Render MP4 ===
 echo "=== Rendering $COMPOSITION_ID → out/$SLUG/$SLUG.mp4 ==="
-docker compose run --rm producer bash -lc "
+if [ -f /.dockerenv ]; then
   [ -d /workspace/node_modules/remotion ] || npm install
-  npx remotion render src/remotion/index.ts $COMPOSITION_ID /workspace/out/$SLUG/$SLUG.mp4
-"
+  npx remotion render \
+    src/remotion/index.ts \
+    "$COMPOSITION_ID" \
+    "/workspace/out/$SLUG/$SLUG.mp4"
+else
+  docker compose run --rm producer bash -lc "
+    [ -d /workspace/node_modules/remotion ] || npm install
+    npx remotion render src/remotion/index.ts '$COMPOSITION_ID' '/workspace/out/$SLUG/$SLUG.mp4'
+  "
+fi
 echo "=== Render complete ==="
 
 # === 2. Extract actual duration from ffprobe ===
