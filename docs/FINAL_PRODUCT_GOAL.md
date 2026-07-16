@@ -118,10 +118,11 @@ isolated inventory showcase. No override or mixed Remotion version is present.
 Phase 7 is complete with repo-owned local Video, animated-image, Lottie,
 motion-blur/trail, soundtrack, ducking, transition-SFX, and audio-quality
 surfaces. GIF uses exact `@remotion/gif` for LAN HTTP Studio compatibility;
-APNG/AVIF/WebP retain Remotion `AnimatedImage`. Its maintained proof includes
-real VoxCPM narration, strict asset preflight, deterministic reviewed stills,
-covers, and an H.264/AAC render. Phase 8 style profiles is next and has not
-started.
+APNG/AVIF/WebP retain Remotion `AnimatedImage`, and local Video keeps the
+official native-video fallback available when LAN HTTP Studio lacks WebCodecs
+`VideoDecoder`. Its maintained proof includes real VoxCPM narration, strict
+asset preflight, deterministic reviewed stills, covers, and an H.264/AAC
+render. Phase 8 style profiles is next and has not started.
 
 ## Supporting Authorities
 

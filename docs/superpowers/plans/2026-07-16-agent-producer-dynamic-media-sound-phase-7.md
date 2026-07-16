@@ -333,6 +333,12 @@ Stop after the Phase 7 commit and status verification. Phase 8 style profiles mu
   `AnimatedImage` for APNG/AVIF/WebP. Docker TypeScript, the focused smoke, and
   a fresh LAN HTTP Studio session pass with `ImageDecoder` still unavailable,
   proving the fallback rather than changing browser security assumptions.
+- A second LAN HTTP Studio regression reproduced local MP4 failure with
+  `VideoDecoder` unavailable even though ffprobe confirmed standard H.264 High,
+  yuv420p, 30fps video plus AAC-LC audio. `ProducerLocalVideo` no longer
+  disables or preempts Remotion's official native-video fallback. The same LAN
+  frame now renders through `<OffthreadVideo>` with no error overlay; the
+  expected fallback diagnostic remains a warning.
 - Ignored FFmpeg fixture generation is complete. `git check-ignore` confirms
   proof image/video inputs remain under ignored `public/generated/`.
 - Direct VoxCPM narration initially remained pending because `/ready` returned

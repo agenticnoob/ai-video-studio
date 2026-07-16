@@ -39,7 +39,9 @@ dynamic media/sound also remain complete. Phase 8 has not started.
 - added local Video, animated-image, and Lottie blocks plus fixed
   CameraMotionBlur and Trail treatments; GIF uses `@remotion/gif` so LAN HTTP
   Studio does not require WebCodecs `ImageDecoder`, while APNG/AVIF/WebP retain
-  `AnimatedImage`; all paths fail closed on remote/absolute/traversal input
+  `AnimatedImage`; local Video retains Remotion's native-video fallback when
+  LAN HTTP Studio lacks WebCodecs `VideoDecoder`; all paths fail closed on
+  remote/absolute/traversal input
 - added manifest-backed narration/BGM/ambience/SFX roles, deterministic bed
   fades and narration ducking, transition-SFX mappings, and local Audio rendering
 - extended asset supply/preflight with sound policy, FFmpeg peak and long-silence

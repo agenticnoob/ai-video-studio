@@ -40,6 +40,9 @@ remote media URL. `ProducerAnimatedImage` routes GIF through exact
 `@remotion/gif@4.0.489`, which works on LAN HTTP Studio without WebCodecs
 `ImageDecoder`; APNG/AVIF/WebP continue through Remotion `AnimatedImage` and
 therefore require a browser context that exposes that decoder.
+`ProducerLocalVideo` must not set `disallowFallbackToOffthreadVideo` or force
+`onError` to fail: LAN HTTP Studio may not expose WebCodecs `VideoDecoder`, and
+the official native-video fallback is the supported preview path there.
 
 ## New project setup
 

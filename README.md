@@ -60,8 +60,9 @@ transition-SFX, and audio-QC surfaces are proved by a maintained composition
 with real VoxCPM narration, strict asset preflight, reviewed stills/covers, and
 an H.264/AAC render. GIF playback uses `@remotion/gif`, so LAN HTTP Studio does
 not require the secure-context-only WebCodecs `ImageDecoder`; other supported
-animated formats retain Remotion `AnimatedImage`. Phase 8 style profiles is
-next and has not started.
+animated formats retain Remotion `AnimatedImage`. Local Video allows Remotion's
+official native-video fallback when LAN HTTP Studio does not expose WebCodecs
+`VideoDecoder`. Phase 8 style profiles is next and has not started.
 
 Existing finished compositions remain frozen read-only references. Historical
 `provider: "f5-tts"` metadata in their generated audio files stays truthful; it

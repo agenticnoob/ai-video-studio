@@ -127,7 +127,7 @@ Phase 6 Remotion capability core is complete.
 | `cinematic-film-burn` | deliberate high-energy cinematic chapter breaks |
 | `getProducerTransitionSeriesDuration()` | total duration for adjacent transition overlaps using official timing objects |
 | `getProducerMediaEffectPreset()` | source-preserving effects for HTML, SVG, image, and video canvas sources |
-| `ProducerLocalVideo` | local manifest-backed video that needs trim, loop, rate, crop, or volume control |
+| `ProducerLocalVideo` | local manifest-backed video with trim, loop, rate, crop, and volume control plus the official native-video fallback for LAN HTTP Studio |
 | `ProducerAnimatedImage` | local animated image with explicit fit, speed, and loop behavior; GIF uses `@remotion/gif` for LAN HTTP Studio compatibility, while APNG/AVIF/WebP use `AnimatedImage` |
 | `ProducerLottie` | local expression-inspected Lottie JSON loaded through `staticFile()` |
 | `ProducerMotionTreatment` | fixed camera, typography, icon, or particle blur/trail treatment |

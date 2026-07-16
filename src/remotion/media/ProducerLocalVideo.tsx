@@ -52,11 +52,9 @@ export const ProducerLocalVideo: FC<ProducerLocalVideoProps> = ({
 
   return (
     <Video
-      disallowFallbackToOffthreadVideo
       loop={loop}
       muted={muted}
       objectFit={objectFit}
-      onError={() => "fail"}
       playbackRate={playbackRate}
       src={staticFile(src)}
       style={{ ...style, height, objectPosition, width }}

@@ -68,7 +68,9 @@ the reusable Phase 7 media and sound surfaces.
 ## Phase 7 Media And Sound Selection
 
 - `ProducerLocalVideo`: manifest-backed local video with explicit trim, loop,
-  playback rate, crop, and volume behavior
+  playback rate, crop, and volume behavior; keep Remotion's official
+  native-video fallback enabled so LAN HTTP Studio works without WebCodecs
+  `VideoDecoder`
 - `ProducerAnimatedImage`: local GIF/APNG/AVIF/WebP playback with explicit
   geometry, fit, speed, and loop behavior; GIF uses `@remotion/gif` so LAN HTTP
   Studio does not depend on WebCodecs `ImageDecoder`, while the other formats

@@ -45,7 +45,9 @@ repository contains `.codegraph/`.
   `4.0.489` and remain inside the uniform Remotion closure.
 - Phase 7 local media/motion/sound modules, asset audio-QC, and the maintained
   proof are complete with real VoxCPM narration, strict preflight, reviewed
-  stills/covers, and an H.264/AAC render. Phase 8 is next and has not started.
+  stills/covers, and an H.264/AAC render. Local video keeps Remotion's official
+  native-video fallback available for LAN HTTP Studio, where WebCodecs may be
+  unavailable. Phase 8 is next and has not started.
 - Historical caption/storyboard contracts and `recipes/blocks` plus
   `recipes/timing` remain only for frozen composition compatibility.
 

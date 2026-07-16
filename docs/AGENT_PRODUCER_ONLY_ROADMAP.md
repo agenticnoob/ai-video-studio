@@ -864,7 +864,8 @@ Official references:
 
 ### Deliverables
 
-- local `<Video>` block with trim, loop, playback-rate, crop, and volume control
+- local `<Video>` block with trim, loop, playback-rate, crop, volume control,
+  and the official native-video fallback for LAN HTTP Studio
 - animated-image block: GIF through `@remotion/gif` for LAN HTTP Studio, and
   APNG/AVIF/WebP through Remotion `AnimatedImage`
 - Lottie block using local `staticFile()` data and metadata validation

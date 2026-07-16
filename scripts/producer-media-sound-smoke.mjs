@@ -64,8 +64,9 @@ for (const relativePath of requiredPaths) {
   assert(existsSync(path.join(root, relativePath)), `Missing Phase 7 surface: ${relativePath}`);
 }
 
+const localVideoSource = read("src/remotion/media/ProducerLocalVideo.tsx");
 const mediaSource = [
-  read("src/remotion/media/ProducerLocalVideo.tsx"),
+  localVideoSource,
   read("src/remotion/media/ProducerAnimatedImage.tsx"),
   read("src/remotion/media/ProducerLottie.tsx"),
 ].join("\n");
@@ -84,6 +85,14 @@ for (const token of [
 ]) {
   assert(mediaSource.includes(token), `Dynamic media source must include ${token}`);
 }
+assert(
+  !localVideoSource.includes("disallowFallbackToOffthreadVideo"),
+  "Producer local video must allow the official native-video fallback for LAN HTTP Studio",
+);
+assert(
+  !localVideoSource.includes('onError={() => "fail"}'),
+  "Producer local video must not force a decode failure before the native-video fallback",
+);
 
 const motionSource = read("src/remotion/motion/presets.tsx");
 for (const token of [
