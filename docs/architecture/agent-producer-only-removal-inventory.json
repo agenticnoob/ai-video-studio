@@ -25,6 +25,12 @@
       "slice": "dynamic-existing-media-sound-design",
       "status": "complete",
       "reason": "Producer-owned local dynamic media, motion treatments, sound design, audio quality gates, and one maintained proof passed real narration, preflight, deterministic still, cover, and MP4 verification."
+    },
+    {
+      "phase": 8,
+      "slice": "style-profile-contract-showcase",
+      "status": "complete",
+      "reason": "Six typed Producer style profiles and deterministic code-only capability-showcase fixtures define visibly different composition, motion, texture, media, Three.js, caption, and sound languages; real dedicated-composition proof remains Phase 8B."
     }
   ],
   "decisionDate": "2026-07-15",
@@ -168,6 +174,14 @@
         "action": "retain",
         "phase": 6,
         "reason": "Producer-owned measured text layout and overflow-prevention helpers."
+      },
+      {
+        "id": "producer-style-profiles",
+        "path": "src/remotion/styles/profiles.ts",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 8,
+        "reason": "Producer-owned constraints and defaults for six code-driven composition, motion, texture, media, caption, and sound languages."
       },
       {
         "id": "capability-showcase",

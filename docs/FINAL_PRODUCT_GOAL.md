@@ -122,7 +122,12 @@ APNG/AVIF/WebP retain Remotion `AnimatedImage`, and local Video keeps the
 official native-video fallback available when LAN HTTP Studio lacks WebCodecs
 `VideoDecoder`. Its maintained proof includes real VoxCPM narration, strict
 asset preflight, deterministic reviewed stills, covers, and an H.264/AAC
-render. Phase 8 style profiles is next and has not started.
+render. Phase 8A is now complete with six typed code-driven profile contracts and six
+deterministic inventory fixtures. The profiles constrain composition, motion,
+texture, media, Three.js, captions, and sound rather than selecting a template
+or generating a scene. Phase 8 remains in progress: Phase 8B real-composition
+proof is next and has not started, so Phase 8 is not yet complete. Phase 9 has
+not started.
 
 ## Supporting Authorities
 

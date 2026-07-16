@@ -25,7 +25,9 @@ import {
   EFFECTS_PAGE_DURATION_IN_FRAMES,
   TEXT_LAYOUT_PAGE_DURATION_IN_FRAMES,
   TRANSITION_TIMING_PAGE_DURATION_IN_FRAMES,
+  STYLE_PROFILE_SHOWCASE_DURATION_IN_FRAMES,
 } from "./durations";
+import { StyleProfileShowcase } from "./StyleProfileShowcase";
 
 const FONT_FAMILY = "Noto Sans CJK SC";
 const TILE_WIDTH = 800;
@@ -495,6 +497,9 @@ export const RemotionCapabilityShowcase = () => {
         </Series.Sequence>
         <Series.Sequence durationInFrames={CANVAS_SOURCE_PAGE_DURATION_IN_FRAMES}>
           <CanvasSourcesPage />
+        </Series.Sequence>
+        <Series.Sequence durationInFrames={STYLE_PROFILE_SHOWCASE_DURATION_IN_FRAMES}>
+          <StyleProfileShowcase />
         </Series.Sequence>
       </Series>
     </AbsoluteFill>

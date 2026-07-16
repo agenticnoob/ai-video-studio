@@ -18,7 +18,9 @@ topic -> research/existing assets -> narration/VoxCPM -> component inventory
 
 Roadmap status: Phase 5 existing-asset supply, Phase 6 Remotion capability core,
 and Phase 7 dynamic media/sound are complete with every installed Remotion
-package exact `4.0.489`. Phase 8 style profiles is next and has not started.
+package exact `4.0.489`. Phase 8A style-profile contract and showcase are
+complete. Phase 8 remains in progress; Phase 8B real-composition proof is next
+and has not started.
 
 ## Skill Stack
 
@@ -89,6 +91,33 @@ Import these surfaces from `src/remotion/media/`, `src/remotion/motion/`, and
 `producer:assets` and `producer:preflight` before representative stills. Rive
 remains unadmitted until an approved local `.riv` asset is proved in a real
 maintained sample.
+
+## Phase 8A Style Profile Selection
+
+Call `getProducerStyleProfile()` only after inspecting the six code-only pages
+in `AgentProducerCapabilityShowcase` and running
+`npm run smoke:producer-style-profiles`:
+
+- `editorial-tech`: thesis-led typography, diagrams, restrained motion, and
+  evidence media
+- `comic-anime`: panel sequencing, halftone/outline texture, speed accents, and
+  existing sprites
+- `cinematic-3d`: code geometry or manifest-backed GLB/glTF, motivated camera,
+  depth, light, material, and weighted sound
+- `retro-terminal`: command rhythm, scanlines, pixel/state transitions, and UI
+  signal sound
+- `documentary-media`: source-first images/video, maps, quotes, lower thirds,
+  restrained motion, and observational sound
+- `hand-drawn-explainer`: paper texture, SVG drawings, rough annotations,
+  diagram reveals, and organic mark sound
+
+A profile constrains palette, typography, materials, layout grammar, approved
+primitives/blocks, effect intensity, transition, motion, media mix, Three.js,
+captions, BGM/SFX, and forbidden defaults. It is not a template, recipe,
+planner schema, universal scene DSL, or automatic composition builder. The
+agent still owns topic-specific structure and may keep a treatment sample-local.
+Phase 8B must prove at least two profiles in new real dedicated compositions;
+do not retrofit completed or frozen compositions for that evidence.
 
 ## Start Here
 
@@ -344,6 +373,7 @@ Use shared tools for deterministic work in future samples:
 - exact Remotion dependency boundary: `npm run smoke:remotion-version-gate`
 - effects/text-layout capability boundary: `npm run smoke:remotion-capabilities`
 - dynamic-media and sound-design boundary: `npm run smoke:producer-media-sound`
+- style-profile contract and showcase boundary: `npm run smoke:producer-style-profiles`
 - mechanical validation: `npm run producer:validate -- --module <validation-module>`
 - manifest-driven review stills: `npm run producer:stills -- --composition <composition-id>`
 - metadata-bundled MP4 and both code-rendered covers:
@@ -409,6 +439,7 @@ npm run smoke:agent-producer-architecture
 npm run smoke:skill-alignment
 npm run smoke:producer-assets
 npm run smoke:remotion-version-gate
+npm run smoke:producer-style-profiles
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npx tsc --noEmit --pretty false'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run lint'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run build'

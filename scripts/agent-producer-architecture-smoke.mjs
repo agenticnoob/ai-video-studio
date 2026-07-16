@@ -54,6 +54,13 @@ assert.deepEqual(
       reason:
         "Producer-owned local dynamic media, motion treatments, sound design, audio quality gates, and one maintained proof passed real narration, preflight, deterministic still, cover, and MP4 verification.",
     },
+    {
+      phase: 8,
+      slice: "style-profile-contract-showcase",
+      status: "complete",
+      reason:
+        "Six typed Producer style profiles and deterministic code-only capability-showcase fixtures define visibly different composition, motion, texture, media, Three.js, caption, and sound languages; real dedicated-composition proof remains Phase 8B.",
+    },
   ],
   "completed roadmap phase slices",
 );
@@ -167,7 +174,12 @@ assert(
   ),
 );
 assert(
-  read("docs/ITERATION_STATUS.md").includes("Phase 8 code-driven style profiles has not started."),
+  read("docs/ITERATION_STATUS.md").includes(
+    "Phase 8A style-profile contract and showcase is complete.",
+  ),
+);
+assert(
+  read("docs/ITERATION_STATUS.md").includes("Phase 8B real-composition proof has not started."),
 );
 assert(read("docs/VISUAL_RECIPE_ROADMAP.md").includes("Superseded"));
 
@@ -184,8 +196,16 @@ for (const command of [
   "smoke:remotion-capabilities",
   "smoke:remotion-version-gate",
   "smoke:producer-media-sound",
+  "smoke:producer-style-profiles",
 ]) {
   assert(packageJson.scripts[command], `package.json must expose ${command}`);
+}
+for (const phase8aPath of [
+  "scripts/producer-style-profiles-smoke.mjs",
+  "src/remotion/styles/profiles.ts",
+  "src/remotion/capability-showcase/StyleProfileShowcase.tsx",
+]) {
+  assert(existsSync(absolute(phase8aPath)), `Phase 8A path must exist: ${phase8aPath}`);
 }
 for (const phase7Path of [
   "scripts/producer-media-sound-smoke.mjs",

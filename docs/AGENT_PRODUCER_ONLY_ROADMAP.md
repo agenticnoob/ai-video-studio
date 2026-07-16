@@ -1,7 +1,8 @@
 # Agent Producer-Only Roadmap
 
-Status: Phase 0 through Phase 7 complete. Phase 8 code-driven style profiles is
-next and has not started.
+Status: Phase 0 through Phase 7 complete. Phase 8 is in progress: Phase 8A
+style-profile contract and capability-showcase fixtures are complete; Phase 8B
+real-composition proof is next and has not started. Phase 9 has not started.
 
 Decision date: 2026-07-15.
 
@@ -889,10 +890,44 @@ Official references:
 
 ## 13. Phase 8 - Code-Driven Style Profiles
 
+Status: in progress. Phase 8A is complete; Phase 8B is next and has not
+started.
+
 ### Goal
 
 Create visibly different production languages without templates or generated
 visual media.
+
+### Phase 8A - Contract And Capability Showcase
+
+Status: complete.
+
+- `src/remotion/styles/profiles.ts` defines and validates all six profile ids
+  as constraints/defaults, not scene content or a template schema
+- every profile owns palette/typography, material/background, a distinct
+  layout grammar, approved primitives/blocks, effect/intensity, transition,
+  motion, media mix, Three.js policy, caption treatment, BGM/SFX strategy, and
+  forbidden defaults
+- `AgentProducerCapabilityShowcase` applies the same message through six
+  independent 90-frame code-only fixtures; the `cinematic-3d` fixture uses
+  isolated code geometry, explicit lights, and frame-derived motion
+- the focused smoke proves six distinct layout grammars and sound signatures,
+  at least four effect/transition/motion combinations, strict resolver
+  behavior, forbidden boundaries, and the exact 1150-frame inventory duration
+- no finished composition, provider, asset manifest, sample registry, or
+  generated/private artifact is modified
+
+### Phase 8B - Real Dedicated-Composition Proof
+
+Status: next and not started.
+
+- create at least two new real dedicated compositions using different profiles
+- route both through normal VoxCPM narration, asset preflight, validation,
+  representative still review, code-rendered covers, MP4, and ffprobe gates
+- prove profile choice changes visual, motion, texture, media, and audible sound
+  language in production rather than only in inventory fixtures
+- add explicit style-profile selection to the future maintained-sample boundary
+  without retrofitting or editing completed/frozen compositions
 
 ### Initial profiles
 

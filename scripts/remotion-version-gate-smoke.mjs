@@ -64,7 +64,8 @@ assert(iterationStatus.includes("Phase 6 version gate is complete."));
 assert(iterationStatus.includes("Phase 6A effects and text-layout foundation is complete."));
 assert(iterationStatus.includes("Phase 6 Remotion capability core is complete."));
 assert(iterationStatus.includes("Phase 7 dynamic existing media and sound design is complete."));
-assert(iterationStatus.includes("Phase 8 code-driven style profiles has not started."));
+assert(iterationStatus.includes("Phase 8A style-profile contract and showcase is complete."));
+assert(iterationStatus.includes("Phase 8B real-composition proof has not started."));
 assert(roadmap.includes("Phase 6B transitions and remaining showcase coverage complete"));
 assert(
   inventory.completedPhaseSlices.some(

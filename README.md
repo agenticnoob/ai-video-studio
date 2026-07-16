@@ -62,7 +62,13 @@ an H.264/AAC render. GIF playback uses `@remotion/gif`, so LAN HTTP Studio does
 not require the secure-context-only WebCodecs `ImageDecoder`; other supported
 animated formats retain Remotion `AnimatedImage`. Local Video allows Remotion's
 official native-video fallback when LAN HTTP Studio does not expose WebCodecs
-`VideoDecoder`. Phase 8 style profiles is next and has not started.
+`VideoDecoder`. `getProducerStyleProfile()` now exposes the Phase 8A contract for
+`editorial-tech`, `comic-anime`, `cinematic-3d`, `retro-terminal`,
+`documentary-media`, and `hand-drawn-explainer`. The six code-only inventory
+fixtures use the same message but visibly different composition, motion,
+texture, media, Three.js, caption, and sound policies. Phase 8 remains in
+progress: Phase 8B must prove at least two profiles in new real dedicated
+compositions and has not started. Phase 9 has not started.
 
 Existing finished compositions remain frozen read-only references. Historical
 `provider: "f5-tts"` metadata in their generated audio files stays truthful; it
@@ -116,6 +122,7 @@ npm run smoke:producer-assets
 npm run smoke:remotion-version-gate
 npm run smoke:remotion-capabilities
 npm run smoke:producer-media-sound
+npm run smoke:producer-style-profiles
 npm run smoke:producer-audio-direct-voxcpm
 npm run smoke:producer-audio-tools
 npm run smoke:agent-producer-web-removal

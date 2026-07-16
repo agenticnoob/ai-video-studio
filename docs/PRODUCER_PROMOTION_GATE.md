@@ -54,6 +54,14 @@ A promotion candidate records:
 
 Any “no” keeps the candidate sample-local.
 
+Phase 8A provides the typed six-profile registry and deterministic inventory
+fixtures. That registry is an available Producer constraint surface, but a
+specific profile is not considered proven for production merely because its
+isolated fixture renders. Phase 8B must prove at least two profiles in new real
+dedicated compositions with narration, asset preflight, still/cover review,
+sound, and MP4 evidence before Phase 8 is complete. Never retrofit a completed
+or frozen composition to manufacture promotion evidence.
+
 ## Documentation Hooks
 
 Update only the matching authority:

@@ -43,6 +43,13 @@ therefore require a browser context that exposes that decoder.
 `ProducerLocalVideo` must not set `disallowFallbackToOffthreadVideo` or force
 `onError` to fail: LAN HTTP Studio may not expose WebCodecs `VideoDecoder`, and
 the official native-video fallback is the supported preview path there.
+Phase 8A adds `getProducerStyleProfile()` with six constraint profiles and six
+code-only pages in `AgentProducerCapabilityShowcase`. Run
+`npm run smoke:producer-style-profiles` before using one. A profile must change
+composition, motion, texture, media, Three.js, caption, and sound language; it
+must never become a color theme, template, recipe, planner schema, or automatic
+scene builder. Phase 8B real-composition proof has not started, so do not
+retrofit completed or frozen compositions to claim profile adoption.
 
 ## New project setup
 

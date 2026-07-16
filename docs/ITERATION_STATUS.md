@@ -1,6 +1,6 @@
 # Iteration Status
 
-Last updated: 2026-07-16
+Last updated: 2026-07-17
 
 ## Current Authority
 
@@ -24,12 +24,36 @@ Phase 6 Remotion capability core is complete.
 
 Phase 7 dynamic existing media and sound design is complete.
 
-Phase 8 code-driven style profiles has not started.
+Phase 8A style-profile contract and showcase is complete.
+
+Phase 8B real-composition proof has not started.
 
 Phase 0 authority reset, Phase 1 direct VoxCPM runtime, Phase 2 F5 removal,
 Phase 3 Web product removal, and Phase 4 Producer OS consolidation remain
 complete. Phase 5 existing asset supply, Phase 6 capability core, and Phase 7
-dynamic media/sound also remain complete. Phase 8 has not started.
+dynamic media/sound also remain complete. Phase 8 is in progress after the
+Phase 8A contract/showcase slice; Phase 8B and Phase 9 have not started.
+
+## Implemented Phase 8A Boundary
+
+- added `getProducerStyleProfile()` plus strict runtime validation for
+  `editorial-tech`, `comic-anime`, `cinematic-3d`, `retro-terminal`,
+  `documentary-media`, and `hand-drawn-explainer`
+- each profile defines palette/typography, material/background rules, a unique
+  layout grammar, approved primitives/blocks, effects/intensity, transitions,
+  motion policy, media mix, Three.js policy, captions, BGM/SFX strategy, and
+  forbidden defaults
+- extended `AgentProducerCapabilityShowcase` from 610 to 1150 frames with six
+  90-frame code-only fixtures that apply the same message through visibly
+  different composition, motion, texture, and media languages
+- the `cinematic-3d` fixture uses new isolated code geometry, explicit lights,
+  and frame-derived motion through `ThreeCanvas`; no finished composition code
+  was reused or modified
+- profile selection remains Agent Producer judgment and returns constraints,
+  not a template, planner schema, scene DSL, or automatic composition builder
+- Phase 8A adds no real sample, narration, local asset, registry record, cover,
+  MP4, provider/config change, or committed generated artifact; Phase 8B owns
+  the two-real-composition acceptance proof
 
 ## Implemented Phase 7 Boundary
 
@@ -135,6 +159,38 @@ dynamic media/sound also remain complete. Phase 8 has not started.
 
 ## Verification
 
+Phase 8A RED evidence:
+
+- the first Docker `smoke:producer-style-profiles` exited 1 with
+  `Missing Phase 8A surface: src/remotion/styles/profiles.ts`
+- after the registry existed, the same guard advanced to the missing
+  `StyleProfileShowcase` and then the missing inventory-status boundary before
+  becoming GREEN
+
+Phase 8A GREEN evidence:
+
+- the focused style-profile smoke passes both static and compiled-runtime
+  stages; it proves six exact ids, unique layout grammars and sound signatures,
+  at least four effect/transition/motion combinations, strict unknown-id
+  failure, forbidden-source boundaries, and the exact 1150-frame duration
+- duplicate Docker renders at frames 655, 745, 835, 925, 1015, and 1105 have
+  identical SHA-256 pairs respectively: `25595f6c...d2972`,
+  `c9100e9a...fa29`, `259e2b2a...cb20`, `916ecd1b...a12f3`,
+  `3cb91445...61f4`, and `85a08be3...4410`
+- visual review found and fixed one tight-wrap collision in the initial
+  `cinematic-3d` headline; the final six frames have one clear focal point,
+  readable safe-area copy, no overlap or blank source, visible 3D geometry,
+  and composition differences that do not depend on profile labels
+- the fresh ten-command focused Docker suite passes. Docker typecheck, build,
+  and composition listing pass with `AgentProducerCapabilityShowcase` at 1150
+  frames; changed-file ESLint and Prettier are clean
+- repository-wide Docker lint remains the historical 39-error/2-warning
+  baseline, with no Phase 8A file in the failure set
+- all review PNGs remain ignored under `out/phase8a-style-profiles/`; frozen
+  compositions, sample manifests/registry, package dependencies, provider,
+  asset contract, environment, Compose, and generated/private artifacts remain
+  unchanged
+
 Phase 5 RED evidence:
 
 - the initial Docker `smoke:producer-assets` exited 1 with
@@ -199,8 +255,9 @@ npm run producer:media-sound-fixtures
 
 ## Next Bounded Phase
 
-Phase 8 code-driven style profiles is next and has not started. This Phase 7
-delivery stops before any style-profile implementation.
+Phase 8B real-composition proof is next and has not started. It must prove at
+least two different profiles in two new dedicated compositions before Phase 8
+can be marked complete. Phase 9 has not started.
 
 ## Frozen History
 

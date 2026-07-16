@@ -47,7 +47,12 @@ repository contains `.codegraph/`.
   proof are complete with real VoxCPM narration, strict preflight, reviewed
   stills/covers, and an H.264/AAC render. Local video keeps Remotion's official
   native-video fallback available for LAN HTTP Studio, where WebCodecs may be
-  unavailable. Phase 8 is next and has not started.
+  unavailable.
+- Phase 8A style-profile contract and showcase are complete: six typed profiles
+  change composition, motion, texture, media, Three.js, caption, and sound
+  language, and six code-only inventory fixtures prove the visual boundary.
+  Phase 8 remains in progress; Phase 8B real-composition proof is next and has
+  not started. Phase 9 has not started.
 - Historical caption/storyboard contracts and `recipes/blocks` plus
   `recipes/timing` remain only for frozen composition compatibility.
 
@@ -116,6 +121,7 @@ npm run smoke:producer-audio-tools
 npm run smoke:remotion-version-gate
 npm run smoke:remotion-capabilities
 npm run smoke:producer-media-sound
+npm run smoke:producer-style-profiles
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
 ```

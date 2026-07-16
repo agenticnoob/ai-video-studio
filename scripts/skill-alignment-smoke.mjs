@@ -112,6 +112,14 @@ for (const required of [
   "ProducerLottie",
   "ProducerSoundtrack",
   "npm run smoke:producer-media-sound",
+  "getProducerStyleProfile",
+  "editorial-tech",
+  "comic-anime",
+  "cinematic-3d",
+  "retro-terminal",
+  "documentary-media",
+  "hand-drawn-explainer",
+  "npm run smoke:producer-style-profiles",
 ])
   assertIncludes(producerSkill, required, "Agent Producer skill");
 assertIncludesWords(
@@ -219,6 +227,8 @@ assertIncludes(remotionSkill, "fitProducerText", "Remotion skill");
 assertIncludes(remotionSkill, "getProducerTransitionPreset", "Remotion skill");
 assertIncludes(remotionSkill, "getProducerTransitionSeriesDuration", "Remotion skill");
 assertIncludes(remotionSkill, "AgentProducerCapabilityShowcase", "Remotion skill");
+assertIncludes(remotionSkill, "getProducerStyleProfile", "Remotion skill");
+assertIncludes(remotionSkill, "npm run smoke:producer-style-profiles", "Remotion skill");
 
 for (const skillName of ["ai-video-studio-agent-producer"]) {
   const skillDir = `.agents/skills/${skillName}`;

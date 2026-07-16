@@ -180,7 +180,8 @@ for (const token of [
 assert(inventory.completedPhases.includes(7), "Removal inventory must mark Phase 7 complete");
 const iterationStatus = read("docs/ITERATION_STATUS.md");
 assert(iterationStatus.includes("Phase 7 dynamic existing media and sound design is complete."));
-assert(iterationStatus.includes("Phase 8 code-driven style profiles has not started."));
+assert(iterationStatus.includes("Phase 8A style-profile contract and showcase is complete."));
+assert(iterationStatus.includes("Phase 8B real-composition proof has not started."));
 
 const producerSkill = read(".agents/skills/ai-video-studio-agent-producer/SKILL.md");
 for (const token of [

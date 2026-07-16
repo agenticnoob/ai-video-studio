@@ -33,7 +33,7 @@ narration, and one-off scene arrangements remain composition-local.
 | `src/remotion/standalone-video/` | timing, audio, captions, and canvas profiles |
 | `src/remotion/catalog/` | discovery metadata and review fixtures |
 | `src/remotion/effects/` | Producer-owned deterministic effect preset factories |
-| `src/remotion/styles/` | measured text fitting and layout diagnostics |
+| `src/remotion/styles/` | measured text fitting plus typed Producer style-profile constraints and defaults |
 | `src/remotion/media/` | local Video, AnimatedImage, and Lottie render blocks |
 | `src/remotion/motion/` | fixed CameraMotionBlur and Trail treatment selection |
 | `src/remotion/sound/` | manifest-backed sound library, envelopes, soundtrack, and transition-SFX mapping |
@@ -145,3 +145,13 @@ Phase 7 dynamic existing media and sound design owns the reusable modules above
 and the maintained `AgentProducerMediaSoundProof`. The Phase 6 showcase-local
 ignored FFmpeg fixture remains a separate canvas-effect proof. Rive is not
 installed or claimed without an approved local `.riv` asset and real use.
+
+Phase 8A adds `getProducerStyleProfile()` with six profile ids:
+`editorial-tech`, `comic-anime`, `cinematic-3d`, `retro-terminal`,
+`documentary-media`, and `hand-drawn-explainer`. Each record constrains
+composition, motion, texture, media, Three.js, captions, and sound; it does not
+generate scenes or select a template. Six code-only pages in
+`AgentProducerCapabilityShowcase` prove the inventory boundary. Run
+`npm run smoke:producer-style-profiles` before selection. Phase 8 remains in
+progress until Phase 8B proves at least two profiles in new real dedicated
+compositions; Phase 8B has not started.

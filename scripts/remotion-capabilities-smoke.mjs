@@ -36,8 +36,10 @@ for (const relativePath of [
   "src/remotion/effects/presets.ts",
   "src/remotion/effects/index.ts",
   "src/remotion/styles/fit-text.ts",
+  "src/remotion/styles/profiles.ts",
   "src/remotion/styles/index.ts",
   "src/remotion/capability-showcase/RemotionCapabilityShowcase.tsx",
+  "src/remotion/capability-showcase/StyleProfileShowcase.tsx",
   "src/remotion/capability-showcase/durations.ts",
   "src/remotion/capability-showcase/index.ts",
   "src/remotion/transitions/presets.ts",
@@ -157,8 +159,8 @@ assert(
 );
 assert.equal(
   REMOTION_CAPABILITY_SHOWCASE_DURATION_IN_FRAMES,
-  610,
-  "Capability showcase must register the exact 610-frame Phase 6 duration",
+  1150,
+  "Capability showcase must register the exact 1150-frame Phase 8A duration",
 );
 assert(
   read("remotion.config.ts").includes('Config.setChromiumOpenGlRenderer("swangle")'),
@@ -191,6 +193,8 @@ const iterationStatus = read("docs/ITERATION_STATUS.md");
 assert(iterationStatus.includes("Phase 6A effects and text-layout foundation is complete."));
 assert(iterationStatus.includes("Phase 6 Remotion capability core is complete."));
 assert(iterationStatus.includes("Phase 7 dynamic existing media and sound design is complete."));
+assert(iterationStatus.includes("Phase 8A style-profile contract and showcase is complete."));
+assert(iterationStatus.includes("Phase 8B real-composition proof has not started."));
 
 const producerSkill = read(".agents/skills/ai-video-studio-agent-producer/SKILL.md");
 for (const required of [
@@ -203,6 +207,8 @@ for (const required of [
   "Config.setAllowHtmlInCanvasEnabled(true)",
   "AgentProducerCapabilityShowcase",
   "npm run smoke:remotion-capabilities",
+  "getProducerStyleProfile",
+  "npm run smoke:producer-style-profiles",
 ]) {
   assert(producerSkill.includes(required), `Agent Producer skill must include ${required}`);
 }
@@ -211,6 +217,7 @@ const capabilitySource = [
   effects,
   fitText,
   read("src/remotion/capability-showcase/RemotionCapabilityShowcase.tsx"),
+  read("src/remotion/capability-showcase/StyleProfileShowcase.tsx"),
 ].join("\n");
 for (const [label, pattern] of [
   ["remote URL", /https?:\/\//i],
