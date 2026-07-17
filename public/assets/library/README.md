@@ -4,6 +4,10 @@ This committed v1 library admits reviewed SVG, PNG, JPEG, and WebP assets
 independently of video use. The Agent is the only management entrypoint; do not
 edit item records, `catalog.json`, or `index.html` by hand.
 
+Use `.agents/skills/ai-video-studio-asset-library/` for admission and
+maintenance. Agent Producer is a catalog consumer, not the management
+workflow.
+
 Each item lives under `items/<asset-id>/` with exactly `asset.json` and one
 `asset.<validated-extension>`. The record owns semantic selection guidance,
 visual facts, provenance/license, integrity, and active/deprecated lifecycle.

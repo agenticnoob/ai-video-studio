@@ -102,9 +102,10 @@ assert.deepEqual(
     {
       id: "agent-managed-reusable-asset-library-v1",
       status: "complete",
-      path: "scripts/lib/producer-asset-library",
+      path: ".agents/skills/ai-video-studio-asset-library",
+      runtimePath: "scripts/lib/producer-asset-library",
       reason:
-        "Agent-only folder-oriented SVG/PNG/JPEG/WebP admission with shared descriptions, visual semantic completion, fixed user authorization, semantic search, deterministic catalog/static report, atomic rollback, and future ProducerAssetManifest cross-validation without adding a Roadmap phase.",
+        "A dedicated non-video skill owns folder-oriented SVG/PNG/JPEG/WebP admission with shared descriptions, visual semantic completion, fixed user authorization, semantic search, deterministic catalog/static report, atomic rollback, and future ProducerAssetManifest cross-validation without adding a Roadmap phase.",
     },
   ],
   "bounded post-Roadmap capability record",
@@ -119,6 +120,11 @@ assert.equal(
   inventory.authority.roadmap,
   "docs/AGENT_PRODUCER_ONLY_ROADMAP.md",
   "roadmap authority",
+);
+assert.equal(
+  inventory.authority.assetLibrarySkill,
+  ".agents/skills/ai-video-studio-asset-library/",
+  "asset-library management authority",
 );
 assert.deepEqual(
   Object.keys(inventory.categories).sort(),

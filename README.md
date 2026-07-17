@@ -6,6 +6,9 @@ code-driven Remotion videos made from real topics and existing assets.
 `.agents/skills/ai-video-studio-agent-producer/` is the only supported
 video-production entrypoint.
 
+Use `.agents/skills/ai-video-studio-asset-library/` separately to organize,
+admit, update, or deprecate reusable visual assets.
+
 Visual production uses code and existing assets only.
 
 The implementation sequence is defined by
@@ -88,7 +91,8 @@ implemented. It admits reviewed SVG/PNG/JPEG/WebP independently of composition
 use, exposes deterministic `producer:library:*` management/search commands,
 and generates committed `catalog.json` plus a directly openable read-only
 `index.html`. This is not a new Roadmap phase and does not restore a Web video
-product.
+product. `.agents/skills/ai-video-studio-asset-library/` owns admission and
+maintenance; Agent Producer only searches and consumes selected items.
 
 Normal intake is a natural-language Agent task over an ignored inbox folder,
 not hand-authored metadata. A batch may mix nested assets and multiple

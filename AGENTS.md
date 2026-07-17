@@ -5,6 +5,9 @@
 `.agents/skills/ai-video-studio-agent-producer/` is the only supported
 video-production entrypoint.
 
+`.agents/skills/ai-video-studio-asset-library/` is the separate entrypoint for
+reusable asset admission and maintenance; it is not a video-production flow.
+
 Visual production uses code and existing assets only.
 
 The implementation sequence is defined by
@@ -84,6 +87,7 @@ repository contains `.codegraph/`.
 | Full migration sequence | `docs/AGENT_PRODUCER_ONLY_ROADMAP.md` |
 | Deletion ownership | `docs/architecture/agent-producer-only-removal-inventory.json` |
 | Producer workflow | `.agents/skills/ai-video-studio-agent-producer/` |
+| Asset library management | `.agents/skills/ai-video-studio-asset-library/` |
 | Remotion rules | `.agents/skills/remotion-best-practices/` |
 | VoxCPM expression | `.agents/skills/ai-video-studio-agent-producer/voxcpm-expression/` |
 | Visual inventory | `docs/REMOTION_COMPONENT_LIBRARY.md`, `src/remotion/catalog/` |

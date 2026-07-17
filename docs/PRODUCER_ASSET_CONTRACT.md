@@ -6,6 +6,9 @@ sound/Lottie quality extensions and one post-Roadmap reusable-image library.
 `.agents/skills/ai-video-studio-agent-producer/` is the only supported
 video-production entrypoint.
 
+`.agents/skills/ai-video-studio-asset-library/` is the separate admission and
+maintenance entrypoint for the reusable image library.
+
 Visual production uses code and existing assets only.
 
 The implementation sequence is defined by
@@ -35,12 +38,14 @@ prior composition reference. Every asset has a canonical
 recommended/avoided uses, style metadata, visual facts, source/license,
 integrity, and active/deprecated lifecycle.
 
-The Agent alone adds, ingests, validates, lists, searches, updates, deprecates,
-and builds the library through `producer:library:*`. Inbox inputs remain under
-ignored `.producer-assets/library-inbox/` and are copied, never moved or
-deleted. Mutations validate in ignored same-filesystem staging, generate
-prospective derived bytes, publish atomically, and restore the previous item,
-catalog, and report if publication fails.
+The dedicated `ai-video-studio-asset-library` skill alone adds, ingests,
+validates, lists, updates, deprecates, and builds the library through
+`producer:library:*`. Agent Producer searches the catalog and consumes selected
+active records but does not manage them. Inbox inputs remain under ignored
+`.producer-assets/library-inbox/` and are copied, never moved or deleted.
+Mutations validate in ignored same-filesystem staging, generate prospective
+derived bytes, publish atomically, and restore the previous item, catalog, and
+report if publication fails.
 
 Inbox intake is folder-oriented at the Agent layer. A batch may contain nested
 SVG/PNG/JPEG/WebP files and multiple free-form description documents with

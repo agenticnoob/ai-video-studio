@@ -5,6 +5,9 @@ Status: active authority from 2026-07-15.
 `.agents/skills/ai-video-studio-agent-producer/` is the only supported
 video-production entrypoint.
 
+`.agents/skills/ai-video-studio-asset-library/` separately owns reusable image
+admission and maintenance without becoming a video-production entrypoint.
+
 Visual production uses code and existing assets only.
 
 The implementation sequence is defined by
@@ -149,7 +152,9 @@ partial, shared, or overlapping description documents; the Agent relates and
 visually inspects them, completes semantic records, and invokes deterministic
 per-item ingestion. User inbox assets inherit the repository authorization and
 no-attribution policy without a per-asset questionnaire. This does not add a
-Roadmap phase or expand the library beyond SVG/PNG/JPEG/WebP.
+Roadmap phase or expand the library beyond SVG/PNG/JPEG/WebP. The dedicated
+`.agents/skills/ai-video-studio-asset-library/` owns this workflow; Agent
+Producer only searches and consumes active items for new videos.
 
 One approved post-Roadmap v1 capability is complete: the Agent-managed reusable
 SVG/PNG/JPEG/WebP library admits items independently of video use, produces a

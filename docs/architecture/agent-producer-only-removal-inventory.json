@@ -61,13 +61,15 @@
     {
       "id": "agent-managed-reusable-asset-library-v1",
       "status": "complete",
-      "path": "scripts/lib/producer-asset-library",
-      "reason": "Agent-only folder-oriented SVG/PNG/JPEG/WebP admission with shared descriptions, visual semantic completion, fixed user authorization, semantic search, deterministic catalog/static report, atomic rollback, and future ProducerAssetManifest cross-validation without adding a Roadmap phase."
+      "path": ".agents/skills/ai-video-studio-asset-library",
+      "runtimePath": "scripts/lib/producer-asset-library",
+      "reason": "A dedicated non-video skill owns folder-oriented SVG/PNG/JPEG/WebP admission with shared descriptions, visual semantic completion, fixed user authorization, semantic search, deterministic catalog/static report, atomic rollback, and future ProducerAssetManifest cross-validation without adding a Roadmap phase."
     }
   ],
   "decisionDate": "2026-07-15",
   "authority": {
     "skill": ".agents/skills/ai-video-studio-agent-producer/",
+    "assetLibrarySkill": ".agents/skills/ai-video-studio-asset-library/",
     "roadmap": "docs/AGENT_PRODUCER_ONLY_ROADMAP.md"
   },
   "allowedHistoricalExceptions": [

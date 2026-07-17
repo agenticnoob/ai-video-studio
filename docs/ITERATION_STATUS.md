@@ -7,6 +7,9 @@ Last updated: 2026-07-17
 `.agents/skills/ai-video-studio-agent-producer/` is the only supported
 video-production entrypoint.
 
+`.agents/skills/ai-video-studio-asset-library/` is the separate reusable-asset
+admission and maintenance entrypoint.
+
 Visual production uses code and existing assets only.
 
 The implementation sequence is defined by
@@ -52,7 +55,9 @@ many-to-many description mappings, visually completes missing semantics, and
 uses one atomic ingest per accepted item. User-supplied inbox assets inherit the
 approved project authorization/no-attribution record, so source and license
 questions are not part of semantic intake. This remains the same post-Roadmap
-v1 capability rather than a new phase or v2 slice.
+v1 capability rather than a new phase or v2 slice. Its dedicated
+`ai-video-studio-asset-library` skill owns management; Agent Producer retains
+only search, selection, manifest snapshotting, and preflight consumption.
 
 Phase 0 authority reset, Phase 1 direct VoxCPM runtime, Phase 2 F5 removal,
 Phase 3 Web product removal, and Phase 4 Producer OS consolidation remain

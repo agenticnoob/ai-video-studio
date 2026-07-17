@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI Video Studio Asset Library"
+  short_description: "Organize and maintain reusable visual assets"
+  default_prompt: "Use $ai-video-studio-asset-library to organize an inbox folder, enrich reusable asset metadata, and admit validated items into the local library."

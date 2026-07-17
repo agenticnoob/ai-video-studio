@@ -29,13 +29,43 @@ for (const file of ["public/assets/library/catalog.json", "public/assets/library
   assert(existsSync(file), `Missing asset-library derived view: ${file}`);
 }
 
-const skill = readFileSync(".agents/skills/ai-video-studio-agent-producer/SKILL.md", "utf8");
-const normalizedSkill = skill.replace(/\s+/gu, " ");
+const assetLibrarySkillPath = ".agents/skills/ai-video-studio-asset-library/SKILL.md";
+assert(existsSync(assetLibrarySkillPath), "Missing dedicated asset-library management skill");
+const assetLibrarySkill = readFileSync(assetLibrarySkillPath, "utf8");
+const normalizedAssetLibrarySkill = assetLibrarySkill.replace(/\s+/gu, " ");
+const producerSkill = readFileSync(
+  ".agents/skills/ai-video-studio-agent-producer/SKILL.md",
+  "utf8",
+);
 assert(
-  skill.includes("producer:library:search"),
+  producerSkill.includes("producer:library:search"),
   "Agent Producer skill must search the reusable asset library before acquisition.",
 );
+assert(
+  producerSkill.includes("ProducerAssetManifest"),
+  "Agent Producer skill must snapshot selected library items into the manifest.",
+);
+for (const forbidden of [
+  "producer:library:add",
+  "producer:library:ingest",
+  "producer:library:update",
+  "producer:library:deprecate",
+  "recursively inventory the requested inbox batch",
+]) {
+  assert(
+    !producerSkill.replace(/\s+/gu, " ").includes(forbidden),
+    `Agent Producer skill must not own asset-library management: ${forbidden}`,
+  );
+}
 for (const token of [
+  "producer:library:add",
+  "producer:library:ingest",
+  "producer:library:validate",
+  "producer:library:list",
+  "producer:library:search",
+  "producer:library:update",
+  "producer:library:deprecate",
+  "producer:library:build",
   "recursively inventory the requested inbox batch",
   "every description document",
   "visually inspect assets with missing semantic facts",
@@ -43,8 +73,8 @@ for (const token of [
   "one atomic `producer:library:ingest` operation per accepted asset",
 ]) {
   assert(
-    normalizedSkill.includes(token),
-    `Agent Producer skill is missing inbox workflow: ${token}`,
+    normalizedAssetLibrarySkill.includes(token),
+    `Asset-library skill is missing management workflow: ${token}`,
   );
 }
 

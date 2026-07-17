@@ -237,45 +237,10 @@ not automatic creative choices: use an active item only when its recommended
 and avoided uses fit the scene, otherwise continue with code-driven visuals or
 another properly licensed existing asset.
 
-The Agent is the only library writer. Manage standalone SVG/PNG/JPEG/WebP with:
-
-```bash
-npm run producer:library:add -- --file <path> --metadata <asset-json>
-npm run producer:library:ingest -- --file .producer-assets/library-inbox/<file> --metadata <asset-json>
-npm run producer:library:validate
-npm run producer:library:list -- --json
-npm run producer:library:search -- --text <scene-intent> --json
-npm run producer:library:update -- --id <asset-id> --metadata <patch-json>
-npm run producer:library:deprecate -- --id <asset-id> --reason <reason>
-npm run producer:library:build -- --check
-```
-
-Admission does not require prior composition use. The inbox is user-owned and
-ignored; ingestion copies without moving or deleting it. The generated
-`public/assets/library/index.html` is a directly openable read-only inspection
-surface with no upload/edit/delete controls. Deprecation is the normal v1
-removal path.
-
-When the user asks to organize an inbox directory, recursively inventory the
-requested inbox batch, including nested supported assets and every description
-document. One description may cover multiple assets and several descriptions
-may contribute to one asset. Resolve mappings from explicit file references,
-filenames, directory proximity, and the supplied prose; visually inspect assets
-with missing semantic facts and fill the canonical title, description,
-subjects, keywords, roles, recommended/avoided uses, style, and visual fields.
-Ask only when an important mapping or creative meaning remains genuinely
-ambiguous.
-
-Repository policy treats user-supplied inbox assets as authorized for project
-use without attribution. The Agent must not ask for source, author, license,
-rights, or attribution, and description documents do not need those fields.
-Omit `source` from the temporary ingest metadata so the runtime applies its
-fixed machine-level user-authorization record. Keep explicit source metadata
-for Agent-authored or URL-imported assets. Invoke one atomic
-`producer:library:ingest` operation per accepted asset, preserve every inbox
-original, and report per-item admitted, duplicate, skipped, ambiguous, or
-failed outcomes. Image understanding is allowed for classification and
-description; image generation and automatic repair remain forbidden.
+Use `public/assets/library/index.html` for read-only inspection. Library
+admission and maintenance are a separate task owned by
+`.agents/skills/ai-video-studio-asset-library/`; do not manage the catalog from
+this video-production workflow.
 
 Allowed assets include user-supplied files, real screenshots, licensed stock
 media, open-source media, local images/video/SVG/audio/fonts, Lottie, Rive,

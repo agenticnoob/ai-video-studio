@@ -46,7 +46,11 @@ const frontmatterName = (source) => {
   return match?.[1]?.trim() ?? "";
 };
 
-const skillNames = ["ai-video-studio-agent-producer", "remotion-best-practices"];
+const skillNames = [
+  "ai-video-studio-agent-producer",
+  "ai-video-studio-asset-library",
+  "remotion-best-practices",
+];
 
 for (const skillName of skillNames) {
   const skillPath = `.agents/skills/${skillName}/SKILL.md`;
@@ -81,11 +85,8 @@ for (const required of [
   "npm run producer:render",
   "npm run producer:quality",
   "npm run producer:library:search",
-  "npm run producer:library:ingest",
-  "npm run producer:library:build -- --check",
   "read-only inspection",
   "not automatic creative choices",
-  "Admission does not require prior composition use",
   "strict maintained manifest",
   "ProducerAssetManifest",
   "docs/PRODUCER_ASSET_CONTRACT.md",
@@ -154,6 +155,35 @@ for (const forbidden of [
   "node_modules/next",
 ])
   assertNotIncludes(producerSkill, forbidden, "Agent Producer skill");
+
+for (const managementToken of [
+  "producer:library:add",
+  "producer:library:ingest",
+  "producer:library:update",
+  "producer:library:deprecate",
+  "recursively inventory the requested inbox batch",
+]) {
+  assertNotIncludes(producerSkill.replace(/\s+/g, " "), managementToken, "Agent Producer skill");
+}
+
+const assetLibrarySkill = read(".agents/skills/ai-video-studio-asset-library/SKILL.md");
+for (const required of [
+  "producer:library:add",
+  "producer:library:ingest",
+  "producer:library:validate",
+  "producer:library:list",
+  "producer:library:search",
+  "producer:library:update",
+  "producer:library:deprecate",
+  "producer:library:build -- --check",
+  "recursively inventory the requested inbox batch",
+  "visually inspect assets with missing semantic facts",
+  "must not ask for source, author, license, rights, or attribution",
+  "one atomic `producer:library:ingest` operation per accepted asset",
+  "Admission does not require prior composition use",
+]) {
+  assertIncludesWords(assetLibrarySkill, required, "Asset Library skill");
+}
 
 const primitiveReference = read(
   ".agents/skills/ai-video-studio-agent-producer/remotion-primitives/REMOTION_PRIMITIVES.md",
@@ -254,7 +284,7 @@ assertIncludes(remotionSkill, "styleProfileId", "Remotion skill");
 assertIncludes(remotionSkill, "producer:quality", "Remotion skill");
 assertIncludes(remotionSkill, "does not score aesthetics", "Remotion skill");
 
-for (const skillName of ["ai-video-studio-agent-producer"]) {
+for (const skillName of ["ai-video-studio-agent-producer", "ai-video-studio-asset-library"]) {
   const skillDir = `.agents/skills/${skillName}`;
   const metadata = read(`${skillDir}/agents/openai.yaml`);
   assertIncludes(metadata, `Use $${skillName}`, `${skillName} openai.yaml`);
@@ -279,6 +309,15 @@ for (const docPath of docsToCheck) {
   const source = read(docPath);
   assertIncludes(source, ".agents/skills/ai-video-studio-agent-producer/", docPath);
   assertNotIncludes(source, ".agents/skills/ai-video-studio-agent-producer-workflow", docPath);
+}
+for (const docPath of [
+  "README.md",
+  "AGENTS.md",
+  "docs/FINAL_PRODUCT_GOAL.md",
+  "docs/ITERATION_STATUS.md",
+  "docs/PRODUCER_ASSET_CONTRACT.md",
+]) {
+  assertIncludes(read(docPath), ".agents/skills/ai-video-studio-asset-library/", docPath);
 }
 
 console.warn("Skill alignment smoke passed.");

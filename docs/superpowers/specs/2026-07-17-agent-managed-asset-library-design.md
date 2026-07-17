@@ -1,12 +1,14 @@
 # Agent-Managed Reusable Asset Library Design
 
-Status: approved design; implementation has not started.
+Status: implemented post-Roadmap v1 capability.
 
 Date: 2026-07-17.
 
 ## 1. Current Repository Facts
 
 - The Agent Producer skill is the only supported video-production entrypoint.
+- The dedicated `ai-video-studio-asset-library` skill is the supported
+  admission and maintenance entrypoint; it is not a video-production flow.
 - The Agent Producer-only Roadmap through Phase 9 is complete. This feature is
   a new user-requested post-Roadmap capability; it does not reopen Phase 9 or
   invent another Roadmap phase.
@@ -24,8 +26,10 @@ Date: 2026-07-17.
 
 ## 2. Product Decision
 
-The reusable asset library is managed exclusively by the Agent through stable
-CLI operations. A human-facing interface is read-only.
+The reusable asset library is managed exclusively through the dedicated
+`ai-video-studio-asset-library` skill and stable CLI operations. Agent Producer
+searches and consumes active items without owning admission or maintenance. A
+human-facing interface is read-only.
 
 The v1 library supports:
 
@@ -431,8 +435,10 @@ production:
 - `docs/PRODUCER_ASSET_CONTRACT.md`;
 - `docs/REMOTION_COMPONENT_LIBRARY.md` when it describes asset inventory;
 - `public/assets/library/README.md`;
-- `.agents/skills/ai-video-studio-agent-producer/SKILL.md` and its relevant
-  reference material;
+- `.agents/skills/ai-video-studio-asset-library/SKILL.md` for admission and
+  maintenance;
+- `.agents/skills/ai-video-studio-agent-producer/SKILL.md` for search and
+  future-video consumption;
 - package scripts and `.gitignore`.
 
 The architecture removal inventory, environment examples, and Compose
@@ -441,9 +447,11 @@ unchanged unless the implementation reveals a real ownership or runtime
 dependency, because this design introduces no service, provider, or environment
 variable.
 
-The skill must explicitly tell the Agent to search the reusable library before
-external acquisition or equivalent new visual construction. It must also state
-that catalog candidates inform creative judgment rather than mandating use.
+The Producer skill must explicitly tell the Agent to search the reusable
+library before external acquisition or equivalent new visual construction. It
+must also state that catalog candidates inform creative judgment rather than
+mandating use. The asset-library skill separately owns admission, inbox
+organization, metadata enrichment, updates, validation, and deprecation.
 
 ## 15. Focused Testing And Acceptance
 

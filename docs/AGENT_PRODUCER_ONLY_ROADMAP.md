@@ -14,6 +14,9 @@ report, and future manifest cross-validation extend the completed Producer OS.
 Folder-oriented inbox organization, Agent visual semantic completion, and the
 fixed user-authorization/no-attribution default are refinements of that same
 post-Roadmap v1 capability; they add no phase and do not start v2.
+`.agents/skills/ai-video-studio-asset-library/` owns that capability's
+admission and maintenance workflow. Agent Producer remains the sole
+video-production entrypoint and only searches/consumes library items.
 
 This roadmap defines the repository transition from a mixed Agent Producer,
 Web video product, and multi-provider TTS workspace into one focused local
