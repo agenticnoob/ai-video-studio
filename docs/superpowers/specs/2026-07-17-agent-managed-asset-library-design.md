@@ -110,6 +110,16 @@ It is Git-ignored. Ingestion copies from the inbox and never deletes or moves
 the user's source file. An inbox file is not an active library asset until the
 Agent completes a successful ingestion transaction.
 
+The inbox may contain nested batch directories, multiple supported assets, and
+multiple free-form description documents. Description documents do not need a
+one-to-one layout: one document may describe several assets and several
+documents may contribute facts to one asset. The Agent recursively inventories
+the batch, relates descriptions to files using explicit references, filenames,
+directory proximity, and visual inspection, then creates one canonical record
+per asset. The Agent asks only when an important asset-to-description mapping or
+creative meaning remains genuinely ambiguous; it does not require the user to
+author the canonical schema.
+
 ## 6. Asset Record
 
 Every `asset.json` uses a versioned strict schema. The v1 logical shape is:
@@ -185,7 +195,14 @@ global profile.
   an image-generation model. In v1 it is not valid for an independently
   generated raster image.
 - `user-provided`: an existing file supplied by the user. The record must state
-  the user-confirmed rights or license basis.
+  the repository's user-authorization policy. Inbox description documents do
+  not need source, author, license, rights, or attribution fields. When the
+  Agent omits `source` during inbox ingestion, the runtime supplies the fixed
+  machine-level record `user-provided` / `user` / `user-authorized` /
+  `User confirmed authorization for project use` / no attribution. This
+  operational record is not semantic selection metadata, and the Agent must not
+  ask the user to repeat those facts. An explicitly supplied source record is
+  still validated normally.
 - `url-import`: an existing file downloaded from an explicit HTTP(S) URL. The
   source URL, creator when known, license, and required attribution must be
   recorded.
@@ -268,7 +285,8 @@ The commands have these responsibilities:
 - `add`: add an Agent-authored SVG or an explicitly supplied file with complete
   metadata.
 - `ingest`: copy an existing inbox file into a canonical item directory using
-  Agent-supplied metadata.
+  Agent-supplied semantic metadata and the fixed user-authorization default
+  when `source` is omitted.
 - `validate`: validate one item or the complete library without changing it.
 - `list`: emit a concise human-readable or JSON inventory.
 - `search`: emit candidate records using text and explicit filters; it does not
@@ -283,6 +301,13 @@ The commands have these responsibilities:
 Natural-language requests remain the user interface. The Agent translates the
 request into these deterministic operations and supplies the creative
 metadata. Direct manual mutation is unsupported.
+
+Batch-folder organization remains an Agent workflow rather than a creative
+classification command. The Agent reads all description documents, visually
+inspects supported assets when semantic fields are missing, prepares one
+metadata input per asset, and invokes the atomic `ingest` operation for each
+accepted item. A batch failure is reported per item and never moves, deletes,
+or commits the inbox originals.
 
 Search remains local and transparent. The CLI performs substring/token matching
 and explicit filters to produce a shortlist. The Agent reads the full candidate
@@ -328,7 +353,9 @@ Library validation fails closed on:
 - missing or empty semantic metadata;
 - unknown Producer style-profile IDs;
 - invalid dimensions, aspect ratio, colors, or transparency values;
-- missing provenance or license facts required by the source variant;
+- missing provenance or license facts required by an explicitly supplied
+  source variant; inbox ingestion may instead apply the fixed user-authorization
+  source record;
 - incorrect size or SHA-256 values;
 - duplicate IDs, paths, or checksums;
 - stale `catalog.json` or `index.html` in check mode;
@@ -342,8 +369,9 @@ SVG validation additionally rejects:
 - JavaScript or data-bearing executable URLs;
 - path or entity constructs that escape the standalone SVG boundary.
 
-Raster validation checks actual image headers and dimensions. No image model is
-invoked to create, classify, caption, or repair an asset.
+Raster validation checks actual image headers and dimensions. The Agent may use
+image understanding to inspect, classify, and describe user-supplied assets;
+image generation and automatic image repair remain forbidden.
 
 ## 12. Transaction And Failure Behavior
 
@@ -367,7 +395,8 @@ Required behavior:
 - never delete or move an inbox source;
 - leave no partial canonical item after validation failure;
 - report all actionable validation errors with the affected asset ID or file;
-- do not weaken schemas, skip checks, or silently invent missing license facts;
+- do not weaken schemas or skip checks; the only implicit license fact is the
+  approved fixed user-authorization record for inbox ingestion;
 - if derived-view generation fails, the overall command fails and does not
   present the new item as successfully available.
 

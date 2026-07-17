@@ -11,6 +11,9 @@ is implemented as a bounded v1 capability for SVG/PNG/JPEG/WebP. It adds no
 Phase 10, reopens no completed phase, and does not change the completion
 definition below. Agent-only CLI management, deterministic catalog/static
 report, and future manifest cross-validation extend the completed Producer OS.
+Folder-oriented inbox organization, Agent visual semantic completion, and the
+fixed user-authorization/no-attribution default are refinements of that same
+post-Roadmap v1 capability; they add no phase and do not start v2.
 
 This roadmap defines the repository transition from a mixed Agent Producer,
 Web video product, and multi-provider TTS workspace into one focused local

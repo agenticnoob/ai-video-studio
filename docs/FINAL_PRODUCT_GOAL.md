@@ -143,6 +143,14 @@ paper/SVG treatment, official transitions, reviewed stills and covers, a
 Phase 9 is complete and the Agent Producer-only Roadmap is complete. No
 additional Roadmap phase has started.
 
+The separate post-Roadmap v1 reusable image library accepts folder-oriented
+Agent intake from the ignored inbox. Users may provide supported images plus
+partial, shared, or overlapping description documents; the Agent relates and
+visually inspects them, completes semantic records, and invokes deterministic
+per-item ingestion. User inbox assets inherit the repository authorization and
+no-attribution policy without a per-asset questionnaire. This does not add a
+Roadmap phase or expand the library beyond SVG/PNG/JPEG/WebP.
+
 One approved post-Roadmap v1 capability is complete: the Agent-managed reusable
 SVG/PNG/JPEG/WebP library admits items independently of video use, produces a
 deterministic machine catalog and local read-only HTML report, and validates

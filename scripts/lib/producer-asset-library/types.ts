@@ -16,6 +16,15 @@ export type AssetLibrarySource = {
   readonly attributionRequired: boolean;
 };
 
+export const userAuthorizedAssetLibrarySource = {
+  kind: "user-provided",
+  provider: "user",
+  creator: "user",
+  license: "user-authorized",
+  rightsBasis: "User confirmed authorization for project use",
+  attributionRequired: false,
+} as const satisfies AssetLibrarySource;
+
 export type AssetLibraryItem = {
   readonly version: 1;
   readonly id: string;

@@ -30,10 +30,23 @@ for (const file of ["public/assets/library/catalog.json", "public/assets/library
 }
 
 const skill = readFileSync(".agents/skills/ai-video-studio-agent-producer/SKILL.md", "utf8");
+const normalizedSkill = skill.replace(/\s+/gu, " ");
 assert(
   skill.includes("producer:library:search"),
   "Agent Producer skill must search the reusable asset library before acquisition.",
 );
+for (const token of [
+  "recursively inventory the requested inbox batch",
+  "every description document",
+  "visually inspect assets with missing semantic facts",
+  "must not ask for source, author, license, rights, or attribution",
+  "one atomic `producer:library:ingest` operation per accepted asset",
+]) {
+  assert(
+    normalizedSkill.includes(token),
+    `Agent Producer skill is missing inbox workflow: ${token}`,
+  );
+}
 
 const buildDir = process.env.PRODUCER_ASSET_LIBRARY_BUILD_DIR;
 if (!buildDir) {
@@ -192,10 +205,20 @@ try {
     filePath: svgPath,
     metadata: metadata("network-cloud", "svg", "agent-authored"),
   });
-  await runtime.ingestAssetLibraryItem({
+  const sourceFreeInboxMetadata = metadata("network-png", "png");
+  delete sourceFreeInboxMetadata.source;
+  const ingestedInboxItem = await runtime.ingestAssetLibraryItem({
     rootDir,
     filePath: pngPath,
-    metadata: metadata("network-png", "png"),
+    metadata: sourceFreeInboxMetadata,
+  });
+  assert.deepEqual(ingestedInboxItem.source, {
+    kind: "user-provided",
+    provider: "user",
+    creator: "user",
+    license: "user-authorized",
+    rightsBasis: "User confirmed authorization for project use",
+    attributionRequired: false,
   });
   assert(existsSync(pngPath), "Inbox ingestion must preserve the original file.");
   await runtime.addAssetLibraryItem({

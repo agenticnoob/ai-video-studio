@@ -104,7 +104,7 @@ assert.deepEqual(
       status: "complete",
       path: "scripts/lib/producer-asset-library",
       reason:
-        "Agent-only SVG/PNG/JPEG/WebP admission, semantic search, deterministic catalog/static report, atomic rollback, and future ProducerAssetManifest cross-validation without adding a Roadmap phase.",
+        "Agent-only folder-oriented SVG/PNG/JPEG/WebP admission with shared descriptions, visual semantic completion, fixed user authorization, semantic search, deterministic catalog/static report, atomic rollback, and future ProducerAssetManifest cross-validation without adding a Roadmap phase.",
     },
   ],
   "bounded post-Roadmap capability record",

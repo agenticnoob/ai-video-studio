@@ -19,6 +19,15 @@ User inbox files belong under ignored `.producer-assets/library-inbox/`.
 Deprecated items remain on disk for traceability and are hidden from default
 search.
 
+An inbox batch may contain nested assets plus any number of free-form
+description documents; mappings may be one-to-many or many-to-one. Give the
+batch directory to the Agent instead of preparing `asset.json` by hand. The
+Agent reads every description, inspects images to fill missing semantic facts,
+asks only about unresolved mapping or important creative ambiguity, and runs
+one atomic ingest per accepted asset. User-supplied inbox assets use the fixed
+project authorization default and require no source, author, license, rights,
+or attribution input from the user.
+
 Future videos search the catalog before acquiring or authoring equivalent
 media, then record any selected active item in their existing
 `ProducerAssetManifest`. Prior use is not required for admission. Generated

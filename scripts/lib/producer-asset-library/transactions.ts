@@ -7,6 +7,7 @@ import {
   type AssetLibraryItem,
   type AssetLibraryKind,
   type AssetLibraryMutationInput,
+  userAuthorizedAssetLibrarySource,
 } from "./types";
 import {
   assertAssetLibraryItem,
@@ -29,6 +30,13 @@ const readOptional = async (filePath: string): Promise<Buffer | undefined> =>
     if (error.code === "ENOENT") return undefined;
     throw error;
   });
+
+const normalizeInboxMetadata = (metadata: unknown): Record<string, unknown> => {
+  const raw = asRecord(metadata, "asset library metadata");
+  return Object.prototype.hasOwnProperty.call(raw, "source")
+    ? raw
+    : { ...raw, source: userAuthorizedAssetLibrarySource };
+};
 
 const restoreFile = async (filePath: string, previous: Buffer | undefined): Promise<void> => {
   if (previous === undefined) {
@@ -175,7 +183,7 @@ const add = async (
     const staged = await stageItem({
       transactionRoot,
       filePath: sourcePath,
-      metadata: input.metadata,
+      metadata: ingest ? normalizeInboxMetadata(input.metadata) : input.metadata,
     });
     return await publishItem({
       rootDir,

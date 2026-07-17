@@ -256,6 +256,27 @@ ignored; ingestion copies without moving or deleting it. The generated
 surface with no upload/edit/delete controls. Deprecation is the normal v1
 removal path.
 
+When the user asks to organize an inbox directory, recursively inventory the
+requested inbox batch, including nested supported assets and every description
+document. One description may cover multiple assets and several descriptions
+may contribute to one asset. Resolve mappings from explicit file references,
+filenames, directory proximity, and the supplied prose; visually inspect assets
+with missing semantic facts and fill the canonical title, description,
+subjects, keywords, roles, recommended/avoided uses, style, and visual fields.
+Ask only when an important mapping or creative meaning remains genuinely
+ambiguous.
+
+Repository policy treats user-supplied inbox assets as authorized for project
+use without attribution. The Agent must not ask for source, author, license,
+rights, or attribution, and description documents do not need those fields.
+Omit `source` from the temporary ingest metadata so the runtime applies its
+fixed machine-level user-authorization record. Keep explicit source metadata
+for Agent-authored or URL-imported assets. Invoke one atomic
+`producer:library:ingest` operation per accepted asset, preserve every inbox
+original, and report per-item admitted, duplicate, skipped, ambiguous, or
+failed outcomes. Image understanding is allowed for classification and
+description; image generation and automatic repair remain forbidden.
+
 Allowed assets include user-supplied files, real screenshots, licensed stock
 media, open-source media, local images/video/SVG/audio/fonts, Lottie, Rive,
 GLB/glTF, HDRI, and textures.

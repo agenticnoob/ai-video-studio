@@ -42,6 +42,17 @@ deleted. Mutations validate in ignored same-filesystem staging, generate
 prospective derived bytes, publish atomically, and restore the previous item,
 catalog, and report if publication fails.
 
+Inbox intake is folder-oriented at the Agent layer. A batch may contain nested
+SVG/PNG/JPEG/WebP files and multiple free-form description documents with
+one-to-many or many-to-one relationships. The Agent reads and relates all
+descriptions, uses visual inspection to complete missing semantic fields, and
+invokes the existing single-item atomic ingest for every accepted asset. It
+asks only about unresolved mapping or important creative ambiguity. Repository
+policy confirms user-supplied inbox assets are authorized for project use
+without attribution, so the user is never asked for per-asset source, author,
+license, rights, or attribution facts; an omitted source is normalized to the
+fixed machine-level `user-authorized` record and remains outside semantics.
+
 `catalog.json` and a self-contained `index.html` are deterministic committed
 views. The browser report is read-only and local: no upload, edit, delete,
 network request, database, API, Next application, or Web-video surface.

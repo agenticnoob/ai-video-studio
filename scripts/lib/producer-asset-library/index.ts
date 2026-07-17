@@ -30,3 +30,4 @@ export type {
   AssetLibraryStatus,
   AssetLibraryUsage,
 } from "./types";
+export { userAuthorizedAssetLibrarySource } from "./types";

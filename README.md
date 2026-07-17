@@ -90,6 +90,14 @@ and generates committed `catalog.json` plus a directly openable read-only
 `index.html`. This is not a new Roadmap phase and does not restore a Web video
 product.
 
+Normal intake is a natural-language Agent task over an ignored inbox folder,
+not hand-authored metadata. A batch may mix nested assets and multiple
+description documents with non-1:1 relationships. The Agent reads them all,
+inspects images to fill missing semantics, asks only about unresolved mapping
+or important creative ambiguity, and atomically ingests each accepted asset.
+User-supplied inbox assets use the repository-wide authorization/no-attribution
+default, so no per-asset license questionnaire is required.
+
 Existing finished compositions remain frozen read-only references. Historical
 `provider: "f5-tts"` metadata in their generated audio files stays truthful; it
 does not authorize new F5 generation.

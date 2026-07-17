@@ -69,6 +69,11 @@ repository contains `.codegraph/`.
   SVG/PNG/JPEG/WebP without prior composition use, provides deterministic
   `producer:library:*` commands plus a local read-only static catalog, and
   cross-validates only future canonical `ProducerAssetManifest` references.
+- Normal library intake gives the Agent an ignored inbox folder containing
+  assets and any number of shared/overlapping description documents. The Agent
+  reads and visually classifies the batch, completes semantics, never asks for
+  per-asset authorization/attribution facts, and invokes one atomic ingest per
+  accepted item using the repository-wide user-authorization default.
 
 ## Where To Look
 
