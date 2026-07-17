@@ -1,0 +1,81 @@
+import type { QualityGatedMaintainedProducerSampleManifest } from "../producer-samples/manifest";
+import { dnsResolutionExplainerSceneStarts } from "./data";
+
+export const dnsResolutionExplainerManifest = {
+  sampleStatus: "maintained",
+  compositionId: "DnsResolutionExplainer",
+  sampleName: "DnsResolutionExplainer",
+  slug: "dns-resolution-explainer",
+  contentFamily: "tutorial",
+  canvasProfile: "landscape-16x9",
+  styleProfileId: "hand-drawn-explainer",
+  localArtifactRoot: "public/generated/dns-resolution-explainer/",
+  ttsStatus: "generated-local",
+  productionBrief: {
+    audience: "People who want a concrete mental model for DNS resolution.",
+    publishingSurface: "Local review and approved technical education channels.",
+    durationTargetSeconds: 24,
+  },
+  narration: {
+    required: true,
+    provider: "voxcpm",
+    mode: "high-fidelity-clone",
+    scriptPath: "src/remotion/DnsResolutionExplainer/script.ts",
+    audioMetadataPath: "src/remotion/DnsResolutionExplainer/audio.generated.ts",
+  },
+  assets: { manifestPath: "src/remotion/DnsResolutionExplainer/assets.manifest.json" },
+  soundDesign: {
+    soundtrackModulePath: "src/remotion/DnsResolutionExplainer/soundtrack.tsx",
+    narrationAssetIds: ["narration-cache", "narration-delegation", "narration-answer"],
+    bgmAssetIds: ["dns-bgm"],
+    ambienceAssetIds: ["paper-room"],
+    sfxAssetIds: ["pencil-query", "resolver-hop", "answer-confirm"],
+  },
+  validationModule: "src/remotion/DnsResolutionExplainer/validation.ts",
+  qualityModule: "src/remotion/DnsResolutionExplainer/quality.ts",
+  render: {
+    metadataPath: "src/remotion/DnsResolutionExplainer/render-metadata.json",
+    cover16x9CompositionId: "DnsResolutionExplainerCover16x9",
+    cover9x16CompositionId: "DnsResolutionExplainerCover9x16",
+  },
+  publishingCopyPath: "src/remotion/DnsResolutionExplainer/publishing.md",
+  reviewFrames: [
+    {
+      frame: dnsResolutionExplainerSceneStarts[0] + 60,
+      label: "cache check",
+      purpose: "Check paper texture, opening hierarchy, cache node reveal, and caption clearance.",
+    },
+    {
+      frame: dnsResolutionExplainerSceneStarts[1] + 90,
+      label: "delegation path",
+      purpose: "Check the root-to-authoritative path, directional motion, and readable labels.",
+    },
+    {
+      frame: dnsResolutionExplainerSceneStarts[2] + 60,
+      label: "answer return",
+      purpose: "Check the final IP and TTL evidence, closing hierarchy, and caption clearance.",
+    },
+  ],
+  sourceFiles: [
+    { path: "src/remotion/DnsResolutionExplainer/DnsResolutionExplainer.tsx", kind: "renderer" },
+    { path: "src/remotion/DnsResolutionExplainer/types.ts", kind: "types" },
+    { path: "src/remotion/DnsResolutionExplainer/script.ts", kind: "script" },
+    { path: "src/remotion/DnsResolutionExplainer/data.ts", kind: "data" },
+    { path: "src/remotion/DnsResolutionExplainer/audio.generated.ts", kind: "audio-metadata" },
+    { path: "src/remotion/DnsResolutionExplainer/manifest.ts", kind: "manifest" },
+    { path: "src/remotion/DnsResolutionExplainer/assets.manifest.json", kind: "asset-manifest" },
+    { path: "src/remotion/DnsResolutionExplainer/soundtrack.tsx", kind: "soundtrack" },
+    { path: "src/remotion/DnsResolutionExplainer/validation.ts", kind: "validation" },
+    { path: "src/remotion/DnsResolutionExplainer/quality.ts", kind: "quality" },
+    { path: "src/remotion/DnsResolutionExplainer/cover.tsx", kind: "cover" },
+    { path: "src/remotion/DnsResolutionExplainer/render-metadata.json", kind: "render-metadata" },
+    { path: "src/remotion/DnsResolutionExplainer/publishing.md", kind: "publishing-copy" },
+    { path: "src/remotion/Root.tsx", kind: "root-registration" },
+  ],
+  promotionCandidates: [],
+  notes: [
+    "This is the Phase 9B final acceptance video for the complete Agent Producer workflow.",
+    "The DNS diagram is a repo-authored, manifest-backed information graphic rather than a fabricated screenshot.",
+    "Generated narration, localized assets, review frames, covers, metadata, and MP4 remain local-only.",
+  ],
+} as const satisfies QualityGatedMaintainedProducerSampleManifest;

@@ -21,8 +21,9 @@ and Phase 7 dynamic media/sound are complete with every installed Remotion
 package exact `4.0.489`. Phase 8A style-profile contract and showcase are
 complete. Phase 8B style-profile sample contract and real-composition proof are
 complete. Phase 8 is complete. Phase 9A deterministic quality gates are
-complete. Phase 9B final acceptance video and final Roadmap closure have not
-started.
+complete. Phase 9B completed `DnsResolutionExplainer` through the final
+VoxCPM/assets/preflight/review/render/quality path. Phase 9 is complete. The
+Roadmap is complete; no additional phase has started.
 
 ## Skill Stack
 
@@ -134,7 +135,7 @@ npm run smoke:producer-style-profile-real-compositions
 
 The generated `styleProfileId` records the constraint choice; it does not
 generate scene structure. The completed Phase 7 proof remains unchanged.
-Phase 8 is complete. Phase 9A is complete. Phase 9B has not started.
+Phase 8 is complete. Phase 9A and Phase 9B are complete. Phase 9 is complete.
 
 ## Phase 9A Deterministic Quality Gate
 
@@ -151,8 +152,8 @@ roots. The CLI collects fresh FFmpeg luma, ffprobe stream/duration, final
 metadata, and Git tracking evidence. It fails on deterministic problems only;
 passing it does not approve visual composition, narration balance, motion, or
 sound design. Do not retrofit completed or frozen compositions merely to add a
-quality module. Phase 9B must prove the final acceptance video through this
-future-only path.
+quality module. `DnsResolutionExplainer` is the completed Phase 9B proof of
+this future-only path; its local media and render artifacts remain ignored.
 
 ## Start Here
 

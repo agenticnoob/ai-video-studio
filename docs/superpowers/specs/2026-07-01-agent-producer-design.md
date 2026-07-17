@@ -1,6 +1,11 @@
 # Agent Producer Design
 
-Status: accepted direction for the default personal production path.
+> Superseded historical design. This file records the pre-Producer-only Web
+> productization boundary and is not a current production authority. Use
+> `docs/FINAL_PRODUCT_GOAL.md`, `docs/ITERATION_STATUS.md`, and
+> `docs/AGENT_PRODUCER_ONLY_ROADMAP.md` instead.
+
+Status: superseded historical design.
 
 ## Problem
 

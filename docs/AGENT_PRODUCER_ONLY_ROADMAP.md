@@ -1,10 +1,8 @@
 # Agent Producer-Only Roadmap
 
-Status: Phase 0 through Phase 8 complete. Phase 8A style-profile contract and
-capability-showcase fixtures, the Phase 8B sample contract, and the two-real-
-composition proof are complete. Phase 8 is complete. Phase 9A deterministic
-quality gates are complete. Phase 9B final acceptance video and final Roadmap
-closure have not started.
+Status: complete. Phase 0 through Phase 9 are complete. Phase 9B completed the
+`DnsResolutionExplainer` final acceptance video, forbidden scan, active-document
+alignment, and Roadmap closure after the Phase 9A quality gate passed.
 
 Decision date: 2026-07-15.
 
@@ -893,7 +891,7 @@ Official references:
 ## 13. Phase 8 - Code-Driven Style Profiles
 
 Status: complete. Phase 8A and both Phase 8B slices are complete. Phase 8 is
-complete. Phase 9A is complete; Phase 9B has not started.
+complete. Phase 9A and Phase 9B are complete; the Roadmap is complete.
 
 ### Goal
 
@@ -923,7 +921,7 @@ Status: complete.
 
 Status: complete. Phase 8B style-profile sample contract is complete. The
 real-composition proof is also complete. Phase 8 is complete. Phase 9A is
-complete; Phase 9B has not started.
+complete; Phase 9B and the Roadmap are complete.
 
 - `producer:scaffold` requires `--style-profile <profile-id>` and writes the
   validated selection into a strict profiled maintained manifest
@@ -982,9 +980,8 @@ language.
 
 ## 14. Phase 9 - Quality Gates And Final Cleanup
 
-Status: in progress. Phase 9A deterministic quality gates are complete. Phase
-9B final acceptance video and final documentation/Roadmap closure have not
-started.
+Status: complete. Phase 9A deterministic quality gates and Phase 9B final
+acceptance/documentation closure are complete.
 
 ### Phase 9A - Deterministic Quality Gates
 
@@ -1006,11 +1003,12 @@ Status: complete.
 
 ### Phase 9B - Final Acceptance And Closure
 
-Status: not started.
+Status: complete.
 
-Phase 9B owns the final acceptance video below, the complete forbidden scan,
-final active-document cleanup, and the decision to mark Phase 9/Roadmap
-complete. It must use the Phase 9A future scaffold and pass `producer:quality`.
+Phase 9B completed the final acceptance video below, the complete forbidden
+scan, final active-document cleanup, and the decision to mark Phase 9/Roadmap
+complete. It used the Phase 9A future scaffold contract and passed
+`producer:quality`.
 
 ### Goal
 
@@ -1111,6 +1109,22 @@ The validation video must include:
 - successful final artifact verification
 - 16:9 and 9:16 covers rendered as Remotion `<Still>` compositions using only
   code and manifest-backed existing assets
+
+Completion evidence:
+
+- `DnsResolutionExplainer` is the new maintained, quality-gated final proof
+  using `hand-drawn-explainer`, deterministic paper/SVG treatment, and the
+  official `directional-slide`
+- three real direct VoxCPM tracks own 218-, 258-, and 261-frame narration and
+  duration-derived captions; the two-frame silent visual hold keeps AAC mux
+  padding inside the exact 739-frame artifact contract
+- nine strict assets cover narration, BGM, ambience, three intentional SFX,
+  and one repo-authored SVG; preflight and mechanical validation pass
+- three representative frames and both Remotion `<Still>` covers were visually
+  reviewed; the final 1920x1080 H.264/AAC render and three-chapter metadata pass
+  `producer:quality`
+- generated audio, localized assets, stills, covers, metadata, MP4, private
+  voice references, `public/generated/`, and `out/` remain untracked
 
 ## 15. Validation Strategy
 
@@ -1261,3 +1275,6 @@ This roadmap is complete only when all statements are true:
 The repository is then no longer an AI video Web product with an Agent Producer
 side path. It is a focused Agent Producer operating system for deterministic,
 code-driven Remotion video production from real topics and existing assets.
+
+All eleven completion statements are satisfied by Phase 9B. This Roadmap is
+complete; no additional phase has started.

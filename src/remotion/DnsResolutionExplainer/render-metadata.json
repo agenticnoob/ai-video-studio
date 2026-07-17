@@ -1,0 +1,10 @@
+{
+  "title": "DNS 解析：一次查询怎样找到正确服务器",
+  "description": "用缓存、逐级委派与权威答案三个步骤解释域名如何解析为 IP 地址。",
+  "fps": 30,
+  "chapters": [
+    { "name": "先查缓存", "durationInFrames": 218 },
+    { "name": "逐级问路", "durationInFrames": 258 },
+    { "name": "返回并缓存", "durationInFrames": 263 }
+  ]
+}

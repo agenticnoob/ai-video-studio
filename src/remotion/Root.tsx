@@ -11,6 +11,16 @@ import {
   AgentProducerMediaSoundProofCover9x16,
 } from "./AgentProducerMediaSoundProof";
 import {
+  DNS_RESOLUTION_EXPLAINER_COMPOSITION_ID,
+  DNS_RESOLUTION_EXPLAINER_DURATION_IN_FRAMES,
+  DNS_RESOLUTION_EXPLAINER_FPS,
+  DNS_RESOLUTION_EXPLAINER_HEIGHT,
+  DNS_RESOLUTION_EXPLAINER_WIDTH,
+  DnsResolutionExplainer,
+  DnsResolutionExplainerCover16x9,
+  DnsResolutionExplainerCover9x16,
+} from "./DnsResolutionExplainer";
+import {
   TCP_HANDSHAKE_EDITORIAL_COMPOSITION_ID,
   TCP_HANDSHAKE_EDITORIAL_DURATION_IN_FRAMES,
   TCP_HANDSHAKE_EDITORIAL_FPS,
@@ -233,6 +243,26 @@ export const RemotionRoot: FC = () => {
         <Still
           id="AgentProducerMediaSoundProofCover9x16"
           component={AgentProducerMediaSoundProofCover9x16}
+          width={1080}
+          height={1920}
+        />
+        <Composition
+          id={DNS_RESOLUTION_EXPLAINER_COMPOSITION_ID}
+          component={DnsResolutionExplainer}
+          durationInFrames={DNS_RESOLUTION_EXPLAINER_DURATION_IN_FRAMES}
+          fps={DNS_RESOLUTION_EXPLAINER_FPS}
+          width={DNS_RESOLUTION_EXPLAINER_WIDTH}
+          height={DNS_RESOLUTION_EXPLAINER_HEIGHT}
+        />
+        <Still
+          id="DnsResolutionExplainerCover16x9"
+          component={DnsResolutionExplainerCover16x9}
+          width={1920}
+          height={1080}
+        />
+        <Still
+          id="DnsResolutionExplainerCover9x16"
+          component={DnsResolutionExplainerCover9x16}
           width={1080}
           height={1920}
         />

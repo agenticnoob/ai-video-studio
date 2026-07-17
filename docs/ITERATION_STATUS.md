@@ -34,7 +34,10 @@ Phase 8 is complete.
 
 Phase 9A deterministic quality gates are complete.
 
-Phase 9B final acceptance video and final Roadmap closure have not started.
+Phase 9B final acceptance video and final Roadmap closure are complete.
+
+Phase 9 and the Agent Producer-only Roadmap are complete. No additional phase
+has started.
 
 Phase 0 authority reset, Phase 1 direct VoxCPM runtime, Phase 2 F5 removal,
 Phase 3 Web product removal, and Phase 4 Producer OS consolidation remain
@@ -42,8 +45,35 @@ complete. Phase 5 existing asset supply, Phase 6 capability core, and Phase 7
 dynamic media/sound also remain complete. Phase 8 is complete after its
 contract/showcase, sample-contract, and two-real-composition proof slices.
 Phase 9A is complete after its future-only quality contract, real
-FFmpeg/ffprobe/Git evidence collector, and post-render CLI. Phase 9B has not
-started.
+FFmpeg/ffprobe/Git evidence collector, and post-render CLI. Phase 9B is
+complete after its final acceptance composition, real artifact proof,
+forbidden scan, and active-document closure.
+
+## Implemented Phase 9B Boundary
+
+- added `DnsResolutionExplainer` as one future-contract maintained composition
+  with explicit `hand-drawn-explainer`, a strict quality module, Root/registry
+  registration, publishing copy, and 16:9/9:16 Remotion `<Still>` covers
+- generated three real direct high-fidelity VoxCPM tracks at 218, 258, and 261
+  frames; narration, progress, summary, and private reference files remain
+  ignored and no provider fallback was introduced
+- localized nine strict assets: three narration tracks, BGM, ambience, three
+  intentional SFX cues, and one repo-authored DNS SVG; asset preflight and
+  composition validation pass
+- used deterministic code paper/SVG treatment and the official
+  `directional-slide`; a headless `<Solid>` canvas artifact was isolated during
+  review and replaced with stable code gradients before acceptance
+- visually reviewed three representative frames and both code-rendered covers;
+  the 739-frame 1920x1080 render contains H.264 video, AAC audio, and matching
+  three-chapter metadata
+- passed `producer:quality` without relaxing Phase 9A thresholds; a two-frame
+  silent visual hold makes video duration own the mux contract while preserving
+  the exact duration-derived narration/caption tracks
+- completed the Phase 9B forbidden scan and aligned active docs, skills,
+  package commands, provider evidence, and removal inventory; environment and
+  Docker topology required no change
+- preserved every completed/frozen composition and kept `public/generated/`,
+  `out/`, private voices, audio, stills, covers, metadata, and MP4 untracked
 
 ## Implemented Phase 9A Boundary
 
@@ -220,6 +250,32 @@ started.
 
 ## Verification
 
+Phase 9B RED evidence:
+
+- the first Docker `smoke:producer-final-acceptance` exited on the missing
+  `src/remotion/DnsResolutionExplainer/manifest.ts`
+- the same focused smoke later advanced to the still-open removal inventory and
+  active-document status, proving implementation and closure are both required
+- asset preflight rejected the initial under-threshold ambience as 40 seconds
+  of silence; the fixture source level was corrected and the same gate passed
+- visual review exposed non-deterministic black regions from a Remotion
+  `<Solid>` canvas; isolated renders ruled out SVG clipping and transition
+  timing before the unstable canvas path was removed
+- the first real `producer:quality` rejected AAC mux padding against the exact
+  737-frame contract; a two-frame silent visual hold made the 739-frame video
+  stream own the container duration without loosening the gate
+
+Phase 9B GREEN evidence:
+
+- direct VoxCPM generation, nine-asset localization, asset preflight, Producer
+  validation, three review stills, two covers, MP4/metadata rendering, and
+  `producer:quality` pass through the final supported path
+- ffprobe reports 739 H.264 frames at 1920x1080/30 fps, AAC audio, and a
+  24.633333-second container; final metadata records 739 frames and three
+  matching chapter starts
+- all three final review frames and both covers were inspected with no blank
+  region, overlap, unsafe caption placement, or cropped portrait evidence
+
 Phase 9A RED evidence:
 
 - the first Docker `smoke:producer-quality-gates` exited on
@@ -333,15 +389,15 @@ npm run smoke:producer-media-sound
 npm run smoke:producer-style-profile-sample-contract
 npm run smoke:producer-style-profile-real-compositions
 npm run smoke:producer-quality-gates
+npm run smoke:producer-final-acceptance
 npm run producer:quality -- --module <quality-module>
 npm run producer:media-sound-fixtures
 ```
 
 ## Next Bounded Phase
 
-Phase 9A deterministic quality gates are complete. Phase 9B final acceptance
-video plus final documentation/Roadmap closure is the next bounded phase and
-has not started.
+The Roadmap is complete through Phase 9B. There is no next Roadmap phase, and
+no additional phase has started.
 
 ## Frozen History
 

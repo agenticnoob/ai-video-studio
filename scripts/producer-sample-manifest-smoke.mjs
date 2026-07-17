@@ -14,6 +14,7 @@ const phaseEightProfiles = new Map([
   ["TcpHandshakeEditorial", "editorial-tech"],
   ["TcpHandshakeTerminal", "retro-terminal"],
 ]);
+const phaseNineFinalAcceptanceId = "DnsResolutionExplainer";
 
 const expectedCompositionIds = [
   "OpenAiHardwareNewsBrief",
@@ -196,6 +197,30 @@ for (const manifest of producerSampleManifests) {
       assert(
         rootSource.includes(marker),
         `${manifest.compositionId} must keep Root marker ${marker}.`,
+      );
+    }
+  } else if (manifest.compositionId === phaseNineFinalAcceptanceId) {
+    assert(
+      manifest.sampleStatus === "maintained",
+      "The Phase 9 final acceptance proof must remain maintained.",
+    );
+    assert(
+      manifest.styleProfileId === "hand-drawn-explainer",
+      "The Phase 9 final acceptance proof must keep its explicit style profile.",
+    );
+    assert(
+      manifest.qualityModule === "src/remotion/DnsResolutionExplainer/quality.ts",
+      "The Phase 9 final acceptance proof must keep deterministic quality ownership.",
+    );
+    assertIgnoredPath(manifest.localArtifactRoot);
+    for (const marker of [
+      phaseNineFinalAcceptanceId,
+      `${phaseNineFinalAcceptanceId}Cover16x9`,
+      `${phaseNineFinalAcceptanceId}Cover9x16`,
+    ]) {
+      assert(
+        rootSource.includes(marker),
+        `The Phase 9 final acceptance proof must keep Root marker ${marker}.`,
       );
     }
   } else {

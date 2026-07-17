@@ -24,7 +24,7 @@ const inventory = JSON.parse(read(inventoryPath));
 assert.equal(inventory.version, 1, "inventory version");
 assert.deepEqual(
   inventory.completedPhases,
-  [0, 1, 2, 3, 4, 5, 6, 7, 8],
+  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
   "completed roadmap phases",
 );
 assert.deepEqual(
@@ -85,6 +85,13 @@ assert.deepEqual(
       status: "complete",
       reason:
         "Future Producer samples now own a deterministic post-render quality module and CLI for layout, evidence, review-frame, artifact, chapter, and Git tracking failures while completed compositions remain unchanged.",
+    },
+    {
+      phase: 9,
+      slice: "final-acceptance-closure",
+      status: "complete",
+      reason:
+        "DnsResolutionExplainer completed the future-only VoxCPM, strict asset, composition, review, cover, H.264/AAC render, quality, forbidden-scan, and active-document closure path while frozen compositions remained unchanged.",
     },
   ],
   "completed roadmap phase slices",
@@ -212,9 +219,10 @@ assert(
 );
 assert(
   read("docs/ITERATION_STATUS.md").includes(
-    "Phase 9B final acceptance video and final Roadmap closure have not started.",
+    "Phase 9B final acceptance video and final Roadmap closure are complete.",
   ),
 );
+assert(read("docs/ITERATION_STATUS.md").includes("The Roadmap is complete through Phase 9B."));
 assert(read("docs/VISUAL_RECIPE_ROADMAP.md").includes("Superseded"));
 
 const packageJson = JSON.parse(read("package.json"));

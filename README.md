@@ -77,7 +77,10 @@ future scaffold owns a composition quality module, and `producer:quality`
 checks measured text/layout bounds, evidence resolution, planned rendered
 frames, luma variation, H.264/AAC metadata/chapter agreement, and tracked
 generated paths after render. Phase 9B final acceptance video and final
-Roadmap cleanup have not started.
+Roadmap cleanup are complete through `DnsResolutionExplainer`: real direct
+VoxCPM narration, nine strict assets, reviewed stills/covers, a 739-frame
+H.264/AAC render, and `producer:quality` all passed. Phase 9 is complete. The
+Roadmap is complete; no additional phase has started.
 
 Existing finished compositions remain frozen read-only references. Historical
 `provider: "f5-tts"` metadata in their generated audio files stays truthful; it
@@ -135,6 +138,7 @@ npm run smoke:producer-media-sound
 npm run smoke:producer-style-profiles
 npm run smoke:producer-style-profile-sample-contract
 npm run smoke:producer-quality-gates
+npm run smoke:producer-final-acceptance
 npm run smoke:producer-audio-direct-voxcpm
 npm run smoke:producer-audio-tools
 npm run smoke:agent-producer-web-removal

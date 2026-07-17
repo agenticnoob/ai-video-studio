@@ -1,0 +1,116 @@
+{
+  "version": 1,
+  "compositionId": "DnsResolutionExplainer",
+  "slug": "dns-resolution-explainer",
+  "outputManifestPath": "src/remotion/DnsResolutionExplainer/assets.manifest.json",
+  "assets": [
+    {
+      "id": "narration-cache",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for the DNS cache check.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/dns-resolution-explainer/audio/cache.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "narration-cache.wav" }
+    },
+    {
+      "id": "narration-delegation",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for recursive DNS delegation.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/dns-resolution-explainer/audio/delegation.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "narration-delegation.wav" }
+    },
+    {
+      "id": "narration-answer",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for the authoritative DNS answer.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/dns-resolution-explainer/audio/answer.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "narration-answer.wav" }
+    },
+    {
+      "id": "dns-bgm",
+      "kind": "audio",
+      "purpose": "Quiet tonal bed for the hand-drawn DNS explanation.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "sound": { "role": "bgm", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 1 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/dns-resolution-explainer/inputs/dns-bgm.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "dns-bgm.wav" }
+    },
+    {
+      "id": "paper-room",
+      "kind": "audio",
+      "purpose": "Low paper-room ambience beneath the narration.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "sound": { "role": "ambience", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 1 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/dns-resolution-explainer/inputs/paper-room.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "paper-room.wav" }
+    },
+    {
+      "id": "pencil-query",
+      "kind": "audio",
+      "purpose": "Short pencil-like query accent.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "sound": { "role": "sfx", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 0.2 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/dns-resolution-explainer/inputs/pencil-query.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "pencil-query.wav" }
+    },
+    {
+      "id": "resolver-hop",
+      "kind": "audio",
+      "purpose": "Directional resolver-hop accent.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "sound": { "role": "sfx", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 0.2 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/dns-resolution-explainer/inputs/resolver-hop.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "resolver-hop.wav" }
+    },
+    {
+      "id": "answer-confirm",
+      "kind": "audio",
+      "purpose": "Sparse confirmation accent for the authoritative answer.",
+      "source": { "provider": "repo-ffmpeg-fixture", "license": "CC0-1.0" },
+      "sound": { "role": "sfx", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 0.2 },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "public/generated/dns-resolution-explainer/inputs/answer-confirm.wav"
+      },
+      "destination": { "scope": "composition", "fileName": "answer-confirm.wav" }
+    },
+    {
+      "id": "dns-resolution-map",
+      "kind": "svg",
+      "purpose": "Repo-authored DNS delegation information graphic.",
+      "source": { "provider": "repo-authored", "license": "CC0-1.0" },
+      "acquisition": {
+        "type": "manual",
+        "sourcePath": "scripts/fixtures/producer-final-acceptance/dns-resolution-map.svg"
+      },
+      "destination": { "scope": "composition", "fileName": "dns-resolution-map.svg" },
+      "requirements": { "minWidth": 1280, "minHeight": 720 }
+    }
+  ]
+}

@@ -136,8 +136,12 @@ post-render `producer:quality` command verifies measured text/layout bounds,
 safe margins, evidence resolution, planned rendered frames, near-blank/low-
 contrast frames, MP4/metadata/chapter agreement, and tracked generated paths.
 Existing completed maintained proofs remain unchanged through the compatibility
-boundary. Phase 9B final acceptance video and final Roadmap closure have not
-started.
+boundary. Phase 9B completed `DnsResolutionExplainer` through the final path:
+real direct VoxCPM narration, nine strict manifest-backed assets, deterministic
+paper/SVG treatment, official transitions, reviewed stills and covers, a
+739-frame H.264/AAC render, publishing copy, and successful `producer:quality`.
+Phase 9 is complete and the Agent Producer-only Roadmap is complete. No
+additional Roadmap phase has started.
 
 ## Supporting Authorities
 

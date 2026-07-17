@@ -1,0 +1,222 @@
+{
+  "version": 1,
+  "compositionId": "DnsResolutionExplainer",
+  "slug": "dns-resolution-explainer",
+  "assets": [
+    {
+      "id": "narration-cache",
+      "kind": "audio",
+      "localPath": "public/generated/dns-resolution-explainer/assets/narration-cache.wav",
+      "purpose": "Direct VoxCPM narration for the DNS cache check.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "71ff27c5e35cd5e5cff7290aa12bf37972170b133dc8a8bae654c267cce60936",
+        "sizeInBytes": 699152
+      },
+      "media": {
+        "durationInSeconds": 7.282375,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-delegation",
+      "kind": "audio",
+      "localPath": "public/generated/dns-resolution-explainer/assets/narration-delegation.wav",
+      "purpose": "Direct VoxCPM narration for recursive DNS delegation.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "98bebc0485b7b31da47e9514a66b47c4822bf9ceffea8fb4b9e52e8873363f5c",
+        "sizeInBytes": 824898
+      },
+      "media": {
+        "durationInSeconds": 8.592229,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-answer",
+      "kind": "audio",
+      "localPath": "public/generated/dns-resolution-explainer/assets/narration-answer.wav",
+      "purpose": "Direct VoxCPM narration for the authoritative DNS answer.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "3d631630907af175f5f98acf31501fa529a4d012bfecd316ed8b148e8e873c0b",
+        "sizeInBytes": 835126
+      },
+      "media": {
+        "durationInSeconds": 8.698771,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "dns-bgm",
+      "kind": "audio",
+      "localPath": "public/generated/dns-resolution-explainer/assets/dns-bgm.wav",
+      "purpose": "Quiet tonal bed for the hand-drawn DNS explanation.",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "7b862e784be904795302bf5fa1de993d5b9f7eb3dfa27b2e69fcb4b5e0610811",
+        "sizeInBytes": 3840078
+      },
+      "media": {
+        "durationInSeconds": 40,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "bgm",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 1
+      }
+    },
+    {
+      "id": "paper-room",
+      "kind": "audio",
+      "localPath": "public/generated/dns-resolution-explainer/assets/paper-room.wav",
+      "purpose": "Low paper-room ambience beneath the narration.",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "2781a26b3d46ddc78a3a0a5eaab6f71b154e0cb2b18c4eb14ef74bcdf93d226b",
+        "sizeInBytes": 3840078
+      },
+      "media": {
+        "durationInSeconds": 40,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "ambience",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 1
+      }
+    },
+    {
+      "id": "pencil-query",
+      "kind": "audio",
+      "localPath": "public/generated/dns-resolution-explainer/assets/pencil-query.wav",
+      "purpose": "Short pencil-like query accent.",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "f7cadd6ffe8ffefa525cad75ada7601c4320bdb2f3d0aa0d2f9d6acbb1b1eb46",
+        "sizeInBytes": 28878
+      },
+      "media": {
+        "durationInSeconds": 0.3,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "sfx",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 0.2
+      }
+    },
+    {
+      "id": "resolver-hop",
+      "kind": "audio",
+      "localPath": "public/generated/dns-resolution-explainer/assets/resolver-hop.wav",
+      "purpose": "Directional resolver-hop accent.",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "f193191c01f2ebe5f9e9683f695a1c1f442d97413a0ff35878fdc1e50696457f",
+        "sizeInBytes": 40398
+      },
+      "media": {
+        "durationInSeconds": 0.42,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "sfx",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 0.2
+      }
+    },
+    {
+      "id": "answer-confirm",
+      "kind": "audio",
+      "localPath": "public/generated/dns-resolution-explainer/assets/answer-confirm.wav",
+      "purpose": "Sparse confirmation accent for the authoritative answer.",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "e57e6390411cab744469469c2fb5b93a119052f78ae0bc21cc7d7fe242aa681c",
+        "sizeInBytes": 46158
+      },
+      "media": {
+        "durationInSeconds": 0.48,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "sfx",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 0.2
+      }
+    },
+    {
+      "id": "dns-resolution-map",
+      "kind": "svg",
+      "localPath": "public/generated/dns-resolution-explainer/assets/dns-resolution-map.svg",
+      "purpose": "Repo-authored DNS delegation information graphic.",
+      "source": {
+        "provider": "repo-authored",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "c1117da0ff6183945daf4ee45362a2fb356302a2d9d64b1162ec89268f11b75b",
+        "sizeInBytes": 3583
+      },
+      "media": {
+        "width": 1600,
+        "height": 720,
+        "codec": "svg"
+      },
+      "requirements": {
+        "minWidth": 1280,
+        "minHeight": 720
+      }
+    }
+  ]
+}

@@ -65,20 +65,28 @@ assert.deepEqual(
 );
 assert.equal(
   maintainedProducerSampleManifests.length,
-  3,
-  "Phases 7 and 8 must register exactly three maintained proof samples.",
+  4,
+  "Phases 7 through 9 must register exactly four maintained proof samples.",
 );
 assert.deepEqual(
   maintainedProducerSampleManifests.map((manifest) => manifest.compositionId),
-  ["AgentProducerMediaSoundProof", "TcpHandshakeEditorial", "TcpHandshakeTerminal"],
-  "The maintained registry must contain the unchanged Phase 7 proof and the two Phase 8 proofs.",
+  [
+    "AgentProducerMediaSoundProof",
+    "TcpHandshakeEditorial",
+    "TcpHandshakeTerminal",
+    "DnsResolutionExplainer",
+  ],
+  "The maintained registry must contain the unchanged Phase 7 and 8 proofs plus the Phase 9 final acceptance proof.",
 );
 assert(
   producerSampleManifests.every(
     (manifest) =>
-      ["AgentProducerMediaSoundProof", "TcpHandshakeEditorial", "TcpHandshakeTerminal"].includes(
-        manifest.compositionId,
-      ) || manifest.sampleStatus === "frozen-reference",
+      [
+        "AgentProducerMediaSoundProof",
+        "TcpHandshakeEditorial",
+        "TcpHandshakeTerminal",
+        "DnsResolutionExplainer",
+      ].includes(manifest.compositionId) || manifest.sampleStatus === "frozen-reference",
   ),
   "Every finished sample outside the maintained proof set must remain a frozen reference.",
 );

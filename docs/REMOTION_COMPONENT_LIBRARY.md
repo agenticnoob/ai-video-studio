@@ -162,5 +162,8 @@ Phase 8 is complete. Phase 9A adds the future-only composition quality module
 and `producer:quality` post-render gate for measured text/layout bounds, safe
 margins, evidence resolution, planned rendered frames, luma variation,
 artifact metadata/chapters, and tracked generated paths. It is deterministic
-validation, not an aesthetic score. Phase 9B final acceptance video and final
-Roadmap closure have not started.
+validation, not an aesthetic score. Phase 9B is complete:
+`DnsResolutionExplainer` uses deterministic code paper/SVG treatment, the
+official `directional-slide`, manifest-backed SVG/audio, reviewed frames and
+covers, and a quality-gated 739-frame H.264/AAC render. Phase 9 and the Roadmap
+are complete.

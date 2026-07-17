@@ -55,6 +55,7 @@ for (const manifest of producerSampleManifests) {
     "AgentProducerMediaSoundProof",
     "TcpHandshakeEditorial",
     "TcpHandshakeTerminal",
+    "DnsResolutionExplainer",
   ]);
   assert.equal(
     manifest.sampleStatus,

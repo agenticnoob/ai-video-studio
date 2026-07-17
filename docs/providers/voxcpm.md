@@ -99,6 +99,14 @@ container commands, and status:
 
 It does not start Next or proxy narration through a repository HTTP route.
 
+## Final Acceptance Proof
+
+Phase 9B generated the three `DnsResolutionExplainer` narration tracks through
+the direct high-fidelity clone path. The tracked metadata records measured
+218-, 258-, and 261-frame WAV durations; private references and generated WAVs
+remain ignored. Asset preflight, composition validation, the 739-frame final
+H.264/AAC render, and `producer:quality` passed without a provider fallback.
+
 ## Validation
 
 ```bash

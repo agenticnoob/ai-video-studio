@@ -59,8 +59,10 @@ repository contains `.codegraph/`.
   Phase 8 is complete. Phase 9A deterministic quality gates are complete: the
   future scaffold owns measured layout/evidence expectations and
   `producer:quality` checks rendered frames, final artifacts, chapters, and Git
-  tracking. Phase 9B final acceptance video and Roadmap closure have not
-  started.
+  tracking. Phase 9B completed `DnsResolutionExplainer` through real direct
+  VoxCPM, strict assets, visual review, H.264/AAC render, code-only covers, and
+  the post-render quality gate. Phase 9 is complete and the Roadmap is
+  complete; no additional phase has started.
 - Historical caption/storyboard contracts and `recipes/blocks` plus
   `recipes/timing` remain only for frozen composition compatibility.
 
@@ -132,6 +134,7 @@ npm run smoke:producer-media-sound
 npm run smoke:producer-style-profiles
 npm run smoke:producer-style-profile-sample-contract
 npm run smoke:producer-quality-gates
+npm run smoke:producer-final-acceptance
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
 ```
