@@ -17,6 +17,7 @@ The implementation sequence is defined by
 topic or supplied material
   -> Agent Producer skill
   -> research and existing-asset collection
+  -> reusable asset-library search and Agent selection
   -> narration beats and VoxCPM
   -> primitive / block / runtime inventory
   -> dedicated Remotion composition
@@ -82,6 +83,13 @@ VoxCPM narration, nine strict assets, reviewed stills/covers, a 739-frame
 H.264/AAC render, and `producer:quality` all passed. Phase 9 is complete. The
 Roadmap is complete; no additional phase has started.
 
+The approved post-Roadmap v1 Agent-managed reusable asset library is also
+implemented. It admits reviewed SVG/PNG/JPEG/WebP independently of composition
+use, exposes deterministic `producer:library:*` management/search commands,
+and generates committed `catalog.json` plus a directly openable read-only
+`index.html`. This is not a new Roadmap phase and does not restore a Web video
+product.
+
 Existing finished compositions remain frozen read-only references. Historical
 `provider: "f5-tts"` metadata in their generated audio files stays truthful; it
 does not authorize new F5 generation.
@@ -94,6 +102,8 @@ does not authorize new F5 generation.
   Lottie, Rive, GLB/glTF, textures, and user-supplied files.
 - Record every visible non-code asset in a `ProducerAssetManifest` and pass
   `producer:preflight` before representative stills.
+- Search `producer:library:search` before acquiring or authoring equivalent
+  visual media; candidates inform Agent judgment and do not select themselves.
 - Attempt real source capture when evidence is needed. If capture fails, record
   why and build an honest code-rendered information graphic.
 - Generate new narration with VoxCPM only.
@@ -126,6 +136,9 @@ Supporting references:
 npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id>
 npm run producer:assets -- --manifest <supply-plan-json>
 npm run producer:preflight -- --composition <composition-id>
+npm run producer:library:search -- --text <scene-intent> --json
+npm run producer:library:validate
+npm run producer:library:build -- --check
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
 npm run producer:render -- --composition <composition-id>

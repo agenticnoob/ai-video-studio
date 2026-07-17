@@ -229,6 +229,33 @@ scene DSL or a planner-authored component model.
 Use primary sources when facts may have changed. Capture or localize only the
 assets that serve a named narration beat.
 
+Before acquiring or authoring equivalent visual media for every future
+maintained video, describe the scene intent and run
+`npm run producer:library:search -- --text <intent> --json`. Inspect the full
+candidate metadata and preview when useful. Catalog results are candidates,
+not automatic creative choices: use an active item only when its recommended
+and avoided uses fit the scene, otherwise continue with code-driven visuals or
+another properly licensed existing asset.
+
+The Agent is the only library writer. Manage standalone SVG/PNG/JPEG/WebP with:
+
+```bash
+npm run producer:library:add -- --file <path> --metadata <asset-json>
+npm run producer:library:ingest -- --file .producer-assets/library-inbox/<file> --metadata <asset-json>
+npm run producer:library:validate
+npm run producer:library:list -- --json
+npm run producer:library:search -- --text <scene-intent> --json
+npm run producer:library:update -- --id <asset-id> --metadata <patch-json>
+npm run producer:library:deprecate -- --id <asset-id> --reason <reason>
+npm run producer:library:build -- --check
+```
+
+Admission does not require prior composition use. The inbox is user-owned and
+ignored; ingestion copies without moving or deleting it. The generated
+`public/assets/library/index.html` is a directly openable read-only inspection
+surface with no upload/edit/delete controls. Deprecation is the normal v1
+removal path.
+
 Allowed assets include user-supplied files, real screenshots, licensed stock
 media, open-source media, local images/video/SVG/audio/fonts, Lottie, Rive,
 GLB/glTF, HDRI, and textures.
@@ -237,6 +264,12 @@ Every visible non-code asset in a maintained sample must map to a strict
 `ProducerAssetManifest` described by `docs/PRODUCER_ASSET_CONTRACT.md`. Use
 `public/assets/library/` for reusable reviewed media and
 `public/generated/<slug>/assets/` for ignored composition-local working media.
+
+When selecting a library candidate, snapshot its stable id, canonical
+`public/assets/library/items/<asset-id>/asset.<extension>` path, compatible
+source/integrity/media facts, and the scene-specific purpose into the existing
+manifest. Normal preflight rejects a missing, deprecated, or drifted library
+reference. Do not backfill completed or frozen manifests.
 
 For remote sources:
 

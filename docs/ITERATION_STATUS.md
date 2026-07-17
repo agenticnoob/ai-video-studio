@@ -39,6 +39,13 @@ Phase 9B final acceptance video and final Roadmap closure are complete.
 Phase 9 and the Agent Producer-only Roadmap are complete. No additional phase
 has started.
 
+The approved Agent-managed reusable asset library is complete as one bounded
+post-Roadmap v1 capability. Agent-only CLI operations manage standalone
+SVG/PNG/JPEG/WebP records, deterministic catalog/report views, ignored inbox
+ingestion, deprecated lifecycle, atomic rollback, local search, and
+forward-only Producer manifest cross-validation. It does not create another
+Roadmap phase.
+
 Phase 0 authority reset, Phase 1 direct VoxCPM runtime, Phase 2 F5 removal,
 Phase 3 Web product removal, and Phase 4 Producer OS consolidation remain
 complete. Phase 5 existing asset supply, Phase 6 capability core, and Phase 7
@@ -391,6 +398,14 @@ npm run smoke:producer-style-profile-real-compositions
 npm run smoke:producer-quality-gates
 npm run smoke:producer-final-acceptance
 npm run producer:quality -- --module <quality-module>
+npm run producer:library:add -- --file <path> --metadata <asset-json>
+npm run producer:library:ingest -- --file .producer-assets/library-inbox/<file> --metadata <asset-json>
+npm run producer:library:validate
+npm run producer:library:list -- --json
+npm run producer:library:search -- --text <scene-intent> --json
+npm run producer:library:update -- --id <asset-id> --metadata <patch-json>
+npm run producer:library:deprecate -- --id <asset-id> --reason <reason>
+npm run producer:library:build -- --check
 npm run producer:media-sound-fixtures
 ```
 

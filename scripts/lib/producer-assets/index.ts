@@ -24,3 +24,4 @@ export type {
   ProducerAssetSupplyPlan,
   ProducerAssetSupplyRequest,
 } from "./types";
+export { validateProducerAssetLibraryReference } from "../producer-asset-library";

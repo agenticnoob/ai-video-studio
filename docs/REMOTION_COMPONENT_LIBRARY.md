@@ -68,6 +68,13 @@ Components may consume only local or localized existing assets through stable
 paths. Asset choice and provenance belong to the Producer job/manifest, not to
 hard-coded remote defaults inside primitives.
 
+Before acquiring or authoring equivalent image/SVG media, the Agent searches
+the standalone reusable library catalog and inspects candidate semantic
+records. SVG/PNG/JPEG/WebP admission does not require prior composition use;
+search results guide but never replace Agent creative judgment. A chosen active
+item is snapshotted into the future composition's normal
+`ProducerAssetManifest` and preflighted for canonical path and metadata drift.
+
 Admit images, video, SVG, audio, fonts, Lottie, Rive, GLB/glTF, HDRI, and
 textures only after format and deterministic-render checks.
 

@@ -143,6 +143,12 @@ paper/SVG treatment, official transitions, reviewed stills and covers, a
 Phase 9 is complete and the Agent Producer-only Roadmap is complete. No
 additional Roadmap phase has started.
 
+One approved post-Roadmap v1 capability is complete: the Agent-managed reusable
+SVG/PNG/JPEG/WebP library admits items independently of video use, produces a
+deterministic machine catalog and local read-only HTML report, and validates
+future composition snapshots. It is not Phase 10 and does not alter the
+Roadmap completion definition.
+
 ## Supporting Authorities
 
 - current status: `docs/ITERATION_STATUS.md`

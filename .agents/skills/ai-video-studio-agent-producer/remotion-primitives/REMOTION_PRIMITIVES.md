@@ -616,6 +616,12 @@ Each transition renders two scenes (A→B) with a specific animation. They follo
 
 ## Agent Producer Development Rule
 
+Before adding or sourcing an equivalent visual, search the Agent-managed
+reusable SVG/PNG/JPEG/WebP catalog with `producer:library:search`. Inspect
+candidate semantics and preview as needed; the shortlist informs Agent creative
+judgment and never mandates use. Record any selected active item in the future
+composition's `ProducerAssetManifest`.
+
 When adding a visual capability:
 
 1. Reuse a primitive or Producer block when it fits the visual intent.

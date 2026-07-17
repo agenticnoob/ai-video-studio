@@ -65,6 +65,10 @@ repository contains `.codegraph/`.
   complete; no additional phase has started.
 - Historical caption/storyboard contracts and `recipes/blocks` plus
   `recipes/timing` remain only for frozen composition compatibility.
+- A separate post-Roadmap v1 Agent-managed reusable asset library now admits
+  SVG/PNG/JPEG/WebP without prior composition use, provides deterministic
+  `producer:library:*` commands plus a local read-only static catalog, and
+  cross-validates only future canonical `ProducerAssetManifest` references.
 
 ## Where To Look
 
@@ -93,6 +97,8 @@ repository contains `.codegraph/`.
 - Keep creative judgment with the agent; automate only deterministic production
   operations and hard-failure checks.
 - Use code and manifest-backed existing assets only.
+- Search the reusable asset catalog before acquiring or authoring equivalent
+  visual media; the Agent owns the final scene-level selection judgment.
 - Run maintained assets through `producer:assets` and `producer:preflight`
   before representative stills.
 - Attempt real capture for source-backed evidence. If capture is unavailable,

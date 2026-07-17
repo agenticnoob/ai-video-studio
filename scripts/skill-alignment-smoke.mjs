@@ -80,6 +80,12 @@ for (const required of [
   "npm run producer:stills",
   "npm run producer:render",
   "npm run producer:quality",
+  "npm run producer:library:search",
+  "npm run producer:library:ingest",
+  "npm run producer:library:build -- --check",
+  "read-only inspection",
+  "not automatic creative choices",
+  "Admission does not require prior composition use",
   "strict maintained manifest",
   "ProducerAssetManifest",
   "docs/PRODUCER_ASSET_CONTRACT.md",
@@ -161,6 +167,12 @@ for (const forbidden of [
 assertIncludes(
   primitiveReference,
   "Agent Producer Development Rule",
+  "Producer primitive reference",
+);
+assertIncludes(primitiveReference, "producer:library:search", "Producer primitive reference");
+assertIncludesWords(
+  primitiveReference,
+  "shortlist informs Agent creative judgment",
   "Producer primitive reference",
 );
 

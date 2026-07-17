@@ -6,6 +6,12 @@ alignment, and Roadmap closure after the Phase 9A quality gate passed.
 
 Decision date: 2026-07-15.
 
+Post-Roadmap note: the separately approved Agent-managed reusable asset library
+is implemented as a bounded v1 capability for SVG/PNG/JPEG/WebP. It adds no
+Phase 10, reopens no completed phase, and does not change the completion
+definition below. Agent-only CLI management, deterministic catalog/static
+report, and future manifest cross-validation extend the completed Producer OS.
+
 This roadmap defines the repository transition from a mixed Agent Producer,
 Web video product, and multi-provider TTS workspace into one focused local
 production system:

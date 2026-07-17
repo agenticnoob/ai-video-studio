@@ -14,6 +14,7 @@ import {
 import { assertProducerAudioQuality } from "./audio-quality";
 import { parseProducerAssetManifest } from "./serialize";
 import type { ProducerAssetExecFile, ProducerAssetMedia } from "./types";
+import { validateProducerAssetLibraryReference } from "../producer-asset-library";
 
 const closeEnough = (left: number | undefined, right: number | undefined): boolean =>
   left === undefined || right === undefined ? left === right : Math.abs(left - right) < 0.001;
@@ -115,6 +116,7 @@ export const preflightProducerAssets = async ({
         throw new Error(`${asset.id} is not normalized to H.264/yuv420p/CFR/AAC.`);
       }
     }
+    await validateProducerAssetLibraryReference({ asset, rootDir: absoluteRoot });
   }
 };
 

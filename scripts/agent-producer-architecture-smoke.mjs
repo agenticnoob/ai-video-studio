@@ -96,6 +96,19 @@ assert.deepEqual(
   ],
   "completed roadmap phase slices",
 );
+assert.deepEqual(
+  inventory.postRoadmapCapabilities,
+  [
+    {
+      id: "agent-managed-reusable-asset-library-v1",
+      status: "complete",
+      path: "scripts/lib/producer-asset-library",
+      reason:
+        "Agent-only SVG/PNG/JPEG/WebP admission, semantic search, deterministic catalog/static report, atomic rollback, and future ProducerAssetManifest cross-validation without adding a Roadmap phase.",
+    },
+  ],
+  "bounded post-Roadmap capability record",
+);
 const completedPhases = new Set(inventory.completedPhases);
 assert.equal(
   inventory.authority.skill,
@@ -234,6 +247,14 @@ for (const command of [
   "producer:stills",
   "producer:render",
   "producer:quality",
+  "producer:library:add",
+  "producer:library:ingest",
+  "producer:library:validate",
+  "producer:library:list",
+  "producer:library:search",
+  "producer:library:update",
+  "producer:library:deprecate",
+  "producer:library:build",
   "smoke:producer-os",
   "smoke:producer-assets",
   "smoke:remotion-capabilities",
@@ -243,6 +264,7 @@ for (const command of [
   "smoke:producer-style-profile-sample-contract",
   "smoke:producer-style-profile-real-compositions",
   "smoke:producer-quality-gates",
+  "smoke:producer-asset-library",
 ]) {
   assert(packageJson.scripts[command], `package.json must expose ${command}`);
 }
@@ -313,6 +335,24 @@ for (const phase5Path of [
 ]) {
   assert(existsSync(absolute(phase5Path)), `Phase 5 path must exist: ${phase5Path}`);
 }
+for (const libraryPath of [
+  "scripts/producer-asset-library.mjs",
+  "scripts/producer-asset-library-smoke.mjs",
+  "scripts/lib/producer-asset-library/index.ts",
+  "scripts/lib/producer-asset-library/validate.ts",
+  "scripts/lib/producer-asset-library/catalog.ts",
+  "scripts/lib/producer-asset-library/search.ts",
+  "scripts/lib/producer-asset-library/transactions.ts",
+  "public/assets/library/catalog.json",
+  "public/assets/library/index.html",
+]) {
+  assert(
+    existsSync(absolute(libraryPath)),
+    `Post-Roadmap asset-library path must exist: ${libraryPath}`,
+  );
+}
+assert(/adds no\s+Phase 10/u.test(read("docs/AGENT_PRODUCER_ONLY_ROADMAP.md")));
+assert(read("public/assets/library/README.md").includes("Prior use is not required for admission"));
 for (const primitivePath of [
   "src/remotion/primitives/cinematic/KenBurns.tsx",
   "src/remotion/primitives/cinematic/ParallaxPan.tsx",

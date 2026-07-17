@@ -57,6 +57,14 @@
       "reason": "DnsResolutionExplainer completed the future-only VoxCPM, strict asset, composition, review, cover, H.264/AAC render, quality, forbidden-scan, and active-document closure path while frozen compositions remained unchanged."
     }
   ],
+  "postRoadmapCapabilities": [
+    {
+      "id": "agent-managed-reusable-asset-library-v1",
+      "status": "complete",
+      "path": "scripts/lib/producer-asset-library",
+      "reason": "Agent-only SVG/PNG/JPEG/WebP admission, semantic search, deterministic catalog/static report, atomic rollback, and future ProducerAssetManifest cross-validation without adding a Roadmap phase."
+    }
+  ],
   "decisionDate": "2026-07-15",
   "authority": {
     "skill": ".agents/skills/ai-video-studio-agent-producer/",
