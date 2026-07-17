@@ -40,6 +40,7 @@ export type ProducerSampleSourceFileKind =
   | "asset-manifest"
   | "soundtrack"
   | "validation"
+  | "quality"
   | "cover"
   | "render-metadata"
   | "publishing-copy";
@@ -151,6 +152,7 @@ export type MaintainedProducerSampleManifest = ProducerSampleManifestBase & {
     readonly sfxAssetIds: readonly string[];
   };
   readonly validationModule: string;
+  readonly qualityModule?: string;
   readonly render: {
     readonly metadataPath: string;
     readonly cover16x9CompositionId: string;
@@ -162,6 +164,11 @@ export type MaintainedProducerSampleManifest = ProducerSampleManifestBase & {
 export type ProfiledMaintainedProducerSampleManifest = MaintainedProducerSampleManifest & {
   readonly styleProfileId: ProducerStyleProfileId;
 };
+
+export type QualityGatedMaintainedProducerSampleManifest =
+  ProfiledMaintainedProducerSampleManifest & {
+    readonly qualityModule: string;
+  };
 
 export type ProducerSampleManifest =
   | FrozenProducerSampleManifest
@@ -243,6 +250,16 @@ export const assertProducerSampleManifest = (manifest: ProducerSampleManifest): 
     `${manifest.compositionId} audio metadata path`,
   );
   requireText(manifest.validationModule, `${manifest.compositionId} validation module`);
+  if (manifest.qualityModule !== undefined) {
+    requireText(manifest.qualityModule, `${manifest.compositionId} quality module`);
+    if (
+      /^https?:\/\//i.test(manifest.qualityModule) ||
+      manifest.qualityModule.startsWith("/") ||
+      manifest.qualityModule.includes("..")
+    ) {
+      throw new Error(`${manifest.compositionId} quality module must use a repository-local path.`);
+    }
+  }
   requireText(manifest.render.metadataPath, `${manifest.compositionId} render metadata path`);
   requireText(
     manifest.render.cover16x9CompositionId,
@@ -290,6 +307,7 @@ export const assertProducerSampleManifest = (manifest: ProducerSampleManifest): 
     manifest.assets.manifestPath,
     ...(manifest.soundDesign ? [manifest.soundDesign.soundtrackModulePath] : []),
     manifest.validationModule,
+    ...(manifest.qualityModule ? [manifest.qualityModule] : []),
     manifest.render.metadataPath,
     manifest.publishingCopyPath,
   ]) {
@@ -317,5 +335,13 @@ export const assertProducerSampleManifest = (manifest: ProducerSampleManifest): 
     !manifest.sourceFiles.some((sourceFile) => sourceFile.kind === "soundtrack")
   ) {
     throw new Error(`${manifest.compositionId} sourceFiles must include soundtrack ownership.`);
+  }
+  if (
+    manifest.qualityModule &&
+    !manifest.sourceFiles.some(
+      (sourceFile) => sourceFile.kind === "quality" && sourceFile.path === manifest.qualityModule,
+    )
+  ) {
+    throw new Error(`${manifest.compositionId} sourceFiles must include quality ownership.`);
   }
 };

@@ -14,6 +14,7 @@ for (const command of [
   "producer:assets",
   "producer:preflight",
   "producer:render",
+  "producer:quality",
   "smoke:producer-os",
 ]) {
   assert(packageJson.scripts[command], `Missing Phase 4 command: ${command}`);
@@ -26,6 +27,7 @@ for (const file of [
   "scripts/render-producer-sample.mjs",
   "scripts/preflight-producer-assets.mjs",
   "src/remotion/producer-samples/scaffold/SampleName/manifest.ts",
+  "src/remotion/producer-samples/scaffold/SampleName/quality.ts",
   "src/remotion/producer-samples/scaffold/SampleName/cover.tsx",
   "src/remotion/producer-samples/scaffold/SampleName/render-metadata.json",
   "src/remotion/producer-samples/scaffold/SampleName/publishing.md",
@@ -86,6 +88,7 @@ assert.equal(
   "src/remotion/SampleName/assets.manifest.json",
 );
 assert.equal(sampleNameManifest.styleProfileId, "editorial-tech");
+assert.equal(sampleNameManifest.qualityModule, "src/remotion/SampleName/quality.ts");
 
 for (const [file, planner] of [
   ["scripts/render-producer-review-frames.mjs", "buildProducerReviewFrameJobs"],
@@ -155,6 +158,7 @@ try {
     "manifest.ts",
     "cover.tsx",
     "validation.ts",
+    "quality.ts",
     "render-metadata.json",
     "publishing.md",
     "assets.supply.json",
@@ -163,6 +167,7 @@ try {
     assert(existsSync(path.join(destination, filename)), `Scaffold output missing ${filename}.`);
   }
   const generatedManifest = read(path.join(destination, "manifest.ts"));
+  const generatedQuality = read(path.join(destination, "quality.ts"));
   const generatedVideo = read(path.join(destination, "PhaseFourFixture.tsx"));
   const generatedGenerator = read(path.join(destination, "generate.mjs"));
   const generatedAssetSupply = read(path.join(destination, "assets.supply.json"));
@@ -170,10 +175,13 @@ try {
   assert(generatedManifest.includes('compositionId: "PhaseFourFixture"'));
   assert(generatedManifest.includes('slug: "phase-four-fixture"'));
   assert(generatedManifest.includes('styleProfileId: "retro-terminal"'));
+  assert(generatedManifest.includes('qualityModule: "src/remotion/PhaseFourFixture/quality.ts"'));
+  assert(generatedManifest.includes("QualityGatedMaintainedProducerSampleManifest"));
   assert(!generatedManifest.includes("STYLE_PROFILE_ID"));
   assert(generatedManifest.includes('from "../producer-samples/manifest"'));
   assert(generatedVideo.includes('from "../standalone-video"'));
   assert(generatedGenerator.includes('from "../../../scripts/lib/producer-audio/index.js"'));
+  assert(generatedQuality.includes('from "../../../scripts/lib/producer-quality-gates"'));
   assert(generatedAssetSupply.includes('"compositionId": "PhaseFourFixture"'));
   assert(generatedAssetSupply.includes('"slug": "phase-four-fixture"'));
   assert(generatedAssetManifest.includes('"compositionId": "PhaseFourFixture"'));

@@ -158,4 +158,9 @@ scaffolds must record one validated profile id; the completed Phase 7 proof is
 not retrofitted. `TcpHandshakeEditorial` and `TcpHandshakeTerminal` prove
 `editorial-tech` and `retro-terminal` with identical facts, real VoxCPM,
 strict assets, reviewed stills/covers, and H.264/AAC renders.
-Phase 8 is complete. Phase 9 has not started.
+Phase 8 is complete. Phase 9A adds the future-only composition quality module
+and `producer:quality` post-render gate for measured text/layout bounds, safe
+margins, evidence resolution, planned rendered frames, luma variation,
+artifact metadata/chapters, and tracked generated paths. It is deterministic
+validation, not an aesthetic score. Phase 9B final acceptance video and final
+Roadmap closure have not started.

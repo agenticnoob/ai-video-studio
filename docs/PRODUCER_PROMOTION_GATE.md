@@ -63,7 +63,10 @@ with narration, asset preflight, still/cover review, sound, and MP4 evidence.
 Never retrofit a completed or frozen composition to manufacture promotion
 evidence. Phase 8B style-profile sample contract is complete: every future
 scaffold records one validated profile id. Phase 8 is complete.
-Phase 9 has not started.
+Phase 9A deterministic quality gates are complete. Future samples run
+`producer:quality` after render and before promotion; a passing mechanical gate
+does not replace actual visual/audio review. Phase 9B final acceptance video
+and final Roadmap closure have not started.
 
 ## Documentation Hooks
 

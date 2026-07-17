@@ -1,4 +1,4 @@
-import type { ProfiledMaintainedProducerSampleManifest } from "../../manifest";
+import type { QualityGatedMaintainedProducerSampleManifest } from "../../manifest";
 
 export const sampleNameManifest = {
   sampleStatus: "maintained",
@@ -26,6 +26,7 @@ export const sampleNameManifest = {
     manifestPath: "src/remotion/SampleName/assets.manifest.json",
   },
   validationModule: "src/remotion/SampleName/validation.ts",
+  qualityModule: "src/remotion/SampleName/quality.ts",
   render: {
     metadataPath: "src/remotion/SampleName/render-metadata.json",
     cover16x9CompositionId: "SampleNameCover16x9",
@@ -46,6 +47,7 @@ export const sampleNameManifest = {
     { path: "src/remotion/SampleName/manifest.ts", kind: "manifest" },
     { path: "src/remotion/SampleName/assets.manifest.json", kind: "asset-manifest" },
     { path: "src/remotion/SampleName/validation.ts", kind: "validation" },
+    { path: "src/remotion/SampleName/quality.ts", kind: "quality" },
     { path: "src/remotion/SampleName/cover.tsx", kind: "cover" },
     { path: "src/remotion/SampleName/render-metadata.json", kind: "render-metadata" },
     { path: "src/remotion/SampleName/publishing.md", kind: "publishing-copy" },
@@ -56,4 +58,4 @@ export const sampleNameManifest = {
     "Generated narration, review frames, covers, metadata, and MP4 stay local-only.",
     "Register the video and both cover Stills in Root before declaring the sample complete.",
   ],
-} as const satisfies ProfiledMaintainedProducerSampleManifest;
+} as const satisfies QualityGatedMaintainedProducerSampleManifest;

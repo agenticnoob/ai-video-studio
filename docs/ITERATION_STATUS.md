@@ -30,14 +30,37 @@ Phase 8B style-profile sample contract is complete.
 
 Phase 8B real-composition proof is complete.
 
-Phase 8 is complete. Phase 9 has not started.
+Phase 8 is complete.
+
+Phase 9A deterministic quality gates are complete.
+
+Phase 9B final acceptance video and final Roadmap closure have not started.
 
 Phase 0 authority reset, Phase 1 direct VoxCPM runtime, Phase 2 F5 removal,
 Phase 3 Web product removal, and Phase 4 Producer OS consolidation remain
 complete. Phase 5 existing asset supply, Phase 6 capability core, and Phase 7
 dynamic media/sound also remain complete. Phase 8 is complete after its
 contract/showcase, sample-contract, and two-real-composition proof slices.
-Phase 9 has not started.
+Phase 9A is complete after its future-only quality contract, real
+FFmpeg/ffprobe/Git evidence collector, and post-render CLI. Phase 9B has not
+started.
+
+## Implemented Phase 9A Boundary
+
+- added one pure deterministic gate for measured text overflow/contrast,
+  visible safe margins, evidence resolution, planned-vs-rendered frames,
+  near-blank/low-contrast luma, H.264/AAC metadata/chapter agreement, and Git-
+  tracked generated artifacts
+- added `producer:quality -- --module <quality-module>` with fresh FFmpeg PNG,
+  ffprobe MP4, final metadata, and `git ls-files` evidence collection
+- made every future scaffold own a strict quality module while all three
+  completed maintained proofs and every frozen composition remain unchanged
+- retained asset preflight and Producer validation as the owners of remote,
+  missing, codec, provenance/license, audio, caption-control, and Root failures
+- kept aesthetic and audio/visual approval with the Agent; the gate rejects
+  deterministic failures only
+- added `smoke:producer-quality-gates`; its real synthetic binaries live only
+  under `/tmp` and no generated media is committed
 
 ## Implemented Phase 8B Real-Composition Proof
 
@@ -197,6 +220,25 @@ Phase 9 has not started.
 
 ## Verification
 
+Phase 9A RED evidence:
+
+- the first Docker `smoke:producer-quality-gates` exited on
+  `Missing Phase 9A quality surface: scripts/lib/producer-quality-gates.ts`
+- later sub-REDs exposed the missing scaffold contract, Node Buffer typing,
+  and repository-external `/tmp` Git path handling before the same command
+  reached GREEN
+
+Phase 9A GREEN evidence:
+
+- the focused Docker smoke compiles the quality runtime, creates a real
+  high-contrast and blank PNG plus a one-second H.264/AAC MP4 under `/tmp`,
+  runs real FFmpeg/ffprobe/Git analysis, and executes `producer:quality`
+- the same gate accepts the good fixture and rejects blank/missing frames,
+  overflow, low text contrast, unsafe bounds, unresolved evidence, codec/
+  metadata mismatch, chapter mismatch, and tracked artifact input
+- Producer OS, sample-manifest/promotion, and validation smokes pass while all
+  completed maintained manifests remain without Phase 9 retrofit
+
 Phase 8A RED evidence:
 
 - the first Docker `smoke:producer-style-profiles` exited 1 with
@@ -290,13 +332,16 @@ npm run smoke:remotion-capabilities
 npm run smoke:producer-media-sound
 npm run smoke:producer-style-profile-sample-contract
 npm run smoke:producer-style-profile-real-compositions
+npm run smoke:producer-quality-gates
+npm run producer:quality -- --module <quality-module>
 npm run producer:media-sound-fixtures
 ```
 
 ## Next Bounded Phase
 
-Phase 8 is complete. Phase 9 quality gates and final cleanup is the next
-bounded phase. Phase 9 has not started.
+Phase 9A deterministic quality gates are complete. Phase 9B final acceptance
+video plus final documentation/Roadmap closure is the next bounded phase and
+has not started.
 
 ## Frozen History
 

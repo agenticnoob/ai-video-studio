@@ -124,7 +124,8 @@ for (const docPath of [
   const source = read(docPath);
   assert(source.includes("Phase 8A"), `${docPath} must describe the Phase 8A boundary.`);
   assert(source.includes("Phase 8 is complete."), `${docPath} must mark Phase 8 complete.`);
-  assert(source.includes("Phase 9 has not started."), `${docPath} must keep Phase 9 unstarted.`);
+  assert(source.includes("Phase 9A"), `${docPath} must describe the Phase 9A boundary.`);
+  assert(source.includes("Phase 9B"), `${docPath} must keep Phase 9B unstarted.`);
 }
 
 const compiledRoot = process.env.PRODUCER_STYLE_PROFILES_BUILD_DIR;

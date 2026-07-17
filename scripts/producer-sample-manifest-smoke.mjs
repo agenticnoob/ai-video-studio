@@ -69,6 +69,7 @@ const scaffoldSources = [
   "src/remotion/producer-samples/scaffold/SampleName/types.ts",
   "src/remotion/producer-samples/scaffold/SampleName/generate.mjs",
   "src/remotion/producer-samples/scaffold/SampleName/validation.ts",
+  "src/remotion/producer-samples/scaffold/SampleName/quality.ts",
 ]
   .map((file) => readFileSync(file, "utf8"))
   .join("\n");
@@ -79,6 +80,7 @@ for (const required of [
   "producerValidationInput",
   "npm run producer:validate",
   "npm run producer:stills",
+  "ProducerQualityPlan",
 ])
   assert(scaffoldSources.includes(required), `Scaffold must reference ${required}.`);
 for (const frozenPath of [
@@ -168,6 +170,10 @@ for (const manifest of producerSampleManifests) {
       !("styleProfileId" in manifest),
       "The completed Phase 7 proof must not be retrofitted with a style profile.",
     );
+    assert(
+      !("qualityModule" in manifest),
+      "The completed Phase 7 proof must not be retrofitted with a quality module.",
+    );
   } else if (phaseEightProfiles.has(manifest.compositionId)) {
     assert(
       manifest.sampleStatus === "maintained",
@@ -178,6 +184,10 @@ for (const manifest of producerSampleManifests) {
       `${manifest.compositionId} must keep its selected style profile.`,
     );
     assertIgnoredPath(manifest.localArtifactRoot);
+    assert(
+      !("qualityModule" in manifest),
+      `${manifest.compositionId} must not be retrofitted with Phase 9 quality ownership.`,
+    );
     for (const marker of [
       manifest.compositionId,
       `${manifest.compositionId}Cover16x9`,
@@ -214,6 +224,7 @@ const scaffoldFiles = [
   "src/remotion/producer-samples/scaffold/SampleName/data.ts",
   "src/remotion/producer-samples/scaffold/SampleName/audio.generated.ts",
   "src/remotion/producer-samples/scaffold/SampleName/manifest.ts",
+  "src/remotion/producer-samples/scaffold/SampleName/quality.ts",
   "src/remotion/producer-samples/scaffold/SampleName/cover.tsx",
   "src/remotion/producer-samples/scaffold/SampleName/render-metadata.json",
   "src/remotion/producer-samples/scaffold/SampleName/publishing.md",
@@ -239,6 +250,7 @@ assert(
 assert(
   scaffoldReadme.includes("npm run producer:scaffold") &&
     scaffoldReadme.includes("npm run producer:render") &&
+    scaffoldReadme.includes("npm run producer:quality") &&
     scaffoldReadme.includes("--style-profile"),
   "Scaffold README must route future samples through scaffold and render commands.",
 );

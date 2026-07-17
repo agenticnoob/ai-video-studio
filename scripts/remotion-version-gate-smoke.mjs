@@ -66,7 +66,8 @@ assert(iterationStatus.includes("Phase 6 Remotion capability core is complete.")
 assert(iterationStatus.includes("Phase 7 dynamic existing media and sound design is complete."));
 assert(iterationStatus.includes("Phase 8A style-profile contract and showcase is complete."));
 assert(iterationStatus.includes("Phase 8 is complete."));
-assert(iterationStatus.includes("Phase 9 has not started."));
+assert(iterationStatus.includes("Phase 9A deterministic quality gates are complete."));
+assert(iterationStatus.includes("Phase 9B final acceptance video"));
 assert(roadmap.includes("Phase 6B transitions and remaining showcase coverage complete"));
 assert(
   inventory.completedPhaseSlices.some(

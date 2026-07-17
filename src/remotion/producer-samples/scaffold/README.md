@@ -22,6 +22,7 @@ The committed sample folder should contain:
 - `audio.generated.ts` or another committed metadata file when the sample needs generated narration metadata
 - `generate.mjs` using the shared `scripts/lib/producer-audio/` functions
 - `validation.ts` exporting `producerValidationInput`
+- `quality.ts` exporting the post-render `producerQualityPlan`
 - `manifest.ts` exporting a strict maintained sample contract
 - `assets.supply.json` declaring manual/URL localization inputs
 - `assets.manifest.json` storing strict local provenance, license, checksum, and media metadata
@@ -58,9 +59,15 @@ npm run producer:preflight -- --composition <composition-id>
 npm run producer:validate -- --module src/remotion/<SampleName>/validation.ts
 npm run producer:stills -- --composition <composition-id>
 npm run producer:render -- --composition <composition-id>
+npm run producer:quality -- --module src/remotion/<SampleName>/quality.ts
 ```
 
 Use `--dry-run` with `producer:stills` when reviewing the planned commands
 before invoking Remotion. These commands validate mechanical contracts and
 render declared review frames; the Agent must still inspect the actual audio,
 stills, and MP4 and make creative revisions.
+
+The scaffold quality plan intentionally fails until the composition replaces
+its measured text/layout evidence, resolves evidence assets, and renders the
+declared stills and final artifacts. `producer:quality` is a deterministic
+hard-failure gate, not an aesthetic score or creative approval.

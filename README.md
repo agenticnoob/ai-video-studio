@@ -72,7 +72,12 @@ require an explicit validated profile id without retrofitting the completed
 Phase 7 proof. `TcpHandshakeEditorial` and `TcpHandshakeTerminal` now prove
 `editorial-tech` and `retro-terminal` on identical narration/facts through
 real VoxCPM, strict assets, reviewed stills/covers, and H.264/AAC renders.
-Phase 8 is complete. Phase 9 has not started.
+Phase 8 is complete. Phase 9A deterministic quality gates are complete. Every
+future scaffold owns a composition quality module, and `producer:quality`
+checks measured text/layout bounds, evidence resolution, planned rendered
+frames, luma variation, H.264/AAC metadata/chapter agreement, and tracked
+generated paths after render. Phase 9B final acceptance video and final
+Roadmap cleanup have not started.
 
 Existing finished compositions remain frozen read-only references. Historical
 `provider: "f5-tts"` metadata in their generated audio files stays truthful; it
@@ -121,6 +126,7 @@ npm run producer:preflight -- --composition <composition-id>
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
 npm run producer:render -- --composition <composition-id>
+npm run producer:quality -- --module <quality-module>
 npm run smoke:producer-os
 npm run smoke:producer-assets
 npm run smoke:remotion-version-gate
@@ -128,6 +134,7 @@ npm run smoke:remotion-capabilities
 npm run smoke:producer-media-sound
 npm run smoke:producer-style-profiles
 npm run smoke:producer-style-profile-sample-contract
+npm run smoke:producer-quality-gates
 npm run smoke:producer-audio-direct-voxcpm
 npm run smoke:producer-audio-tools
 npm run smoke:agent-producer-web-removal

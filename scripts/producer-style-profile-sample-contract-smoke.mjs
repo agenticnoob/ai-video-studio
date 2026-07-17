@@ -71,9 +71,10 @@ assert(
   "Scaffold must replace the style-profile token.",
 );
 assert(
-  scaffoldManifestSource.includes("ProfiledMaintainedProducerSampleManifest") &&
-    scaffoldManifestSource.includes('styleProfileId: "editorial-tech" /* STYLE_PROFILE_ID */'),
-  "Scaffold manifest must require a tokenized profile id.",
+  scaffoldManifestSource.includes("QualityGatedMaintainedProducerSampleManifest") &&
+    scaffoldManifestSource.includes('styleProfileId: "editorial-tech" /* STYLE_PROFILE_ID */') &&
+    scaffoldManifestSource.includes('qualityModule: "src/remotion/SampleName/quality.ts"'),
+  "Scaffold manifest must require tokenized profile and quality-gate ownership.",
 );
 assert(
   !phaseSevenManifestSource.includes("styleProfileId"),
@@ -112,7 +113,8 @@ for (const docPath of [
     `${docPath} must describe the completed Phase 8B contract slice.`,
   );
   assert(source.includes("Phase 8 is complete."), `${docPath} must mark Phase 8 complete.`);
-  assert(source.includes("Phase 9 has not started."), `${docPath} must keep Phase 9 unstarted.`);
+  assert(source.includes("Phase 9A"), `${docPath} must describe the Phase 9A boundary.`);
+  assert(source.includes("Phase 9B"), `${docPath} must keep Phase 9B unstarted.`);
 }
 
 const scaffoldRoot = mkdtempSync(path.join(os.tmpdir(), "producer-profile-contract-"));

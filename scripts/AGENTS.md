@@ -21,6 +21,7 @@ and architecture guards. There is no supported Web route smoke surface.
 | Asset supply | `lib/producer-assets/`, `producer-assets.mjs` | Localizes manual/URL media, checksums, probes, and normalizes. |
 | Asset preflight | `preflight-producer-assets.mjs` | Fails before maintained still/render jobs on invalid assets. |
 | Unified render | `lib/producer-render.ts`, `render-producer-sample.mjs` | Plans/runs MP4, metadata, and two code-rendered covers. |
+| Post-render quality | `lib/producer-quality-*`, `validate-producer-quality.mjs` | Collects FFmpeg/ffprobe/Git evidence and rejects deterministic layout/review/artifact failures. |
 | Remotion version gate | `remotion-version-gate-smoke.mjs` | Requires exact `4.0.489` for the complete installed Remotion closure and completed Phase 6 docs/inventory. |
 | Remotion capabilities | `remotion-capabilities-smoke.mjs` | Guards effects, text fitting, transitions, duration arithmetic, showcase sources, docs, and forbidden boundaries. |
 | Capability fixture | `fixtures/remotion-capabilities/create-video-fixture.sh` | Creates one ignored FFmpeg-only local video for isolated canvas-effect review. |
@@ -51,7 +52,11 @@ references. Do not use them as future Producer scaffolds.
   maintained sample; never retrofit the completed Phase 7 proof.
 - Keep `TcpHandshakeEditorial` and `TcpHandshakeTerminal` as the maintained
   Phase 8 profile proofs; their generated narration, assets, stills, covers,
-  and MP4s stay ignored. Phase 8 is complete. Phase 9 has not started.
+  and MP4s stay ignored. Phase 8 is complete. Phase 9A quality gates are
+  complete; Phase 9B final acceptance video and Roadmap closure have not
+  started.
+- Run `producer:quality -- --module <quality-module>` after render for every
+  future scaffold; do not treat its result as aesthetic approval.
 
 ## ANTI-PATTERNS
 
@@ -71,5 +76,6 @@ docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:remotion-capabilities'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:producer-media-sound'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:producer-style-profile-sample-contract'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:producer-quality-gates'
 git diff --check
 ```

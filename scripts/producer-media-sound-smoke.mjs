@@ -182,7 +182,8 @@ const iterationStatus = read("docs/ITERATION_STATUS.md");
 assert(iterationStatus.includes("Phase 7 dynamic existing media and sound design is complete."));
 assert(iterationStatus.includes("Phase 8A style-profile contract and showcase is complete."));
 assert(iterationStatus.includes("Phase 8 is complete."));
-assert(iterationStatus.includes("Phase 9 has not started."));
+assert(iterationStatus.includes("Phase 9A deterministic quality gates are complete."));
+assert(iterationStatus.includes("Phase 9B final acceptance video"));
 
 const producerSkill = read(".agents/skills/ai-video-studio-agent-producer/SKILL.md");
 for (const token of [

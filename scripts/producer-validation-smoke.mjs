@@ -124,6 +124,44 @@ await assert.doesNotReject(() =>
     ],
   }),
 );
+const qualityGatedManifest = {
+  ...maintainedManifest,
+  qualityModule: "fixtures/quality.ts",
+  sourceFiles: [
+    ...maintainedManifest.sourceFiles,
+    { path: "fixtures/quality.ts", kind: "quality" },
+  ],
+};
+await assert.doesNotReject(() =>
+  validate({
+    manifest: qualityGatedManifest,
+    assetManifest: maintainedAssetManifest,
+    registeredCompositionIds: [
+      "FixtureProducerVideo",
+      "FixtureProducerVideoCover16x9",
+      "FixtureProducerVideoCover9x16",
+    ],
+  }),
+);
+await assert.rejects(
+  () =>
+    validate({
+      manifest: { ...qualityGatedManifest, qualityModule: "https://example.com/quality.ts" },
+      assetManifest: maintainedAssetManifest,
+    }),
+  /quality module.*repository-local/i,
+);
+await assert.rejects(
+  () =>
+    validate({
+      manifest: {
+        ...qualityGatedManifest,
+        sourceFiles: maintainedManifest.sourceFiles,
+      },
+      assetManifest: maintainedAssetManifest,
+    }),
+  /sourceFiles.*quality/i,
+);
 await assert.rejects(
   () =>
     validate({

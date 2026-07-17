@@ -20,7 +20,9 @@ Roadmap status: Phase 5 existing-asset supply, Phase 6 Remotion capability core,
 and Phase 7 dynamic media/sound are complete with every installed Remotion
 package exact `4.0.489`. Phase 8A style-profile contract and showcase are
 complete. Phase 8B style-profile sample contract and real-composition proof are
-complete. Phase 8 is complete. Phase 9 has not started.
+complete. Phase 8 is complete. Phase 9A deterministic quality gates are
+complete. Phase 9B final acceptance video and final Roadmap closure have not
+started.
 
 ## Skill Stack
 
@@ -132,7 +134,25 @@ npm run smoke:producer-style-profile-real-compositions
 
 The generated `styleProfileId` records the constraint choice; it does not
 generate scene structure. The completed Phase 7 proof remains unchanged.
-Phase 8 is complete. Phase 9 has not started.
+Phase 8 is complete. Phase 9A is complete. Phase 9B has not started.
+
+## Phase 9A Deterministic Quality Gate
+
+Every future scaffold owns a `quality.ts` module. After `producer:render`, run:
+
+```bash
+npm run producer:quality -- --module src/remotion/<CompositionName>/quality.ts
+npm run smoke:producer-quality-gates
+```
+
+The module records measured text/layout bounds, safe margins, evidence status,
+planned review-frame paths, expected MP4/chapter timing, and generated artifact
+roots. The CLI collects fresh FFmpeg luma, ffprobe stream/duration, final
+metadata, and Git tracking evidence. It fails on deterministic problems only;
+passing it does not approve visual composition, narration balance, motion, or
+sound design. Do not retrofit completed or frozen compositions merely to add a
+quality module. Phase 9B must prove the final acceptance video through this
+future-only path.
 
 ## Start Here
 
@@ -395,6 +415,8 @@ Use shared tools for deterministic work in future samples:
 - manifest-driven review stills: `npm run producer:stills -- --composition <composition-id>`
 - metadata-bundled MP4 and both code-rendered covers:
   `npm run producer:render -- --composition <composition-id>`
+- post-render deterministic quality evidence:
+  `npm run producer:quality -- --module <quality-module>`
 
 Every new maintained sample uses the strict maintained manifest contract under
 `src/remotion/producer-samples/`. Existing registry entries are
@@ -457,6 +479,7 @@ npm run smoke:skill-alignment
 npm run smoke:producer-assets
 npm run smoke:remotion-version-gate
 npm run smoke:producer-style-profiles
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:producer-quality-gates'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npx tsc --noEmit --pretty false'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run lint'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run build'

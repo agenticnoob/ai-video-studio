@@ -79,6 +79,7 @@ for (const required of [
   "npm run producer:validate",
   "npm run producer:stills",
   "npm run producer:render",
+  "npm run producer:quality",
   "strict maintained manifest",
   "ProducerAssetManifest",
   "docs/PRODUCER_ASSET_CONTRACT.md",
@@ -121,6 +122,7 @@ for (const required of [
   "hand-drawn-explainer",
   "npm run smoke:producer-style-profiles",
   "npm run smoke:producer-style-profile-sample-contract",
+  "npm run smoke:producer-quality-gates",
   "--style-profile",
 ])
   assertIncludes(producerSkill, required, "Agent Producer skill");
@@ -237,6 +239,8 @@ assertIncludes(
   "Remotion skill",
 );
 assertIncludes(remotionSkill, "styleProfileId", "Remotion skill");
+assertIncludes(remotionSkill, "producer:quality", "Remotion skill");
+assertIncludes(remotionSkill, "does not score aesthetics", "Remotion skill");
 
 for (const skillName of ["ai-video-studio-agent-producer"]) {
   const skillDir = `.agents/skills/${skillName}`;

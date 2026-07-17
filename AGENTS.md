@@ -56,7 +56,11 @@ repository contains `.codegraph/`.
   remains unchanged. `TcpHandshakeEditorial` and `TcpHandshakeTerminal` apply
   `editorial-tech` and `retro-terminal` to identical facts with real VoxCPM,
   strict assets, reviewed stills/covers, and H.264/AAC renders.
-  Phase 8 is complete. Phase 9 has not started.
+  Phase 8 is complete. Phase 9A deterministic quality gates are complete: the
+  future scaffold owns measured layout/evidence expectations and
+  `producer:quality` checks rendered frames, final artifacts, chapters, and Git
+  tracking. Phase 9B final acceptance video and Roadmap closure have not
+  started.
 - Historical caption/storyboard contracts and `recipes/blocks` plus
   `recipes/timing` remain only for frozen composition compatibility.
 
@@ -127,6 +131,7 @@ npm run smoke:remotion-capabilities
 npm run smoke:producer-media-sound
 npm run smoke:producer-style-profiles
 npm run smoke:producer-style-profile-sample-contract
+npm run smoke:producer-quality-gates
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
 ```
@@ -134,7 +139,8 @@ npm run producer:stills -- --composition <composition-id>
 Future sample command order starts with
 `npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id>`, then
 asset supply/preflight, validation, and representative still review, and ends
-with `npm run producer:render -- --composition <composition-id>`.
+with `npm run producer:render -- --composition <composition-id>` followed by
+`npm run producer:quality -- --module <quality-module>`.
 
 Current full checks are Docker-first:
 

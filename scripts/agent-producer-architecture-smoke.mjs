@@ -79,6 +79,13 @@ assert.deepEqual(
       reason:
         "Two real dedicated TCP-handshake compositions apply editorial-tech and retro-terminal to identical facts and pass VoxCPM narration, asset preflight, validation, reviewed still/cover, MP4, and ffprobe gates.",
     },
+    {
+      phase: 9,
+      slice: "quality-gates",
+      status: "complete",
+      reason:
+        "Future Producer samples now own a deterministic post-render quality module and CLI for layout, evidence, review-frame, artifact, chapter, and Git tracking failures while completed compositions remain unchanged.",
+    },
   ],
   "completed roadmap phase slices",
 );
@@ -200,7 +207,14 @@ assert(
   read("docs/ITERATION_STATUS.md").includes("Phase 8B style-profile sample contract is complete."),
 );
 assert(read("docs/ITERATION_STATUS.md").includes("Phase 8 is complete."));
-assert(read("docs/ITERATION_STATUS.md").includes("Phase 9 has not started."));
+assert(
+  read("docs/ITERATION_STATUS.md").includes("Phase 9A deterministic quality gates are complete."),
+);
+assert(
+  read("docs/ITERATION_STATUS.md").includes(
+    "Phase 9B final acceptance video and final Roadmap closure have not started.",
+  ),
+);
 assert(read("docs/VISUAL_RECIPE_ROADMAP.md").includes("Superseded"));
 
 const packageJson = JSON.parse(read("package.json"));
@@ -211,6 +225,7 @@ for (const command of [
   "producer:validate",
   "producer:stills",
   "producer:render",
+  "producer:quality",
   "smoke:producer-os",
   "smoke:producer-assets",
   "smoke:remotion-capabilities",
@@ -219,6 +234,7 @@ for (const command of [
   "smoke:producer-style-profiles",
   "smoke:producer-style-profile-sample-contract",
   "smoke:producer-style-profile-real-compositions",
+  "smoke:producer-quality-gates",
 ]) {
   assert(packageJson.scripts[command], `package.json must expose ${command}`);
 }
@@ -249,6 +265,15 @@ for (const phase8bProofPath of [
     existsSync(absolute(phase8bProofPath)),
     `Phase 8B proof path must exist: ${phase8bProofPath}`,
   );
+}
+for (const phase9aPath of [
+  "scripts/producer-quality-gates-smoke.mjs",
+  "scripts/lib/producer-quality-gates.ts",
+  "scripts/lib/producer-quality-analysis.ts",
+  "scripts/validate-producer-quality.mjs",
+  "src/remotion/producer-samples/scaffold/SampleName/quality.ts",
+]) {
+  assert(existsSync(absolute(phase9aPath)), `Phase 9A path must exist: ${phase9aPath}`);
 }
 for (const phase7Path of [
   "scripts/producer-media-sound-smoke.mjs",

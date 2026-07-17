@@ -61,7 +61,9 @@ src/remotion/
   `styleProfileId` before implementing a new maintained composition.
 - Keep `TcpHandshakeEditorial` and `TcpHandshakeTerminal` as the maintained
   real proofs for `editorial-tech` and `retro-terminal`; Phase 8 is complete.
-  Phase 9 has not started.
+- Every future scaffold owns a `quality.ts` module and runs `producer:quality`
+  after render. Phase 9A deterministic quality gates are complete; Phase 9B
+  final acceptance video and Roadmap closure have not started.
 - Build topic data, narration, and scene order inside the dedicated
   composition.
 - Use `standalone-video/caption-types` for future Producer captions.
@@ -84,5 +86,6 @@ npm run smoke:remotion-version-gate
 npm run smoke:remotion-capabilities
 npm run smoke:producer-media-sound
 npm run smoke:producer-style-profile-sample-contract
+npm run smoke:producer-quality-gates
 npm run producer:stills -- --composition <composition-id>
 ```

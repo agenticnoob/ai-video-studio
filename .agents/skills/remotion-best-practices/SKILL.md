@@ -56,7 +56,12 @@ composition declares a validated `styleProfileId` through the required
 `producer:scaffold --style-profile` flag, then runs
 `npm run smoke:producer-style-profile-sample-contract`. This records a
 constraint choice only; the composition still owns its topic-specific scene
-design. Phase 8 is complete. Phase 9 has not started.
+design. Phase 8 is complete. Phase 9A deterministic quality gates are
+complete. Every future composition owns a quality module and runs
+`producer:quality` after render for measured text/layout bounds, safe margins,
+evidence resolution, rendered-frame luma, artifact metadata/chapters, and Git
+tracking. The gate does not score aesthetics. Phase 9B final acceptance video
+and final Roadmap closure have not started.
 
 ## New project setup
 

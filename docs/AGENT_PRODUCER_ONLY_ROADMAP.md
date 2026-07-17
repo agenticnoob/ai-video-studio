@@ -2,7 +2,9 @@
 
 Status: Phase 0 through Phase 8 complete. Phase 8A style-profile contract and
 capability-showcase fixtures, the Phase 8B sample contract, and the two-real-
-composition proof are complete. Phase 8 is complete. Phase 9 has not started.
+composition proof are complete. Phase 8 is complete. Phase 9A deterministic
+quality gates are complete. Phase 9B final acceptance video and final Roadmap
+closure have not started.
 
 Decision date: 2026-07-15.
 
@@ -891,7 +893,7 @@ Official references:
 ## 13. Phase 8 - Code-Driven Style Profiles
 
 Status: complete. Phase 8A and both Phase 8B slices are complete. Phase 8 is
-complete. Phase 9 has not started.
+complete. Phase 9A is complete; Phase 9B has not started.
 
 ### Goal
 
@@ -920,8 +922,8 @@ Status: complete.
 ### Phase 8B - Real Dedicated-Composition Proof
 
 Status: complete. Phase 8B style-profile sample contract is complete. The
-real-composition proof is also complete. Phase 8 is complete. Phase 9 has not
-started.
+real-composition proof is also complete. Phase 8 is complete. Phase 9A is
+complete; Phase 9B has not started.
 
 - `producer:scaffold` requires `--style-profile <profile-id>` and writes the
   validated selection into a strict profiled maintained manifest
@@ -979,6 +981,36 @@ language.
   universal scene schema
 
 ## 14. Phase 9 - Quality Gates And Final Cleanup
+
+Status: in progress. Phase 9A deterministic quality gates are complete. Phase
+9B final acceptance video and final documentation/Roadmap closure have not
+started.
+
+### Phase 9A - Deterministic Quality Gates
+
+Status: complete.
+
+- `scripts/lib/producer-quality-gates.ts` rejects measured text overflow and
+  low contrast, unsafe visible bounds, unresolved evidence, missing/blank
+  review frames, MP4/metadata/chapter mismatch, and tracked generated paths
+- `scripts/lib/producer-quality-analysis.ts` collects fresh FFmpeg gray-frame,
+  ffprobe stream/duration, final metadata, and Git tracking evidence
+- `producer:quality -- --module <quality-module>` is the post-render executable
+  gate; `smoke:producer-quality-gates` proves its real analysis path
+- every future scaffold owns a strict quality module; the three completed
+  maintained proofs and every frozen composition remain unchanged
+- asset preflight and Producer validation retain remote/missing media,
+  provenance/license/codec, narration/caption/Root, clipping, and silence
+  ownership rather than duplicating those checks
+- the runtime rejects deterministic failures only and never scores aesthetics
+
+### Phase 9B - Final Acceptance And Closure
+
+Status: not started.
+
+Phase 9B owns the final acceptance video below, the complete forbidden scan,
+final active-document cleanup, and the decision to mark Phase 9/Roadmap
+complete. It must use the Phase 9A future scaffold and pass `producer:quality`.
 
 ### Goal
 
@@ -1118,7 +1150,9 @@ npm run producer:preflight -- --composition <composition-id>
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>
 npm run producer:render -- --composition <composition-id>
+npm run producer:quality -- --module <quality-module>
 npm run smoke:producer-os
+npm run smoke:producer-quality-gates
 npm run smoke:remotion-capabilities
 npx remotion compositions src/remotion/index.ts
 ```

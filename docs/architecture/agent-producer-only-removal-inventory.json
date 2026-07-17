@@ -43,6 +43,12 @@
       "slice": "style-profile-real-compositions",
       "status": "complete",
       "reason": "Two real dedicated TCP-handshake compositions apply editorial-tech and retro-terminal to identical facts and pass VoxCPM narration, asset preflight, validation, reviewed still/cover, MP4, and ffprobe gates."
+    },
+    {
+      "phase": 9,
+      "slice": "quality-gates",
+      "status": "complete",
+      "reason": "Future Producer samples now own a deterministic post-render quality module and CLI for layout, evidence, review-frame, artifact, chapter, and Git tracking failures while completed compositions remain unchanged."
     }
   ],
   "decisionDate": "2026-07-15",
@@ -146,6 +152,22 @@
         "action": "retain",
         "phase": 4,
         "reason": "Manifest-driven representative still planning."
+      },
+      {
+        "id": "producer-quality-gates",
+        "path": "scripts/lib/producer-quality-gates.ts",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 9,
+        "reason": "Pure deterministic post-render layout, evidence, frame, artifact, chapter, and Git tracking failures."
+      },
+      {
+        "id": "producer-quality-analysis",
+        "path": "scripts/lib/producer-quality-analysis.ts",
+        "pathKind": "path",
+        "action": "retain",
+        "phase": 9,
+        "reason": "Fresh FFmpeg, ffprobe, final metadata, and Git evidence collection for Producer quality gates."
       },
       {
         "id": "producer-assets",
