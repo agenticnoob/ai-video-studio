@@ -1,0 +1,15 @@
+{
+  "title": "AI 日报｜2026 年 7 月 17 日",
+  "description": "comic-anime 风格竖版 AI 日报，覆盖 Moonshot Kimi K3、企业 AI 组织化、技术突破、政策监管、资本动向和 Agent 开发者信号",
+  "fps": 30,
+  "chapters": [
+    { "name": "开篇论点", "sceneId": "open" },
+    { "name": "Moonshot Kimi K3", "sceneId": "moonshot-k3" },
+    { "name": "企业AI组织化", "sceneId": "enterprise-ai" },
+    { "name": "技术突破", "sceneId": "tech-breakthroughs" },
+    { "name": "政策监管", "sceneId": "policy" },
+    { "name": "资本动向", "sceneId": "capital-markets" },
+    { "name": "趋势总结", "sceneId": "trend-summary" },
+    { "name": "开发者判断", "sceneId": "close" }
+  ]
+}

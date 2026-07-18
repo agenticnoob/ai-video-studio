@@ -2,6 +2,7 @@ import type { MaintainedProducerSampleManifest, ProducerSampleManifest } from ".
 import { agentProducerMediaSoundProofManifest } from "../AgentProducerMediaSoundProof/manifest";
 import { tcpHandshakeEditorialManifest } from "../TcpHandshakeEditorial/manifest";
 import { tcpHandshakeTerminalManifest } from "../TcpHandshakeTerminal/manifest";
+import { aiDailyNews20260717Manifest } from "../AiDailyNews20260717/manifest";
 import { dnsResolutionExplainerManifest } from "../DnsResolutionExplainer/manifest";
 
 export const producerSampleManifests = [
@@ -692,6 +693,7 @@ export const producerSampleManifests = [
   tcpHandshakeEditorialManifest,
   tcpHandshakeTerminalManifest,
   dnsResolutionExplainerManifest,
+  aiDailyNews20260717Manifest,
 ] as const satisfies readonly ProducerSampleManifest[];
 
 export const getProducerSampleManifestByCompositionId = (

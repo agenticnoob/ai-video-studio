@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "compositionId": "AiDailyNews20260717",
+  "slug": "ai-daily-news-2026-07-17",
+  "outputManifestPath": "src/remotion/AiDailyNews20260717/assets.manifest.json",
+  "assets": [
+    {
+      "id": "news-brief-bgm",
+      "source": "file://public/generated/ai-daily-news-2026-07-17/assets/news-brief-bgm.wav",
+      "kind": "audio"
+    },
+    {
+      "id": "studio-ambience",
+      "source": "file://public/generated/ai-daily-news-2026-07-17/assets/studio-ambience.wav",
+      "kind": "audio"
+    }
+  ]
+}

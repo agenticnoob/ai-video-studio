@@ -111,6 +111,17 @@ import {
   getAiDailyNews20260714Duration,
 } from "./AiDailyNews20260714";
 import {
+  AI_DAILY_NEWS_20260717_COMPOSITION_ID,
+  AI_DAILY_NEWS_20260717_FPS,
+  AI_DAILY_NEWS_20260717_HEIGHT,
+  AI_DAILY_NEWS_20260717_WIDTH,
+  AiDailyNews20260717Video,
+  AiDailyNews20260717Cover16x9,
+  AiDailyNews20260717Cover9x16,
+  aiDailyNews20260717Data,
+  getDuration as getAiDailyNews20260717Duration,
+} from "./AiDailyNews20260717";
+import {
   AI_DAILY_NEWS_BRIEF_20260708_COMPOSITION_ID,
   AI_DAILY_NEWS_BRIEF_20260708_FPS,
   AI_DAILY_NEWS_BRIEF_20260708_HEIGHT,
@@ -303,6 +314,26 @@ export const RemotionRoot: FC = () => {
         <Still
           id="TcpHandshakeTerminalCover9x16"
           component={TcpHandshakeTerminalCover9x16}
+          width={1080}
+          height={1920}
+        />
+        <Composition
+          id={AI_DAILY_NEWS_20260717_COMPOSITION_ID}
+          component={AiDailyNews20260717Video}
+          durationInFrames={getAiDailyNews20260717Duration(aiDailyNews20260717Data)}
+          fps={AI_DAILY_NEWS_20260717_FPS}
+          width={AI_DAILY_NEWS_20260717_WIDTH}
+          height={AI_DAILY_NEWS_20260717_HEIGHT}
+        />
+        <Still
+          id="AiDailyNews20260717Cover16x9"
+          component={AiDailyNews20260717Cover16x9}
+          width={1920}
+          height={1080}
+        />
+        <Still
+          id="AiDailyNews20260717Cover9x16"
+          component={AiDailyNews20260717Cover9x16}
           width={1080}
           height={1920}
         />
