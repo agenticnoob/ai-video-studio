@@ -196,7 +196,9 @@ targets.
 
 Public Producer command wrappers remain directly under `scripts/`. Internal
 checks are grouped by responsibility under `scripts/smoke/architecture/`,
-`scripts/smoke/producer/`, and `scripts/smoke/compositions/`.
+`scripts/smoke/producer/`, and `scripts/smoke/compositions/`. Historical
+one-off data builders, capture helpers, and narration generators live under
+`scripts/tools/`; they are not supported Producer command wrappers.
 
 Current Docker validation remains:
 

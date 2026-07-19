@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-// Generate per-scene TTS audio for AiDailyNews20260714 using LYY voice clone
+// Generate per-scene TTS audio for AiDailyNews20260713 using LYY voice clone
 // Uses VoxCPM clone_with_prompt API directly (raw WAV binary)
 
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
 
-const ROOT = path.resolve(import.meta.dirname, "..");
-const SLUG = "ai-daily-news-2026-07-14";
+const ROOT = path.resolve(import.meta.dirname, "../..");
+const SLUG = "ai-daily-news-2026-07-13";
 const PUBLIC_DIR = path.join(ROOT, "public", "generated", SLUG);
 const ASSET_PREFIX = `generated/${SLUG}`;
 
@@ -21,42 +21,57 @@ const BEATS = [
   {
     id: "open",
     narration:
-      "今天 AI 行业的重心不在决定性的前沿大模型首发，而在更系统的变化。企业预算正在从传统软件转向 AI 基础设施，数据中心开始遭遇电力与环保限制，AI 搜索产品被要求为生成内容承担直接责任，而资本继续涌向芯片、垂直 Agent 和头部模型公司。整个行业正在从模型能力竞赛，进入电力、芯片、部署能力和监管责任的系统竞争。",
+      "今天 AI 行业的重心不在新模型发布，而在算力基础设施、能源成本、资本集中和社会治理。Meta、Intel、Helsing 公布的大额投资，以及美国围绕数据中心电价的政策动作共同说明：AI 竞争已经从谁的模型更强，扩展为谁能够获得电力、芯片、数据中心、资本和政府支持。",
   },
   {
-    id: "budget-shift",
+    id: "meta-infra",
     narration:
-      "IBM 表示客户将部分预算从软件、咨询和大型机转向 GPU 服务器、存储和网络设备，以提前锁定紧缺的 AI 基础设施。多笔大型交易因此未能按期完成，股价盘中一度下跌约百分之二十六。与此同时，台积电第二季度营收同比增长百分之三十六，创历史新高，预计净利润同比增长约百分之五十九，连续第五个季度创纪录。市场关注其是否将资本支出进一步上调。",
+      "Meta 宣布将路易斯安那州 Hyperion 数据中心容量提升至 5GW，投资超 500 亿美元，并表示未来三年将在美国基础设施和就业投入约 6000 亿美元。同一天，Intel 启动 50 亿欧元投资升级爱尔兰工厂。5GW 已经接近大型区域电力系统规模，说明头部模型公司的核心资产正在从模型权重扩展到电力合同、土地、水资源和自有算力集群。",
   },
   {
-    id: "perf-watt",
+    id: "waze-voice",
     narration:
-      "NVIDIA 强调固定电力预算下能产生多少 Token，这才是新的核心指标。在部分 MoE 模型测试中，GB300 NVL72 的每瓦性能可达 Hopper 平台的十到二十五倍。同一天，芯片创业公司 TYLsemi 完成四千三百万美元早期融资，其方案将芯片拆分为可组合的芯粒，宣称可将定制 AI 芯片开发成本降低接近一半。技术竞争正从单卡算力，转向每瓦收入、每 Token 成本和芯片定制化。",
+      "Google 旗下 Waze 推出新的 AI 功能，用户可以通过自然语言报告路况，并获得个性化导航体验。信号很简单：语音模型正在从聊天入口进入驾驶、导航等持续在线场景，AI 的交互面正在从对话框扩展到每一次日常使用。",
   },
   {
-    id: "legal-hallu",
+    id: "gpt56-agent",
     narration:
-      "一项七月十三日发布的双语法律基准测试发现，受测模型在 GDPR 条文查询上准确率达百分之九十四至一百，但在资料稀缺的沙特数据保护法问题上，错误引用或编造条文的比例达到百分之六十到七十七。令人担忧的是，百分之九十一的虚构引用仍然表现出不低于零点八的高置信度。模型的自信程度，不能作为可靠性依据。",
+      "OpenAI 于七月九日发布 GPT-5.6 系列，旗舰模型 Sol 引入 ultra 模式，利用多个子 Agent 并行执行复杂任务。它的重要性不只是基准成绩，而是模型产品结构正在发生变化：一个用户请求不再必然对应一次模型调用，而可能自动触发规划、并行子任务、工具调用、验证和结果汇总。",
   },
   {
-    id: "regulation-wave",
+    id: "gpt-live",
     narration:
-      "纽约州宣布对功率五十兆瓦及以上的新数据中心实施为期一年的建设禁令，期间将制定统一的环境影响标准。同一天，德国媒体监管机构表示，Google AI Overviews 和 Perplexity 生成的摘要属于服务提供者创建的内容，因此可能需要直接为错误内容负责。这改变了 AI 搜索的责任边界：传统搜索提供链接，AI 搜索生成答案，平台可能成为内容发布者。",
+      "OpenAI 于七月八日发布 GPT-Live，采用全双工架构，同时听取和生成语音；遇到复杂任务时委托给后端模型。这提供了一种明确的 Agent 架构方向：低延迟交互层、规划层、执行层和验证层分离。未来的 AI 助理不太可能由一个大模型承担所有任务，而会分成实时交互、规划和执行层。",
   },
   {
-    id: "governance",
+    id: "us-policy",
     narration:
-      "澳大利亚宣布在总理与内阁部内部设立 Office of AI，统一协调不同政府部门的 AI 标准、审批和监管。目前该国尚无专门的综合 AI 法律。与此同时，Google DeepMind CEO Demis Hassabis 提议建立由美国主导、行业出资的全球前沿 AI 测试机构，在模型发布前进行网络、生物和欺骗能力测试。治理正在从分散的行业自律，转向国家级的集中监管协调。",
+      "白宫计划召集公用事业公司、数据中心开发商和州政府，推动一项自愿承诺：AI 公司和数据中心运营方应承担新增发电、电网升级和预留容量成本，避免把费用转嫁给普通居民。这意味着 AI 监管正在从模型安全扩展到电力、水资源、地方财政风险和成本分配。",
   },
   {
-    id: "capital-flow",
+    id: "eu-copyright",
     narration:
-      "据路透社报道，DeepSeek 新一轮融资讨论的投前估值约为七百一十亿美元，并可能最快于二零二六年提交 IPO 申请。面向中型企业的 AI 金融平台 Flex 完成七千万美元融资，估值约十二亿美元，较六个月前翻倍。SoftBank CEO 孙正义预计，到二零四零年全球 AI 投资需求可能达到每年五万亿美元。资本正同时押注模型、芯片和垂直 Agent，但可闭环完成任务的业务系统才是真正的产品。",
+      "欧盟委员会发布可行性研究，评估建立统一的文本与数据挖掘退出登记系统。版权所有者可以登记不允许其作品被用于模型训练。这目前仍是研究方案，但未来数据合规可能不只是有没有版权，还包括是否能够机器化读取权利人的退出声明。同一天，超过 200 名专家呼吁政府提前建立应对 AI 经济影响的政策和制度。",
+  },
+  {
+    id: "helsing",
+    narration:
+      "欧洲国防 AI 公司 Helsing 完成 18 亿美元 E 轮融资，估值 180 亿美元。投资者包括 Lightspeed、General Catalyst、Goldman Sachs 等。Helsing 业务从战场数据分析扩展到自主无人机、水下监控、军用航空和实时目标识别。资本正在将国防 AI 视为独立的大型产业，防务、主权算力与 AI 正逐渐合并为同一投资主题。",
+  },
+  {
+    id: "china-signal",
+    narration:
+      "中国宣布习近平将于七月十七日至二十日在上海出席 2026 世界人工智能大会并发表讲话，这是首次现场参加。结合近期关于限制最先进模型向海外开放的讨论，可以看到中美 AI 战略正出现相似变化：先进模型开始被视为与芯片、军事技术类似的国家级战略资产。",
+  },
+  {
+    id: "trend-summary",
+    narration:
+      "AI 竞争基础设施化：Meta 5GW 和 Intel 投资显示电力和芯片成为核心壁垒。Agent 架构分层：GPT-Live 和 GPT-5.6 推动单模型到多模型编排。监管对象扩大：电价、版权退出和就业影响使合规从模型层进入完整产业链。资本继续头部集中：Helsing 融资验证国防 AI 成为热门赛道。AI 主权化：中美欧均强化控制和评估，全球统一模型和服务可能逐渐分区。",
   },
   {
     id: "close",
     narration:
-      "今天的新闻给 Agent 开发者五个核心信号。第一，能否在有限 Token 和电力成本下长期运行。第二，能否验证每一次引用、判断和外部操作。第三，能否接入真实业务系统并承担结果责任。第四，能否提供权限、审计、重试和人工接管机制。第五，能否把不稳定的模型能力包装成稳定可交付的服务。面向 Agent 提供的 Skill、工具服务、执行验证和可靠性基础设施，其商业价值正变得更加明确。",
+      "对 Agent 开发者今天最值得关注的一点是：模型本身正逐渐成为可替换的执行组件，真正长期有价值的层开始转向任务编排、工具与数据授权、执行验证、成本控制和可靠性交付。这与为其他 Agent 提供可靠能力服务的方向高度一致。",
   },
 ];
 
@@ -164,22 +179,22 @@ const main = () => {
       const result = genForBeat(BEATS[i], i);
       if (result) results.push(result);
     } catch (err) {
-      console.warn(`  ⚠ Failed ${BEATS[i]?.id ?? i}: ${err.message}`);
+      console.warn(`  ⚠ Failed ${beat?.id ?? i}: ${err.message}`);
     }
   }
 
   // Write audio.generated.ts
-  const ts = `// Auto-generated by scripts/generate-ai-daily-news-20260714-tts-clone.mjs
+  const ts = `// Auto-generated by scripts/tools/generate-ai-daily-news-20260713-tts-clone.mjs
 // Voice clone: LYY (high-fidelity clone_with_prompt)
 // ${new Date().toISOString()}
 
 import type { AudioTrack } from "./types";
 
-export const aiDailyNews20260714Audio: AudioTrack[] = ${JSON.stringify(results, null, 2)};
+export const aiDailyNews20260713Audio: AudioTrack[] = ${JSON.stringify(results, null, 2)};
 `;
 
   writeFileSync(
-    path.join(ROOT, "src", "remotion", "AiDailyNews20260714", "audio.generated.ts"),
+    path.join(ROOT, "src", "remotion", "AiDailyNews20260713", "audio.generated.ts"),
     ts,
   );
 

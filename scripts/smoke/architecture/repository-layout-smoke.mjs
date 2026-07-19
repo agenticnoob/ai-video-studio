@@ -111,4 +111,39 @@ for (const entry of readdirSync(absolute("scripts"), { withFileTypes: true })) {
   );
 }
 
+const toolPaths = [
+  "scripts/tools/build-beyond-language-data.mjs",
+  "scripts/tools/build-beyond-language-meta.mjs",
+  "scripts/tools/capture-news-screenshots.mjs",
+  "scripts/tools/generate-ai-concepts-redefined-tts.mjs",
+  "scripts/tools/generate-ai-daily-news-20260713-tts-clone.mjs",
+  "scripts/tools/generate-ai-daily-news-20260714-tts-clone.mjs",
+  "scripts/tools/generate-beyond-language-tts.mjs",
+  "scripts/tools/generate-raw-thought-tts-v2.mjs",
+];
+for (const relativePath of toolPaths) {
+  assert.equal(trackedPaths(relativePath).length, 1, `One-off tool path: ${relativePath}`);
+  assert(existsSync(absolute(relativePath)), `One-off tool filesystem path: ${relativePath}`);
+  const oldRootPath = `scripts/${path.basename(relativePath)}`;
+  assert.equal(trackedPaths(oldRootPath).length, 0, `One-off tool must leave root: ${oldRootPath}`);
+}
+
+for (const relativePath of [
+  "scripts/ensure-remotion-browser.mjs",
+  "scripts/studio.sh",
+  "scripts/producer-voxcpm.sh",
+  "scripts/render-video.sh",
+  "scripts/producer-scaffold.mjs",
+  "scripts/producer-assets.mjs",
+  "scripts/preflight-producer-assets.mjs",
+  "scripts/producer-asset-library.mjs",
+  "scripts/validate-producer-sample.mjs",
+  "scripts/render-producer-review-frames.mjs",
+  "scripts/render-producer-sample.mjs",
+  "scripts/validate-producer-quality.mjs",
+]) {
+  assert.equal(trackedPaths(relativePath).length, 1, `Stable root wrapper: ${relativePath}`);
+  assert(existsSync(absolute(relativePath)), `Stable root wrapper filesystem path: ${relativePath}`);
+}
+
 console.log("Repository layout smoke passed.");

@@ -3,8 +3,9 @@
 ## OVERVIEW
 
 `scripts` keeps public Producer wrappers at its root, deterministic runtimes in
-`lib/`, fixtures in `fixtures/`, and responsibility-grouped checks in `smoke/`.
-There is no supported Web route smoke surface.
+`lib/`, fixtures in `fixtures/`, responsibility-grouped checks in `smoke/`, and
+historical one-off data/capture/generation helpers in `tools/`. There is no
+supported Web route smoke surface.
 
 ## WHERE TO LOOK
 
@@ -32,6 +33,7 @@ There is no supported Web route smoke surface.
 | Style-profile sample contract | `smoke/producer/producer-style-profile-sample-contract-smoke.mjs` | Guards mandatory profile selection for future scaffolds while preserving the Phase 7 proof. |
 | Composition guards | `smoke/compositions/` | Frozen and dedicated-composition contract checks. |
 | Architecture guards | `smoke/architecture/` | Product authority, Web-removal, version, skill, and layout checks. |
+| Historical one-off tools | `tools/` | Non-public data builders, source-capture helpers, and composition-specific narration generators. |
 
 Older composition-specific generators and smokes are frozen maintenance
 references. Do not use them as future Producer scaffolds.
@@ -43,6 +45,7 @@ references. Do not use them as future Producer scaffolds.
 - Node smoke scripts should be deterministic and focused on one contract.
 - Temporary smoke build output belongs under `/tmp`.
 - Keep package smoke names aligned with maintained script files.
+- Keep public Producer wrappers at the `scripts/` root; one-off helpers belong in `tools/`.
 - Direct VoxCPM runtime failures must fail closed without a provider fallback.
 - Keep private voices and generated media out of source control.
 - Treat registry entries marked `frozen-reference` as discovery metadata only.
