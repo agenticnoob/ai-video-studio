@@ -22,6 +22,7 @@
 - Read `PEXELS_API_KEY` and `STOCK_ASSETS_OUTPUT_DIR` only at startup. Optional defaults are `STOCK_ASSETS_MAX_BYTES=26214400` and `STOCK_ASSETS_TIMEOUT_MS=20000`.
 - The AI Video Studio output root is the already ignored `/data/projects/labs/ai-video-studio/.producer-assets/stock-candidates/`. Do not add a redundant `.gitignore` rule.
 - The MCP never accepts a URL, output directory, filename, API key, license override, or attribution override as tool input.
+- Before any library/MCP search, Agent Producer classifies the narration beat as asset-led, code-led, or hybrid. Code-led beats use the narrowest existing primitive/block or composition-local React/HTML/SVG/Canvas component and do not call the MCP; stock media cannot stand in as false evidence or generic filler.
 - Search the reviewed library first. Call the MCP only when no reviewed item fits. Remotion must use only the composition-local copy created by `producer:assets`, never a remote URL or `.producer-assets/stock-candidates/` path.
 - Later approval uses `producer:library:add` with real Pexels facts. Never use the inbox-specific `producer:library:ingest` for MCP candidates.
 - Do not automatically promote, delete, or clean candidates. Rejection from the reusable library does not invalidate an already localized current-video copy.
@@ -96,7 +97,7 @@ Repository integration files:
 - `package.json` — root convenience smoke registrations only; no workspace or MCP runtime dependency.
 - `scripts/AGENTS.md` — new smoke/fixture ownership and validation command.
 - `README.md`, `AGENTS.md`, `docs/FINAL_PRODUCT_GOAL.md`, `docs/ITERATION_STATUS.md`, `docs/AGENT_PRODUCER_ONLY_ROADMAP.md`, `docs/PRODUCER_ASSET_CONTRACT.md` — bounded post-Roadmap truth.
-- `.agents/skills/ai-video-studio-agent-producer/SKILL.md` — library-first MCP fallback and current-video localization.
+- `.agents/skills/ai-video-studio-agent-producer/SKILL.md` — visual-source decision gate, library-first MCP fallback, hybrid scene ownership, and current-video localization.
 - `.agents/skills/ai-video-studio-asset-library/SKILL.md` — later explicit review via `producer:library:add`, never inbox ingest.
 - `scripts/smoke/architecture/skill-alignment-smoke.mjs` — executable skill ownership assertions.
 
@@ -109,7 +110,7 @@ Repository integration files:
 | MCP in-process contract tests | `packages/stock-assets-mcp/tests/mcp-contract.test.ts` | Mocked provider/download only | Tool discovery, schemas, annotations, structured/text/image results, stable errors |
 | MCP stdio process tests | `packages/stock-assets-mcp/tests/stdio-contract.test.ts` | Never | CLI startup/shutdown and stdout protocol purity |
 | Repository integration smoke | `scripts/smoke/producer/producer-stock-assets-smoke.mjs` | Never | Receipt-to-supply translation, composition-local copy, manifest, and preflight |
-| Repository alignment smoke | `scripts/smoke/architecture/stock-assets-mcp-alignment-smoke.mjs` | Never | Library-first docs/skills/package boundaries and ignored-path policy |
+| Repository alignment smoke | `scripts/smoke/architecture/stock-assets-mcp-alignment-smoke.mjs` | Never | Visual-source decision, library-first docs/skills/package boundaries, and ignored-path policy |
 | Opt-in live Pexels smoke | `packages/stock-assets-mcp/tests/live-pexels.test.ts` | Real Pexels only | One bounded search, preview, and acquisition in a fresh temp root |
 | Docker-first final checks | Root `producer` service | Package install may reach npm; tests do not reach Pexels | Root type/lint/build/composition and focused integration truth |
 
@@ -1044,7 +1045,7 @@ Expected: all three exit `0`; no source/media is written into the real repositor
 
 ### Task 12: Library-First Agent Producer, Later Review, and Authority Alignment
 
-**Goal:** Make the new capability discoverable through the correct skills while preserving the Producer/library ownership split and completed Roadmap.
+**Goal:** Make the new capability discoverable through the correct skills while preserving the visual-source decision gate, Producer/library ownership split, and completed Roadmap.
 
 **Files:**
 
@@ -1063,7 +1064,7 @@ Expected: all three exit `0`; no source/media is written into the real repositor
 **Interfaces:**
 
 - Produces root command `smoke:stock-assets-mcp-alignment`.
-- Agent Producer owns library-first search, MCP fallback, visual choice, acquisition, receipt-to-supply translation, and current-video localization.
+- Agent Producer owns beat-level asset-led/code-led/hybrid classification, library-first search, MCP fallback, visual choice, acquisition, receipt-to-supply translation, hybrid scene composition, and current-video localization.
 - Asset Library skill owns only later explicit review/admission through `producer:library:add`.
 
 - [ ] **Step 1: Write the failing alignment guard**
@@ -1072,6 +1073,11 @@ Require these exact truths across active docs/skills:
 
 - package/CLI/server name and `packages/stock-assets-mcp/` path;
 - `.producer-assets/stock-candidates/` is ignored by the existing broad rule;
+- every named narration beat is classified as asset-led, code-led, or hybrid before asset search;
+- asset-led means a real person/place/object/product/source or truthful evidence; code-led means a process/relationship/state/hierarchy/comparison/value; hybrid uses the image as the reality/evidence anchor and code for explanation;
+- code-led beats inventory existing primitives/blocks and never call the MCP;
+- stock may establish a category, object, setting, or mood but cannot serve as evidence for a specific claim it does not truthfully depict;
+- images are not generic filler, fabricated screenshots, or raster containers for explanatory copy/charts/process diagrams;
 - `producer:library:search` precedes `search_images`;
 - shortlist preview precedes acquisition when useful;
 - Agent may acquire without per-image confirmation;
@@ -1098,7 +1104,7 @@ Expected: first missing post-Roadmap MCP truth in docs/skills.
 - Root README/AGENTS: current capability and command discovery, not package implementation detail.
 - Final goal/status/Roadmap: one bounded post-Roadmap capability, not Phase 10 and not another production entrypoint.
 - Asset contract: distinguish reviewed library, ignored candidate store, and ignored composition-local copy; preserve exact Pexels provenance/attribution; no direct candidate render.
-- Producer skill: explicit `library search -> MCP search -> preview -> acquire -> producer:assets -> preflight` order and autonomous per-image selection.
+- Producer skill: first record asset-led/code-led/hybrid and the beat's visual responsibility. Code-led follows `existing primitive -> existing block -> composition-local component` without MCP. Asset-led/hybrid follows `library search -> MCP search -> preview -> acquire -> producer:assets -> preflight`; hybrid scenes keep crop/layout/callouts/focus/labels/comparison/frame-driven motion in a scene-owned component. Keep per-image selection autonomous.
 - Asset Library skill: after visual/semantic review, write a temporary library metadata JSON whose `source` maps the receipt exactly: `kind: "url-import"`, `provider`, `creator.name -> creator`, `license.name -> license`, `sourcePageUrl -> sourceUrl`, `providerAssetId -> sourceId`, `providerPolicy.attributionText -> attribution`, and `providerPolicy.attributionRequired -> attributionRequired`; add reviewed title/description/subjects/keywords/roles/recommended uses/avoided uses/style tags, then run `producer:library:add -- --file <candidate-original> --metadata <reviewed-metadata-json>`. Never use inbox ingest; rejection leaves the current video intact; candidate cleanup is separately authorized and outside v1.
 - Package README remains the MCP client/config/tool/security authority.
 - Do not add `PEXELS_API_KEY` to root `.env.example` or Compose: the package is a separately configured local MCP process.

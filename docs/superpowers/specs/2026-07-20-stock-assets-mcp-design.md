@@ -519,30 +519,66 @@ not convert a normal client disconnect into an unhandled rejection.
 
 ## 15. AI Video Studio Integration
 
-### 15.1 Video-production flow
+### 15.1 Visual-source decision gate
+
+Stock search is not the default visual-production step. Before searching the
+reviewed library or calling the MCP, Agent Producer classifies each named
+narration beat by the visual responsibility it must satisfy:
+
+- **asset-led**: use an existing image when the audience must see a real
+  person, place, object, product, source, or other concrete appearance, or when
+  a factual claim needs truthful visual evidence;
+- **code-led**: use the narrowest existing primitive, Producer block, or
+  composition-local React/HTML/SVG/Canvas component when the audience must
+  understand a process, relationship, state change, hierarchy, comparison, or
+  measured value;
+- **hybrid**: use an image as the reality/evidence anchor and code for crop,
+  layout, callouts, focus, labels, comparison, and frame-driven motion when a
+  beat needs both.
+
+A licensed stock image may establish a category, object, setting, or mood. It
+is not evidence for a specific event, person, product state, research result,
+or claim unless it truthfully depicts that exact subject. Images must not be
+used as generic filler for an unresolved scene, as fabricated screenshots, or
+to bake explanatory copy, charts, or process diagrams into raster media.
+
+If real evidence capture is unavailable or unreadable, record the reason
+outside the frame and use an honest code-rendered information graphic; never
+present it as a screenshot. The decision gate is Agent judgment documented in
+the production brief/scene intent. It does not add an MCP input, manifest
+field, planner schema, automatic scorer, or universal scene component.
+
+### 15.2 Video-production flow
 
 For each future video:
 
-1. Agent Producer searches the reviewed reusable library with
-   `producer:library:search`.
-2. The Agent inspects full candidate metadata and previews when useful.
-3. If no reviewed item fits the scene, the Agent calls `search_images`.
-4. The Agent calls `preview_images` for a bounded shortlist and owns the visual
+1. Agent Producer records whether the beat is asset-led, code-led, or hybrid
+   and names the visual responsibility.
+2. For a code-led beat, the Agent inventories existing primitives/blocks and
+   builds the narrowest composition-local component that fits; it does not
+   call the stock MCP.
+3. For an asset-led or hybrid beat, Agent Producer searches the reviewed
+   reusable library with `producer:library:search`.
+4. The Agent inspects full candidate metadata and previews when useful.
+5. If no reviewed item fits the scene, the Agent calls `search_images`.
+6. The Agent calls `preview_images` for a bounded shortlist and owns the visual
    choice.
-5. The Agent calls `acquire_image` for the selected Pexels ID without asking
+7. The Agent calls `acquire_image` for the selected Pexels ID without asking
    for per-image user confirmation.
-6. The Agent transforms the returned file and receipt into an existing
+8. The Agent transforms the returned file and receipt into an existing
    `producer:assets` supply entry with exact provider, source URL, creator,
    license, attribution, and purpose facts.
-7. Existing localization copies the image to
+9. Existing localization copies the image to
    `public/generated/<slug>/assets/`, measures integrity/media metadata, and
    writes the composition's strict asset manifest.
-8. Existing preflight runs before representative stills and render.
+10. Existing preflight runs before representative stills and render. Hybrid
+    scenes render the localized image through a scene-owned component that
+    provides its explanatory layout and motion.
 
 Remotion never renders directly from the MCP candidate directory or a remote
 Pexels URL.
 
-### 15.2 Later reusable-library review
+### 15.3 Later reusable-library review
 
 Review is an explicit later Agent or user request. The reviewer inspects the
 original candidate, receipt, visual content, semantic fit, recommended uses,
@@ -567,8 +603,9 @@ the new capability discoverable and truthful:
   post-Roadmap status, without creating Phase 10;
 - `docs/PRODUCER_ASSET_CONTRACT.md` for the candidate-versus-composition-local
   versus-reviewed-library boundary;
-- `.agents/skills/ai-video-studio-agent-producer/SKILL.md` for library-first MCP
-  fallback and current-video localization;
+- `.agents/skills/ai-video-studio-agent-producer/SKILL.md` for the visual-source
+  decision gate, library-first MCP fallback, hybrid scene ownership, and
+  current-video localization;
 - `.agents/skills/ai-video-studio-asset-library/SKILL.md` for later review and
   `producer:library:add` admission;
 - `packages/stock-assets-mcp/README.md` for local installation, MCP client
@@ -676,6 +713,10 @@ The v1 capability is complete only when all of the following are true:
 - Acquisition writes a valid original plus `acquisition.json` only below the
   configured output root.
 - The MCP accepts neither arbitrary download URLs nor arbitrary write paths.
+- The Agent Producer documentation classifies each beat as asset-led,
+  code-led, or hybrid before asset search; code-led beats do not call the MCP,
+  and stock media is never treated as evidence for a claim it does not
+  truthfully depict.
 - The Agent Producer documentation searches the reviewed library first and
   calls the MCP only when no suitable reviewed item exists.
 - A selected candidate can become a strict composition-local Producer asset
