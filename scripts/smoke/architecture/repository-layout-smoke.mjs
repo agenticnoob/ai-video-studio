@@ -109,6 +109,17 @@ for (const entry of readdirSync(absolute("scripts"), { withFileTypes: true })) {
     !entry.isFile() || !entry.name.endsWith("-smoke.mjs"),
     `Smoke scripts must not live at scripts root: scripts/${entry.name}`,
   );
+  assert(
+    !entry.isFile() || !/^scripts-tmp-.*\.(?:mjs|ts)$/u.test(entry.name),
+    `Temporary harnesses must not live at scripts root: scripts/${entry.name}`,
+  );
+}
+
+for (const entry of readdirSync(root, { withFileTypes: true })) {
+  assert(
+    !entry.isFile() || !/^scripts-tmp-.*\.(?:mjs|ts)$/u.test(entry.name),
+    `Temporary harnesses must not live at repository root: ${entry.name}`,
+  );
 }
 
 const toolPaths = [
