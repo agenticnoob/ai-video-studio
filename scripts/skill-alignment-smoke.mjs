@@ -298,13 +298,35 @@ for (const [source, label] of [
   );
 }
 const scienceExplainerAcceptance = "User audition status: accepted on 2026-07-19.";
-assertIncludes(voxcpmSkill, scienceExplainerAcceptance, "VoxCPM skill user acceptance");
-assertIncludes(voxcpmDoc, scienceExplainerAcceptance, "VoxCPM provider doc user acceptance");
-assertIncludes(
-  read("docs/ITERATION_STATUS.md"),
-  scienceExplainerAcceptance,
-  "Iteration status user acceptance",
-);
+const activeScienceExplainerDocs = [
+  [producerSkill, "Agent Producer skill science explainer default"],
+  [read("AGENTS.md"), "AGENTS science explainer default"],
+  [read("README.md"), "README science explainer default"],
+  [read("docs/FINAL_PRODUCT_GOAL.md"), "Final product goal science explainer default"],
+  [read("docs/ITERATION_STATUS.md"), "Iteration status science explainer default"],
+  [read("docs/AGENT_PRODUCER_ONLY_ROADMAP.md"), "Roadmap science explainer default"],
+  [voxcpmDoc, "VoxCPM provider doc science explainer default"],
+  [voxcpmSkill, "VoxCPM skill science explainer default"],
+];
+for (const [source, label] of activeScienceExplainerDocs) {
+  for (const required of [
+    "science-explainer-young-male",
+    "future Chinese science-explainer",
+    "controllable-clone",
+    "voices/clone/science-explainer-young-male.wav",
+    "voices/clone/science-explainer-young-male.txt",
+    "high-fidelity-clone",
+    "production brief",
+    "non-science content",
+    "fail closed",
+    "`lyy`",
+    "F5",
+    "another provider",
+    scienceExplainerAcceptance,
+  ]) {
+    assertIncludes(source, required, label);
+  }
+}
 assertIncludes(
   read("docs/superpowers/specs/2026-07-19-science-explainer-voice-profile-design.md"),
   "Status: implemented and user-audition accepted on 2026-07-19",

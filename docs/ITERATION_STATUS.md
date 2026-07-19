@@ -57,12 +57,17 @@ peaks, and keep leading/trailing silence below 250 ms. Proof WAVs,
 `public/generated/science-explainer-voice-proof/audio/`; the private WAV and
 exact transcript remain ignored under `voices/clone/`.
 
-The normal science mode is `controllable-clone` with compact per-beat delivery
+For future Chinese science-explainer narration, the normal science mode is
+`controllable-clone` with
+`voices/clone/science-explainer-young-male.wav` and compact per-beat delivery
 controls. Highest-fidelity work may use `high-fidelity-clone` with the same WAV
-and exact same-name transcript and no control. An explicit production brief may
-override the science-only default; missing private files fail closed with no
-`lyy`, F5, or provider fallback. Mechanical qualification does not approve
-speaker identity, timbre consistency, or expressive quality.
+and exact same-name transcript at
+`voices/clone/science-explainer-young-male.txt` and no control. An explicit
+production brief may override the science-only default; non-science content
+retains the existing default clone configuration. Missing private files must
+fail closed and must not silently fall back to `lyy`, F5, or another provider.
+Mechanical qualification does not approve speaker identity, timbre
+consistency, or expressive quality.
 
 User audition status: accepted on 2026-07-19. The user confirmed the overall
 voice effect is strong, completing the subjective timbre/expression gate and

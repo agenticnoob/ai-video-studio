@@ -41,6 +41,22 @@ Roadmap is complete; no additional phase has started.
   `npm run smoke:remotion-capabilities`. Do not add mixed Remotion versions;
   transitions and light leaks are part of the exact `4.0.489` closure.
 
+## Chinese Science-Explainer Narration Default
+
+For future Chinese science-explainer narration, default to the user-accepted
+`science-explainer-young-male` profile. Its normal mode is
+`controllable-clone` with
+`voices/clone/science-explainer-young-male.wav` and compact per-beat control
+instructions. When highest timbre fidelity is the priority, use
+`high-fidelity-clone` with the same WAV and the exact same-name transcript at
+`voices/clone/science-explainer-young-male.txt`, and omit the control
+instruction. An explicit production brief may override this science-only
+default; non-science content retains the existing default clone configuration.
+Missing private reference files must fail closed and must not silently fall
+back to `lyy`, F5, or another provider.
+
+User audition status: accepted on 2026-07-19.
+
 ## Phase 6 Capability Selection
 
 - `getProducerEffectPreset()`: resolve one of the four code-only effect

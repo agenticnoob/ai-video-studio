@@ -18,6 +18,22 @@ post-Roadmap v1 capability; they add no phase and do not start v2.
 admission and maintenance workflow. Agent Producer remains the sole
 video-production entrypoint and only searches/consumes library items.
 
+Post-Roadmap voice policy: for future Chinese science-explainer narration,
+default to the user-accepted `science-explainer-young-male` profile. Its normal
+mode is `controllable-clone` with
+`voices/clone/science-explainer-young-male.wav` and compact per-beat control
+instructions. When highest timbre fidelity is the priority, use
+`high-fidelity-clone` with the same WAV and the exact same-name transcript at
+`voices/clone/science-explainer-young-male.txt`, and omit the control
+instruction. An explicit production brief may override this science-only
+default; non-science content retains the existing default clone configuration.
+Missing private reference files must fail closed and must not silently fall
+back to `lyy`, F5, or another provider. This policy adds no Roadmap phase,
+runtime voice registry, environment variable, manifest field, or scaffold
+parameter, and it does not modify completed or frozen videos.
+
+User audition status: accepted on 2026-07-19.
+
 This roadmap defines the repository transition from a mixed Agent Producer,
 Web video product, and multi-provider TTS workspace into one focused local
 production system:
