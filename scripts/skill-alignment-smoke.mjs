@@ -297,6 +297,19 @@ for (const [source, label] of [
     label,
   );
 }
+const scienceExplainerAcceptance = "User audition status: accepted on 2026-07-19.";
+assertIncludes(voxcpmSkill, scienceExplainerAcceptance, "VoxCPM skill user acceptance");
+assertIncludes(voxcpmDoc, scienceExplainerAcceptance, "VoxCPM provider doc user acceptance");
+assertIncludes(
+  read("docs/ITERATION_STATUS.md"),
+  scienceExplainerAcceptance,
+  "Iteration status user acceptance",
+);
+assertIncludes(
+  read("docs/superpowers/specs/2026-07-19-science-explainer-voice-profile-design.md"),
+  "Status: implemented and user-audition accepted on 2026-07-19",
+  "Science explainer voice design status",
+);
 
 const remotionSkill = read(".agents/skills/remotion-best-practices/SKILL.md");
 assertIncludes(remotionSkill, "AI Video Studio Agent Producer", "Remotion skill");

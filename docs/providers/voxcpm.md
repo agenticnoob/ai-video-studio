@@ -49,7 +49,11 @@ The local qualification root is
 `summary.json`, and `index.md`. All three tracks were generated through direct
 VoxCPM `controllable-clone` with the exact profile reference and normal
 repository parameters. Mechanical qualification does not prove identical
-speaker identity or expressive quality; those remain user audition decisions.
+speaker identity or expressive quality.
+
+User audition status: accepted on 2026-07-19. The selected profile is fully
+qualified for the science-only default; the acceptance is a human listening
+decision layered on top of, not produced by, the mechanical checks.
 
 ## Producer Direct Runtime Contract
 

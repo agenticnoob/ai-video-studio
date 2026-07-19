@@ -101,7 +101,12 @@ The qualification proof consists of three real direct VoxCPM
 `public/generated/science-explainer-voice-proof/audio/`. Mechanical checks
 cover request mode/path, WAV format, duration, signal, clipping, edge silence,
 and Git isolation; they do not approve speaker identity, timbre consistency,
-or expressive quality. The user makes that final audition judgment.
+or expressive quality.
+
+User audition status: accepted on 2026-07-19. The user confirmed the qualified
+voice effect is strong and approved this profile for the science-only default.
+This subjective acceptance completes qualification without expanding what the
+mechanical checks claim.
 
 ## Text, Punctuation, And Expression
 

@@ -1,7 +1,7 @@
 # Science Explainer Voice Profile Design
 
 Date: 2026-07-19
-Status: approved for implementation
+Status: implemented and user-audition accepted on 2026-07-19
 
 ## Goal
 
@@ -118,6 +118,8 @@ high-fidelity alternative, and fail-closed/no-fallback rule.
 
 Mechanical checks do not claim that the three deliveries sound like the same
 speaker. Final timbre and expression judgment remains a user audition decision.
+The user completed that judgment on 2026-07-19, confirmed the effect is strong,
+and accepted `science-explainer-young-male` as the science-only default.
 
 ## Non-Goals
 

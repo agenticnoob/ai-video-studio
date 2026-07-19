@@ -307,3 +307,10 @@ git log -1 --oneline
 ```
 
 Expected: commit succeeds locally with no push; unrelated `SuperintelligenceBeyondHumanCognition` changes remain dirty and unstaged, while all private/generated proof artifacts remain ignored.
+
+## Post-Implementation Acceptance
+
+On 2026-07-19, the user auditioned the three proof tracks, confirmed the voice
+effect is strong, and accepted `science-explainer-young-male` as the default
+for future Chinese science-explainer narration. This completes the subjective
+gate that the mechanical qualification intentionally left to human judgment.

@@ -62,8 +62,12 @@ controls. Highest-fidelity work may use `high-fidelity-clone` with the same WAV
 and exact same-name transcript and no control. An explicit production brief may
 override the science-only default; missing private files fail closed with no
 `lyy`, F5, or provider fallback. Mechanical qualification does not approve
-speaker identity, timbre consistency, or expressive quality, which still
-requires user audition.
+speaker identity, timbre consistency, or expressive quality.
+
+User audition status: accepted on 2026-07-19. The user confirmed the overall
+voice effect is strong, completing the subjective timbre/expression gate and
+making `science-explainer-young-male` fully qualified for future Chinese
+science-explainer narration.
 
 ### Post-Roadmap: AiDailyNews20260717 (2026-07-18)
 
