@@ -1,0 +1,16 @@
+{
+  "title": "AI 日报｜2026 年 7 月 19 日",
+  "description": "hand-drawn-explainer 风格 AI 日报周末版，覆盖 Meta/Anthropic 算力协议、VulnHunter 开源、Kimi K3 2.8T 参数、澳洲 AI 监管、Databricks 1880亿估值、Csquare IPO 和 Agent 开发者信号",
+  "fps": 30,
+  "chapters": [
+    { "name": "开篇论点", "sceneId": "open" },
+    { "name": "Meta与Anthropic算力协议", "sceneId": "meta-anthropic" },
+    { "name": "VulnHunter代码安全", "sceneId": "vulnhunter" },
+    { "name": "Kimi K3 开放模型", "sceneId": "kimi-k3" },
+    { "name": "澳洲AI监管", "sceneId": "australia-regulation" },
+    { "name": "Databricks 估值", "sceneId": "databricks" },
+    { "name": "Csquare IPO", "sceneId": "csquare-ipo" },
+    { "name": "趋势总结", "sceneId": "trend-summary" },
+    { "name": "开发者判断", "sceneId": "close" }
+  ]
+}

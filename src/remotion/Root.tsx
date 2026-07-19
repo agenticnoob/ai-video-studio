@@ -122,6 +122,17 @@ import {
   getDuration as getAiDailyNews20260717Duration,
 } from "./AiDailyNews20260717";
 import {
+  AI_DAILY_NEWS_20260719_COMPOSITION_ID,
+  AI_DAILY_NEWS_20260719_FPS,
+  AI_DAILY_NEWS_20260719_HEIGHT,
+  AI_DAILY_NEWS_20260719_WIDTH,
+  AiDailyNews20260719Video,
+  AiDailyNews20260719Cover16x9,
+  AiDailyNews20260719Cover9x16,
+  aiDailyNews20260719Data,
+  getDuration as getAiDailyNews20260719Duration,
+} from "./AiDailyNews20260719";
+import {
   SUPERINTELLIGENCE_BEYOND_HUMAN_COGNITION_COMPOSITION_ID,
   SUPERINTELLIGENCE_BEYOND_HUMAN_COGNITION_DURATION_IN_FRAMES,
   SUPERINTELLIGENCE_BEYOND_HUMAN_COGNITION_FPS,
@@ -344,6 +355,26 @@ export const RemotionRoot: FC = () => {
         <Still
           id="AiDailyNews20260717Cover9x16"
           component={AiDailyNews20260717Cover9x16}
+          width={1080}
+          height={1920}
+        />
+        <Composition
+          id={AI_DAILY_NEWS_20260719_COMPOSITION_ID}
+          component={AiDailyNews20260719Video}
+          durationInFrames={getAiDailyNews20260719Duration(aiDailyNews20260719Data)}
+          fps={AI_DAILY_NEWS_20260719_FPS}
+          width={AI_DAILY_NEWS_20260719_WIDTH}
+          height={AI_DAILY_NEWS_20260719_HEIGHT}
+        />
+        <Still
+          id="AiDailyNews20260719Cover16x9"
+          component={AiDailyNews20260719Cover16x9}
+          width={1920}
+          height={1080}
+        />
+        <Still
+          id="AiDailyNews20260719Cover9x16"
+          component={AiDailyNews20260719Cover9x16}
           width={1080}
           height={1920}
         />

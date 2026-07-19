@@ -1,0 +1,16 @@
+{
+  "assets": [
+    {
+      "localPath": "public/generated/ai-daily-news-2026-07-19/assets/news-brief-bgm.mp3",
+      "source": "local",
+      "license": "production-internal",
+      "role": "bgm"
+    },
+    {
+      "localPath": "public/generated/ai-daily-news-2026-07-19/assets/studio-ambience.mp3",
+      "source": "local",
+      "license": "production-internal",
+      "role": "ambience"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "compositionId": "AiDailyNews20260719",
+  "slug": "ai-daily-news-2026-07-19",
+  "assets": [
+    {
+      "id": "news-brief-bgm",
+      "kind": "audio",
+      "localPath": "public/generated/ai-daily-news-2026-07-19/assets/news-brief-bgm.wav",
+      "purpose": "Low pulse BGM for news brief narration (120s, looped).",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "ae2637ee5b38e655f6b0a40372eb3f0b7ad3ce6e710ced7b5ee28f98775c3024",
+        "sizeInBytes": 11520078
+      },
+      "media": {
+        "durationInSeconds": 120,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "bgm",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 1
+      }
+    },
+    {
+      "id": "studio-ambience",
+      "kind": "audio",
+      "localPath": "public/generated/ai-daily-news-2026-07-19/assets/studio-ambience.wav",
+      "purpose": "Quiet studio ambience for news brief (120s, looped).",
+      "source": {
+        "provider": "repo-ffmpeg-fixture",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "9c8d8f5dfd357aab53aceb8d06183453ae0aed824743b3b9467daf74ad1d20ab",
+        "sizeInBytes": 11520078
+      },
+      "media": {
+        "durationInSeconds": 120,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "ambience",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 1
+      }
+    }
+  ]
+}
