@@ -262,6 +262,42 @@ for (const required of [
 for (const forbidden of ["Repo Adapter Contract", "/api/tts", "NEXT_ORIGIN", "TTS_PROVIDER"])
   assertNotIncludes(voxcpmDoc, forbidden, "VoxCPM provider doc");
 
+const scienceExplainerProfileTokens = [
+  "science-explainer-young-male",
+  "future Chinese science-explainer",
+  "controllable-clone",
+  "voices/clone/science-explainer-young-male.wav",
+  "voices/clone/science-explainer-young-male.txt",
+  "high-fidelity-clone",
+  "production brief",
+  "fail closed",
+  "no fallback",
+];
+for (const required of scienceExplainerProfileTokens) {
+  assertIncludes(voxcpmSkill, required, "VoxCPM skill science explainer default");
+  assertIncludes(voxcpmDoc, required, "VoxCPM provider doc science explainer default");
+}
+for (const [source, label] of [
+  [voxcpmSkill, "VoxCPM skill science explainer default"],
+  [voxcpmDoc, "VoxCPM provider doc science explainer default"],
+]) {
+  assertIncludesWords(
+    source,
+    "non-science content retains the existing default clone configuration",
+    label,
+  );
+  assertIncludesWords(
+    source,
+    "high-fidelity-clone uses the same WAV and exact same-name transcript without a control instruction",
+    label,
+  );
+  assertIncludesWords(
+    source,
+    "must not silently fall back to `lyy`, F5, or another provider",
+    label,
+  );
+}
+
 const remotionSkill = read(".agents/skills/remotion-best-practices/SKILL.md");
 assertIncludes(remotionSkill, "AI Video Studio Agent Producer", "Remotion skill");
 assertIncludes(remotionSkill, "rules/video-layout.md", "Remotion skill");

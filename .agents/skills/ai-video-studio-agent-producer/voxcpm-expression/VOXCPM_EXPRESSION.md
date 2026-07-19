@@ -71,6 +71,38 @@ When generating video narration without explicit override, use:
 Both audio files are of the same speaker. `prompt_audio` carries the exact transcript;
 `reference_audio` provides additional timbre stability without needing its own transcript.
 
+## Chinese Science-Explainer Default
+
+For future Chinese science-explainer narration, default to the qualified
+`science-explainer-young-male` profile. Its normal mode is
+`controllable-clone` with
+`referenceAudioPath: voices/clone/science-explainer-young-male.wav`. Keep the
+role and timbre intent stable, then use one compact control instruction per
+narration beat to adjust only the delivery state needed by that beat.
+
+An explicit production brief may override this science-only default. The rule
+is that non-science content retains the existing default clone configuration
+above.
+
+When highest speaker fidelity matters more than controllability,
+high-fidelity-clone uses the same WAV and exact same-name transcript without a
+control instruction. Pass the WAV as
+`promptAudioPath: voices/clone/science-explainer-young-male.wav` and the exact
+transcript as
+`promptTranscriptPath: voices/clone/science-explainer-young-male.txt`; do not
+pass `control`.
+
+Both private files must exist under ignored `voices/clone/` before generation.
+Missing files fail closed with no fallback. Science-explainer narration must
+not silently fall back to `lyy`, F5, or another provider.
+
+The qualification proof consists of three real direct VoxCPM
+`controllable-clone` tracks under
+`public/generated/science-explainer-voice-proof/audio/`. Mechanical checks
+cover request mode/path, WAV format, duration, signal, clipping, edge silence,
+and Git isolation; they do not approve speaker identity, timbre consistency,
+or expressive quality. The user makes that final audition judgment.
+
 ## Text, Punctuation, And Expression
 
 Write natural spoken text first. Use a compact control instruction with at most

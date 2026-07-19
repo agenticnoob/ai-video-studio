@@ -1,6 +1,6 @@
 # Iteration Status
 
-Last updated: 2026-07-17
+Last updated: 2026-07-19
 
 ## Current Authority
 
@@ -40,6 +40,30 @@ Phase 9A deterministic quality gates are complete.
 Phase 9B final acceptance video and final Roadmap closure are complete.
 
 Phase 9 and the Agent Producer-only Roadmap are complete.
+
+### Post-Roadmap: Chinese Science-Explainer VoxCPM Voice (2026-07-19)
+
+Qualified the selected `science-explainer-young-male` private reference as the
+future Chinese science-explainer default without starting a new Roadmap phase
+or changing non-science narration. Three real direct VoxCPM
+`controllable-clone` tracks use the same ignored
+`voices/clone/science-explainer-young-male.wav` reference and the approved
+calm, energetic, and curious delivery controls.
+
+All three proof WAVs are decodable mono 48 kHz `pcm_s16le`, run 7.412104,
+6.976500, and 9.307208 seconds, have audible finite signal with -0.1 dBFS
+peaks, and keep leading/trailing silence below 250 ms. Proof WAVs,
+`summary.json`, and `index.md` remain ignored under
+`public/generated/science-explainer-voice-proof/audio/`; the private WAV and
+exact transcript remain ignored under `voices/clone/`.
+
+The normal science mode is `controllable-clone` with compact per-beat delivery
+controls. Highest-fidelity work may use `high-fidelity-clone` with the same WAV
+and exact same-name transcript and no control. An explicit production brief may
+override the science-only default; missing private files fail closed with no
+`lyy`, F5, or provider fallback. Mechanical qualification does not approve
+speaker identity, timbre consistency, or expressive quality, which still
+requires user audition.
 
 ### Post-Roadmap: AiDailyNews20260717 (2026-07-18)
 

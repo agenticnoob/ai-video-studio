@@ -21,6 +21,36 @@ for mode, text, expression, and quality decisions.
 
 Prefer clean single-speaker reference audio around 5–30 seconds.
 
+## Chinese Science-Explainer Default
+
+For future Chinese science-explainer narration, the qualified default profile
+is `science-explainer-young-male`. Use `controllable-clone` as the normal mode,
+set `referenceAudioPath` to
+`voices/clone/science-explainer-young-male.wav`, and supply a compact control
+instruction per narration beat when its delivery state needs to change.
+
+An explicit production brief may override this science-only default. The rule
+is that non-science content retains the existing default clone configuration.
+
+When speaker fidelity has priority over delivery control,
+high-fidelity-clone uses the same WAV and exact same-name transcript without a
+control instruction. Use
+`promptAudioPath: voices/clone/science-explainer-young-male.wav` with
+`promptTranscriptPath: voices/clone/science-explainer-young-male.txt`, and omit
+`control`.
+
+Both private files are ignored local inputs and must exist before a science
+request is built. Missing files fail closed with no fallback. The runtime must
+not silently fall back to `lyy`, F5, or another provider.
+
+The local qualification root is
+`public/generated/science-explainer-voice-proof/audio/` and contains
+`calm-explanation.wav`, `energetic-reveal.wav`, `curious-question.wav`,
+`summary.json`, and `index.md`. All three tracks were generated through direct
+VoxCPM `controllable-clone` with the exact profile reference and normal
+repository parameters. Mechanical qualification does not prove identical
+speaker identity or expressive quality; those remain user audition decisions.
+
 ## Producer Direct Runtime Contract
 
 The Producer-owned implementation is `scripts/lib/producer-audio/`:
