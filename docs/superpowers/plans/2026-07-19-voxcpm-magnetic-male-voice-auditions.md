@@ -6,7 +6,7 @@
 
 **Architecture:** A local-only audition runner calls the existing direct Producer VoxCPM runtime sequentially with ten unique ids and one identical narration/control pair. The runtime owns request formatting, silence trimming, WAV validation, duration measurement, and artifact writes; the runner adds bounded duration retries and a JSON/Markdown audition index. FFprobe and FFmpeg independently verify the finished WAV files.
 
-**Tech Stack:** Node.js/tsx, `scripts/lib/producer-audio/`, VoxCPM direct HTTP API, FFmpeg, ffprobe, Docker Compose `producer` service.
+**Tech Stack:** Node.js, TypeScript compiler, `scripts/lib/producer-audio/`, VoxCPM direct HTTP API, FFmpeg, ffprobe, Docker Compose `producer` service.
 
 ## Global Constraints
 
@@ -166,10 +166,10 @@ Expected: both paths match the `public/generated/` ignore rule.
 Run:
 
 ```bash
-docker compose exec -T producer npx tsx public/generated/voxcpm-magnetic-male-auditions/generate.mjs
+docker compose exec -T producer bash -lc 'rm -rf /tmp/voxcpm-magnetic-male-auditions-build && npx tsc --allowJs --target es2022 --module commonjs --moduleResolution node --skipLibCheck --esModuleInterop --noEmit false --outDir /tmp/voxcpm-magnetic-male-auditions-build public/generated/voxcpm-magnetic-male-auditions/generate.mjs scripts/lib/producer-audio/index.ts scripts/lib/producer-audio/types.ts scripts/lib/producer-audio/config.ts scripts/lib/producer-audio/captions.ts scripts/lib/producer-audio/wav.ts scripts/lib/producer-audio/progress.ts scripts/lib/producer-audio/providers/voxcpm.ts scripts/lib/producer-audio/request.ts scripts/lib/producer-audio/metadata.ts scripts/lib/producer-audio/run.ts src/remotion/standalone-video/caption-types.ts && NODE_PATH=/workspace/node_modules:node_modules node /tmp/voxcpm-magnetic-male-auditions-build/public/generated/voxcpm-magnetic-male-auditions/generate.mjs'
 ```
 
-Expected: ten `candidate-NN: N.NNNs` lines and exit 0. A cold service may make the first request slower while the model reloads.
+Expected: compilation succeeds, then ten `candidate-NN: N.NNNs` lines appear and the command exits 0. A cold service may make the first request slower while the model reloads.
 
 - [ ] **Step 2: Validate the summary contract**
 
