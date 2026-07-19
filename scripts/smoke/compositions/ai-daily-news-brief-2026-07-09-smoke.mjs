@@ -13,10 +13,10 @@ const rendererSource = readFileSync(
   "src/remotion/AiDailyNewsBrief20260709/AiDailyNewsBrief20260709.tsx",
   "utf8",
 );
-const dataModule = await import("../src/remotion/AiDailyNewsBrief20260709/data.js");
-const audioModule = await import("../src/remotion/AiDailyNewsBrief20260709/audio.generated.js");
-const scriptModule = await import("../src/remotion/AiDailyNewsBrief20260709/script.js");
-const typesModule = await import("../src/remotion/AiDailyNewsBrief20260709/types.js");
+const dataModule = await import("../../../src/remotion/AiDailyNewsBrief20260709/data.js");
+const audioModule = await import("../../../src/remotion/AiDailyNewsBrief20260709/audio.generated.js");
+const scriptModule = await import("../../../src/remotion/AiDailyNewsBrief20260709/script.js");
+const typesModule = await import("../../../src/remotion/AiDailyNewsBrief20260709/types.js");
 
 const {
   AI_DAILY_NEWS_BRIEF_20260709_COMPOSITION_ID,

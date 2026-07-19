@@ -1,10 +1,9 @@
-/* global console */
+/* global console, process */
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const root = process.cwd();
 const read = (relativePath) => readFileSync(path.join(root, relativePath), "utf8");
 
 const proofs = [

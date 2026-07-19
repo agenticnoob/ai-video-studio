@@ -282,14 +282,14 @@ for (const command of [
   assert(packageJson.scripts[command], `package.json must expose ${command}`);
 }
 for (const phase8aPath of [
-  "scripts/producer-style-profiles-smoke.mjs",
+  "scripts/smoke/producer/producer-style-profiles-smoke.mjs",
   "src/remotion/styles/profiles.ts",
   "src/remotion/capability-showcase/StyleProfileShowcase.tsx",
 ]) {
   assert(existsSync(absolute(phase8aPath)), `Phase 8A path must exist: ${phase8aPath}`);
 }
 for (const phase8bContractPath of [
-  "scripts/producer-style-profile-sample-contract-smoke.mjs",
+  "scripts/smoke/producer/producer-style-profile-sample-contract-smoke.mjs",
   "src/remotion/styles/profile-ids.ts",
   "src/remotion/producer-samples/manifest.ts",
   "src/remotion/producer-samples/scaffold/SampleName/manifest.ts",
@@ -300,7 +300,7 @@ for (const phase8bContractPath of [
   );
 }
 for (const phase8bProofPath of [
-  "scripts/producer-style-profile-real-compositions-smoke.mjs",
+  "scripts/smoke/producer/producer-style-profile-real-compositions-smoke.mjs",
   "src/remotion/TcpHandshakeEditorial/manifest.ts",
   "src/remotion/TcpHandshakeTerminal/manifest.ts",
 ]) {
@@ -310,7 +310,7 @@ for (const phase8bProofPath of [
   );
 }
 for (const phase9aPath of [
-  "scripts/producer-quality-gates-smoke.mjs",
+  "scripts/smoke/producer/producer-quality-gates-smoke.mjs",
   "scripts/lib/producer-quality-gates.ts",
   "scripts/lib/producer-quality-analysis.ts",
   "scripts/validate-producer-quality.mjs",
@@ -319,7 +319,7 @@ for (const phase9aPath of [
   assert(existsSync(absolute(phase9aPath)), `Phase 9A path must exist: ${phase9aPath}`);
 }
 for (const phase7Path of [
-  "scripts/producer-media-sound-smoke.mjs",
+  "scripts/smoke/producer/producer-media-sound-smoke.mjs",
   "scripts/lib/producer-assets/audio-quality.ts",
   "src/remotion/media/ProducerLocalVideo.tsx",
   "src/remotion/media/ProducerAnimatedImage.tsx",
@@ -331,7 +331,7 @@ for (const phase7Path of [
   assert(existsSync(absolute(phase7Path)), `Phase 7 path must exist: ${phase7Path}`);
 }
 for (const phase6aPath of [
-  "scripts/remotion-capabilities-smoke.mjs",
+  "scripts/smoke/producer/remotion-capabilities-smoke.mjs",
   "src/remotion/effects/presets.ts",
   "src/remotion/styles/fit-text.ts",
   "src/remotion/capability-showcase/RemotionCapabilityShowcase.tsx",
@@ -350,7 +350,7 @@ for (const phase5Path of [
 }
 for (const libraryPath of [
   "scripts/producer-asset-library.mjs",
-  "scripts/producer-asset-library-smoke.mjs",
+  "scripts/smoke/producer/producer-asset-library-smoke.mjs",
   "scripts/lib/producer-asset-library/index.ts",
   "scripts/lib/producer-asset-library/validate.ts",
   "scripts/lib/producer-asset-library/catalog.ts",

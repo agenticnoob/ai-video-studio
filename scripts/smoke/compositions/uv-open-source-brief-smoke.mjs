@@ -4,7 +4,7 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const compiledRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const compiledRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 const dataModule = await import(
   path.join(compiledRoot, "src", "remotion", "UvOpenSourceBrief", "data.js")
 );

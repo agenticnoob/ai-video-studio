@@ -17,7 +17,7 @@ const assertIgnoredPath = (path) => {
   }
 };
 
-const evidenceLensModule = await import("../src/remotion/producer-samples/evidence-lens/index.js");
+const evidenceLensModule = await import("../../../src/remotion/producer-samples/evidence-lens/index.js");
 const indexSource = readFileSync("src/remotion/producer-samples/evidence-lens/index.ts", "utf8");
 const componentSource = readFileSync(
   "src/remotion/producer-samples/evidence-lens/evidence-lens.tsx",

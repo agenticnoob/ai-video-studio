@@ -1,7 +1,10 @@
 /* global console */
 import assert from "node:assert/strict";
-import { fixtureProducerManifest } from "./fixtures/producer-tools/fixture-manifest.js";
-import { buildProducerReviewFrameJobs, slugifyReviewFrameLabel } from "./lib/producer-review-frames.js";
+import { fixtureProducerManifest } from "../../fixtures/producer-tools/fixture-manifest.js";
+import {
+  buildProducerReviewFrameJobs,
+  slugifyReviewFrameLabel,
+} from "../../lib/producer-review-frames.js";
 
 assert.equal(slugifyReviewFrameLabel("GPT-5.6 / Model Tiers"), "gpt-5-6-model-tiers");
 const jobs = buildProducerReviewFrameJobs({ manifest: fixtureProducerManifest });

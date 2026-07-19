@@ -13,7 +13,7 @@ import {
   localizeProducerAssets,
   preflightProducerAssets,
   serializeProducerAssetManifest,
-} from "./lib/producer-assets/index.js";
+} from "../../lib/producer-assets/index.js";
 
 const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
 

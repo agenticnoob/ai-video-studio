@@ -7,7 +7,7 @@ const {
   producerSampleManifests,
   getProducerSampleManifestByCompositionId,
   assertProducerSampleManifest,
-} = await import("../src/remotion/producer-samples/index.js");
+} = await import("../../../src/remotion/producer-samples/index.js");
 
 const rootSource = readFileSync("src/remotion/Root.tsx", "utf8");
 const phaseEightProfiles = new Map([
@@ -15,6 +15,22 @@ const phaseEightProfiles = new Map([
   ["TcpHandshakeTerminal", "retro-terminal"],
 ]);
 const phaseNineFinalAcceptanceId = "DnsResolutionExplainer";
+const postRoadmapMaintainedProfiles = new Map([
+  [
+    "AiDailyNews20260717",
+    {
+      qualityModule: "src/remotion/AiDailyNews20260717/quality.ts",
+      styleProfileId: "comic-anime",
+    },
+  ],
+  [
+    "SuperintelligenceBeyondHumanCognition",
+    {
+      qualityModule: "src/remotion/SuperintelligenceBeyondHumanCognition/quality.ts",
+      styleProfileId: "cinematic-3d",
+    },
+  ],
+]);
 
 const expectedCompositionIds = [
   "OpenAiHardwareNewsBrief",
@@ -222,6 +238,28 @@ for (const manifest of producerSampleManifests) {
         rootSource.includes(marker),
         `The Phase 9 final acceptance proof must keep Root marker ${marker}.`,
       );
+    }
+  } else if (postRoadmapMaintainedProfiles.has(manifest.compositionId)) {
+    const expected = postRoadmapMaintainedProfiles.get(manifest.compositionId);
+    assert(
+      manifest.sampleStatus === "maintained",
+      `${manifest.compositionId} must remain a maintained post-Roadmap sample.`,
+    );
+    assert(
+      manifest.styleProfileId === expected.styleProfileId,
+      `${manifest.compositionId} must keep its selected style profile.`,
+    );
+    assert(
+      manifest.qualityModule === expected.qualityModule,
+      `${manifest.compositionId} must keep deterministic quality ownership.`,
+    );
+    assertIgnoredPath(manifest.localArtifactRoot);
+    for (const marker of [
+      manifest.compositionId,
+      `${manifest.compositionId}Cover16x9`,
+      `${manifest.compositionId}Cover9x16`,
+    ]) {
+      assert(rootSource.includes(marker), `${manifest.compositionId} must keep Root marker ${marker}.`);
     }
   } else {
     assert(

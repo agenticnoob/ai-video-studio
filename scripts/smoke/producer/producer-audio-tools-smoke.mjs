@@ -12,7 +12,7 @@ import {
   runProducerAudioGeneration,
   serializeProducerAudioMetadata,
   updateProducerDurationConstant,
-} from "./lib/producer-audio/index.js";
+} from "../../lib/producer-audio/index.js";
 
 const requestSource = await readFile(
   path.join(process.cwd(), "scripts/lib/producer-audio/request.ts"),

@@ -2,9 +2,9 @@
 
 ## OVERVIEW
 
-`scripts` contains the Docker Producer wrappers, direct VoxCPM runtime,
-deterministic validation/review tooling, retained frozen-composition smokes,
-and architecture guards. There is no supported Web route smoke surface.
+`scripts` keeps public Producer wrappers at its root, deterministic runtimes in
+`lib/`, fixtures in `fixtures/`, and responsibility-grouped checks in `smoke/`.
+There is no supported Web route smoke surface.
 
 ## WHERE TO LOOK
 
@@ -23,13 +23,15 @@ and architecture guards. There is no supported Web route smoke surface.
 | Reusable asset library | `lib/producer-asset-library/`, `producer-asset-library.mjs` | Agent-only SVG/PNG/JPEG/WebP management, semantic search, deterministic catalog/report, and atomic rollback. |
 | Unified render | `lib/producer-render.ts`, `render-producer-sample.mjs` | Plans/runs MP4, metadata, and two code-rendered covers. |
 | Post-render quality | `lib/producer-quality-*`, `validate-producer-quality.mjs` | Collects FFmpeg/ffprobe/Git evidence and rejects deterministic layout/review/artifact failures. |
-| Remotion version gate | `remotion-version-gate-smoke.mjs` | Requires exact `4.0.489` for the complete installed Remotion closure and completed Phase 6 docs/inventory. |
-| Remotion capabilities | `remotion-capabilities-smoke.mjs` | Guards effects, text fitting, transitions, duration arithmetic, showcase sources, docs, and forbidden boundaries. |
+| Repository layout | `smoke/architecture/repository-layout-smoke.mjs` | Guards tracked remnants, retained styling, grouped smokes/tools, and root pollution. |
+| Remotion version gate | `smoke/architecture/remotion-version-gate-smoke.mjs` | Requires exact `4.0.489` for the complete installed Remotion closure and completed Phase 6 docs/inventory. |
+| Remotion capabilities | `smoke/producer/remotion-capabilities-smoke.mjs` | Guards effects, text fitting, transitions, duration arithmetic, showcase sources, docs, and forbidden boundaries. |
 | Capability fixture | `fixtures/remotion-capabilities/create-video-fixture.sh` | Creates one ignored FFmpeg-only local video for isolated canvas-effect review. |
 | Media/sound fixture | `fixtures/producer-media-sound/create-fixtures.sh` | Creates ignored local PNG/GIF/video/BGM/ambience/SFX proof inputs. |
-| Media/sound gate | `producer-media-sound-smoke.mjs` | Guards Phase 7 packages, modules, proof ownership, deterministic helpers, docs, and forbidden boundaries. |
-| Style-profile sample contract | `producer-style-profile-sample-contract-smoke.mjs` | Guards mandatory profile selection for future scaffolds while preserving the Phase 7 proof. |
-| Architecture guards | `agent-producer-*-smoke.mjs`, `skill-alignment-smoke.mjs` | Product boundary checks. |
+| Media/sound gate | `smoke/producer/producer-media-sound-smoke.mjs` | Guards Phase 7 packages, modules, proof ownership, deterministic helpers, docs, and forbidden boundaries. |
+| Style-profile sample contract | `smoke/producer/producer-style-profile-sample-contract-smoke.mjs` | Guards mandatory profile selection for future scaffolds while preserving the Phase 7 proof. |
+| Composition guards | `smoke/compositions/` | Frozen and dedicated-composition contract checks. |
+| Architecture guards | `smoke/architecture/` | Product authority, Web-removal, version, skill, and layout checks. |
 
 Older composition-specific generators and smokes are frozen maintenance
 references. Do not use them as future Producer scaffolds.
@@ -57,8 +59,7 @@ references. Do not use them as future Producer scaffolds.
 - Keep `TcpHandshakeEditorial` and `TcpHandshakeTerminal` as the maintained
   Phase 8 profile proofs; their generated narration, assets, stills, covers,
   and MP4s stay ignored. Phase 8 is complete. Phase 9A quality gates are
-  complete; Phase 9B final acceptance video and Roadmap closure have not
-  started.
+  complete; Phase 9B final acceptance video and Roadmap closure are complete.
 - Run `producer:quality -- --module <quality-module>` after render for every
   future scaffold; do not treat its result as aesthetic approval.
 

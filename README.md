@@ -194,6 +194,10 @@ validation registration are ready. Current registry entries describe finished
 compositions as `frozen-reference`; they are discovery metadata, not migration
 targets.
 
+Public Producer command wrappers remain directly under `scripts/`. Internal
+checks are grouped by responsibility under `scripts/smoke/architecture/`,
+`scripts/smoke/producer/`, and `scripts/smoke/compositions/`.
+
 Current Docker validation remains:
 
 ```bash

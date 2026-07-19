@@ -11,10 +11,10 @@ const rendererSource = readFileSync(
   "src/remotion/AiConceptsForBeginners/AiConceptsForBeginners.tsx",
   "utf8",
 );
-const scriptModule = await import("../src/remotion/AiConceptsForBeginners/script.js");
-const dataModule = await import("../src/remotion/AiConceptsForBeginners/data.js");
-const audioModule = await import("../src/remotion/AiConceptsForBeginners/audio.generated.js");
-const typesModule = await import("../src/remotion/AiConceptsForBeginners/types.js");
+const scriptModule = await import("../../../src/remotion/AiConceptsForBeginners/script.js");
+const dataModule = await import("../../../src/remotion/AiConceptsForBeginners/data.js");
+const audioModule = await import("../../../src/remotion/AiConceptsForBeginners/audio.generated.js");
+const typesModule = await import("../../../src/remotion/AiConceptsForBeginners/types.js");
 
 const expectedConcepts = [
   "LLM",

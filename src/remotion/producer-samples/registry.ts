@@ -61,7 +61,7 @@ export const producerSampleManifests = [
         kind: "audio-metadata",
       },
       { path: "src/remotion/Root.tsx", kind: "root-registration" },
-      { path: "scripts/ai-concepts-for-beginners-smoke.mjs", kind: "smoke" },
+      { path: "scripts/smoke/compositions/ai-concepts-for-beginners-smoke.mjs", kind: "smoke" },
     ],
     promotionCandidates: [
       {
@@ -142,7 +142,7 @@ export const producerSampleManifests = [
         kind: "audio-metadata",
       },
       { path: "src/remotion/Root.tsx", kind: "root-registration" },
-      { path: "scripts/ai-daily-news-brief-2026-07-09-smoke.mjs", kind: "smoke" },
+      { path: "scripts/smoke/compositions/ai-daily-news-brief-2026-07-09-smoke.mjs", kind: "smoke" },
     ],
     promotionCandidates: [
       {
@@ -230,7 +230,7 @@ export const producerSampleManifests = [
         kind: "audio-metadata",
       },
       { path: "src/remotion/Root.tsx", kind: "root-registration" },
-      { path: "scripts/ai-news-strategic-brief-2026-07-09-smoke.mjs", kind: "smoke" },
+      { path: "scripts/smoke/compositions/ai-news-strategic-brief-2026-07-09-smoke.mjs", kind: "smoke" },
     ],
     promotionCandidates: [
       {
@@ -312,7 +312,7 @@ export const producerSampleManifests = [
         kind: "audio-metadata",
       },
       { path: "src/remotion/Root.tsx", kind: "root-registration" },
-      { path: "scripts/ai-daily-news-brief-2026-07-08-smoke.mjs", kind: "smoke" },
+      { path: "scripts/smoke/compositions/ai-daily-news-brief-2026-07-08-smoke.mjs", kind: "smoke" },
     ],
     promotionCandidates: [
       {
@@ -383,7 +383,7 @@ export const producerSampleManifests = [
         kind: "audio-metadata",
       },
       { path: "src/remotion/Root.tsx", kind: "root-registration" },
-      { path: "scripts/openai-hardware-news-brief-smoke.mjs", kind: "smoke" },
+      { path: "scripts/smoke/compositions/openai-hardware-news-brief-smoke.mjs", kind: "smoke" },
     ],
     promotionCandidates: [
       {
@@ -448,7 +448,7 @@ export const producerSampleManifests = [
       { path: "src/remotion/UvOpenSourceBrief/data.ts", kind: "data" },
       { path: "src/remotion/UvOpenSourceBrief/audio.generated.ts", kind: "audio-metadata" },
       { path: "src/remotion/Root.tsx", kind: "root-registration" },
-      { path: "scripts/uv-open-source-brief-smoke.mjs", kind: "smoke" },
+      { path: "scripts/smoke/compositions/uv-open-source-brief-smoke.mjs", kind: "smoke" },
     ],
     promotionCandidates: [
       {
@@ -521,7 +521,7 @@ export const producerSampleManifests = [
       { path: "src/remotion/WorldCupBettingAnalysis/data.ts", kind: "data" },
       { path: "src/remotion/WorldCupBettingAnalysis/audio.generated.ts", kind: "audio-metadata" },
       { path: "src/remotion/Root.tsx", kind: "root-registration" },
-      { path: "scripts/world-cup-betting-analysis-smoke.mjs", kind: "smoke" },
+      { path: "scripts/smoke/compositions/world-cup-betting-analysis-smoke.mjs", kind: "smoke" },
     ],
     promotionCandidates: [
       {
@@ -586,7 +586,7 @@ export const producerSampleManifests = [
       { path: "src/remotion/PixelRAGChineseStandalone/data.generated.ts", kind: "audio-metadata" },
       { path: "src/remotion/PixelRAGChineseStandalone/visuals.tsx", kind: "renderer" },
       { path: "src/remotion/Root.tsx", kind: "root-registration" },
-      { path: "scripts/pixelrag-chinese-standalone-smoke.mjs", kind: "smoke" },
+      { path: "scripts/smoke/compositions/pixelrag-chinese-standalone-smoke.mjs", kind: "smoke" },
     ],
     promotionCandidates: [
       {

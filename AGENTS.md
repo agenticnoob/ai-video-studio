@@ -114,6 +114,7 @@ User audition status: accepted on 2026-07-19.
 | Asset runtime | `scripts/lib/producer-assets/` |
 | Mechanical validation | `scripts/lib/producer-validation.ts` |
 | Review-frame planning | `scripts/lib/producer-review-frames.ts` |
+| Script ownership | `scripts/AGENTS.md` |
 
 ## Production Rules
 

@@ -9,7 +9,7 @@ const {
   producerSamplePromotionGateStates,
   getProducerSampleManifestByCompositionId,
   getProducerSamplePromotionGateState,
-} = await import("../src/remotion/producer-samples/index.js");
+} = await import("../../../src/remotion/producer-samples/index.js");
 
 const allowedTargets = ["primitive", "block", "effect", "transition", "style-profile"];
 assert.deepEqual(
@@ -50,13 +50,15 @@ for (const candidate of evidenceLensCandidates) {
   assert.equal(candidate.status, "promoted", `${candidate.id} must retain promoted evidence.`);
 }
 
+const maintainedIds = new Set([
+  "AgentProducerMediaSoundProof",
+  "TcpHandshakeEditorial",
+  "TcpHandshakeTerminal",
+  "DnsResolutionExplainer",
+  "AiDailyNews20260717",
+  "SuperintelligenceBeyondHumanCognition",
+]);
 for (const manifest of producerSampleManifests) {
-  const maintainedIds = new Set([
-    "AgentProducerMediaSoundProof",
-    "TcpHandshakeEditorial",
-    "TcpHandshakeTerminal",
-    "DnsResolutionExplainer",
-  ]);
   assert.equal(
     manifest.sampleStatus,
     maintainedIds.has(manifest.compositionId) ? "maintained" : "frozen-reference",

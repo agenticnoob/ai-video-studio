@@ -54,41 +54,40 @@ const {
   maintainedProducerSampleManifests,
   producerSampleManifests,
   producerSamplePromotionTargets,
-} = await import("../src/remotion/producer-samples/index.js");
+} = await import("../../../src/remotion/producer-samples/index.js");
 const { sampleNameManifest } =
-  await import("../src/remotion/producer-samples/scaffold/SampleName/manifest.js");
-const { buildProducerRenderJobs } = await import("./lib/producer-render.js");
+  await import("../../../src/remotion/producer-samples/scaffold/SampleName/manifest.js");
+const { buildProducerRenderJobs } = await import("../../../scripts/lib/producer-render.js");
 
 assert.deepEqual(
   [...producerSamplePromotionTargets],
   ["primitive", "block", "effect", "transition", "style-profile"],
 );
+const expectedMaintainedCompositionIds = [
+  "AgentProducerMediaSoundProof",
+  "TcpHandshakeEditorial",
+  "TcpHandshakeTerminal",
+  "DnsResolutionExplainer",
+  "AiDailyNews20260717",
+  "SuperintelligenceBeyondHumanCognition",
+];
 assert.equal(
   maintainedProducerSampleManifests.length,
-  4,
-  "Phases 7 through 9 must register exactly four maintained proof samples.",
+  expectedMaintainedCompositionIds.length,
+  "The registry must contain every maintained and post-Roadmap Producer sample.",
 );
 assert.deepEqual(
   maintainedProducerSampleManifests.map((manifest) => manifest.compositionId),
-  [
-    "AgentProducerMediaSoundProof",
-    "TcpHandshakeEditorial",
-    "TcpHandshakeTerminal",
-    "DnsResolutionExplainer",
-  ],
-  "The maintained registry must contain the unchanged Phase 7 and 8 proofs plus the Phase 9 final acceptance proof.",
+  expectedMaintainedCompositionIds,
+  "The maintained registry order must match the current Producer sample boundary.",
 );
 assert(
   producerSampleManifests.every(
     (manifest) =>
-      [
-        "AgentProducerMediaSoundProof",
-        "TcpHandshakeEditorial",
-        "TcpHandshakeTerminal",
-        "DnsResolutionExplainer",
-      ].includes(manifest.compositionId) || manifest.sampleStatus === "frozen-reference",
+      expectedMaintainedCompositionIds.includes(manifest.compositionId) ||
+      manifest.sampleStatus === "frozen-reference",
   ),
-  "Every finished sample outside the maintained proof set must remain a frozen reference.",
+  "Every sample outside the maintained set must remain a frozen reference.",
 );
 assert.doesNotThrow(() => assertProducerSampleManifest(sampleNameManifest));
 assert.equal(

@@ -7,14 +7,14 @@ import { access, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
-import { readProducerVoxcpmConfig } from "./lib/producer-audio/config.js";
-import { createVoxcpmProducerRequestPlan } from "./lib/producer-audio/providers/voxcpm.js";
-import { requestProducerNarrationAsset } from "./lib/producer-audio/request.js";
+import { readProducerVoxcpmConfig } from "../../lib/producer-audio/config.js";
+import { createVoxcpmProducerRequestPlan } from "../../lib/producer-audio/providers/voxcpm.js";
+import { requestProducerNarrationAsset } from "../../lib/producer-audio/request.js";
 import {
   concatenatePcmWavs,
   getPcmWavDurationSeconds,
   trimPcmWavSilence,
-} from "./lib/producer-audio/wav.js";
+} from "../../lib/producer-audio/wav.js";
 
 const makePcmWav = ({
   audibleFrames = 100,

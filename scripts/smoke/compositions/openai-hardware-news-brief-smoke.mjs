@@ -13,9 +13,9 @@ const rendererSource = readFileSync(
   "src/remotion/OpenAiHardwareNewsBrief/OpenAiHardwareNewsBrief.tsx",
   "utf8",
 );
-const dataModule = await import("../src/remotion/OpenAiHardwareNewsBrief/data.js");
-const audioModule = await import("../src/remotion/OpenAiHardwareNewsBrief/audio.generated.js");
-const typesModule = await import("../src/remotion/OpenAiHardwareNewsBrief/types.js");
+const dataModule = await import("../../../src/remotion/OpenAiHardwareNewsBrief/data.js");
+const audioModule = await import("../../../src/remotion/OpenAiHardwareNewsBrief/audio.generated.js");
+const typesModule = await import("../../../src/remotion/OpenAiHardwareNewsBrief/types.js");
 
 const {
   OPENAI_HARDWARE_NEWS_BRIEF_COMPOSITION_ID,

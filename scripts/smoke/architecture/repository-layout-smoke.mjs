@@ -2,7 +2,7 @@
 
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
@@ -66,5 +66,49 @@ assert.equal(
   "4.0.489",
   "@remotion/tailwind-v4 must remain in the exact Remotion closure.",
 );
+
+const groupedSmokePaths = [
+  "scripts/smoke/architecture/agent-producer-architecture-smoke.mjs",
+  "scripts/smoke/architecture/agent-producer-web-removal-smoke.mjs",
+  "scripts/smoke/architecture/remotion-version-gate-smoke.mjs",
+  "scripts/smoke/architecture/repository-layout-smoke.mjs",
+  "scripts/smoke/architecture/skill-alignment-smoke.mjs",
+  "scripts/smoke/producer/agent-producer-os-smoke.mjs",
+  "scripts/smoke/producer/evidence-lens-smoke.mjs",
+  "scripts/smoke/producer/producer-asset-library-smoke.mjs",
+  "scripts/smoke/producer/producer-assets-smoke.mjs",
+  "scripts/smoke/producer/producer-audio-direct-voxcpm-smoke.mjs",
+  "scripts/smoke/producer/producer-audio-tools-smoke.mjs",
+  "scripts/smoke/producer/producer-final-acceptance-smoke.mjs",
+  "scripts/smoke/producer/producer-media-sound-smoke.mjs",
+  "scripts/smoke/producer/producer-promotion-gate-smoke.mjs",
+  "scripts/smoke/producer/producer-quality-gates-smoke.mjs",
+  "scripts/smoke/producer/producer-review-frames-smoke.mjs",
+  "scripts/smoke/producer/producer-sample-manifest-smoke.mjs",
+  "scripts/smoke/producer/producer-style-profile-real-compositions-smoke.mjs",
+  "scripts/smoke/producer/producer-style-profile-sample-contract-smoke.mjs",
+  "scripts/smoke/producer/producer-style-profiles-smoke.mjs",
+  "scripts/smoke/producer/producer-validation-smoke.mjs",
+  "scripts/smoke/producer/remotion-capabilities-smoke.mjs",
+  "scripts/smoke/producer/standalone-video-runtime-smoke.mjs",
+  "scripts/smoke/compositions/ai-concepts-for-beginners-smoke.mjs",
+  "scripts/smoke/compositions/ai-daily-news-brief-2026-07-08-smoke.mjs",
+  "scripts/smoke/compositions/ai-daily-news-brief-2026-07-09-smoke.mjs",
+  "scripts/smoke/compositions/ai-news-strategic-brief-2026-07-09-smoke.mjs",
+  "scripts/smoke/compositions/openai-hardware-news-brief-smoke.mjs",
+  "scripts/smoke/compositions/pixelrag-chinese-standalone-smoke.mjs",
+  "scripts/smoke/compositions/uv-open-source-brief-smoke.mjs",
+  "scripts/smoke/compositions/world-cup-betting-analysis-smoke.mjs",
+];
+for (const relativePath of groupedSmokePaths) {
+  assert.equal(trackedPaths(relativePath).length, 1, `Grouped smoke path: ${relativePath}`);
+  assert(existsSync(absolute(relativePath)), `Grouped smoke filesystem path: ${relativePath}`);
+}
+for (const entry of readdirSync(absolute("scripts"), { withFileTypes: true })) {
+  assert(
+    !entry.isFile() || !entry.name.endsWith("-smoke.mjs"),
+    `Smoke scripts must not live at scripts root: scripts/${entry.name}`,
+  );
+}
 
 console.log("Repository layout smoke passed.");

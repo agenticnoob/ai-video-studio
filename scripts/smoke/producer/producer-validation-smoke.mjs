@@ -1,7 +1,7 @@
 /* global console */
 import assert from "node:assert/strict";
-import { fixtureProducerValidationInput } from "./fixtures/producer-tools/fixture-config.js";
-import { validateProducerSample } from "./lib/producer-validation.js";
+import { fixtureProducerValidationInput } from "../../fixtures/producer-tools/fixture-config.js";
+import { validateProducerSample } from "../../lib/producer-validation.js";
 
 const validate = (overrides = {}) =>
   validateProducerSample({

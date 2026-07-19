@@ -72,7 +72,7 @@ for (const scriptName of Object.keys(packageJson.scripts ?? {})) {
 }
 assert.equal(
   packageJson.scripts?.["smoke:agent-producer-web-removal"],
-  "node scripts/agent-producer-web-removal-smoke.mjs",
+  "node scripts/smoke/architecture/agent-producer-web-removal-smoke.mjs",
   "Phase 3 focused smoke command",
 );
 
