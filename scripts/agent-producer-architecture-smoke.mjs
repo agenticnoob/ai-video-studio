@@ -207,6 +207,13 @@ for (const docPath of activeDocs) {
   }
 }
 
+assert(
+  read("docs/DESIGN_SYSTEM.md").startsWith("# AI Video Studio Design System"),
+  "Active design-system documentation must live under docs/.",
+);
+assert(read("README.md").includes("docs/DESIGN_SYSTEM.md"));
+assert(read("AGENTS.md").includes("docs/DESIGN_SYSTEM.md"));
+
 assert(read("docs/FINAL_PRODUCT_GOAL.md").includes("only supported production flow"));
 assert(read("docs/ITERATION_STATUS.md").includes("Phase 0"));
 assert(read("docs/ITERATION_STATUS.md").includes("Phase 4"));

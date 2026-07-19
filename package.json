@@ -75,6 +75,7 @@
     "producer:style-profile-proof-assets": "bash scripts/fixtures/producer-style-profile-proofs/create-audio-fixtures.sh",
     "fixture:remotion-capabilities": "bash scripts/fixtures/remotion-capabilities/create-video-fixture.sh",
     "smoke:remotion-version-gate": "node scripts/remotion-version-gate-smoke.mjs",
+    "smoke:repository-layout": "node scripts/smoke/architecture/repository-layout-smoke.mjs",
     "smoke:agent-producer-architecture": "node scripts/agent-producer-architecture-smoke.mjs",
     "smoke:agent-producer-web-removal": "node scripts/agent-producer-web-removal-smoke.mjs",
     "smoke:skill-alignment": "node scripts/skill-alignment-smoke.mjs",

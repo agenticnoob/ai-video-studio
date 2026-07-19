@@ -152,6 +152,7 @@ Read in this order:
 
 Supporting references:
 
+- `docs/DESIGN_SYSTEM.md`
 - `docs/REMOTION_COMPONENT_LIBRARY.md`
 - `docs/PRODUCER_PROMOTION_GATE.md`
 - `docs/PRODUCER_ASSET_CONTRACT.md`

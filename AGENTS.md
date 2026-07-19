@@ -101,6 +101,7 @@ User audition status: accepted on 2026-07-19.
 | Current goal | `docs/FINAL_PRODUCT_GOAL.md` |
 | Current milestone | `docs/ITERATION_STATUS.md` |
 | Full migration sequence | `docs/AGENT_PRODUCER_ONLY_ROADMAP.md` |
+| Video design system | `docs/DESIGN_SYSTEM.md` |
 | Deletion ownership | `docs/architecture/agent-producer-only-removal-inventory.json` |
 | Producer workflow | `.agents/skills/ai-video-studio-agent-producer/` |
 | Asset library management | `.agents/skills/ai-video-studio-asset-library/` |
