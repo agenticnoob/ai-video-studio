@@ -122,6 +122,16 @@ import {
   getDuration as getAiDailyNews20260717Duration,
 } from "./AiDailyNews20260717";
 import {
+  SUPERINTELLIGENCE_BEYOND_HUMAN_COGNITION_COMPOSITION_ID,
+  SUPERINTELLIGENCE_BEYOND_HUMAN_COGNITION_DURATION_IN_FRAMES,
+  SUPERINTELLIGENCE_BEYOND_HUMAN_COGNITION_FPS,
+  SUPERINTELLIGENCE_BEYOND_HUMAN_COGNITION_HEIGHT,
+  SUPERINTELLIGENCE_BEYOND_HUMAN_COGNITION_WIDTH,
+  SuperintelligenceBeyondHumanCognitionCover16x9,
+  SuperintelligenceBeyondHumanCognitionCover9x16,
+  SuperintelligenceBeyondHumanCognitionVideo,
+} from "./SuperintelligenceBeyondHumanCognition";
+import {
   AI_DAILY_NEWS_BRIEF_20260708_COMPOSITION_ID,
   AI_DAILY_NEWS_BRIEF_20260708_FPS,
   AI_DAILY_NEWS_BRIEF_20260708_HEIGHT,
@@ -334,6 +344,26 @@ export const RemotionRoot: FC = () => {
         <Still
           id="AiDailyNews20260717Cover9x16"
           component={AiDailyNews20260717Cover9x16}
+          width={1080}
+          height={1920}
+        />
+        <Composition
+          id={SUPERINTELLIGENCE_BEYOND_HUMAN_COGNITION_COMPOSITION_ID}
+          component={SuperintelligenceBeyondHumanCognitionVideo}
+          durationInFrames={SUPERINTELLIGENCE_BEYOND_HUMAN_COGNITION_DURATION_IN_FRAMES}
+          fps={SUPERINTELLIGENCE_BEYOND_HUMAN_COGNITION_FPS}
+          width={SUPERINTELLIGENCE_BEYOND_HUMAN_COGNITION_WIDTH}
+          height={SUPERINTELLIGENCE_BEYOND_HUMAN_COGNITION_HEIGHT}
+        />
+        <Still
+          id="SuperintelligenceBeyondHumanCognitionCover16x9"
+          component={SuperintelligenceBeyondHumanCognitionCover16x9}
+          width={1920}
+          height={1080}
+        />
+        <Still
+          id="SuperintelligenceBeyondHumanCognitionCover9x16"
+          component={SuperintelligenceBeyondHumanCognitionCover9x16}
           width={1080}
           height={1920}
         />

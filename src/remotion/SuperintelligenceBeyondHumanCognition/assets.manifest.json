@@ -1,0 +1,517 @@
+{
+  "version": 1,
+  "compositionId": "SuperintelligenceBeyondHumanCognition",
+  "slug": "superintelligence-beyond-human-cognition",
+  "assets": [
+    {
+      "id": "narration-scene-01",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/narration-scene-01.wav",
+      "purpose": "Direct VoxCPM narration for scene 01.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "fa7a1f5c639c6d9866f68fadf05955b3c9d56e50e7c2a648b73b28560aa68faa",
+        "sizeInBytes": 2291274
+      },
+      "media": {
+        "durationInSeconds": 23.866979,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-scene-02",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/narration-scene-02.wav",
+      "purpose": "Direct VoxCPM narration for scene 02.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "be29db0de7c9cc92c0863215aa0eac63790657191b0d762236e93706ecdb567d",
+        "sizeInBytes": 2307726
+      },
+      "media": {
+        "durationInSeconds": 24.038354,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-scene-03",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/narration-scene-03.wav",
+      "purpose": "Direct VoxCPM narration for scene 03.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "35e957ecbb67d0cb4713f10aa1b9ba391c11bab9c7dfcd9304ab2305f008d3b5",
+        "sizeInBytes": 2124102
+      },
+      "media": {
+        "durationInSeconds": 22.125604,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-scene-04",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/narration-scene-04.wav",
+      "purpose": "Direct VoxCPM narration for scene 04.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "949b400fa954179d3e7de28d171f7ce2cf051395728d20c0e91ad76b21c983a2",
+        "sizeInBytes": 2488180
+      },
+      "media": {
+        "durationInSeconds": 25.918083,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-scene-05",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/narration-scene-05.wav",
+      "purpose": "Direct VoxCPM narration for scene 05.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "8ca1c06b8ec32ac73ee4df910b63268856323ec1fbbb97d2866b7896fb1c84cb",
+        "sizeInBytes": 2721312
+      },
+      "media": {
+        "durationInSeconds": 28.346542,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-scene-06",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/narration-scene-06.wav",
+      "purpose": "Direct VoxCPM narration for scene 06.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "e3713d2f181b3190dbfffc10a863383b183ed62d59669ae7421038b25490c503",
+        "sizeInBytes": 2702782
+      },
+      "media": {
+        "durationInSeconds": 28.153521,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-scene-07",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/narration-scene-07.wav",
+      "purpose": "Direct VoxCPM narration for scene 07.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "918ac2bdaf2baffcda4e774f4a4b90fc18327afdbb9b1dfa234b2191714a0ff0",
+        "sizeInBytes": 2377688
+      },
+      "media": {
+        "durationInSeconds": 24.767125,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-scene-08",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/narration-scene-08.wav",
+      "purpose": "Direct VoxCPM narration for scene 08.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "43d2b3b77ac5c4b6aed79760000e9534c55b27f0d750ceaa651d849e79498e86",
+        "sizeInBytes": 2583162
+      },
+      "media": {
+        "durationInSeconds": 26.907479,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-scene-09",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/narration-scene-09.wav",
+      "purpose": "Direct VoxCPM narration for scene 09.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "6e244322bfc4347a8dd7c1354c3be44f8c3fc0f5b2ba9a02eba4888e6165b9f1",
+        "sizeInBytes": 2699226
+      },
+      "media": {
+        "durationInSeconds": 28.116479,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-scene-10",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/narration-scene-10.wav",
+      "purpose": "Direct VoxCPM narration for scene 10.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "6a278cb80e672beeb42955c8b2f2eae43b243337cac836d7ccc85b22d39bfe50",
+        "sizeInBytes": 2433536
+      },
+      "media": {
+        "durationInSeconds": 25.348875,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-scene-11",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/narration-scene-11.wav",
+      "purpose": "Direct VoxCPM narration for scene 11.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "42146bb209b144f9ecb385badd617e0b7f11f6dbc2c25d774d50026965a694e5",
+        "sizeInBytes": 2455086
+      },
+      "media": {
+        "durationInSeconds": 25.573354,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-scene-12",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/narration-scene-12.wav",
+      "purpose": "Direct VoxCPM narration for scene 12.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "74108dcd19741fee75dc36601ef63b192997145d9a1d0e0884f56752d0bd3394",
+        "sizeInBytes": 2554296
+      },
+      "media": {
+        "durationInSeconds": 26.606792,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-scene-13",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/narration-scene-13.wav",
+      "purpose": "Direct VoxCPM narration for scene 13.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "a0b1a300c2a72022cff300b7312c4debb342cedff11b01601a48b5333e9672cf",
+        "sizeInBytes": 2355780
+      },
+      "media": {
+        "durationInSeconds": 24.538917,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-scene-14",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/narration-scene-14.wav",
+      "purpose": "Direct VoxCPM narration for scene 14.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "4fcd0df9c6b4548daaf9d854f5cc3558178accc745bb1de60f2c105e61edc1e6",
+        "sizeInBytes": 2704546
+      },
+      "media": {
+        "durationInSeconds": 28.171896,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "narration-scene-15",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/narration-scene-15.wav",
+      "purpose": "Direct VoxCPM narration for scene 15.",
+      "source": {
+        "provider": "voxcpm",
+        "license": "producer-generated-local"
+      },
+      "integrity": {
+        "sha256": "120deee1d7e7acde07d5d6181ebaffe3dbe2e6b8097dff997c24bbade631be37",
+        "sizeInBytes": 2675208
+      },
+      "media": {
+        "durationInSeconds": 27.866292,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "narration",
+        "maxAllowedPeakDb": -0.5,
+        "maxSilenceSeconds": 2.5
+      }
+    },
+    {
+      "id": "cinematic-bed",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/cinematic-bed.wav",
+      "purpose": "Low harmonic bed reused from a reviewed maintained editorial composition.",
+      "source": {
+        "provider": "repo-maintained-asset",
+        "sourceId": "editorial-bgm",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "4ffe7ebd18ffe14ca3618b5a40e3d4911cd52aba1fe8756caa0f272bcb26b9fb",
+        "sizeInBytes": 2880078
+      },
+      "media": {
+        "durationInSeconds": 30,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "bgm",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 1
+      }
+    },
+    {
+      "id": "spatial-air",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/spatial-air.wav",
+      "purpose": "Subtle electronic room ambience reused from a reviewed maintained composition.",
+      "source": {
+        "provider": "repo-maintained-asset",
+        "sourceId": "terminal-ambience",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "152a8d51ec7dcdf1a646c543b481ffdcfbf40f15d96e197a82fedf6ea0f2a5ad",
+        "sizeInBytes": 2880078
+      },
+      "media": {
+        "durationInSeconds": 30,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "ambience",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 1
+      }
+    },
+    {
+      "id": "chapter-bloom",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/chapter-bloom.wav",
+      "purpose": "Chapter boundary whoosh reused from a reviewed maintained composition.",
+      "source": {
+        "provider": "repo-maintained-asset",
+        "sourceId": "soft-whoosh",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "674dcfdaf80c947cd9e0f40440d1e56fcb86357ac615e0b951d4fe29792f79cc",
+        "sizeInBytes": 52878
+      },
+      "media": {
+        "durationInSeconds": 0.55,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "sfx",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 0.2
+      }
+    },
+    {
+      "id": "node-confirm",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/node-confirm.wav",
+      "purpose": "Knowledge-node confirmation reused from a reviewed maintained composition.",
+      "source": {
+        "provider": "repo-maintained-asset",
+        "sourceId": "node-confirm",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "8450cd167f43db07c10185dd3813673e451e6c11aa10608f4c2d3a3eef06ee83",
+        "sizeInBytes": 23118
+      },
+      "media": {
+        "durationInSeconds": 0.24,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "sfx",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 0.2
+      }
+    },
+    {
+      "id": "phase-sweep",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/phase-sweep.wav",
+      "purpose": "Weighted phase-change sweep reused from a reviewed maintained composition.",
+      "source": {
+        "provider": "repo-maintained-asset",
+        "sourceId": "signal-sweep",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "ea1f800f015f12619571dcf55106379d298711da8aeb04e612e8b3a5c94c8515",
+        "sizeInBytes": 40398
+      },
+      "media": {
+        "durationInSeconds": 0.42,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "sfx",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 0.2
+      }
+    },
+    {
+      "id": "historical-impact",
+      "kind": "audio",
+      "localPath": "public/generated/superintelligence-beyond-human-cognition/assets/historical-impact.wav",
+      "purpose": "Sparse weighted impact reused from a reviewed maintained composition.",
+      "source": {
+        "provider": "repo-maintained-asset",
+        "sourceId": "key-confirm",
+        "license": "CC0-1.0"
+      },
+      "integrity": {
+        "sha256": "0ff99279b0b87ab20fb6045fc377d6dcb7c155b9e39fe36af69ea34934ecdb01",
+        "sizeInBytes": 17358
+      },
+      "media": {
+        "durationInSeconds": 0.18,
+        "sampleRate": 48000,
+        "codec": "pcm_s16le"
+      },
+      "sound": {
+        "role": "sfx",
+        "maxAllowedPeakDb": -1,
+        "maxSilenceSeconds": 0.2
+      }
+    }
+  ]
+}

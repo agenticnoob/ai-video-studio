@@ -1,7 +1,6 @@
 import { Audio } from "@remotion/media";
 import type { FC } from "react";
 import { staticFile } from "remotion";
-
 import { assertProducerLocalMediaPath } from "../media/local-path";
 import { getProducerBedVolume, getProducerDuckedVolume } from "./envelopes";
 import type { ProducerBedTrack, ProducerNarrationWindow, ProducerSfxCue } from "./types";

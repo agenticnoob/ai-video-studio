@@ -41,6 +41,23 @@ Phase 9B final acceptance video and final Roadmap closure are complete.
 
 Phase 9 and the Agent Producer-only Roadmap are complete.
 
+### Post-Roadmap: SuperintelligenceBeyondHumanCognition Source Slice (2026-07-19)
+
+Registered the 15-scene portrait `SuperintelligenceBeyondHumanCognition`
+production source with the `cinematic-3d` profile, five chapters, real direct
+VoxCPM `high-fidelity-clone` narration, 21 strict localized audio assets,
+sample-local research/publishing notes, soundtrack, validation, quality plan,
+and two Remotion Still cover components. Asset preflight and mechanical sample
+validation pass in the Docker `producer` service.
+
+This is not a final-video completion claim. Local review-frame artifacts exist,
+but the final H.264/AAC MP4, rendered cover PNGs, full audiovisual review, and
+composition `producer:quality` result are still outstanding. The user
+authorized committing the remaining source and documentation locally on
+2026-07-19; private voice files and all generated audio, localized assets,
+review frames, covers, metadata, and MP4 outputs remain ignored and local-only.
+No new Roadmap phase starts and no push is authorized.
+
 ### Post-Roadmap: Chinese Science-Explainer VoxCPM Voice (2026-07-19)
 
 Qualified the selected `science-explainer-young-male` private reference as the

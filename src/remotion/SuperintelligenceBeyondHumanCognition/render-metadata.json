@@ -1,0 +1,12 @@
+{
+  "title": "当智能走出人类认知之外",
+  "description": "从自动化科学与可解释性的已观察能力出发，区分合理外推与哲学思辨，追问当认知、验证和行动形成自主闭环时，人类是否仍拥有决定未来的权力。",
+  "fps": 30,
+  "chapters": [
+    { "name": "智能本身", "durationInFrames": 2101 },
+    { "name": "闭环", "durationInFrames": 3216 },
+    { "name": "认知断层", "durationInFrames": 2410 },
+    { "name": "价值重写", "durationInFrames": 2301 },
+    { "name": "新主体", "durationInFrames": 1681 }
+  ]
+}

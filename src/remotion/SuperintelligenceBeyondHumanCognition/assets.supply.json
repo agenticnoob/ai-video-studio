@@ -1,0 +1,197 @@
+{
+  "version": 1,
+  "compositionId": "SuperintelligenceBeyondHumanCognition",
+  "slug": "superintelligence-beyond-human-cognition",
+  "outputManifestPath": "src/remotion/SuperintelligenceBeyondHumanCognition/assets.manifest.json",
+  "assets": [
+    {
+      "id": "narration-scene-01",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for scene 01.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/superintelligence-beyond-human-cognition/audio/scene-01.wav" },
+      "destination": { "scope": "composition", "fileName": "narration-scene-01.wav" }
+    },
+    {
+      "id": "narration-scene-02",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for scene 02.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/superintelligence-beyond-human-cognition/audio/scene-02.wav" },
+      "destination": { "scope": "composition", "fileName": "narration-scene-02.wav" }
+    },
+    {
+      "id": "narration-scene-03",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for scene 03.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/superintelligence-beyond-human-cognition/audio/scene-03.wav" },
+      "destination": { "scope": "composition", "fileName": "narration-scene-03.wav" }
+    },
+    {
+      "id": "narration-scene-04",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for scene 04.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/superintelligence-beyond-human-cognition/audio/scene-04.wav" },
+      "destination": { "scope": "composition", "fileName": "narration-scene-04.wav" }
+    },
+    {
+      "id": "narration-scene-05",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for scene 05.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/superintelligence-beyond-human-cognition/audio/scene-05.wav" },
+      "destination": { "scope": "composition", "fileName": "narration-scene-05.wav" }
+    },
+    {
+      "id": "narration-scene-06",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for scene 06.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/superintelligence-beyond-human-cognition/audio/scene-06.wav" },
+      "destination": { "scope": "composition", "fileName": "narration-scene-06.wav" }
+    },
+    {
+      "id": "narration-scene-07",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for scene 07.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/superintelligence-beyond-human-cognition/audio/scene-07.wav" },
+      "destination": { "scope": "composition", "fileName": "narration-scene-07.wav" }
+    },
+    {
+      "id": "narration-scene-08",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for scene 08.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/superintelligence-beyond-human-cognition/audio/scene-08.wav" },
+      "destination": { "scope": "composition", "fileName": "narration-scene-08.wav" }
+    },
+    {
+      "id": "narration-scene-09",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for scene 09.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/superintelligence-beyond-human-cognition/audio/scene-09.wav" },
+      "destination": { "scope": "composition", "fileName": "narration-scene-09.wav" }
+    },
+    {
+      "id": "narration-scene-10",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for scene 10.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/superintelligence-beyond-human-cognition/audio/scene-10.wav" },
+      "destination": { "scope": "composition", "fileName": "narration-scene-10.wav" }
+    },
+    {
+      "id": "narration-scene-11",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for scene 11.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/superintelligence-beyond-human-cognition/audio/scene-11.wav" },
+      "destination": { "scope": "composition", "fileName": "narration-scene-11.wav" }
+    },
+    {
+      "id": "narration-scene-12",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for scene 12.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/superintelligence-beyond-human-cognition/audio/scene-12.wav" },
+      "destination": { "scope": "composition", "fileName": "narration-scene-12.wav" }
+    },
+    {
+      "id": "narration-scene-13",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for scene 13.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/superintelligence-beyond-human-cognition/audio/scene-13.wav" },
+      "destination": { "scope": "composition", "fileName": "narration-scene-13.wav" }
+    },
+    {
+      "id": "narration-scene-14",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for scene 14.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/superintelligence-beyond-human-cognition/audio/scene-14.wav" },
+      "destination": { "scope": "composition", "fileName": "narration-scene-14.wav" }
+    },
+    {
+      "id": "narration-scene-15",
+      "kind": "audio",
+      "purpose": "Direct VoxCPM narration for scene 15.",
+      "source": { "provider": "voxcpm", "license": "producer-generated-local" },
+      "sound": { "role": "narration", "maxAllowedPeakDb": -0.5, "maxSilenceSeconds": 2.5 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/superintelligence-beyond-human-cognition/audio/scene-15.wav" },
+      "destination": { "scope": "composition", "fileName": "narration-scene-15.wav" }
+    },
+    {
+      "id": "cinematic-bed",
+      "kind": "audio",
+      "purpose": "Low harmonic bed reused from a reviewed maintained editorial composition.",
+      "source": { "provider": "repo-maintained-asset", "sourceId": "editorial-bgm", "license": "CC0-1.0" },
+      "sound": { "role": "bgm", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 1 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/tcp-handshake-editorial/assets/editorial-bgm.wav" },
+      "destination": { "scope": "composition", "fileName": "cinematic-bed.wav" }
+    },
+    {
+      "id": "spatial-air",
+      "kind": "audio",
+      "purpose": "Subtle electronic room ambience reused from a reviewed maintained composition.",
+      "source": { "provider": "repo-maintained-asset", "sourceId": "terminal-ambience", "license": "CC0-1.0" },
+      "sound": { "role": "ambience", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 1 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/tcp-handshake-terminal/assets/terminal-ambience.wav" },
+      "destination": { "scope": "composition", "fileName": "spatial-air.wav" }
+    },
+    {
+      "id": "chapter-bloom",
+      "kind": "audio",
+      "purpose": "Chapter boundary whoosh reused from a reviewed maintained composition.",
+      "source": { "provider": "repo-maintained-asset", "sourceId": "soft-whoosh", "license": "CC0-1.0" },
+      "sound": { "role": "sfx", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 0.2 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/tcp-handshake-editorial/assets/soft-whoosh.wav" },
+      "destination": { "scope": "composition", "fileName": "chapter-bloom.wav" }
+    },
+    {
+      "id": "node-confirm",
+      "kind": "audio",
+      "purpose": "Knowledge-node confirmation reused from a reviewed maintained composition.",
+      "source": { "provider": "repo-maintained-asset", "sourceId": "node-confirm", "license": "CC0-1.0" },
+      "sound": { "role": "sfx", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 0.2 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/tcp-handshake-editorial/assets/node-confirm.wav" },
+      "destination": { "scope": "composition", "fileName": "node-confirm.wav" }
+    },
+    {
+      "id": "phase-sweep",
+      "kind": "audio",
+      "purpose": "Weighted phase-change sweep reused from a reviewed maintained composition.",
+      "source": { "provider": "repo-maintained-asset", "sourceId": "signal-sweep", "license": "CC0-1.0" },
+      "sound": { "role": "sfx", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 0.2 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/tcp-handshake-terminal/assets/signal-sweep.wav" },
+      "destination": { "scope": "composition", "fileName": "phase-sweep.wav" }
+    },
+    {
+      "id": "historical-impact",
+      "kind": "audio",
+      "purpose": "Sparse weighted impact reused from a reviewed maintained composition.",
+      "source": { "provider": "repo-maintained-asset", "sourceId": "key-confirm", "license": "CC0-1.0" },
+      "sound": { "role": "sfx", "maxAllowedPeakDb": -1, "maxSilenceSeconds": 0.2 },
+      "acquisition": { "type": "manual", "sourcePath": "public/generated/tcp-handshake-terminal/assets/key-confirm.wav" },
+      "destination": { "scope": "composition", "fileName": "historical-impact.wav" }
+    }
+  ]
+}

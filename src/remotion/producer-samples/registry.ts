@@ -4,6 +4,7 @@ import { tcpHandshakeEditorialManifest } from "../TcpHandshakeEditorial/manifest
 import { tcpHandshakeTerminalManifest } from "../TcpHandshakeTerminal/manifest";
 import { aiDailyNews20260717Manifest } from "../AiDailyNews20260717/manifest";
 import { dnsResolutionExplainerManifest } from "../DnsResolutionExplainer/manifest";
+import { superintelligenceBeyondHumanCognitionManifest } from "../SuperintelligenceBeyondHumanCognition/manifest";
 
 export const producerSampleManifests = [
   {
@@ -694,6 +695,7 @@ export const producerSampleManifests = [
   tcpHandshakeTerminalManifest,
   dnsResolutionExplainerManifest,
   aiDailyNews20260717Manifest,
+  superintelligenceBeyondHumanCognitionManifest,
 ] as const satisfies readonly ProducerSampleManifest[];
 
 export const getProducerSampleManifestByCompositionId = (
