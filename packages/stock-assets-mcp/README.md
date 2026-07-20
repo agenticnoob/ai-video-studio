@@ -4,9 +4,10 @@ Private, local-only Node.js 20+ package for a stdio MCP stock-image server. The
 package is independently installable and is not part of the root npm dependency
 graph.
 
-Tasks 1–6 establish the startup boundary, strict public contracts, Pexels image
-provider, shared validated-image download primitive, pure preview handler, and
-atomic candidate store. The MCP tools are not registered with the server yet.
+Tasks 1–7 establish the startup boundary, strict public contracts, Pexels image
+provider, shared validated-image download primitive, atomic candidate store,
+and all four pure tool handlers. The MCP tools are not registered with the
+server yet.
 
 ## Configuration
 
@@ -31,11 +32,17 @@ or caller-selected path.
 ## Frozen public contracts
 
 The future registered tool names are `get_provider_status`, `search_images`,
-`preview_images`, and `acquire_image`. Their strict Zod contracts exist and the
-pure `preview_images` handler is implemented, but the server still exposes zero
-tools.
+`preview_images`, and `acquire_image`. Their strict Zod contracts and pure
+handlers exist, but the server still exposes zero tools until the separate MCP
+registration task.
 
-`get_provider_status` accepts only `{}`. `search_images` accepts:
+`get_provider_status` accepts only `{}`. It returns server/schema version, the
+single configured `pexels` provider, truthful search/preview/acquire
+capabilities, output-root readiness, and the latest optional quota snapshot.
+It performs no provider search, lookup, or network request and never exposes a
+key or environment value.
+
+`search_images` accepts:
 
 ```ts
 {
@@ -53,6 +60,10 @@ tools.
 }
 ```
 
+The search handler strictly parses and normalizes this input before delegating
+exactly once to the Pexels adapter. It returns the normalized candidates,
+pagination, cache status, and optional quota without writing files.
+
 `preview_images` accepts one to four unique decimal `imageIds`. It re-fetches
 every canonical provider record, downloads only the adapter-owned preview URL,
 and preserves caller order. Result content starts with serialized structured
@@ -66,7 +77,13 @@ error without partial-success image content.
 `acquire_image` accepts only a canonical decimal `imageId` and optional
 descriptive `searchContext` (`query`, normalized `orientation`, and a
 1–500-character `selectionNote`). Unknown fields are rejected, including URL,
-key, output-directory, and filename inputs.
+key, output-directory, filename, license override, and attribution override
+inputs. The handler re-fetches the canonical provider record, downloads only
+its adapter-owned `originalUrl` through the configured acquisition byte limit,
+and then calls `CandidateStore.acquire`. It is the only pure handler that calls
+the store or writes files. Returned original/receipt paths are generic absolute
+candidate paths below the configured root; they are never synthesized as
+`public/generated`, reusable-library, or Remotion paths.
 
 Successful structured outputs use `{ok: true}` plus their strict status,
 candidate/page, preview mapping, or versioned acquisition-receipt fields. A
@@ -76,6 +93,13 @@ attribution. Adapter-owned original and preview download URLs are not public
 candidate fields. Every acquired receipt preserves canonical Pexels source,
 creator, license, attribution, measured file integrity, optional descriptive
 search context, and acquisition time.
+
+Every successful pure handler returns conforming `structuredContent` plus the
+same serialized JSON at text content index 0. Preview then appends its mapped
+MCP image blocks. Expected validation, provider, download, output-boundary, and
+integrity exceptions retain their stable codes through `isError: true` tool
+results. Unexpected programming errors are not broad-caught and mislabeled as
+provider failures.
 
 ## Candidate store
 

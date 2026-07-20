@@ -10,19 +10,25 @@ import {
   toToolErrorResult,
   type StockAssetsToolErrorResult,
 } from "../domain/errors.js";
-import type {
-  ImageProviderAdapter,
-  ProviderImageRecord,
-} from "../providers/types.js";
+import type { ProviderImageRecord } from "../providers/types.js";
 import { downloadValidatedImage } from "../storage/image-validation.js";
+import type { StockAssetsToolContext } from "./provider-status.js";
 
-export type PreviewImagesContext = {
-  readonly provider: ImageProviderAdapter;
-  readonly previewMaxBytes: 5_242_880;
-  readonly timeoutMs: number;
-  readonly fetchImpl?: typeof fetch;
-  readonly sleep?: (milliseconds: number) => Promise<void>;
-};
+export type PreviewImagesContext = Pick<StockAssetsToolContext, "provider"> &
+  (
+    | {
+        readonly config: Pick<
+          StockAssetsToolContext["config"],
+          "previewMaxBytes" | "timeoutMs"
+        >;
+      }
+    | {
+        readonly previewMaxBytes: 5_242_880;
+        readonly timeoutMs: number;
+        readonly fetchImpl?: typeof fetch;
+        readonly sleep?: (milliseconds: number) => Promise<void>;
+      }
+  );
 
 type PreviewImageContent = {
   readonly type: "image";
@@ -104,6 +110,21 @@ export async function previewImages(
     );
   }
 
+  const downloadConfig =
+    "config" in context
+      ? {
+          previewMaxBytes: context.config.previewMaxBytes,
+          timeoutMs: context.config.timeoutMs,
+        }
+      : {
+          previewMaxBytes: context.previewMaxBytes,
+          timeoutMs: context.timeoutMs,
+          ...(context.fetchImpl === undefined
+            ? {}
+            : { fetchImpl: context.fetchImpl }),
+          ...(context.sleep === undefined ? {} : { sleep: context.sleep }),
+        };
+
   const imageContent: PreviewImageContent[] = [];
   const images: PreviewImagesOutput["images"] = [];
   for (const [index, imageId] of parsedInput.data.imageIds.entries()) {
@@ -120,12 +141,14 @@ export async function previewImages(
     try {
       const validated = await downloadValidatedImage({
         url: record.previewUrl,
-        maxBytes: context.previewMaxBytes,
-        timeoutMs: context.timeoutMs,
-        ...(context.fetchImpl === undefined
+        maxBytes: downloadConfig.previewMaxBytes,
+        timeoutMs: downloadConfig.timeoutMs,
+        ...(downloadConfig.fetchImpl === undefined
           ? {}
-          : { fetchImpl: context.fetchImpl }),
-        ...(context.sleep === undefined ? {} : { sleep: context.sleep }),
+          : { fetchImpl: downloadConfig.fetchImpl }),
+        ...(downloadConfig.sleep === undefined
+          ? {}
+          : { sleep: downloadConfig.sleep }),
       });
       images.push({
         imageId,
