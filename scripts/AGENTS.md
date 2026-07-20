@@ -21,6 +21,8 @@ supported Web route smoke surface.
 | Sample scaffold | `producer-scaffold.mjs` | Creates the strict maintained future source skeleton. |
 | Asset supply | `lib/producer-assets/`, `producer-assets.mjs` | Localizes manual/URL media, checksums, probes, and normalizes. |
 | Asset preflight | `preflight-producer-assets.mjs` | Fails before maintained still/render jobs on invalid assets. |
+| Stock candidate integration fixture | `fixtures/producer-stock-assets/fixture-candidate.mjs` | Writes a deterministic local PNG and matching mocked Pexels receipt only into a caller-owned temporary root. |
+| Stock candidate integration smoke | `smoke/producer/producer-stock-assets-smoke.mjs` | Proves receipt-to-supply localization, composition-local manifest, preflight, source preservation, and no automatic library admission without live Pexels access. |
 | Reusable asset library | `lib/producer-asset-library/`, `producer-asset-library.mjs` | Agent-only SVG/PNG/JPEG/WebP management, semantic search, deterministic catalog/report, and atomic rollback. |
 | Unified render | `lib/producer-render.ts`, `render-producer-sample.mjs` | Plans/runs MP4, metadata, and two code-rendered covers. |
 | Post-render quality | `lib/producer-quality-*`, `validate-producer-quality.mjs` | Collects FFmpeg/ffprobe/Git evidence and rejects deterministic layout/review/artifact failures. |
@@ -50,6 +52,9 @@ references. Do not use them as future Producer scaffolds.
 - Keep private voices and generated media out of source control.
 - Treat registry entries marked `frozen-reference` as discovery metadata only.
 - Keep `ProducerAssetManifest` output deterministic and free of private source paths.
+- Keep the stock-candidate integration fixture fully local and deterministic;
+  mocked receipt/image bytes and all generated media must stay under
+  `mkdtemp(os.tmpdir())` and be removed in `finally`.
 - Keep `.producer-assets/library-inbox/` user-owned and unchanged; library
   publication must validate in staging and roll back item/catalog/report bytes
   together.
@@ -79,6 +84,7 @@ references. Do not use them as future Producer scaffolds.
 ```bash
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:agent-producer-web-removal'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:producer-audio-tools'
+docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:producer-stock-assets'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:producer-assets'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:remotion-version-gate'
 docker compose run --rm producer bash -lc '[ -d /workspace/node_modules/remotion ] || npm install; npm run smoke:remotion-capabilities'
