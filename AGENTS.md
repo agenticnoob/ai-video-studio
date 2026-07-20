@@ -72,6 +72,13 @@ repository contains `.codegraph/`.
   SVG/PNG/JPEG/WebP without prior composition use, provides deterministic
   `producer:library:*` commands plus a local read-only static catalog, and
   cross-validates only future canonical `ProducerAssetManifest` references.
+- A separate bounded post-Roadmap `stock-assets-mcp` package now provides a
+  local Pexels-only stdio fallback after reviewed-library search. Its
+  `acquisition.json` receipt is the only integration boundary; Agent Producer
+  localizes the selected candidate through `producer:assets`, and Remotion
+  never renders a candidate path or remote URL. This is not Phase 10 and adds
+  no HTTP, OAuth, UI, Unsplash, Pixabay, stock video, automatic promotion, or
+  automatic deletion. Completed and frozen compositions remain unchanged.
 - Normal library intake gives the Agent an ignored inbox folder containing
   assets and any number of shared/overlapping description documents. The Agent
   reads and visually classifies the batch, completes semantics, never asks for
@@ -112,6 +119,7 @@ User audition status: accepted on 2026-07-19.
 | Producer sample OS | `src/remotion/producer-samples/` |
 | Asset contract | `docs/PRODUCER_ASSET_CONTRACT.md` |
 | Asset runtime | `scripts/lib/producer-assets/` |
+| Stock fallback package | `packages/stock-assets-mcp/` |
 | Mechanical validation | `scripts/lib/producer-validation.ts` |
 | Review-frame planning | `scripts/lib/producer-review-frames.ts` |
 | Script ownership | `scripts/AGENTS.md` |
@@ -127,6 +135,9 @@ User audition status: accepted on 2026-07-19.
 - Use code and manifest-backed existing assets only.
 - Search the reusable asset catalog before acquiring or authoring equivalent
   visual media; the Agent owns the final scene-level selection judgment.
+- Classify every named narration beat as asset-led, code-led, or hybrid before
+  any asset search. Code-led beats use repo-owned code and do not call the MCP;
+  asset-led or hybrid beats may use `stock-assets-mcp` only after library search.
 - Run maintained assets through `producer:assets` and `producer:preflight`
   before representative stills.
 - Attempt real capture for source-backed evidence. If capture is unavailable,
@@ -158,6 +169,7 @@ Use the smallest focused checks first:
 npm run smoke:agent-producer-architecture
 npm run smoke:agent-producer-web-removal
 npm run smoke:skill-alignment
+npm run smoke:stock-assets-mcp-alignment
 npm run smoke:producer-os
 npm run smoke:producer-assets
 npm run smoke:producer-audio-direct-voxcpm

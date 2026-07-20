@@ -162,6 +162,17 @@ deterministic machine catalog and local read-only HTML report, and validates
 future composition snapshots. It is not Phase 10 and does not alter the
 Roadmap completion definition.
 
+A second bounded post-Roadmap capability, `stock-assets-mcp`, is complete as an
+independently installable local Pexels-only stdio acquisition fallback. Agent
+Producer classifies each beat as asset-led, code-led, or hybrid, searches the
+reviewed library first, and uses the MCP only when an asset-led or hybrid beat
+has no suitable result. Its versioned `acquisition.json` receipt feeds the
+existing `producer:assets` contract; Remotion consumes only the localized
+composition copy. Later reusable-library admission remains an explicit Asset
+Library task. This is not Phase 10 or another production entrypoint. It adds no
+HTTP, OAuth, UI, Unsplash, Pixabay, stock video, automatic promotion, or
+automatic deletion, and completed and frozen compositions remain unchanged.
+
 ## Chinese Science-Explainer Narration Default
 
 For future Chinese science-explainer narration, default to the user-accepted

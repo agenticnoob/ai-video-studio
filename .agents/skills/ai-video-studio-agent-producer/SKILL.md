@@ -245,6 +245,27 @@ scene DSL or a planner-authored component model.
 Use primary sources when facts may have changed. Capture or localize only the
 assets that serve a named narration beat.
 
+#### Visual-Source Decision Gate
+
+Before any library or MCP search, record every named narration beat as
+asset-led, code-led, or hybrid and name its visual responsibility:
+
+- asset-led: use an existing image when the audience must see a real person,
+  place, object, product, source, or truthful evidence;
+- code-led: use code when the audience must understand a process, relationship,
+  state change, hierarchy, comparison, or measured value;
+- hybrid: use the image as the reality or evidence anchor and keep crop, layout,
+  callouts, focus, labels, comparison, and frame-driven motion in a scene-owned
+  code component.
+
+Code-led beats follow
+`existing primitive -> existing block -> composition-local component`.
+Code-led beats do not call stock-assets-mcp. Stock may establish a category,
+object, setting, or mood, but it cannot serve as evidence for a specific claim
+it does not truthfully depict. Do not use images as generic filler, fabricated
+screenshots, or raster containers for explanatory copy, charts, or process
+diagrams.
+
 Before acquiring or authoring equivalent visual media for every future
 maintained video, describe the scene intent and run
 `npm run producer:library:search -- --text <intent> --json`. Inspect the full
@@ -257,6 +278,26 @@ Use `public/assets/library/index.html` for read-only inspection. Library
 admission and maintenance are a separate task owned by
 `.agents/skills/ai-video-studio-asset-library/`; do not manage the catalog from
 this video-production workflow.
+
+When no reviewed item fits an asset-led or hybrid beat, use the separately
+configured local `stock-assets-mcp` process in this order:
+
+1. `npm run producer:library:search -- --text <intent> --json`
+2. `search_images` for a bounded Pexels shortlist
+3. `preview_images` before acquisition when useful
+4. `acquire_image` for the selected canonical image id, without per-image
+   confirmation
+5. read the candidate `acquisition.json` and map its exact provider, source URL
+   and ID, creator, license, attribution, and purpose facts into `producer:assets`
+6. run `producer:preflight` before representative stills or render
+
+The acquired original remains in the ignored
+`.producer-assets/stock-candidates/` audit area. `producer:assets` localizes a
+composition-owned copy under `public/generated/<slug>/assets/`. Remotion never
+renders a remote URL or a path below .producer-assets/stock-candidates/. The
+Agent owns the visual choice and hybrid scene composition. Reusable-library
+review belongs to the Asset Library skill later; there is no automatic
+promotion or deletion.
 
 Allowed assets include user-supplied files, real screenshots, licensed stock
 media, open-source media, local images/video/SVG/audio/fonts, Lottie, Rive,

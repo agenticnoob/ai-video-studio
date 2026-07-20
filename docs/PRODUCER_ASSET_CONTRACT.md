@@ -23,6 +23,8 @@ SHA-256 and byte size, plus kind-appropriate media metadata.
 
 - reusable reviewed v1 assets:
   `public/assets/library/items/<asset-id>/asset.<svg|png|jpg|webp>`
+- ignored `stock-assets-mcp` acquisition candidates:
+  `.producer-assets/stock-candidates/<provider>/<provider-id>/`
 - composition-local working assets: `public/generated/<slug>/assets/<file>`
 - final manifest: the dedicated composition's `assets.manifest.json`
 
@@ -111,3 +113,26 @@ There is no fabricated screenshot or runtime media fallback.
 
 Asset records must not contain generation `model`, `prompt`, `seed`, or
 `workflow` fields.
+
+## Post-Roadmap Stock Candidate Boundary
+
+`stock-assets-mcp` is a bounded post-Roadmap Pexels-only stdio acquisition
+fallback, not Phase 10 or a video-production entrypoint. Agent Producer searches
+the reviewed library first and uses the MCP only for an unmatched asset-led or
+hybrid beat. A code-led beat remains code-driven and does not call the MCP.
+
+Each acquired candidate contains one validated original plus the versioned
+`acquisition.json` receipt under `.producer-assets/stock-candidates/`. That
+ignored store is neither a reviewed library nor a Remotion input. The Agent
+maps exact provider, source URL and ID, creator, license, attribution, integrity,
+and media facts from the receipt into `producer:assets`, which copies the chosen
+image to `public/generated/<slug>/assets/` and produces the strict composition
+manifest. Remotion never renders the candidate path or a remote URL.
+
+Later approval is a separate semantic and visual review owned by the Asset
+Library skill and uses `producer:library:add` with the real receipt provenance.
+It never uses the inbox-only `producer:library:ingest` path for an MCP candidate.
+Library rejection does not invalidate or delete an existing composition-local
+copy. There is no automatic promotion or automatic deletion; cleanup requires
+separate authorization. The package adds no HTTP, OAuth, UI, Unsplash, Pixabay,
+or stock video, and completed and frozen compositions remain unchanged.

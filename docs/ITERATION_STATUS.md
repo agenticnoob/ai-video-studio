@@ -139,6 +139,21 @@ v1 capability rather than a new phase or v2 slice. Its dedicated
 `ai-video-studio-asset-library` skill owns management; Agent Producer retains
 only search, selection, manifest snapshotting, and preflight consumption.
 
+### Post-Roadmap: stock-assets-mcp (2026-07-20)
+
+The independently installable `packages/stock-assets-mcp/` package is complete
+as one bounded post-Roadmap local Pexels-only stdio capability. Agent Producer
+classifies named beats as asset-led, code-led, or hybrid, searches the reviewed
+library first, and invokes the MCP only for unmatched asset-led or hybrid work.
+The selected candidate remains ignored under `.producer-assets/stock-candidates/`;
+its `acquisition.json` receipt maps into the existing `producer:assets` flow and
+the current video renders only the localized composition copy.
+
+Later reusable-library review remains explicit and owned by the Asset Library
+skill. The capability starts no Phase 10, changes no production entrypoint, and
+adds no HTTP, OAuth, UI, Unsplash, Pixabay, stock video, automatic promotion, or
+automatic deletion. Completed and frozen compositions remain unchanged.
+
 Phase 0 authority reset, Phase 1 direct VoxCPM runtime, Phase 2 F5 removal,
 Phase 3 Web product removal, and Phase 4 Producer OS consolidation remain
 complete. Phase 5 existing asset supply, Phase 6 capability core, and Phase 7
@@ -490,6 +505,7 @@ npm run smoke:producer-style-profile-sample-contract
 npm run smoke:producer-style-profile-real-compositions
 npm run smoke:producer-quality-gates
 npm run smoke:producer-final-acceptance
+npm run smoke:stock-assets-mcp-alignment
 npm run producer:quality -- --module <quality-module>
 npm run producer:library:add -- --file <path> --metadata <asset-json>
 npm run producer:library:ingest -- --file .producer-assets/library-inbox/<file> --metadata <asset-json>

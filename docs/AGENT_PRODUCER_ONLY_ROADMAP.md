@@ -18,6 +18,16 @@ post-Roadmap v1 capability; they add no phase and do not start v2.
 admission and maintenance workflow. Agent Producer remains the sole
 video-production entrypoint and only searches/consumes library items.
 
+Post-Roadmap stock acquisition note: `stock-assets-mcp` is implemented as a
+second bounded post-Roadmap capability: an independently installable local
+Pexels-only stdio fallback behind reviewed-library search. Agent Producer
+classifies named beats as asset-led, code-led, or hybrid, localizes selected
+candidates through the existing `producer:assets` boundary, and never renders
+remote or candidate-store paths. Later reusable-library review remains owned
+by the Asset Library skill. This adds no Phase 10, production entrypoint, HTTP,
+OAuth, UI, Unsplash, Pixabay, stock video, automatic promotion, or automatic
+deletion. Completed and frozen compositions remain unchanged.
+
 Post-Roadmap voice policy: for future Chinese science-explainer narration,
 default to the user-accepted `science-explainer-young-male` profile. Its normal
 mode is `controllable-clone` with

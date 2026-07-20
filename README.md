@@ -102,6 +102,17 @@ or important creative ambiguity, and atomically ingests each accepted asset.
 User-supplied inbox assets use the repository-wide authorization/no-attribution
 default, so no per-asset license questionnaire is required.
 
+One separate bounded post-Roadmap capability, `stock-assets-mcp`, provides a
+local Pexels-only stdio fallback when an asset-led or hybrid narration beat has
+no suitable reviewed-library result. Agent Producer searches the library first,
+previews and acquires a bounded MCP candidate only when needed, and maps its
+`acquisition.json` receipt into `producer:assets`; Remotion uses only the
+localized `public/generated/<slug>/assets/` copy. Later reusable-library review
+belongs to the Asset Library skill. This is not Phase 10 or another production
+entrypoint. It adds no HTTP, OAuth, UI, Unsplash, Pixabay, or stock video,
+with no automatic promotion and no automatic deletion; completed and frozen
+compositions remain unchanged.
+
 Existing finished compositions remain frozen read-only references. Historical
 `provider: "f5-tts"` metadata in their generated audio files stays truthful; it
 does not authorize new F5 generation.
@@ -132,6 +143,10 @@ User audition status: accepted on 2026-07-19.
   `producer:preflight` before representative stills.
 - Search `producer:library:search` before acquiring or authoring equivalent
   visual media; candidates inform Agent judgment and do not select themselves.
+- Before asset search, classify every named narration beat as asset-led,
+  code-led, or hybrid. Code-led beats stay code-driven and never call
+  `stock-assets-mcp`; asset-led and hybrid beats may use it only after the
+  reviewed library has no suitable result.
 - Attempt real source capture when evidence is needed. If capture fails, record
   why and build an honest code-rendered information graphic.
 - Generate new narration with VoxCPM only.
@@ -186,6 +201,7 @@ npm run smoke:producer-audio-tools
 npm run smoke:agent-producer-web-removal
 npm run smoke:agent-producer-architecture
 npm run smoke:skill-alignment
+npm run smoke:stock-assets-mcp-alignment
 ```
 
 New maintained samples declare a strict sample manifest and asset manifest under their dedicated

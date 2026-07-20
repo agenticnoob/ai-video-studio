@@ -47,6 +47,36 @@ Invoke one atomic `producer:library:ingest` operation per accepted asset. Never
 move, delete, edit, or commit inbox originals. Report admitted, duplicate,
 skipped, ambiguous, and failed outcomes per item.
 
+## Later MCP Candidate Review
+
+Review of a `stock-assets-mcp` candidate is an explicit later Agent or user
+request, separate from current-video localization. Inspect the candidate
+original, `acquisition.json`, visual content, semantic fit, recommended uses,
+avoided uses, and style tags. Prepare a temporary reviewed metadata JSON with a
+reviewed title, description, subjects, keywords, roles, recommended uses,
+avoided uses, and style tags. Its source maps receipt facts exactly:
+
+```ts
+source: {
+  kind: "url-import",
+  provider: receipt.provider,
+  creator: receipt.creator.name,
+  license: receipt.license.name,
+  sourceUrl: receipt.sourcePageUrl,
+  sourceId: receipt.providerAssetId,
+  attribution: receipt.providerPolicy.attributionText,
+  attributionRequired: receipt.providerPolicy.attributionRequired,
+}
+```
+
+If approved, run
+`producer:library:add -- --file <candidate-original> --metadata <reviewed-metadata-json>`.
+For this later review, never use `producer:library:ingest` for an MCP candidate
+because inbox ingest assigns the user-supplied `user-authorized` source record.
+A rejection leaves the composition-local copy valid. Candidate cleanup requires
+separate authorization and is outside v1; never auto-promote or auto-delete a
+candidate.
+
 ## Commands
 
 ```bash
