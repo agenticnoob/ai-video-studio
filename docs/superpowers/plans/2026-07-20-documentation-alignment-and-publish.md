@@ -113,7 +113,7 @@ Run: `git status --short && git ls-files --others --exclude-standard && git diff
 
 Expected: only intended documentation/alignment files are staged; generated media, `public/generated/`, `out/`, and private voice inputs are absent.
 
-- [ ] **Step 4: Commit and push**
+- [x] **Step 4: Commit and push**
 
 Run: `git commit -m "docs: align repository documentation" && git push -u origin "$(git branch --show-current)"`
 
