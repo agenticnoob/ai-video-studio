@@ -101,6 +101,13 @@ The agent owns research, factual judgment, narration structure, visual
 metaphor, asset choice, scene composition, motion and sound design, visual
 review, revisions, and promotion decisions.
 
+Iteration authority tracks product capabilities and milestones, not the
+delivery state of an individual video production. A composition's render,
+cover, audiovisual review, or quality state affects that production only; it
+does not create, block, or reopen an iteration unless an approved milestone
+explicitly names the composition as acceptance evidence. Use composition-local
+records and ignored local artifacts for ordinary production status.
+
 ## Current Runtime Boundary
 
 The direct VoxCPM Producer runtime under `scripts/lib/producer-audio/` owns

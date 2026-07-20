@@ -66,6 +66,13 @@ repository contains `.codegraph/`.
   VoxCPM, strict assets, visual review, H.264/AAC render, code-only covers, and
   the post-render quality gate. Phase 9 is complete and the Roadmap is
   complete; no additional phase has started.
+- Iteration authority tracks product capabilities and milestones, not the
+  delivery state of an individual video. A composition's render, cover,
+  audiovisual review, or quality state does not create, block, or reopen an
+  iteration unless an approved milestone explicitly names that composition as
+  acceptance evidence. Use composition-local manifests, validation/quality
+  modules, research/publishing notes, and ignored artifacts for ordinary
+  production status.
 - Historical caption/storyboard contracts and `recipes/blocks` plus
   `recipes/timing` remain only for frozen composition compatibility.
 - A separate post-Roadmap v1 Agent-managed reusable asset library now admits
@@ -106,7 +113,8 @@ User audition status: accepted on 2026-07-19.
 | Task | Location |
 | --- | --- |
 | Current goal | `docs/FINAL_PRODUCT_GOAL.md` |
-| Current milestone | `docs/ITERATION_STATUS.md` |
+| Capability / milestone status | `docs/ITERATION_STATUS.md` |
+| Individual production status | `src/remotion/<CompositionName>/` |
 | Full migration sequence | `docs/AGENT_PRODUCER_ONLY_ROADMAP.md` |
 | Video design system | `docs/DESIGN_SYSTEM.md` |
 | Deletion ownership | `docs/architecture/agent-producer-only-removal-inventory.json` |

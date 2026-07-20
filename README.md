@@ -34,6 +34,13 @@ New videos are purpose-built compositions under
 `src/remotion/<CompositionName>/`. Remotion Studio and CLI are the preview,
 still, and render surfaces.
 
+Iteration authority tracks supported capabilities and milestones. Individual
+video productions and their render, cover, audiovisual review, or quality
+state do not create, block, or reopen an iteration unless an approved milestone
+explicitly names the composition as acceptance evidence. For ordinary
+production delivery status, inspect the dedicated composition's manifest,
+validation, quality, research, publishing, and ignored local artifacts.
+
 ## Current Runtime
 
 Phase 3 removed the legacy Web generation/editor product, its APIs, templates,

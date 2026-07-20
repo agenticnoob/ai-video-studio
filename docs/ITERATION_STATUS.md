@@ -15,6 +15,18 @@ Visual production uses code and existing assets only.
 The implementation sequence is defined by
 `docs/AGENT_PRODUCER_ONLY_ROADMAP.md`.
 
+## Status Boundary
+
+Iteration status tracks supported product capabilities and milestones. An
+individual video production and its render, cover, audiovisual review, or
+quality state do not create, block, or reopen an iteration unless an approved
+milestone explicitly names that composition as acceptance evidence.
+
+For ordinary production delivery status, use the composition-local manifest,
+validation and quality modules, research and publishing notes, plus ignored
+local artifacts. Do not infer the current iteration from an unfinished or
+finished production output.
+
 ## Current Milestone
 
 Phase 6 version gate is complete.
@@ -40,23 +52,6 @@ Phase 9A deterministic quality gates are complete.
 Phase 9B final acceptance video and final Roadmap closure are complete.
 
 Phase 9 and the Agent Producer-only Roadmap are complete.
-
-### Post-Roadmap: SuperintelligenceBeyondHumanCognition Source Slice (2026-07-19)
-
-Registered the 15-scene portrait `SuperintelligenceBeyondHumanCognition`
-production source with the `cinematic-3d` profile, five chapters, real direct
-VoxCPM `high-fidelity-clone` narration, 21 strict localized audio assets,
-sample-local research/publishing notes, soundtrack, validation, quality plan,
-and two Remotion Still cover components. Asset preflight and mechanical sample
-validation pass in the Docker `producer` service.
-
-This is not a final-video completion claim. Local review-frame artifacts exist,
-but the final H.264/AAC MP4, rendered cover PNGs, full audiovisual review, and
-composition `producer:quality` result are still outstanding. The user
-authorized committing the remaining source and documentation locally on
-2026-07-19; private voice files and all generated audio, localized assets,
-review frames, covers, metadata, and MP4 outputs remain ignored and local-only.
-No new Roadmap phase starts and no push is authorized.
 
 ### Post-Roadmap: Chinese Science-Explainer VoxCPM Voice (2026-07-19)
 
@@ -90,37 +85,6 @@ User audition status: accepted on 2026-07-19. The user confirmed the overall
 voice effect is strong, completing the subjective timbre/expression gate and
 making `science-explainer-young-male` fully qualified for future Chinese
 science-explainer narration.
-
-### Post-Roadmap: AiDailyNews20260717 (2026-07-18)
-
-Added `AiDailyNews20260717` as a new post-Roadmap maintained composition:
-- **Format**: portrait 9:16 (1080×1920), ~6.8 min / 12,280 frames / 30 fps
-- **Style profile**: `comic-anime` — panel sequencing, halftone texture, speed accents
-- **Canvas**: `portrait-9x16` — first Agent Producer portrait video
-- **Content**: AI daily news brief for 2026-07-17 with 8 sections covering Kimi K3, enterprise AI, tech breakthroughs, policy/regulation, capital markets, trend summary, and developer signals
-- **Narration**: real VoxCPM high-fidelity-clone (LYY voice), 8 tracks totaling 12,216 frames
-- **Covers**: two Remotion `<Still>` compositions (16:9 and 9:16)
-- **Verification**: Docker typecheck, build, composition listing, Root registry, producer-samples registry, and asset preflight pass
-- **Validation**: `producer:validate` ✅
-- **Stills**: 8 review frames rendered ✅
-- **Render**: 369MB H.264/AAC MP4 with 8 chapters at 1080×1920/30fps ✅
-- **Covers**: 16:9 and 9:16 code-rendered Still PNGs generated
-- **Artifacts**: generated narration audio, review frames, covers, and MP4 remain local-only and ignored
-
-### Post-Roadmap: AiDailyNews20260719 (2026-07-20)
-
-Added `AiDailyNews20260719` as a new post-Roadmap maintained composition:
-- **Format**: landscape 16:9 (1920×1080), ~6 min / 10,855 frames / 30 fps
-- **Style profile**: `hand-drawn-explainer` — paper texture, SVG drawings, sketch frames, annotation arrows, data badges
-- **Canvas**: `landscape-16x9`
-- **Content**: AI daily news weekend edition for 2026-07-19 with 9 sections covering Meta/Anthropic compute deal, VulnHunter, Kimi K3, Australia regulation, Databricks, Csquare IPO, trend summary, and developer signals
-- **Narration**: real VoxCPM high-fidelity-clone (LYY voice), 9 tracks totaling 10,783 frames
-- **Covers**: two Remotion `<Still>` compositions (16:9 and 9:16)
-- **Verification**: Docker typecheck, build, composition listing, and Root registry pass
-- **Stills**: 9 review frames rendered ✅
-- **Render**: 24MB H.264/AAC MP4 at 1920×1080/30fps ✅
-- **Covers**: 16:9 and 9:16 code-rendered Still PNGs generated
-- **Artifacts**: generated narration audio, covers, and MP4 remain local-only and ignored
 
 The approved Agent-managed reusable asset library is complete as one bounded
 post-Roadmap v1 capability. Agent-only CLI operations manage standalone
