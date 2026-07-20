@@ -543,4 +543,16 @@ for (const docPath of [
   assertIncludes(read(docPath), ".agents/skills/ai-video-studio-asset-library/", docPath);
 }
 
+const remotionAgents = read("src/remotion/AGENTS.md");
+assertIncludesWords(
+  remotionAgents,
+  "Phase 9B final acceptance video and Roadmap closure are complete",
+  "Remotion knowledge base Roadmap status",
+);
+assertNotIncludes(
+  remotionAgents,
+  "Phase 9B final acceptance video and Roadmap closure have not started",
+  "Remotion knowledge base Roadmap status",
+);
+
 console.warn("Skill alignment smoke passed.");

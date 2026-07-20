@@ -15,7 +15,7 @@ src/remotion/
 |-- primitives/               # maintained visual primitives
 |-- catalog/                  # Agent-facing primitive discovery
 |-- effects/                  # Phase 6A Producer-owned effect presets
-|-- styles/                   # Phase 6A measured text fitting
+|-- styles/                   # measured text fitting and Phase 8 style profiles
 |-- transitions/              # Phase 6B official presets and duration accounting
 |-- media/                    # Phase 7 local Video, AnimatedImage, and Lottie blocks
 |-- motion/                   # Phase 7 fixed motion-blur and trail treatments
@@ -39,6 +39,7 @@ src/remotion/
 | Existing asset contract | `producer-samples/asset-manifest.ts` | Local manifest type used by Phase 5 preflight. |
 | Effect presets | `effects/` | `comic-print`, `cyber-scan`, `paper-grain`, and `pixel-grid`. |
 | Text fitting | `styles/fit-text.ts` | Guarded CJK-aware width/height/line fitting. |
+| Style profiles | `styles/profiles.ts`, `styles/profile-ids.ts` | Six validated Phase 8 production-language constraints. |
 | Transition presets | `transitions/` | Four official Producer presets and overlap-aware duration accounting. |
 | Dynamic media | `media/` | Local manifest-backed video, animated image, and Lottie rendering. |
 | Motion treatments | `motion/` | Fixed camera, typography, icon, and particle blur/trail ids. |
@@ -63,7 +64,7 @@ src/remotion/
   real proofs for `editorial-tech` and `retro-terminal`; Phase 8 is complete.
 - Every future scaffold owns a `quality.ts` module and runs `producer:quality`
   after render. Phase 9A deterministic quality gates are complete; Phase 9B
-  final acceptance video and Roadmap closure have not started.
+  final acceptance video and Roadmap closure are complete.
 - Build topic data, narration, and scene order inside the dedicated
   composition.
 - Use `standalone-video/caption-types` for future Producer captions.

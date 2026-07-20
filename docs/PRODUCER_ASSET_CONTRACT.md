@@ -1,7 +1,8 @@
 # Producer Asset Contract
 
 Status: active Phase 5 composition asset-supply contract with Phase 7
-sound/Lottie quality extensions and one post-Roadmap reusable-image library.
+sound/Lottie quality extensions, the post-Roadmap reusable-image library, and
+the bounded stock-candidate acquisition boundary.
 
 `.agents/skills/ai-video-studio-agent-producer/` is the only supported
 video-production entrypoint.

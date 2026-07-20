@@ -119,7 +119,7 @@ are complete. A strict maintained manifest plus asset manifest, manual/URL
 localization, checksum/provenance/license/media metadata, FFmpeg normalization,
 preflight, validation, review-frame, and unified render commands now own every
 future composition. Every pre-Phase-7 registry entry remains
-`frozen-reference`; Phase 7 adds one maintained proof. Phase
+`frozen-reference`; Phase 7 added one maintained proof. Phase
 6 Remotion capability core is complete on an exact `4.0.489` closure. Four
 Producer-owned effect ids, guarded Chinese text fitting, four official
 transition presets with calculated overlap duration, light-leak/film-burn

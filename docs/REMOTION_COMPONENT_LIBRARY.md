@@ -89,9 +89,9 @@ Before writing a new visual component:
 5. choose sample-local TSX when no shared component fits
 6. extract reuse only after still/MP4 evidence
 
-## Capability Roadmap
+## Completed Capability Set
 
-The following additions are owned by the Producer-only Roadmap:
+The completed Producer-only Roadmap owns these additions:
 
 - `@remotion/effects`, `CanvasImage`, and `HtmlInCanvas`
 - project effect presets and custom `createEffect()` effects
@@ -101,8 +101,9 @@ The following additions are owned by the Producer-only Roadmap:
 - BGM, ambience, SFX, ducking, clipping, and silence checks
 - code-driven style profiles
 
-A capability is not complete until the Agent Producer Skill documents when to
-use it and a deterministic fixture or real composition proves it.
+A shared capability remains admissible only when the Agent Producer Skill
+documents when to use it and a deterministic fixture or real composition
+proves it.
 
 ## Promotion Rule
 
@@ -153,7 +154,7 @@ and the maintained `AgentProducerMediaSoundProof`. The Phase 6 showcase-local
 ignored FFmpeg fixture remains a separate canvas-effect proof. Rive is not
 installed or claimed without an approved local `.riv` asset and real use.
 
-Phase 8A adds `getProducerStyleProfile()` with six profile ids:
+Phase 8A added `getProducerStyleProfile()` with six profile ids:
 `editorial-tech`, `comic-anime`, `cinematic-3d`, `retro-terminal`,
 `documentary-media`, and `hand-drawn-explainer`. Each record constrains
 composition, motion, texture, media, Three.js, captions, and sound; it does not
@@ -165,7 +166,7 @@ scaffolds must record one validated profile id; the completed Phase 7 proof is
 not retrofitted. `TcpHandshakeEditorial` and `TcpHandshakeTerminal` prove
 `editorial-tech` and `retro-terminal` with identical facts, real VoxCPM,
 strict assets, reviewed stills/covers, and H.264/AAC renders.
-Phase 8 is complete. Phase 9A adds the future-only composition quality module
+Phase 8 is complete. Phase 9A added the future-only composition quality module
 and `producer:quality` post-render gate for measured text/layout bounds, safe
 margins, evidence resolution, planned rendered frames, luma variation,
 artifact metadata/chapters, and tracked generated paths. It is deterministic

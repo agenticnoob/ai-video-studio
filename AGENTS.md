@@ -37,7 +37,7 @@ repository contains `.codegraph/`.
 - Phase 5 completed strict asset manifests, manual/URL localization, checksum,
   provenance/license/media metadata, FFmpeg normalization, and preflight.
 - Every pre-Phase-7 Producer registry entry remains `frozen-reference`
-  metadata; Phase 7 adds one maintained proof only.
+  metadata; Phase 7 added one maintained proof only.
 - Phase 6 Remotion capability core is complete: every installed Remotion
   package is exact `4.0.489`; Producer-owned effects, guarded Chinese text
   fitting, official transition presets/timing, light-leak/film-burn treatment,

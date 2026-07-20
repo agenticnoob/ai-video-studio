@@ -445,9 +445,12 @@ stills for transition, light-leak, film-burn, and four-source canvas frames.
 Full evidence is recorded in
 `docs/superpowers/plans/2026-07-16-remotion-transitions-showcase-phase-6b.md`.
 
-Repository-wide Docker lint retains the freshly confirmed historical baseline
-of 39 errors and 2 warnings unless the final post-upgrade run proves otherwise.
-Phase 6 does not claim unrelated lint cleanup.
+Repository-wide Docker lint is not currently clean. A fresh 2026-07-20 run
+reports 170 errors and 0 warnings across ignored/generated stock-package
+output, ignored local proof files, historical one-off tools, and pre-existing
+composition source. Focused alignment smokes, changed-file lint, typecheck,
+build, and composition listing remain the scoped gates; this status does not
+claim unrelated lint cleanup.
 
 VoxCPM provider docs now record the 10-minute idle unload and request-triggered
 reload contract. `.env.example` and Compose remain unchanged. Every frozen
