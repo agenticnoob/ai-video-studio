@@ -10,6 +10,7 @@ import path from "node:path";
 import { readProducerVoxcpmConfig } from "../../lib/producer-audio/config.js";
 import { createVoxcpmProducerRequestPlan } from "../../lib/producer-audio/providers/voxcpm.js";
 import { requestProducerNarrationAsset } from "../../lib/producer-audio/request.js";
+import { createVoxcpmProducerRequestPlanForProfile } from "../../lib/producer-audio/voice-profiles.js";
 import {
   concatenatePcmWavs,
   getPcmWavDurationSeconds,
@@ -56,10 +57,14 @@ await mkdir(path.join(artifactRoot, "voices", "clone"), { recursive: true });
 const referenceAudioPath = "voices/clone/reference.wav";
 const promptTranscriptPath = "voices/clone/reference.txt";
 const timbreAudioPath = "voices/clone/timbre.wav";
+const scienceReferenceAudioPath = "voices/clone/science-explainer-young-male.wav";
+const sciencePromptTranscriptPath = "voices/clone/science-explainer-young-male.txt";
 const fixtureWav = makePcmWav();
 await writeFile(path.join(artifactRoot, referenceAudioPath), fixtureWav);
 await writeFile(path.join(artifactRoot, promptTranscriptPath), "精确逐字稿\n");
 await writeFile(path.join(artifactRoot, timbreAudioPath), fixtureWav);
+await writeFile(path.join(artifactRoot, scienceReferenceAudioPath), fixtureWav);
+await writeFile(path.join(artifactRoot, sciencePromptTranscriptPath), "注册表克隆。\n");
 
 const config = readProducerVoxcpmConfig({
   VOXCPM_TTS_BASE_URL: "http://voxcpm.local:8810",
@@ -170,6 +175,22 @@ assert(requests[0]?.body instanceof FormData);
 assert(requests[0].body.get("reference_audio") instanceof Blob);
 assert.equal(textField(requests[0].body, "control"), "calm");
 assert.equal(requests[0].body.get("prompt_text"), null);
+
+requests.length = 0;
+const registeredSciencePlan = createVoxcpmProducerRequestPlanForProfile({
+  beat: { id: "registered-science", narrationRequired: true, ttsText: "注册表克隆。" },
+  profileId: "science-explainer-young-male",
+  control: "清晰、自然、中速",
+});
+await requestProducerNarrationAsset({
+  config,
+  fetchImpl: fetchAudio,
+  plan: registeredSciencePlan,
+  rootDir: artifactRoot,
+  slug: "fixture-video",
+});
+assert.equal(requests.at(-1)?.url, config.controllableCloneEndpoint);
+assert.equal(textField(requests.at(-1)?.body, "control"), "清晰、自然、中速");
 
 requests.length = 0;
 const highFidelityPlan = createVoxcpmProducerRequestPlan({

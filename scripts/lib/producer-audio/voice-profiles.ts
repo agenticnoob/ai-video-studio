@@ -1,4 +1,6 @@
 import registryDocument from "./voice-profiles.json";
+import { createVoxcpmProducerRequestPlan } from "./providers/voxcpm";
+import type { ProducerNarratedBeat, ProducerVoxcpmRequestPlan } from "./types";
 
 export const producerVoiceProfileIds = ["lyy", "science-explainer-young-male"] as const;
 
@@ -153,6 +155,49 @@ export const getProducerVoiceProfile = (id: ProducerVoiceProfileId): ProducerVoi
   const profile = producerVoiceProfiles.find((candidate) => candidate.id === id);
   if (!profile) throw new Error(`Unknown Producer voice profile: ${String(id)}.`);
   return profile;
+};
+
+export const createVoxcpmProducerRequestPlanForProfile = ({
+  beat,
+  control,
+  mode,
+  profileId,
+}: {
+  readonly beat: ProducerNarratedBeat;
+  readonly control?: string;
+  readonly mode?: ProducerCloneMode;
+  readonly profileId: ProducerVoiceProfileId;
+}): ProducerVoxcpmRequestPlan => {
+  const profile = getProducerVoiceProfile(profileId);
+  const resolvedMode = mode ?? profile.defaultMode;
+  if (resolvedMode === "controllable-clone") {
+    if (!profile.controllableClone) {
+      throw new Error(`${profile.id} does not support controllable-clone.`);
+    }
+    const normalizedControl = control?.trim();
+    if (profile.controllableClone.controlRequired && !normalizedControl) {
+      throw new Error(`${profile.id} controllable-clone requires a compact per-beat control.`);
+    }
+    return createVoxcpmProducerRequestPlan({
+      beat,
+      mode: resolvedMode,
+      referenceAudioPath: profile.controllableClone.referenceAudioPath,
+      ...(normalizedControl ? { control: normalizedControl } : {}),
+    });
+  }
+  if (!profile.highFidelityClone) {
+    throw new Error(`${profile.id} does not support high-fidelity-clone.`);
+  }
+  if (control?.trim()) {
+    throw new Error(`${profile.id} high-fidelity-clone must omit control.`);
+  }
+  return createVoxcpmProducerRequestPlan({
+    beat,
+    mode: resolvedMode,
+    promptAudioPath: profile.highFidelityClone.promptAudioPath,
+    promptTranscriptPath: profile.highFidelityClone.promptTranscriptPath,
+    referenceAudioPath: profile.highFidelityClone.referenceAudioPath,
+  });
 };
 
 assertProducerVoiceProfiles();
