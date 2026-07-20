@@ -66,15 +66,26 @@ assertMissing(".agents/skills/ai-video-studio-agent-producer-workflow");
 assertMissing(".agents/skills/ai-video-studio-voxcpm-expression"); // inlined into agent-producer
 
 const producerSkill = read(".agents/skills/ai-video-studio-agent-producer/SKILL.md");
+const producerNarrationReferencePath =
+  ".agents/skills/ai-video-studio-agent-producer/references/narration.md";
+const producerNarrationReference = read(producerNarrationReferencePath);
 assertIncludes(producerSkill, "Production Chain", "Agent Producer skill");
 assertIncludes(producerSkill, "Skill Stack", "Agent Producer skill");
-assertIncludes(producerSkill, "punctuation-split", "Agent Producer skill");
-assertIncludesWords(producerSkill, "trimmed and concatenated", "Agent Producer skill");
 assertIncludes(producerSkill, ".agents/skills/remotion-best-practices/", "Agent Producer skill");
 assertIncludes(
-  producerSkill,
-  ".agents/skills/ai-video-studio-agent-producer/voxcpm-expression/VOXCPM_EXPRESSION.md",
-  "Agent Producer skill",
+  producerNarrationReference,
+  "../voxcpm-expression/VOXCPM_EXPRESSION.md",
+  "Agent Producer narration reference",
+);
+assertIncludes(
+  producerNarrationReference,
+  "punctuation-split",
+  "Agent Producer narration reference",
+);
+assertIncludesWords(
+  producerNarrationReference,
+  "trimmed and concatenated",
+  "Agent Producer narration reference",
 );
 for (const required of [
   "npm run producer:scaffold",
@@ -103,7 +114,6 @@ for (const required of [
   "public/assets/library/",
   "public/generated/<slug>/assets/",
   "frozen-reference",
-  "scripts/lib/producer-audio/",
   "existing finished samples are read-only references",
   "only supported video-production entrypoint",
   "docs/AGENT_PRODUCER_ONLY_ROADMAP.md",
@@ -111,15 +121,6 @@ for (const required of [
   "Remotion `<Still>`",
   "honest code-rendered information graphic",
   "VoxCPM is the only supported narration provider",
-  "direct VoxCPM Producer runtime",
-  "voice-design",
-  "controllable-clone",
-  "high-fidelity-clone",
-  "voices/clone/",
-  "public/generated/<slug>/audio/",
-  "scene id",
-  "fail closed",
-  "displayText",
   "docker compose run --rm producer",
   "getProducerEffectPreset",
   "fitProducerText",
@@ -143,12 +144,30 @@ for (const required of [
   "--style-profile",
 ])
   assertIncludes(producerSkill, required, "Agent Producer skill");
+for (const required of [
+  "scripts/lib/producer-audio/",
+  "voice-design",
+  "controllable-clone",
+  "high-fidelity-clone",
+  "voices/clone/",
+  "public/generated/<slug>/audio/",
+  "scene id",
+  "request fingerprint",
+  "fails closed",
+  "displayText",
+]) {
+  assertIncludesWords(producerNarrationReference, required, "Agent Producer narration reference");
+}
 assertIncludesWords(
-  producerSkill,
+  producerNarrationReference,
   "first real request reloads it automatically",
-  "Agent Producer skill",
+  "Agent Producer narration reference",
 );
-assertIncludesWords(producerSkill, "`/ready` is diagnostic, not a gate", "Agent Producer skill");
+assertIncludesWords(
+  producerNarrationReference,
+  "`/ready` is diagnostic, not a gate",
+  "Agent Producer narration reference",
+);
 for (const forbidden of [
   "Use `VideoProject`",
   "TTS_PROVIDER=f5-tts",
@@ -322,7 +341,7 @@ for (const [source, label] of [
 }
 const scienceExplainerAcceptance = "User audition status: accepted on 2026-07-19.";
 const activeScienceExplainerDocs = [
-  [producerSkill, "Agent Producer skill science explainer default"],
+  [producerNarrationReference, "Agent Producer narration reference science explainer default"],
   [read("AGENTS.md"), "AGENTS science explainer default"],
   [read("README.md"), "README science explainer default"],
   [read("docs/FINAL_PRODUCT_GOAL.md"), "Final product goal science explainer default"],

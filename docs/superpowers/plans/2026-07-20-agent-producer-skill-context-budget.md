@@ -48,7 +48,7 @@ composition source, manifests, generated artifacts, or private voice files.
 - Modify: `scripts/smoke/architecture/skill-alignment-smoke.mjs:68-151`
 - Modify: `scripts/smoke/architecture/skill-alignment-smoke.mjs:289-344`
 
-- [ ] **Step 1: Route narration assertions to the not-yet-existing reference**
+- [x] **Step 1: Route narration assertions to the not-yet-existing reference**
 
 Add the path and read near the existing `producerSkill` declaration:
 
@@ -71,7 +71,7 @@ In `activeScienceExplainerDocs`, replace the Agent Producer tuple with:
 [producerNarrationReference, "Agent Producer narration reference science explainer default"],
 ```
 
-- [ ] **Step 2: Run RED and verify the missing reference is the reason**
+- [x] **Step 2: Run RED and verify the missing reference is the reason**
 
 Run:
 
@@ -82,7 +82,7 @@ npm run smoke:skill-alignment
 Expected: FAIL with `ENOENT` naming
 `.agents/skills/ai-video-studio-agent-producer/references/narration.md`.
 
-- [ ] **Step 3: Create the narration reference**
+- [x] **Step 3: Create the narration reference**
 
 Create the file with these exact sections and contracts:
 
@@ -137,7 +137,7 @@ order, and ignored/untracked status. Handoff records narration mode, caption
 method, audio paths, verification results, and any failed scene ids.
 ```
 
-- [ ] **Step 4: Run GREEN**
+- [x] **Step 4: Run GREEN**
 
 Run:
 
@@ -148,7 +148,7 @@ git diff --check
 
 Expected: both commands PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add .agents/skills/ai-video-studio-agent-producer/references/narration.md \
