@@ -4,8 +4,10 @@ Private, local-only Node.js 20+ package for a stdio MCP stock-image server. The
 package is independently installable and is not part of the root npm dependency
 graph.
 
-Tasks 1–3 establish the startup boundary, strict public contracts, and the
-Pexels image provider. The MCP tools are not registered or implemented yet.
+Tasks 1–4 establish the startup boundary, strict public contracts, Pexels image
+provider, and shared validated-image download primitive. The MCP tools are not
+registered or implemented yet; in particular, no preview handler or candidate
+store exists at this stage.
 
 ## Configuration
 
@@ -110,6 +112,26 @@ deterministic 250 ms and 500 ms waits (three total attempts). `404`, `429`, and
 other `4xx` responses never retry. A numeric `Retry-After` hint is bounded to
 one hour. Malformed JSON or successful payloads fail closed without returning
 the upstream body, key, or Authorization value.
+
+## Validated image downloads
+
+Preview and acquisition will share one bounded download primitive. It accepts
+only HTTPS URLs on the exact `images.pexels.com` host, rejects userinfo and
+non-default ports, follows redirects manually, revalidates every target, and
+permits at most five redirect hops. Image-host requests never receive the
+Pexels API `Authorization` header.
+
+The caller supplies either the fixed 5 MiB preview limit or the configured
+acquisition limit (25 MiB by default). A declared oversized `Content-Length`
+is rejected before reading. Undeclared or smaller bodies are read chunk by
+chunk and cancelled immediately when the running total crosses the limit.
+
+Allowed responses are JPEG, PNG, and WebP only. Declared MIME, file magic, and
+a strict full Sharp decode must agree. Decode uses `failOn: "error"`, a
+100,000,000-pixel input limit, and positive integer dimensions. The returned
+`jpg`, `png`, or `webp` extension, byte count, and lowercase SHA-256 are derived
+from validated bytes, never from the URL suffix. No bytes are persisted by
+this primitive itself.
 
 ## Local commands
 
