@@ -1,4 +1,4 @@
-import type { QualityGatedMaintainedProducerSampleManifest } from "../../manifest";
+import type { VoiceProfiledQualityGatedMaintainedProducerSampleManifest } from "../../manifest";
 
 export const sampleNameManifest = {
   sampleStatus: "maintained",
@@ -18,7 +18,8 @@ export const sampleNameManifest = {
   narration: {
     required: true,
     provider: "voxcpm",
-    mode: "high-fidelity-clone",
+    voiceProfileId: "lyy" /* VOICE_PROFILE_ID */,
+    mode: "high-fidelity-clone" /* VOICE_MODE */,
     scriptPath: "src/remotion/SampleName/script.ts",
     audioMetadataPath: "src/remotion/SampleName/audio.generated.ts",
   },
@@ -58,4 +59,4 @@ export const sampleNameManifest = {
     "Generated narration, review frames, covers, metadata, and MP4 stay local-only.",
     "Register the video and both cover Stills in Root before declaring the sample complete.",
   ],
-} as const satisfies QualityGatedMaintainedProducerSampleManifest;
+} as const satisfies VoiceProfiledQualityGatedMaintainedProducerSampleManifest;

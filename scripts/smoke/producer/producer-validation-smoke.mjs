@@ -178,6 +178,47 @@ await assert.rejects(
 await assert.rejects(
   () =>
     validate({
+      manifest: {
+        ...maintainedManifest,
+        narration: { ...maintainedManifest.narration, voiceProfileId: "unknown-voice" },
+      },
+      assetManifest: maintainedAssetManifest,
+    }),
+  /voice profile/i,
+);
+await assert.rejects(
+  () =>
+    validate({
+      manifest: {
+        ...maintainedManifest,
+        narration: {
+          ...maintainedManifest.narration,
+          mode: "voice-design",
+          voiceProfileId: "lyy",
+        },
+      },
+      assetManifest: maintainedAssetManifest,
+    }),
+  /voice-design.*voice profile|voice profile.*voice-design/i,
+);
+await assert.rejects(
+  () =>
+    validate({
+      manifest: {
+        ...maintainedManifest,
+        narration: {
+          ...maintainedManifest.narration,
+          mode: "controllable-clone",
+          voiceProfileId: "lyy",
+        },
+      },
+      assetManifest: maintainedAssetManifest,
+    }),
+  /does not support/i,
+);
+await assert.rejects(
+  () =>
+    validate({
       manifest: maintainedManifest,
       assetManifest: undefined,
       registeredCompositionIds: [

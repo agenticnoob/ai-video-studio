@@ -13,8 +13,18 @@ assert(buildRoot, "PRODUCER_VOICE_PROFILES_BUILD_DIR is required.");
 
 const registryPath = "scripts/lib/producer-audio/voice-profiles.json";
 const runtimePath = path.join(buildRoot, "scripts/lib/producer-audio/voice-profiles.js");
+const manifestRuntimePath = path.join(
+  buildRoot,
+  "src/remotion/producer-samples/manifest.js",
+);
+const scaffoldManifestRuntimePath = path.join(
+  buildRoot,
+  "src/remotion/producer-samples/scaffold/SampleName/manifest.js",
+);
 const registry = JSON.parse(read(registryPath));
 const runtime = await import(pathToFileURL(runtimePath).href);
+const { assertProducerSampleManifest } = await import(pathToFileURL(manifestRuntimePath).href);
+const { sampleNameManifest } = await import(pathToFileURL(scaffoldManifestRuntimePath).href);
 
 assert.equal(registry.version, 1);
 assert.deepEqual(
@@ -94,6 +104,41 @@ assert.throws(
       profileId: "lyy",
       mode: "controllable-clone",
       control: "calm",
+    }),
+  /does not support/i,
+);
+
+assert.equal(sampleNameManifest.narration.voiceProfileId, "lyy");
+assert.doesNotThrow(() => assertProducerSampleManifest(sampleNameManifest));
+assert.throws(
+  () =>
+    assertProducerSampleManifest({
+      ...sampleNameManifest,
+      narration: { ...sampleNameManifest.narration, voiceProfileId: "unknown-voice" },
+    }),
+  /voice profile/i,
+);
+assert.throws(
+  () =>
+    assertProducerSampleManifest({
+      ...sampleNameManifest,
+      narration: {
+        ...sampleNameManifest.narration,
+        mode: "voice-design",
+        voiceProfileId: "lyy",
+      },
+    }),
+  /voice-design.*voice profile|voice profile.*voice-design/i,
+);
+assert.throws(
+  () =>
+    assertProducerSampleManifest({
+      ...sampleNameManifest,
+      narration: {
+        ...sampleNameManifest.narration,
+        mode: "controllable-clone",
+        voiceProfileId: "lyy",
+      },
     }),
   /does not support/i,
 );

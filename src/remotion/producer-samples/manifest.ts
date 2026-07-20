@@ -1,3 +1,9 @@
+import {
+  getProducerVoiceProfile,
+  isProducerVoiceProfileId,
+  type ProducerCloneMode,
+  type ProducerVoiceProfileId,
+} from "../../../scripts/lib/producer-audio/voice-profiles";
 import { isProducerStyleProfileId, type ProducerStyleProfileId } from "../styles/profile-ids";
 
 export const producerSampleCanvasProfiles = ["landscape-16x9", "portrait-9x16"] as const;
@@ -138,6 +144,7 @@ export type MaintainedProducerSampleManifest = ProducerSampleManifestBase & {
     readonly required: boolean;
     readonly provider: "voxcpm";
     readonly mode: "voice-design" | "controllable-clone" | "high-fidelity-clone";
+    readonly voiceProfileId?: ProducerVoiceProfileId;
     readonly scriptPath: string;
     readonly audioMetadataPath: string;
   };
@@ -169,6 +176,16 @@ export type QualityGatedMaintainedProducerSampleManifest =
   ProfiledMaintainedProducerSampleManifest & {
     readonly qualityModule: string;
   };
+
+export type VoiceProfiledQualityGatedMaintainedProducerSampleManifest = Omit<
+  QualityGatedMaintainedProducerSampleManifest,
+  "narration"
+> & {
+  readonly narration: QualityGatedMaintainedProducerSampleManifest["narration"] & {
+    readonly mode: ProducerCloneMode;
+    readonly voiceProfileId: ProducerVoiceProfileId;
+  };
+};
 
 export type ProducerSampleManifest =
   | FrozenProducerSampleManifest
@@ -243,6 +260,23 @@ export const assertProducerSampleManifest = (manifest: ProducerSampleManifest): 
   }
   if (manifest.narration.provider !== "voxcpm") {
     throw new Error(`${manifest.compositionId} maintained narration must use VoxCPM.`);
+  }
+  if (manifest.narration.voiceProfileId !== undefined) {
+    if (!isProducerVoiceProfileId(manifest.narration.voiceProfileId)) {
+      throw new Error(`${manifest.compositionId} has an unsupported Producer voice profile.`);
+    }
+    if (manifest.narration.mode === "voice-design") {
+      throw new Error(`${manifest.compositionId} voice-design must not declare a voice profile.`);
+    }
+    const voiceProfile = getProducerVoiceProfile(manifest.narration.voiceProfileId);
+    if (
+      (manifest.narration.mode === "controllable-clone" && !voiceProfile.controllableClone) ||
+      (manifest.narration.mode === "high-fidelity-clone" && !voiceProfile.highFidelityClone)
+    ) {
+      throw new Error(
+        `${manifest.compositionId} voice profile ${voiceProfile.id} does not support ${manifest.narration.mode}.`,
+      );
+    }
   }
   requireText(manifest.narration.scriptPath, `${manifest.compositionId} narration script path`);
   requireText(
