@@ -3,7 +3,7 @@
 import { readFile } from "node:fs/promises";
 
 import {
-  createVoxcpmProducerRequestPlan,
+  createVoxcpmProducerRequestPlanForProfile,
   readProducerVoxcpmConfig,
   requestProducerNarrationAsset,
   runProducerAudioGeneration,
@@ -15,35 +15,39 @@ const sampleNameNarrationBeats = [
     narrationRequired: true,
     ttsText: "Start with the real topic and the viewer promise.",
     language: "en",
+    voiceControl: "Natural, clear explanation, medium pace, restrained ending",
   },
   {
     id: "proof",
     narrationRequired: true,
     ttsText: "Show one concrete source, data point, or product state.",
     language: "en",
+    voiceControl: "Natural, clear explanation, medium pace, restrained ending",
   },
   {
     id: "close",
     narrationRequired: true,
     ttsText: "End with the reusable takeaway.",
     language: "en",
+    voiceControl: "Natural, clear explanation, medium pace, restrained ending",
   },
 ];
 
 const root = "src/remotion/SampleName";
 const slug = "sample-name";
+const voiceProfileId = "lyy" /* VOICE_PROFILE_ID */;
+const voiceMode = "high-fidelity-clone" /* VOICE_MODE */;
 const voxcpmConfig = readProducerVoxcpmConfig();
 
 await runProducerAudioGeneration({
   compositionId: "SampleName",
   beats: sampleNameNarrationBeats,
   createRequestPlan: (beat) =>
-    createVoxcpmProducerRequestPlan({
+    createVoxcpmProducerRequestPlanForProfile({
       beat,
-      mode: "high-fidelity-clone",
-      promptAudioPath: "voices/clone/lyy.wav",
-      promptTranscriptPath: "voices/clone/lyy.txt",
-      referenceAudioPath: "voices/clone/lyy-r.wav",
+      profileId: voiceProfileId,
+      mode: voiceMode,
+      ...(voiceMode === "controllable-clone" ? { control: beat.voiceControl } : {}),
     }),
   requestNarration: ({ plan }) =>
     requestProducerNarrationAsset({ config: voxcpmConfig, plan, slug }),

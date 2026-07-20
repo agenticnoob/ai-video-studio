@@ -144,6 +144,38 @@ assert.deepEqual(
 const scaffoldRoot = mkdtempSync(path.join(os.tmpdir(), "producer-os-scaffold-"));
 try {
   const outputRoot = path.join(scaffoldRoot, "src/remotion");
+  assert.throws(
+    () =>
+      execFileSync(process.execPath, [
+        "scripts/producer-scaffold.mjs",
+        "--name",
+        "MissingVoiceFixture",
+        "--slug",
+        "missing-voice-fixture",
+        "--style-profile",
+        "retro-terminal",
+        "--output-root",
+        outputRoot,
+      ]),
+    /voice-profile|usage/i,
+  );
+  assert.throws(
+    () =>
+      execFileSync(process.execPath, [
+        "scripts/producer-scaffold.mjs",
+        "--name",
+        "UnknownVoiceFixture",
+        "--slug",
+        "unknown-voice-fixture",
+        "--style-profile",
+        "retro-terminal",
+        "--voice-profile",
+        "unknown-voice",
+        "--output-root",
+        outputRoot,
+      ]),
+    /voice-profile.*one of/i,
+  );
   execFileSync(
     process.execPath,
     [
@@ -154,6 +186,8 @@ try {
       "phase-four-fixture",
       "--style-profile",
       "retro-terminal",
+      "--voice-profile",
+      "science-explainer-young-male",
       "--output-root",
       outputRoot,
     ],
@@ -182,12 +216,20 @@ try {
   assert(generatedManifest.includes('compositionId: "PhaseFourFixture"'));
   assert(generatedManifest.includes('slug: "phase-four-fixture"'));
   assert(generatedManifest.includes('styleProfileId: "retro-terminal"'));
+  assert(generatedManifest.includes('voiceProfileId: "science-explainer-young-male"'));
+  assert(generatedManifest.includes('mode: "controllable-clone"'));
   assert(generatedManifest.includes('qualityModule: "src/remotion/PhaseFourFixture/quality.ts"'));
   assert(generatedManifest.includes("QualityGatedMaintainedProducerSampleManifest"));
   assert(!generatedManifest.includes("STYLE_PROFILE_ID"));
   assert(generatedManifest.includes('from "../producer-samples/manifest"'));
   assert(generatedVideo.includes('from "../standalone-video"'));
   assert(generatedGenerator.includes('from "../../../scripts/lib/producer-audio/index.js"'));
+  assert(generatedGenerator.includes('voiceProfileId = "science-explainer-young-male"'));
+  assert(generatedGenerator.includes('voiceMode = "controllable-clone"'));
+  assert(generatedGenerator.includes("createVoxcpmProducerRequestPlanForProfile"));
+  assert(!generatedGenerator.includes("voices/clone/lyy"));
+  assert(!generatedGenerator.includes("VOICE_PROFILE_ID"));
+  assert(!generatedGenerator.includes("VOICE_MODE"));
   assert(generatedQuality.includes('from "../../../scripts/lib/producer-quality-gates"'));
   assert(generatedAssetSupply.includes('"compositionId": "PhaseFourFixture"'));
   assert(generatedAssetSupply.includes('"slug": "phase-four-fixture"'));

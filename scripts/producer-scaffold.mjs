@@ -12,6 +12,7 @@ const valueFor = (flag) => {
 const name = valueFor("--name");
 const slug = valueFor("--slug");
 const styleProfileId = valueFor("--style-profile");
+const voiceProfileId = valueFor("--voice-profile");
 const outputRoot = valueFor("--output-root") ?? "src/remotion";
 const styleProfileIds = [
   "editorial-tech",
@@ -21,16 +22,26 @@ const styleProfileIds = [
   "documentary-media",
   "hand-drawn-explainer",
 ];
+const voiceProfileRegistry = JSON.parse(
+  await readFile(path.resolve("scripts/lib/producer-audio/voice-profiles.json"), "utf8"),
+);
+const voiceProfiles = voiceProfileRegistry.profiles;
+const voiceProfile = voiceProfiles.find((candidate) => candidate.id === voiceProfileId);
 
-if (!name || !slug || !styleProfileId) {
+if (!name || !slug || !styleProfileId || !voiceProfileId) {
   throw new Error(
-    "Usage: npm run producer:scaffold -- --name <PascalCase> --slug <kebab-case> --style-profile <profile-id> [--output-root <path>]",
+    "Usage: npm run producer:scaffold -- --name <PascalCase> --slug <kebab-case> --style-profile <profile-id> --voice-profile <voice-profile-id> [--output-root <path>]",
   );
 }
 if (!/^[A-Z][A-Za-z0-9]*$/.test(name)) throw new Error("--name must be PascalCase.");
 if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) throw new Error("--slug must be kebab-case.");
 if (!styleProfileIds.includes(styleProfileId)) {
   throw new Error(`--style-profile must be one of: ${styleProfileIds.join(", ")}.`);
+}
+if (!voiceProfile) {
+  throw new Error(
+    `--voice-profile must be one of: ${voiceProfiles.map((profile) => profile.id).join(", ")}.`,
+  );
 }
 
 const templateRoot = path.resolve("src/remotion/producer-samples/scaffold/SampleName");
@@ -55,6 +66,8 @@ const replaceTokens = (source) =>
     .replaceAll("sampleName", lowerCamelName)
     .replaceAll("sample-name", slug)
     .replaceAll('"editorial-tech" /* STYLE_PROFILE_ID */', JSON.stringify(styleProfileId))
+    .replaceAll('"lyy" /* VOICE_PROFILE_ID */', JSON.stringify(voiceProfile.id))
+    .replaceAll('"high-fidelity-clone" /* VOICE_MODE */', JSON.stringify(voiceProfile.defaultMode))
     .replaceAll('"../../../standalone-video', '"../standalone-video')
     .replaceAll('"../../../../../scripts', '"../../../scripts')
     .replaceAll('"../../manifest"', '"../producer-samples/manifest"')

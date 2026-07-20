@@ -108,6 +108,18 @@ assert.throws(
   /does not support/i,
 );
 
+const scaffoldGenerator = read("src/remotion/producer-samples/scaffold/SampleName/generate.mjs");
+for (const forbidden of [
+  "voices/clone/lyy.wav",
+  "voices/clone/lyy.txt",
+  "voices/clone/lyy-r.wav",
+  "voices/clone/science-explainer-young-male.wav",
+  "voices/clone/science-explainer-young-male.txt",
+]) {
+  assert(!scaffoldGenerator.includes(forbidden), `Future scaffold must not hard-code ${forbidden}.`);
+}
+assert(scaffoldGenerator.includes("createVoxcpmProducerRequestPlanForProfile"));
+
 assert.equal(sampleNameManifest.narration.voiceProfileId, "lyy");
 assert.doesNotThrow(() => assertProducerSampleManifest(sampleNameManifest));
 assert.throws(
