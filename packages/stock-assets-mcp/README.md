@@ -242,3 +242,18 @@ disconnect.
 The package has not run or claimed a live Pexels verification. Default tests
 use mocked fetch, in-memory transports, spawned local stdio processes, and
 temporary directories only.
+
+## Optional live Pexels smoke
+
+`npm run smoke:live` is an explicit, optional integration smoke. It requires a
+real `PEXELS_API_KEY`, sends that key to Pexels through the production adapter,
+consumes provider quota, and performs exactly one bounded search, one
+single-image preview, and one acquisition. It creates its output root with
+`mkdtemp()` below the operating-system temporary directory and removes the
+client, server, and temporary root in `finally`.
+
+The real live execution is not part of default `npm test`, default
+verification, or CI claims. Without `STOCK_ASSETS_LIVE_PEXELS=1`, the
+real-network case is discovered but skipped. Do not run the opt-in command
+without explicit authorization and an already configured real key; never print
+or commit that key.

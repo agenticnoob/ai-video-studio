@@ -19,7 +19,8 @@
     "test:compile": "rm -rf .test-dist && tsc -p tsconfig.test.json",
     "test": "npm run test:compile && node --test .test-dist/tests/*.test.js",
     "lint": "eslint src tests",
-    "start": "node dist/cli.js"
+    "start": "node dist/cli.js",
+    "smoke:live": "npm run test:compile && STOCK_ASSETS_LIVE_PEXELS=1 node --test .test-dist/tests/live-pexels.test.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.29.0",
