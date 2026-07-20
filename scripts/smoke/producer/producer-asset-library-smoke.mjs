@@ -33,17 +33,19 @@ const assetLibrarySkillPath = ".agents/skills/ai-video-studio-asset-library/SKIL
 assert(existsSync(assetLibrarySkillPath), "Missing dedicated asset-library management skill");
 const assetLibrarySkill = readFileSync(assetLibrarySkillPath, "utf8");
 const normalizedAssetLibrarySkill = assetLibrarySkill.replace(/\s+/gu, " ");
-const producerSkill = readFileSync(
-  ".agents/skills/ai-video-studio-agent-producer/SKILL.md",
+const producerAssetsReferencePath =
+  ".agents/skills/ai-video-studio-agent-producer/references/assets-evidence.md";
+const producerAssetsReference = readFileSync(
+  producerAssetsReferencePath,
   "utf8",
 );
 assert(
-  producerSkill.includes("producer:library:search"),
-  "Agent Producer skill must search the reusable asset library before acquisition.",
+  producerAssetsReference.includes("producer:library:search"),
+  "Agent Producer assets reference must search the reusable asset library before acquisition.",
 );
 assert(
-  producerSkill.includes("ProducerAssetManifest"),
-  "Agent Producer skill must snapshot selected library items into the manifest.",
+  producerAssetsReference.includes("ProducerAssetManifest"),
+  "Agent Producer assets reference must snapshot selected library items into the manifest.",
 );
 for (const forbidden of [
   "producer:library:add",
@@ -53,8 +55,8 @@ for (const forbidden of [
   "recursively inventory the requested inbox batch",
 ]) {
   assert(
-    !producerSkill.replace(/\s+/gu, " ").includes(forbidden),
-    `Agent Producer skill must not own asset-library management: ${forbidden}`,
+    !producerAssetsReference.replace(/\s+/gu, " ").includes(forbidden),
+    `Agent Producer assets reference must not own asset-library management: ${forbidden}`,
   );
 }
 for (const token of [

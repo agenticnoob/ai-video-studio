@@ -69,6 +69,9 @@ const producerSkill = read(".agents/skills/ai-video-studio-agent-producer/SKILL.
 const producerNarrationReferencePath =
   ".agents/skills/ai-video-studio-agent-producer/references/narration.md";
 const producerNarrationReference = read(producerNarrationReferencePath);
+const producerAssetsReferencePath =
+  ".agents/skills/ai-video-studio-agent-producer/references/assets-evidence.md";
+const producerAssetsReference = read(producerAssetsReferencePath);
 assertIncludes(producerSkill, "Production Chain", "Agent Producer skill");
 assertIncludes(producerSkill, "Skill Stack", "Agent Producer skill");
 assertIncludes(producerSkill, ".agents/skills/remotion-best-practices/", "Agent Producer skill");
@@ -95,31 +98,13 @@ for (const required of [
   "npm run producer:stills",
   "npm run producer:render",
   "npm run producer:quality",
-  "npm run producer:library:search",
-  "Visual-Source Decision Gate",
-  "asset-led",
-  "code-led",
-  "hybrid",
-  "stock-assets-mcp",
-  "search_images",
-  "preview_images",
-  "acquire_image",
-  "acquisition.json",
-  ".producer-assets/stock-candidates/",
-  "read-only inspection",
-  "not automatic creative choices",
   "strict maintained manifest",
-  "ProducerAssetManifest",
-  "docs/PRODUCER_ASSET_CONTRACT.md",
-  "public/assets/library/",
-  "public/generated/<slug>/assets/",
   "frozen-reference",
   "existing finished samples are read-only references",
   "only supported video-production entrypoint",
   "docs/AGENT_PRODUCER_ONLY_ROADMAP.md",
   "code and existing assets only",
   "Remotion `<Still>`",
-  "honest code-rendered information graphic",
   "VoxCPM is the only supported narration provider",
   "docker compose run --rm producer",
   "getProducerEffectPreset",
@@ -144,6 +129,28 @@ for (const required of [
   "--style-profile",
 ])
   assertIncludes(producerSkill, required, "Agent Producer skill");
+for (const required of [
+  "Visual-Source Decision Gate",
+  "asset-led",
+  "code-led",
+  "hybrid",
+  "producer:library:search",
+  "stock-assets-mcp",
+  "search_images",
+  "preview_images",
+  "acquire_image",
+  "acquisition.json",
+  ".producer-assets/stock-candidates/",
+  "public/generated/<slug>/assets/",
+  "producer:assets",
+  "producer:preflight",
+  "ProducerAssetManifest",
+  "docs/PRODUCER_ASSET_CONTRACT.md",
+  "public/assets/library/",
+  "honest code-rendered information graphic",
+]) {
+  assertIncludesWords(producerAssetsReference, required, "Agent Producer assets reference");
+}
 for (const required of [
   "scripts/lib/producer-audio/",
   "voice-design",
@@ -193,6 +200,11 @@ for (const managementToken of [
   "recursively inventory the requested inbox batch",
 ]) {
   assertNotIncludes(producerSkill.replace(/\s+/g, " "), managementToken, "Agent Producer skill");
+  assertNotIncludes(
+    producerAssetsReference.replace(/\s+/g, " "),
+    managementToken,
+    "Agent Producer assets reference",
+  );
 }
 
 const assetLibrarySkill = read(".agents/skills/ai-video-studio-asset-library/SKILL.md");

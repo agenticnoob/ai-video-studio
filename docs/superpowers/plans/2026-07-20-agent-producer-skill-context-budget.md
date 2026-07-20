@@ -165,7 +165,7 @@ git commit -m "docs: extract agent producer narration guidance"
 - Modify: `scripts/smoke/architecture/stock-assets-mcp-alignment-smoke.mjs:61-110`
 - Modify: `scripts/smoke/producer/producer-asset-library-smoke.mjs:32-58`
 
-- [ ] **Step 1: Route asset assertions to the not-yet-existing reference**
+- [x] **Step 1: Route asset assertions to the not-yet-existing reference**
 
 Use the same path variable in all three smokes:
 
@@ -181,7 +181,7 @@ source, stock tool, receipt, candidate path, localization and preflight
 assertions to this reference. Keep all asset-library management prohibitions
 active on both the entrypoint and asset reference.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run:
 
@@ -192,7 +192,7 @@ npm run smoke:stock-assets-mcp-alignment
 
 Expected: both fail only because `references/assets-evidence.md` is missing.
 
-- [ ] **Step 3: Create the asset/evidence reference**
+- [x] **Step 3: Create the asset/evidence reference**
 
 Create these exact sections: `Visual-Source Decision Gate`, `Library First`,
 `Pexels Fallback`, `Manifest And Local Paths`, and `Evidence Honesty`. Preserve
@@ -249,7 +249,7 @@ reason outside the frame and use an honest code-rendered information graphic.
 Never label it as a screenshot or show internal fallback text in the video.
 ```
 
-- [ ] **Step 4: Run GREEN**
+- [x] **Step 4: Run GREEN**
 
 Run:
 
@@ -262,7 +262,7 @@ git diff --check
 
 Expected: all commands PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add .agents/skills/ai-video-studio-agent-producer/references/assets-evidence.md \

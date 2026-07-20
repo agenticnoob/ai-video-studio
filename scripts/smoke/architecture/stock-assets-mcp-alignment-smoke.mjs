@@ -58,8 +58,9 @@ for (const docPath of activeAuthorityPaths) {
   assertIncludes(source, "Phase 10", docPath);
 }
 
-const producerSkillPath = ".agents/skills/ai-video-studio-agent-producer/SKILL.md";
-const producerSkill = read(producerSkillPath);
+const producerAssetsReferencePath =
+  ".agents/skills/ai-video-studio-agent-producer/references/assets-evidence.md";
+const producerAssetsReference = read(producerAssetsReferencePath);
 for (const token of [
   "Visual-Source Decision Gate",
   "asset-led",
@@ -85,10 +86,10 @@ for (const token of [
   "producer:assets",
   "producer:preflight",
 ]) {
-  assertIncludesWords(producerSkill, token, producerSkillPath);
+  assertIncludesWords(producerAssetsReference, token, producerAssetsReferencePath);
 }
 assertInOrder(
-  producerSkill,
+  producerAssetsReference,
   [
     "producer:library:search",
     "search_images",
@@ -97,17 +98,17 @@ assertInOrder(
     "producer:assets",
     "producer:preflight",
   ],
-  producerSkillPath,
+  producerAssetsReferencePath,
 );
 assertIncludesWords(
-  producerSkill.toLowerCase(),
+  producerAssetsReference.toLowerCase(),
   "code-led beats do not call stock-assets-mcp",
-  producerSkillPath,
+  producerAssetsReferencePath,
 );
 assertIncludesWords(
-  producerSkill,
-  "Remotion never renders a remote URL or a path below .producer-assets/stock-candidates/",
-  producerSkillPath,
+  producerAssetsReference,
+  "Remotion never renders a remote URL or a path below `.producer-assets/stock-candidates/`",
+  producerAssetsReferencePath,
 );
 
 const assetSkillPath = ".agents/skills/ai-video-studio-asset-library/SKILL.md";
