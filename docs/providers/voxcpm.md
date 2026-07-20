@@ -21,6 +21,20 @@ for mode, text, expression, and quality decisions.
 
 Prefer clean single-speaker reference audio around 5–30 seconds.
 
+## Producer Voice Profile Registry
+
+The bounded post-Roadmap VoxCPM-only voice profile registry is committed at
+`scripts/lib/producer-audio/voice-profiles.json`. Registry v1 contains exactly
+`lyy` and `science-explainer-young-male`. Future scaffolds require
+`--voice-profile <voice-profile-id>`; Agent judgment applies the science
+default, while an explicit production brief may select registered `lyy` for
+non-science content. The resolver supplies the selected clone mode and private
+paths to the existing direct request planner. Unknown ids, unsupported
+profile/mode pairs, invalid paths, and missing private files fail closed with
+no fallback. `voice-design` remains profile-less. No environment/config
+provider selector or second provider is introduced, and existing
+completed/frozen source and generated artifacts remain unchanged.
+
 ## Chinese Science-Explainer Default
 
 For future Chinese science-explainer narration, the qualified default profile

@@ -31,6 +31,11 @@ repository contains `.codegraph/`.
   were removed in Phase 2.
 - The direct VoxCPM Producer runtime under `scripts/lib/producer-audio/` owns
   future narration without starting Next or using a repository HTTP route.
+- The bounded post-Roadmap VoxCPM-only voice profile registry under
+  `scripts/lib/producer-audio/voice-profiles.json` owns explicit future clone
+  identity, supported mode, and private reference-path resolution. Future
+  scaffolds and manifests record the same selected profile/mode; existing
+  completed and frozen compositions remain unchanged.
 - The Docker `producer` service owns Studio and Docker-first verification.
 - Phase 4 completed the strict maintained sample manifest plus executable
   scaffold, validation, review-frame, and render command chain.
@@ -107,6 +112,15 @@ Missing private reference files must fail closed and must not silently fall
 back to `lyy`, F5, or another provider.
 
 User audition status: accepted on 2026-07-19.
+
+The voice profile registry v1 contains exactly `lyy` and
+`science-explainer-young-male`. Every future scaffold requires
+`--voice-profile <voice-profile-id>`; Agent judgment applies the science
+default, while an explicit production brief may select registered `lyy` for
+non-science content. Unknown ids, unsupported profile/mode pairs, invalid
+paths, and missing private files fail closed with no fallback. VoxCPM remains
+the only provider; no environment/config provider selector, Phase 10, or
+retrofit of completed/frozen source or generated artifacts is introduced.
 
 ## Where To Look
 
@@ -194,7 +208,7 @@ npm run producer:stills -- --composition <composition-id>
 ```
 
 Future sample command order starts with
-`npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id>`, then
+`npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id> --voice-profile <voice-profile-id>`, then
 asset supply/preflight, validation, and representative still review, and ends
 with `npm run producer:render -- --composition <composition-id>` followed by
 `npm run producer:quality -- --module <quality-module>`.

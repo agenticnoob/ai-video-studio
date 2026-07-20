@@ -64,6 +64,13 @@
       "path": ".agents/skills/ai-video-studio-asset-library",
       "runtimePath": "scripts/lib/producer-asset-library",
       "reason": "A dedicated non-video skill owns folder-oriented SVG/PNG/JPEG/WebP admission with shared descriptions, visual semantic completion, fixed user authorization, semantic search, deterministic catalog/static report, atomic rollback, and future ProducerAssetManifest cross-validation without adding a Roadmap phase."
+    },
+    {
+      "id": "producer-voice-profile-registry-v1",
+      "status": "complete",
+      "path": ".agents/skills/ai-video-studio-agent-producer",
+      "runtimePath": "scripts/lib/producer-audio/voice-profiles.ts",
+      "reason": "A typed VoxCPM-only registry makes future clone identity and mode selection explicit in Producer scaffolds and manifests, preserves the accepted science default, fails closed without fallback, and does not migrate completed compositions or start Phase 10."
     }
   ],
   "decisionDate": "2026-07-15",

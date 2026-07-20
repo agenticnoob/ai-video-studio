@@ -460,6 +460,15 @@ const activeScienceExplainerDocs = [
   [voxcpmDoc, "VoxCPM provider doc science explainer default"],
   [voxcpmSkill, "VoxCPM skill science explainer default"],
 ];
+const voiceRegistryTokens = [
+  "voice profile registry",
+  "scripts/lib/producer-audio/voice-profiles.json",
+  "--voice-profile <voice-profile-id>",
+  "science-explainer-young-male",
+  "explicit production brief",
+  "fail closed",
+  "no fallback",
+];
 for (const [source, label] of activeScienceExplainerDocs) {
   for (const required of [
     "science-explainer-young-male",
@@ -478,6 +487,21 @@ for (const [source, label] of activeScienceExplainerDocs) {
   ]) {
     assertIncludes(source, required, label);
   }
+  for (const required of voiceRegistryTokens) {
+    assertIncludes(source, required, `${label} voice profile registry`);
+  }
+}
+const scaffoldCommand =
+  "npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id> --voice-profile <voice-profile-id>";
+for (const [source, label] of [
+  [producerSkill, "Agent Producer skill"],
+  [read("README.md"), "README"],
+  [read("AGENTS.md"), "AGENTS"],
+  [read("docs/FINAL_PRODUCT_GOAL.md"), "Final product goal"],
+  [read("docs/ITERATION_STATUS.md"), "Iteration status"],
+  [read("docs/AGENT_PRODUCER_ONLY_ROADMAP.md"), "Roadmap"],
+]) {
+  assertIncludes(source, scaffoldCommand, `${label} scaffold command`);
 }
 assertIncludes(
   read("docs/superpowers/specs/2026-07-19-science-explainer-voice-profile-design.md"),

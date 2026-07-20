@@ -15,6 +15,7 @@ supported Web route smoke surface.
 | Metadata render | `render-video.sh` | Renders MP4 + JSON under ignored `out/<slug>/`. |
 | Remotion browser | `ensure-remotion-browser.mjs` | Container browser preflight. |
 | Direct narration | `lib/producer-audio/` | VoxCPM-only request, WAV, caption, and recovery runtime. |
+| Voice profiles | `lib/producer-audio/voice-profiles.json`, `lib/producer-audio/voice-profiles.ts` | VoxCPM-only explicit clone identity/mode/path registry; no fallback. |
 | VoxCPM container access | `producer-voxcpm.sh` | `ready`, direct `run`, and `status`; no app server. |
 | Producer validation | `lib/producer-validation.ts` | Hard-failure manifest/composition checks. |
 | Review frames | `lib/producer-review-frames.ts` | Deterministic frame planning. |
@@ -62,8 +63,11 @@ references. Do not use them as future Producer scaffolds.
   transitions and light leaks; do not add overrides or a mixed closure.
 - Keep capability and Phase 7 proof fixture media generated and ignored. Use
   `producer:assets` and `producer:preflight` before maintained stills.
-- Require `producer:scaffold --style-profile <profile-id>` for every future
-  maintained sample; never retrofit the completed Phase 7 proof.
+- Require
+  `producer:scaffold --style-profile <profile-id> --voice-profile <voice-profile-id>`
+  for every future maintained sample; never retrofit completed or frozen
+  compositions. Resolve clone paths only through the voice profile registry;
+  missing files and invalid selections fail closed with no fallback.
 - Keep `TcpHandshakeEditorial` and `TcpHandshakeTerminal` as the maintained
   Phase 8 profile proofs; their generated narration, assets, stills, covers,
   and MP4s stay ignored. Phase 8 is complete. Phase 9A quality gates are

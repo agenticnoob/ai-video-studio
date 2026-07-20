@@ -23,6 +23,17 @@ Choose the upstream model mode before preparing text or references:
 The direct Producer runtime exposes all three approved modes one-to-one. Read
 `Producer Direct Runtime Contract` before building a request.
 
+## Voice Profile Registry
+
+The bounded post-Roadmap VoxCPM-only voice profile registry lives at
+`scripts/lib/producer-audio/voice-profiles.json`. Future scaffolds require
+`--voice-profile <voice-profile-id>`; the Agent selects the registered identity
+from the brief, and an explicit production brief may override the science
+default. Registry resolution must fail closed with no fallback to `lyy`, F5,
+another profile, or another provider. `voice-design` remains profile-less.
+Future generators call `createVoxcpmProducerRequestPlanForProfile()` and do not
+copy raw clone paths.
+
 ## Reference Audio Rules
 
 - Prefer clean single-speaker audio around **5–30 seconds**.
@@ -107,6 +118,26 @@ User audition status: accepted on 2026-07-19. The user confirmed the qualified
 voice effect is strong and approved this profile for the science-only default.
 This subjective acceptance completes qualification without expanding what the
 mechanical checks claim.
+
+Normal controllable science request:
+
+```ts
+createVoxcpmProducerRequestPlanForProfile({
+  beat,
+  profileId: "science-explainer-young-male",
+  control: "冷静、清晰、自然解释，中速",
+});
+```
+
+Explicit high-fidelity science override; control is intentionally absent:
+
+```ts
+createVoxcpmProducerRequestPlanForProfile({
+  beat,
+  profileId: "science-explainer-young-male",
+  mode: "high-fidelity-clone",
+});
+```
 
 ## Text, Punctuation, And Expression
 

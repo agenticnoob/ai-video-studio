@@ -86,6 +86,22 @@ voice effect is strong, completing the subjective timbre/expression gate and
 making `science-explainer-young-male` fully qualified for future Chinese
 science-explainer narration.
 
+### Post-Roadmap: Producer Voice Profile Registry v1 (2026-07-21)
+
+The bounded VoxCPM-only voice profile registry is complete at
+`scripts/lib/producer-audio/voice-profiles.json`. Registry v1 contains exactly
+`lyy` and `science-explainer-young-male`. Future scaffolds require
+`--voice-profile <voice-profile-id>` and record the resolved profile/mode in
+both the manifest and generator. Agent judgment applies the science default;
+an explicit production brief may select registered `lyy` for non-science
+content. Unknown ids, unsupported profile/mode pairs, invalid paths, and
+missing private files fail closed with no fallback.
+
+This is future-only: existing completed/frozen source and generated artifacts
+remain unchanged. VoxCPM remains the only provider, no environment/config
+provider selector is introduced, Phase 9 and the Roadmap remain complete, and
+no Phase 10 starts.
+
 The approved Agent-managed reusable asset library is complete as one bounded
 post-Roadmap v1 capability. Agent-only CLI operations manage standalone
 SVG/PNG/JPEG/WebP records, deterministic catalog/report views, ignored inbox
@@ -459,7 +475,7 @@ composition remains unchanged.
 ## Current Commands
 
 ```bash
-npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id>
+npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id> --voice-profile <voice-profile-id>
 npm run producer:assets -- --manifest <supply-plan-json>
 npm run producer:preflight -- --composition <composition-id>
 npm run producer:validate -- --module <validation-module>

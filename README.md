@@ -140,6 +140,17 @@ back to `lyy`, F5, or another provider.
 
 User audition status: accepted on 2026-07-19.
 
+The bounded post-Roadmap VoxCPM-only voice profile registry v1 is complete at
+`scripts/lib/producer-audio/voice-profiles.json`. It contains exactly `lyy` and
+`science-explainer-young-male`. Every future scaffold requires
+`--voice-profile <voice-profile-id>`; Agent judgment applies the science
+default, while an explicit production brief may select registered `lyy` for
+non-science content. Unknown ids, unsupported profile/mode pairs, invalid
+paths, and missing private files fail closed with no fallback. Existing
+completed/frozen source and generated artifacts remain unchanged; Phase 9 and
+the Roadmap stay complete, no Phase 10 starts, and no environment/config
+provider selector is added.
+
 ## Production Rules
 
 - Use React, HTML, SVG, Canvas, Three.js, Remotion effects, and deterministic
@@ -184,7 +195,7 @@ Supporting references:
 ## Stable Producer Commands
 
 ```bash
-npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id>
+npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id> --voice-profile <voice-profile-id>
 npm run producer:assets -- --manifest <supply-plan-json>
 npm run producer:preflight -- --composition <composition-id>
 npm run producer:library:search -- --text <scene-intent> --json

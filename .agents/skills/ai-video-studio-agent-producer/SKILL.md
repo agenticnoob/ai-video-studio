@@ -19,7 +19,7 @@ brief -> narration -> assets/preflight -> Remotion composition -> validation
 Stable commands run in this order when their stage applies:
 
 ```bash
-npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id>
+npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id> --voice-profile <voice-profile-id>
 npm run producer:assets -- --manifest <supply-plan-json>
 npm run producer:preflight -- --composition <composition-id>
 npm run producer:validate -- --module <validation-module>

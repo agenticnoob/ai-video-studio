@@ -28,6 +28,22 @@ control instructions, or expression tags, read
 
 ## Chinese Science-Explainer Default
 
+The bounded post-Roadmap VoxCPM-only voice profile registry is the active clone
+identity boundary. Inspect
+`scripts/lib/producer-audio/voice-profiles.json`; do not copy raw clone paths
+into a future generator. `producer:scaffold` has no voice default and requires
+`--voice-profile <voice-profile-id>`. Use this operational sequence:
+
+```txt
+brief classification
+  -> Agent selects a registered voiceProfileId
+  -> science brief defaults to science-explainer-young-male
+  -> explicit production brief may select another registered profile
+  -> registry resolves the selected clone mode and private paths
+  -> composition generate.mjs supplies per-beat control only for controllable-clone
+  -> direct VoxCPM request fails closed if the selected files are missing
+```
+
 For future Chinese science-explainer narration, default to the user-accepted
 `science-explainer-young-male`. Normal work uses `controllable-clone` with
 `voices/clone/science-explainer-young-male.wav` and compact per-beat controls.
@@ -38,6 +54,13 @@ An explicit production brief may override this science-only default;
 non-science content retains the existing default clone configuration. Missing
 private files fail closed and must not silently fall back to `lyy`, F5, or
 another provider. User audition status: accepted on 2026-07-19.
+
+`voice-design` remains profile-less. High-fidelity clone omits control. Registry
+lookup has no fallback to `lyy` or another profile, and unknown profile ids,
+unsupported profile/mode pairs, invalid paths, and missing private files fail
+closed. Existing composition generators are compatibility history, not
+migration examples. Future scaffolds record one explicit profile and resolved
+mode in both the manifest and `generate.mjs`.
 
 ## Audio Review And Handoff
 

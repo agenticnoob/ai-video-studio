@@ -180,6 +180,18 @@ Library task. This is not Phase 10 or another production entrypoint. It adds no
 HTTP, OAuth, UI, Unsplash, Pixabay, stock video, automatic promotion, or
 automatic deletion, and completed and frozen compositions remain unchanged.
 
+A third bounded post-Roadmap Producer capability is complete: the VoxCPM-only
+voice profile registry v1 at
+`scripts/lib/producer-audio/voice-profiles.json`. It contains exactly `lyy` and
+`science-explainer-young-male`, and every future scaffold requires
+`--voice-profile <voice-profile-id>`. Agent judgment applies the science
+default; an explicit production brief may select registered `lyy` for
+non-science content. Unknown ids, unsupported profile/mode pairs, invalid
+paths, and missing private files fail closed with no fallback. Existing
+completed/frozen source and generated artifacts remain unchanged, no
+environment/config provider selector is added, Phase 9 and the Roadmap remain
+complete, and no Phase 10 starts.
+
 ## Chinese Science-Explainer Narration Default
 
 For future Chinese science-explainer narration, default to the user-accepted
@@ -195,6 +207,12 @@ Missing private reference files must fail closed and must not silently fall
 back to `lyy`, F5, or another provider.
 
 User audition status: accepted on 2026-07-19.
+
+Future scaffold command:
+
+```bash
+npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id> --voice-profile <voice-profile-id>
+```
 
 ## Supporting Authorities
 

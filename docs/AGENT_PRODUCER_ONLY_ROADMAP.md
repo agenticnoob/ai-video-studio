@@ -38,9 +38,17 @@ instructions. When highest timbre fidelity is the priority, use
 instruction. An explicit production brief may override this science-only
 default; non-science content retains the existing default clone configuration.
 Missing private reference files must fail closed and must not silently fall
-back to `lyy`, F5, or another provider. This policy adds no Roadmap phase,
-runtime voice registry, environment variable, manifest field, or scaffold
-parameter, and it does not modify completed or frozen videos.
+back to `lyy`, F5, or another provider. The completed bounded follow-up
+intentionally adds one VoxCPM-only voice profile registry at
+`scripts/lib/producer-audio/voice-profiles.json`, one future-only manifest
+field, and the required `--voice-profile <voice-profile-id>` scaffold parameter
+without changing the completed Roadmap definition. Agent judgment applies the
+science default, while an explicit production brief may select registered
+`lyy` for non-science content. Unknown ids, unsupported profile/mode pairs,
+invalid paths, and missing private files fail closed with no fallback. It adds
+no environment/config provider selector, modifies no completed/frozen source
+or generated artifact, starts no Phase 10, and leaves Phase 9 and the Roadmap
+complete.
 
 User audition status: accepted on 2026-07-19.
 
@@ -1195,7 +1203,7 @@ git diff --check
 The final package exposes a compact production command set:
 
 ```bash
-npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id>
+npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id> --voice-profile <voice-profile-id>
 npm run producer:audio -- --module <audio-config-module>
 npm run producer:assets -- --manifest <supply-plan-json>
 npm run producer:preflight -- --composition <composition-id>

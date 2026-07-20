@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import console from "node:console";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import process from "node:process";
 
@@ -17,6 +17,11 @@ const trackedPaths = (pathspec) =>
     .trim()
     .split("\n")
     .filter((relativePath) => relativePath && existsSync(absolute(relativePath)));
+const filesUnder = (relativeDirectory) =>
+  readdirSync(absolute(relativeDirectory), { withFileTypes: true }).flatMap((entry) => {
+    const relativePath = path.posix.join(relativeDirectory, entry.name);
+    return entry.isDirectory() ? filesUnder(relativePath) : [relativePath];
+  });
 
 assert(existsSync(absolute(inventoryPath)), `${inventoryPath} must exist`);
 const inventory = JSON.parse(read(inventoryPath));
@@ -107,8 +112,33 @@ assert.deepEqual(
       reason:
         "A dedicated non-video skill owns folder-oriented SVG/PNG/JPEG/WebP admission with shared descriptions, visual semantic completion, fixed user authorization, semantic search, deterministic catalog/static report, atomic rollback, and future ProducerAssetManifest cross-validation without adding a Roadmap phase.",
     },
+    {
+      id: "producer-voice-profile-registry-v1",
+      status: "complete",
+      path: ".agents/skills/ai-video-studio-agent-producer",
+      runtimePath: "scripts/lib/producer-audio/voice-profiles.ts",
+      reason:
+        "A typed VoxCPM-only registry makes future clone identity and mode selection explicit in Producer scaffolds and manifests, preserves the accepted science default, fails closed without fallback, and does not migrate completed compositions or start Phase 10.",
+    },
   ],
   "bounded post-Roadmap capability record",
+);
+const legacyRawVoiceGeneratorAllowlist = [
+  "src/remotion/AiDailyNews20260717/generate.mjs",
+  "src/remotion/AiDailyNews20260719/generate.mjs",
+  "src/remotion/DnsResolutionExplainer/generate.mjs",
+  "src/remotion/SuperintelligenceBeyondHumanCognition/generate.mjs",
+  "src/remotion/TcpHandshakeEditorial/generate.mjs",
+  "src/remotion/TcpHandshakeTerminal/generate.mjs",
+];
+const rawVoiceGenerators = filesUnder("src/remotion")
+  .filter((relativePath) => relativePath.endsWith("/generate.mjs"))
+  .filter((relativePath) => read(relativePath).includes("voices/clone/"))
+  .sort();
+assert.deepEqual(
+  rawVoiceGenerators,
+  legacyRawVoiceGeneratorAllowlist,
+  "exact legacy raw voice generator compatibility allowlist",
 );
 const completedPhases = new Set(inventory.completedPhases);
 assert.equal(
