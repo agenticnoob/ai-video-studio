@@ -680,7 +680,7 @@ git commit -m "refactor: route agent producer skill by task"
 
 - Modify: `docs/superpowers/specs/2026-07-20-agent-producer-skill-context-budget-design.md:4`
 
-- [ ] **Step 1: Run fresh-context skill scenarios**
+- [x] **Step 1: Run fresh-context skill scenarios**
 
 Run three fresh agents with no conversation context beyond the repository and
 the stated task. Record their file-read choices and answer summaries outside
@@ -714,7 +714,7 @@ stable commands and names all four stage references without claiming they must
 all be preloaded.
 ```
 
-- [ ] **Step 2: Run the focused regression suite**
+- [x] **Step 2: Run the focused regression suite**
 
 Run:
 
@@ -737,7 +737,7 @@ npm run smoke:producer-final-acceptance
 
 Expected: every command PASS.
 
-- [ ] **Step 3: Run Docker-first repository verification**
+- [x] **Step 3: Run Docker-first repository verification**
 
 Run:
 
@@ -754,7 +754,7 @@ If repository-wide lint retains an existing baseline, verify no modified `.mjs`
 file appears in the failure set and record the fresh counts without claiming a
 clean lint gate.
 
-- [ ] **Step 4: Mark the design implemented**
+- [x] **Step 4: Mark the design implemented**
 
 Change:
 
@@ -768,7 +768,7 @@ to:
 Status: implemented and verified on 2026-07-20
 ```
 
-- [ ] **Step 5: Verify artifact and Git boundaries**
+- [x] **Step 5: Verify artifact and Git boundaries**
 
 Run:
 
@@ -782,14 +782,14 @@ Expected: only the skill Markdown, owned smoke scripts, design status, and this
 committed plan are in scope; no `public/generated/`, `out/`, `.producer-assets/`,
 or `voices/clone/` path is tracked or modified.
 
-- [ ] **Step 6: Commit closure**
+- [x] **Step 6: Commit closure**
 
 ```bash
 git add docs/superpowers/specs/2026-07-20-agent-producer-skill-context-budget-design.md
 git commit -m "docs: record agent producer skill context refactor"
 ```
 
-- [ ] **Step 7: Handoff without pushing**
+- [x] **Step 7: Handoff without pushing**
 
 Report the final entrypoint word count, reference word counts, context-scenario
 results, commits, focused smoke results, Docker results, lint baseline if any,

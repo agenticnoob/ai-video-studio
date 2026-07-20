@@ -1,7 +1,7 @@
 # Agent Producer Skill Context-Budget Design
 
 Date: 2026-07-20
-Status: approved for implementation planning
+Status: implemented and verified on 2026-07-20
 
 ## Goal
 
