@@ -154,13 +154,21 @@ for (const docPath of [
   "docs/AGENT_PRODUCER_ONLY_ROADMAP.md",
   "docs/REMOTION_COMPONENT_LIBRARY.md",
   "docs/PRODUCER_PROMOTION_GATE.md",
-  ".agents/skills/ai-video-studio-agent-producer/SKILL.md",
   ".agents/skills/remotion-best-practices/SKILL.md",
 ]) {
   const source = read(docPath);
   assert(source.includes("Phase 8 is complete."), `${docPath} must mark Phase 8 complete.`);
   assert(source.includes("Phase 9A"), `${docPath} must describe the Phase 9A boundary.`);
   assert(source.includes("Phase 9B"), `${docPath} must keep Phase 9B unstarted.`);
+}
+const producerRemotionReference = read(
+  ".agents/skills/ai-video-studio-agent-producer/references/remotion-composition.md",
+);
+for (const token of ["getProducerStyleProfile()", "producer:scaffold", "render-review-quality.md"]) {
+  assert(
+    producerRemotionReference.includes(token),
+    `Agent Producer Remotion reference must include current composition routing: ${token}`,
+  );
 }
 
 console.warn("Producer style-profile real compositions smoke passed.");

@@ -117,7 +117,6 @@ for (const docPath of [
   "docs/ITERATION_STATUS.md",
   "docs/AGENT_PRODUCER_ONLY_ROADMAP.md",
   "docs/REMOTION_COMPONENT_LIBRARY.md",
-  ".agents/skills/ai-video-studio-agent-producer/SKILL.md",
   ".agents/skills/remotion-best-practices/SKILL.md",
 ]) {
   const source = read(docPath);
@@ -125,6 +124,20 @@ for (const docPath of [
   assert(source.includes("Phase 8 is complete."), `${docPath} must mark Phase 8 complete.`);
   assert(source.includes("Phase 9A"), `${docPath} must describe the Phase 9A boundary.`);
   assert(source.includes("Phase 9B"), `${docPath} must keep Phase 9B unstarted.`);
+}
+const producerRemotionReference = read(
+  ".agents/skills/ai-video-studio-agent-producer/references/remotion-composition.md",
+);
+for (const token of [
+  "getProducerStyleProfile()",
+  "producer:scaffold",
+  "--style-profile",
+  "render-review-quality.md",
+]) {
+  assert(
+    producerRemotionReference.includes(token),
+    `Agent Producer Remotion reference must include current style routing: ${token}`,
+  );
 }
 
 const compiledRoot = process.env.PRODUCER_STYLE_PROFILES_BUILD_DIR;

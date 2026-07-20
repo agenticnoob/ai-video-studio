@@ -197,7 +197,9 @@ assert(iterationStatus.includes("Phase 8 is complete."));
 assert(iterationStatus.includes("Phase 9A deterministic quality gates are complete."));
 assert(iterationStatus.includes("Phase 9B final acceptance video"));
 
-const producerSkill = read(".agents/skills/ai-video-studio-agent-producer/SKILL.md");
+const producerRemotionReference = read(
+  ".agents/skills/ai-video-studio-agent-producer/references/remotion-composition.md",
+);
 for (const required of [
   "getProducerEffectPreset",
   "getProducerMediaEffectPreset",
@@ -211,7 +213,10 @@ for (const required of [
   "getProducerStyleProfile",
   "npm run smoke:producer-style-profiles",
 ]) {
-  assert(producerSkill.includes(required), `Agent Producer skill must include ${required}`);
+  assert(
+    producerRemotionReference.includes(required),
+    `Agent Producer Remotion reference must include ${required}`,
+  );
 }
 
 const capabilitySource = [

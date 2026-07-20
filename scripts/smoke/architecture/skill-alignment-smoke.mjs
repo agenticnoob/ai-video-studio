@@ -72,6 +72,9 @@ const producerNarrationReference = read(producerNarrationReferencePath);
 const producerAssetsReferencePath =
   ".agents/skills/ai-video-studio-agent-producer/references/assets-evidence.md";
 const producerAssetsReference = read(producerAssetsReferencePath);
+const producerRemotionReferencePath =
+  ".agents/skills/ai-video-studio-agent-producer/references/remotion-composition.md";
+const producerRemotionReference = read(producerRemotionReferencePath);
 assertIncludes(producerSkill, "Production Chain", "Agent Producer skill");
 assertIncludes(producerSkill, "Skill Stack", "Agent Producer skill");
 assertIncludes(producerSkill, ".agents/skills/remotion-best-practices/", "Agent Producer skill");
@@ -107,15 +110,27 @@ for (const required of [
   "Remotion `<Still>`",
   "VoxCPM is the only supported narration provider",
   "docker compose run --rm producer",
+  "npm run smoke:producer-quality-gates",
+])
+  assertIncludes(producerSkill, required, "Agent Producer skill");
+for (const required of [
+  ".agents/skills/remotion-best-practices/SKILL.md",
+  "rules/video-layout.md",
+  "rules/subtitles.md",
+  "rules/silence-detection.md",
   "getProducerEffectPreset",
+  "getProducerMediaEffectPreset",
   "fitProducerText",
+  "getProducerTransitionPreset",
+  "getProducerTransitionSeriesDuration",
+  "cinematic-film-burn",
+  "Config.setAllowHtmlInCanvasEnabled(true)",
   "AgentProducerCapabilityShowcase",
-  "npm run smoke:remotion-capabilities",
   "ProducerLocalVideo",
   "ProducerAnimatedImage",
   "ProducerLottie",
+  "ProducerMotionTreatment",
   "ProducerSoundtrack",
-  "npm run smoke:producer-media-sound",
   "getProducerStyleProfile",
   "editorial-tech",
   "comic-anime",
@@ -123,12 +138,15 @@ for (const required of [
   "retro-terminal",
   "documentary-media",
   "hand-drawn-explainer",
-  "npm run smoke:producer-style-profiles",
-  "npm run smoke:producer-style-profile-sample-contract",
-  "npm run smoke:producer-quality-gates",
+  "producer:scaffold",
   "--style-profile",
-])
-  assertIncludes(producerSkill, required, "Agent Producer skill");
+  "smoke:remotion-capabilities",
+  "smoke:producer-media-sound",
+  "smoke:producer-style-profiles",
+  "smoke:producer-style-profile-sample-contract",
+]) {
+  assertIncludes(producerRemotionReference, required, "Agent Producer Remotion reference");
+}
 for (const required of [
   "Visual-Source Decision Gate",
   "asset-led",

@@ -284,7 +284,7 @@ git commit -m "docs: extract agent producer asset guidance"
 - Modify: `scripts/smoke/producer/producer-style-profile-sample-contract-smoke.mjs:99-117`
 - Modify: `scripts/smoke/producer/producer-style-profile-real-compositions-smoke.mjs:149-164`
 
-- [ ] **Step 1: Route capability assertions to the missing reference**
+- [x] **Step 1: Route capability assertions to the missing reference**
 
 Add:
 
@@ -300,7 +300,7 @@ that require Roadmap phase-history wording; retain those checks for the actual
 authority docs and Remotion skill. Add focused assertions that the new
 reference includes current profile selection, scaffold, and quality routing.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run:
 
@@ -311,7 +311,7 @@ npm run smoke:producer-media-sound
 
 Expected: FAIL because `references/remotion-composition.md` is missing.
 
-- [ ] **Step 3: Create the Remotion reference**
+- [x] **Step 3: Create the Remotion reference**
 
 Use these exact responsibilities and current surfaces:
 
@@ -360,7 +360,7 @@ Run `npm run smoke:remotion-capabilities`,
 boundary. Do not retrofit completed or frozen compositions.
 ```
 
-- [ ] **Step 4: Run GREEN**
+- [x] **Step 4: Run GREEN**
 
 Run:
 
@@ -376,7 +376,7 @@ git diff --check
 
 Expected: all commands PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add .agents/skills/ai-video-studio-agent-producer/references/remotion-composition.md \

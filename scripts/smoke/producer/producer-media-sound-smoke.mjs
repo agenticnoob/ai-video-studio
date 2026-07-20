@@ -184,7 +184,9 @@ assert(iterationStatus.includes("Phase 8 is complete."));
 assert(iterationStatus.includes("Phase 9A deterministic quality gates are complete."));
 assert(iterationStatus.includes("Phase 9B final acceptance video"));
 
-const producerSkill = read(".agents/skills/ai-video-studio-agent-producer/SKILL.md");
+const producerRemotionReference = read(
+  ".agents/skills/ai-video-studio-agent-producer/references/remotion-composition.md",
+);
 for (const token of [
   "ProducerLocalVideo",
   "ProducerAnimatedImage",
@@ -192,7 +194,10 @@ for (const token of [
   "ProducerSoundtrack",
   "smoke:producer-media-sound",
 ]) {
-  assert(producerSkill.includes(token), `Agent Producer skill must include ${token}`);
+  assert(
+    producerRemotionReference.includes(token),
+    `Agent Producer Remotion reference must include ${token}`,
+  );
 }
 
 const phase7RenderSource = [mediaSource, motionSource, soundSource, proofRenderer].join("\n");
