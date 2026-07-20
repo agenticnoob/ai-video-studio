@@ -4,10 +4,10 @@ Private, local-only Node.js 20+ package for a stdio MCP stock-image server. The
 package is independently installable and is not part of the root npm dependency
 graph.
 
-Tasks 1–7 establish the startup boundary, strict public contracts, Pexels image
+Tasks 1–8 establish the startup boundary, strict public contracts, Pexels image
 provider, shared validated-image download primitive, atomic candidate store,
-and all four pure tool handlers. The MCP tools are not registered with the
-server yet.
+all four pure tool handlers, and their protocol-accurate MCP registrations.
+The production CLI lifecycle and shutdown behavior remain a separate task.
 
 ## Configuration
 
@@ -31,10 +31,11 @@ or caller-selected path.
 
 ## Frozen public contracts
 
-The future registered tool names are `get_provider_status`, `search_images`,
-`preview_images`, and `acquire_image`. Their strict Zod contracts and pure
-handlers exist, but the server still exposes zero tools until the separate MCP
-registration task.
+The registered tool names are `get_provider_status`, `search_images`,
+`preview_images`, and `acquire_image`. The server factory returns a configured
+but unconnected `McpServer` with strict Zod input/output schemas and truthful
+annotations. It exposes no resources, prompts, sampling, elicitation, tasks,
+or experimental capabilities.
 
 `get_provider_status` accepts only `{}`. It returns server/schema version, the
 single configured `pexels` provider, truthful search/preview/acquire
@@ -206,3 +207,30 @@ npm test
 npm run lint
 npm run build
 ```
+
+## MCP client configuration
+
+After producing `dist/cli.js`, a stdio MCP client can use this configuration
+shape. Replace both absolute paths and the placeholder; do not commit a real
+key.
+
+```json
+{
+  "mcpServers": {
+    "stock-assets-mcp": {
+      "command": "node",
+      "args": [
+        "/absolute/path/packages/stock-assets-mcp/dist/cli.js"
+      ],
+      "env": {
+        "PEXELS_API_KEY": "<your-provider-key>",
+        "STOCK_ASSETS_OUTPUT_DIR": "/absolute/path/to/stock-candidates"
+      }
+    }
+  }
+}
+```
+
+`preview_images` returns MCP image content blocks. The client must support MCP
+image content to display those previews. Tool registration is complete, but
+this task does not claim the CLI lifecycle/shutdown work is complete.

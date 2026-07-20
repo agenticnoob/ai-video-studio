@@ -1,4 +1,24 @@
 import assert from "node:assert/strict";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
+
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+
+import { StockAssetsException } from "../src/domain/errors.js";
+import type {
+  NormalizedSearchInput,
+  ProviderQuota,
+  SearchPage,
+} from "../src/domain/schemas.js";
+import type {
+  ImageProviderAdapter,
+  ProviderImageRecord,
+} from "../src/providers/types.js";
+import { createStockAssetsServer } from "../src/server.js";
+import { CandidateStore } from "../src/storage/candidate-store.js";
+import type { StockAssetsToolContext } from "../src/tools/provider-status.js";
 
 export type FetchCall = {
   readonly url: string;
@@ -150,4 +170,141 @@ export function timeoutFetchEntry(): FetchQueueEntry {
         once: true,
       });
     });
+}
+
+export function providerRecord(imageId = "2014422"): ProviderImageRecord {
+  return {
+    provider: "pexels",
+    imageId,
+    width: 3_024,
+    height: 2_016,
+    aspectRatio: 1.5,
+    description: `Fixture image ${imageId}`,
+    averageColor: "#978E82",
+    thumbnailUrl: `https://images.pexels.com/photos/${imageId}/thumbnail.jpg`,
+    sourcePageUrl: `https://www.pexels.com/photo/fixture-${imageId}/`,
+    photographer: {
+      name: `Photographer ${imageId}`,
+      profileUrl: `https://www.pexels.com/@fixture-${imageId}`,
+    },
+    attribution: {
+      required: true,
+      text: `Photo by Photographer ${imageId} on Pexels`,
+    },
+    previewUrl: `https://images.pexels.com/photos/${imageId}/preview.bin`,
+    originalUrl: `https://images.pexels.com/photos/${imageId}/original.bin`,
+  };
+}
+
+export class InProcessFixtureProvider implements ImageProviderAdapter {
+  readonly id = "pexels" as const;
+  configured = true;
+  searchFailure: unknown;
+  getByIdFailure: unknown;
+  quota: ProviderQuota | undefined = {
+    limit: 20_000,
+    remaining: 19_999,
+    resetAt: 1_590_529_646,
+  };
+
+  isConfigured(): boolean {
+    return this.configured;
+  }
+
+  getQuota(): ProviderQuota | undefined {
+    return this.quota;
+  }
+
+  search(input: NormalizedSearchInput): Promise<SearchPage> {
+    if (this.searchFailure !== undefined) {
+      return Promise.reject(this.searchFailure);
+    }
+    const record = providerRecord();
+    return Promise.resolve({
+      items: [
+        {
+          provider: record.provider,
+          imageId: record.imageId,
+          width: record.width,
+          height: record.height,
+          aspectRatio: record.aspectRatio,
+          description: record.description,
+          ...(record.averageColor === undefined
+            ? {}
+            : { averageColor: record.averageColor }),
+          thumbnailUrl: record.thumbnailUrl,
+          sourcePageUrl: record.sourcePageUrl,
+          photographer: record.photographer,
+          attribution: record.attribution,
+        },
+      ],
+      page: input.page,
+      perPage: input.perPage,
+      totalResults: 1,
+      cache: { hit: false },
+      ...(this.quota === undefined ? {} : { quota: this.quota }),
+    });
+  }
+
+  getById(imageId: string): Promise<ProviderImageRecord> {
+    if (this.getByIdFailure !== undefined) {
+      return Promise.reject(this.getByIdFailure);
+    }
+    return Promise.resolve(providerRecord(imageId));
+  }
+}
+
+export type InProcessFixture = {
+  readonly client: Client;
+  readonly provider: InProcessFixtureProvider;
+  readonly context: StockAssetsToolContext;
+  readonly close: () => Promise<void>;
+};
+
+export async function createInProcessFixture(
+  provider = new InProcessFixtureProvider(),
+): Promise<InProcessFixture> {
+  const outputDir = await mkdtemp(path.join(tmpdir(), "stock-assets-mcp-contract-"));
+  const context: StockAssetsToolContext = {
+    config: {
+      outputDir,
+      maxBytes: 26_214_400,
+      previewMaxBytes: 5_242_880,
+      timeoutMs: 20_000,
+    },
+    provider,
+    store: new CandidateStore({
+      rootDir: outputDir,
+      now: () => new Date("2026-07-20T00:00:00.000Z"),
+    }),
+  };
+  const server = createStockAssetsServer(context);
+  assert.equal(server.isConnected(), false);
+  const client = new Client({
+    name: "stock-assets-mcp-contract-test",
+    version: "0.1.0",
+  });
+  const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+  await Promise.all([
+    server.connect(serverTransport),
+    client.connect(clientTransport),
+  ]);
+
+  return {
+    client,
+    provider,
+    context,
+    async close(): Promise<void> {
+      await Promise.allSettled([client.close(), server.close()]);
+      await rm(outputDir, { recursive: true, force: true });
+    },
+  };
+}
+
+export function rateLimitedFixtureError(secret: string): StockAssetsException {
+  return new StockAssetsException(
+    "RATE_LIMITED",
+    `Authorization: ${secret}; quota exhausted`,
+    { retryAfterSeconds: 60 },
+  );
 }
