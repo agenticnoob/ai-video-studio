@@ -203,12 +203,23 @@ this primitive itself.
 ## Local commands
 
 ```bash
-npm install
+npm ci
 npm run typecheck
 npm test
 npm run lint
 npm run build
+npm run verify:pack
+npm pack --dry-run --json
 ```
+
+The package remains private and independently installable. Its pack allowlist
+contains only `dist/` and this README in addition to npm's required
+`package.json`; tests, `.test-dist/`, TypeScript source, source maps, environment
+files, candidates, coverage, secrets, and tarballs are not package contents.
+`npm test` builds `dist/` first so spawned stdio contract tests are valid after
+a fresh `npm ci` with no pre-existing build output.
+The root repository is not an npm workspace and does not import the MCP SDK or
+this nested package into the Remotion/Producer runtime.
 
 ## MCP client configuration
 

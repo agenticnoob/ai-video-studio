@@ -17,8 +17,9 @@
     "build": "rm -rf dist && tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.test.json --noEmit",
     "test:compile": "rm -rf .test-dist && tsc -p tsconfig.test.json",
-    "test": "npm run test:compile && node --test .test-dist/tests/*.test.js",
+    "test": "npm run build && npm run test:compile && node --test .test-dist/tests/*.test.js",
     "lint": "eslint src tests",
+    "verify:pack": "npm pack --dry-run --json",
     "start": "node dist/cli.js",
     "smoke:live": "npm run test:compile && STOCK_ASSETS_LIVE_PEXELS=1 node --test .test-dist/tests/live-pexels.test.js"
   },
