@@ -4,10 +4,10 @@ Private, local-only Node.js 20+ package for a stdio MCP stock-image server. The
 package is independently installable and is not part of the root npm dependency
 graph.
 
-Tasks 1–8 establish the startup boundary, strict public contracts, Pexels image
+Tasks 1–9 establish the startup boundary, strict public contracts, Pexels image
 provider, shared validated-image download primitive, atomic candidate store,
-all four pure tool handlers, and their protocol-accurate MCP registrations.
-The production CLI lifecycle and shutdown behavior remain a separate task.
+all four pure tool handlers, their protocol-accurate MCP registrations, and the
+production-safe stdio CLI lifecycle.
 
 ## Configuration
 
@@ -25,7 +25,9 @@ STOCK_ASSETS_TIMEOUT_MS=20000
 5 MiB limit. For AI Video Studio, the intended ignored output root is
 `/data/projects/labs/ai-video-studio/.producer-assets/stock-candidates/`.
 
-The transport is stdio only. Secrets and filesystem paths are startup
+The transport is stdio only. Stdout is reserved completely for newline-delimited
+MCP JSON-RPC messages. All bounded, single-line, centrally redacted startup,
+transport, and shutdown diagnostics go to stderr. Secrets and filesystem paths are startup
 configuration; no current or future tool accepts an API key, output directory,
 or caller-selected path.
 
@@ -210,9 +212,9 @@ npm run build
 
 ## MCP client configuration
 
-After producing `dist/cli.js`, a stdio MCP client can use this configuration
-shape. Replace both absolute paths and the placeholder; do not commit a real
-key.
+Run `npm run build` before adding the client configuration so that
+`dist/cli.js` exists. A stdio MCP client can then use this configuration shape.
+Replace both absolute paths and the placeholder; do not commit a real key.
 
 ```json
 {
@@ -232,5 +234,11 @@ key.
 ```
 
 `preview_images` returns MCP image content blocks. The client must support MCP
-image content to display those previews. Tool registration is complete, but
-this task does not claim the CLI lifecycle/shutdown work is complete.
+image content to display those previews. The CLI installs signal handling
+before connecting, shares one guarded shutdown across SIGINT, SIGTERM, stdin,
+and transport close, and does not force `process.exit()` for a normal
+disconnect.
+
+The package has not run or claimed a live Pexels verification. Default tests
+use mocked fetch, in-memory transports, spawned local stdio processes, and
+temporary directories only.
