@@ -4,10 +4,9 @@ Private, local-only Node.js 20+ package for a stdio MCP stock-image server. The
 package is independently installable and is not part of the root npm dependency
 graph.
 
-Tasks 1–5 establish the startup boundary, strict public contracts, Pexels image
-provider, shared validated-image download primitive, and pure preview handler.
-The MCP tools are not registered with the server yet, and no candidate store
-exists at this stage.
+Tasks 1–6 establish the startup boundary, strict public contracts, Pexels image
+provider, shared validated-image download primitive, pure preview handler, and
+atomic candidate store. The MCP tools are not registered with the server yet.
 
 ## Configuration
 
@@ -77,6 +76,37 @@ attribution. Adapter-owned original and preview download URLs are not public
 candidate fields. Every acquired receipt preserves canonical Pexels source,
 creator, license, attribution, measured file integrity, optional descriptive
 search context, and acquisition time.
+
+## Candidate store
+
+Acquisition storage is deterministic below the configured root:
+
+```text
+<root>/pexels/<image-id>/original.<validated-extension>
+<root>/pexels/<image-id>/acquisition.json
+```
+
+A published item contains exactly those two regular files. The store accepts
+only validated JPEG, PNG, or WebP bytes plus canonical adapter facts, then
+re-decodes and re-hashes the staged original before publishing. The receipt
+strictly records schema/acquisition/provider IDs, Pexels source page and
+creator, fixed Pexels license facts, required attribution, validated media and
+integrity facts, optional descriptive search context, and an injected-clock
+acquisition time.
+
+Image and receipt writes occur in one private temp directory below the same
+provider root as the final item. Both files are exclusively created and
+synced, the full staged directory is revalidated, and publication uses an
+atomic directory rename. A failed transaction removes only the temp directory
+created and revalidated by that operation; it does not clean sibling temp
+paths or candidates automatically.
+
+Matching repeat acquisition validates and reuses the existing two-file item
+without changing `acquiredAt`. Byte, receipt, or canonical-fact drift returns
+`INTEGRITY_MISMATCH` and never overwrites. Traversal, containment, non-regular
+paths, and provider/item/file symlink boundaries fail closed as
+`OUTPUT_BOUNDARY_VIOLATION`. A concurrent winner is validated and either reused
+or rejected as a mismatch.
 
 Tool failures use `{ok: false, error: {code, message, retryable,
 retryAfterSeconds?}}` with exactly these codes:
