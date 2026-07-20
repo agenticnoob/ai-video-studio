@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "profiles": [
+    {
+      "id": "lyy",
+      "label": "LYY",
+      "useWhen": "General or non-science narration explicitly selects the existing clone identity.",
+      "defaultMode": "high-fidelity-clone",
+      "highFidelityClone": {
+        "promptAudioPath": "voices/clone/lyy.wav",
+        "promptTranscriptPath": "voices/clone/lyy.txt",
+        "referenceAudioPath": "voices/clone/lyy-r.wav"
+      }
+    },
+    {
+      "id": "science-explainer-young-male",
+      "label": "Science explainer young male",
+      "useWhen": "Future Chinese science-explainer narration unless the production brief explicitly overrides it.",
+      "defaultMode": "controllable-clone",
+      "controllableClone": {
+        "referenceAudioPath": "voices/clone/science-explainer-young-male.wav",
+        "controlRequired": true
+      },
+      "highFidelityClone": {
+        "promptAudioPath": "voices/clone/science-explainer-young-male.wav",
+        "promptTranscriptPath": "voices/clone/science-explainer-young-male.txt",
+        "referenceAudioPath": "voices/clone/science-explainer-young-male.wav"
+      }
+    }
+  ]
+}

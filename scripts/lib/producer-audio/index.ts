@@ -5,6 +5,7 @@ export * from "./progress";
 export * from "./providers/voxcpm";
 export * from "./request";
 export * from "./run";
+export * from "./voice-profiles";
 export * from "./wav";
 export type {
   ProducerAudioSummary,
