@@ -75,6 +75,12 @@ const producerAssetsReference = read(producerAssetsReferencePath);
 const producerRemotionReferencePath =
   ".agents/skills/ai-video-studio-agent-producer/references/remotion-composition.md";
 const producerRemotionReference = read(producerRemotionReferencePath);
+const producerWorkflowReferencePath =
+  ".agents/skills/ai-video-studio-agent-producer/references/full-video-workflow.md";
+const producerWorkflowReference = read(producerWorkflowReferencePath);
+const producerFinalizationReferencePath =
+  ".agents/skills/ai-video-studio-agent-producer/references/render-review-quality.md";
+const producerFinalizationReference = read(producerFinalizationReferencePath);
 assertIncludes(producerSkill, "Production Chain", "Agent Producer skill");
 assertIncludes(producerSkill, "Skill Stack", "Agent Producer skill");
 assertIncludes(producerSkill, ".agents/skills/remotion-best-practices/", "Agent Producer skill");
@@ -110,9 +116,49 @@ for (const required of [
   "Remotion `<Still>`",
   "VoxCPM is the only supported narration provider",
   "docker compose run --rm producer",
-  "npm run smoke:producer-quality-gates",
 ])
   assertIncludes(producerSkill, required, "Agent Producer skill");
+for (const required of [
+  "audience and publishing surface",
+  "duration and aspect ratio",
+  "language and content family",
+  "factual freshness",
+  "narration requirement",
+  "expected assets and evidence",
+  "output slug",
+  "local artifact root",
+  "narration.md",
+  "assets-evidence.md",
+  "remotion-composition.md",
+  "render-review-quality.md",
+]) {
+  assertIncludesWords(producerWorkflowReference, required, "Agent Producer workflow reference");
+}
+assertIncludesWords(
+  producerWorkflowReference.toLowerCase(),
+  "narration duration owns",
+  "Agent Producer workflow reference",
+);
+for (const required of [
+  "producer:validate",
+  "producer:stills",
+  "producer:render",
+  "producer:quality",
+  "ffprobe",
+  "1920x1080",
+  "1080x1920",
+  "final MP4",
+  "does not approve aesthetics",
+  "publishing",
+  "Promote only reuse",
+  "Handoff records",
+]) {
+  assertIncludesWords(
+    producerFinalizationReference,
+    required,
+    "Agent Producer finalization reference",
+  );
+}
 for (const required of [
   ".agents/skills/remotion-best-practices/SKILL.md",
   "rules/video-layout.md",

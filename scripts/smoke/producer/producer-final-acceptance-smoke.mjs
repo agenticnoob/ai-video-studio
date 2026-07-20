@@ -125,10 +125,27 @@ for (const [relativePath, required] of [
   ["docs/FINAL_PRODUCT_GOAL.md", "Phase 9 is complete"],
   ["docs/ITERATION_STATUS.md", "Roadmap is complete"],
   ["docs/AGENT_PRODUCER_ONLY_ROADMAP.md", "Status: complete"],
-  [".agents/skills/ai-video-studio-agent-producer/SKILL.md", "Phase 9 is complete"],
   [".agents/skills/remotion-best-practices/SKILL.md", "Phase 9 is complete"],
 ]) {
   assert(read(relativePath).includes(required), `${relativePath} must include ${required}`);
+}
+const producerFinalizationReference = read(
+  ".agents/skills/ai-video-studio-agent-producer/references/render-review-quality.md",
+);
+for (const required of [
+  "producer:validate",
+  "producer:stills",
+  "producer:render",
+  "producer:quality",
+  "ffprobe",
+  "Watch the final MP4",
+  "does not approve aesthetics",
+  "Handoff records",
+]) {
+  assert(
+    producerFinalizationReference.replace(/\s+/gu, " ").includes(required),
+    `Agent Producer finalization reference must include ${required}`,
+  );
 }
 
 const newRuntimeSource = [renderer, soundtrack, quality, manifest].join("\n");

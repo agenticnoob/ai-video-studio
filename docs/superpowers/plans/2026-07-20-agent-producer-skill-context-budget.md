@@ -399,7 +399,7 @@ git commit -m "docs: extract agent producer remotion guidance"
 - Modify: `scripts/smoke/producer/producer-quality-gates-smoke.mjs:36-42`
 - Modify: `scripts/smoke/producer/producer-final-acceptance-smoke.mjs:122-131`
 
-- [ ] **Step 1: Add failing ownership assertions**
+- [x] **Step 1: Add failing ownership assertions**
 
 Add reads for both missing files. Require the workflow reference to contain the
 brief fields, stage order, `narration duration owns timing`, and all five stage
@@ -413,7 +413,7 @@ Change `producer-quality-gates-smoke.mjs` to assert `producer:quality` and
 `producer-final-acceptance-smoke.mjs`, remove `SKILL.md` from the Phase 9 status
 list and assert final-path guidance in the finalization reference instead.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run:
 
@@ -425,7 +425,7 @@ npm run smoke:producer-final-acceptance
 
 Expected: FAIL only on the missing workflow/finalization references.
 
-- [ ] **Step 3: Create `full-video-workflow.md`**
+- [x] **Step 3: Create `full-video-workflow.md`**
 
 Include this concise orchestration contract:
 
@@ -458,7 +458,7 @@ Do not introduce a planner, universal scene DSL, Web workflow, generated visual
 media, second narration provider, or migration of completed/frozen work.
 ```
 
-- [ ] **Step 4: Create `render-review-quality.md`**
+- [x] **Step 4: Create `render-review-quality.md`**
 
 Create sections for `Preflight And Stills`, `Render And Covers`, `Quality And
 Creative Approval`, and `Handoff`. Preserve:
@@ -486,7 +486,7 @@ cover paths, validation results, known issues, and the next bounded step.
 Promote only reuse proved by a real composition.
 ```
 
-- [ ] **Step 5: Run GREEN**
+- [x] **Step 5: Run GREEN**
 
 Run:
 
@@ -499,7 +499,7 @@ git diff --check
 
 Expected: all commands PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add .agents/skills/ai-video-studio-agent-producer/references/full-video-workflow.md \

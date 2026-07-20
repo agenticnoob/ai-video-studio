@@ -36,7 +36,14 @@ assert(
 for (const [relativePath, required] of [
   ["docs/ITERATION_STATUS.md", "Phase 9A deterministic quality gates are complete."],
   ["docs/AGENT_PRODUCER_ONLY_ROADMAP.md", "Phase 9B - Final Acceptance And Closure"],
-  [".agents/skills/ai-video-studio-agent-producer/SKILL.md", "producer:quality"],
+  [
+    ".agents/skills/ai-video-studio-agent-producer/references/render-review-quality.md",
+    "producer:quality",
+  ],
+  [
+    ".agents/skills/ai-video-studio-agent-producer/references/render-review-quality.md",
+    "does not approve aesthetics",
+  ],
   [".agents/skills/remotion-best-practices/SKILL.md", "does not score aesthetics"],
 ]) {
   assert(read(relativePath).includes(required), `${relativePath} must include ${required}.`);
