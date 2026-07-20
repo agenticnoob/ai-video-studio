@@ -397,7 +397,15 @@ for (const forbidden of ['"recipe"', '"template"', "productized", "productizatio
   );
 }
 
-const producerSkill = read(".agents/skills/ai-video-studio-agent-producer/SKILL.md");
+const producerGuidancePaths = [
+  ".agents/skills/ai-video-studio-agent-producer/SKILL.md",
+  ".agents/skills/ai-video-studio-agent-producer/references/full-video-workflow.md",
+  ".agents/skills/ai-video-studio-agent-producer/references/narration.md",
+  ".agents/skills/ai-video-studio-agent-producer/references/assets-evidence.md",
+  ".agents/skills/ai-video-studio-agent-producer/references/remotion-composition.md",
+  ".agents/skills/ai-video-studio-agent-producer/references/render-review-quality.md",
+];
+const producerGuidance = producerGuidancePaths.map(read).join("\n");
 for (const phrase of [
   "Use `VideoProject`",
   "TTS_PROVIDER=f5-tts",
@@ -407,8 +415,8 @@ for (const phrase of [
   "recipe/template promotion",
 ]) {
   assert(
-    !producerSkill.includes(phrase),
-    `Agent Producer skill must not include ${JSON.stringify(phrase)}`,
+    !producerGuidance.includes(phrase),
+    `Active Agent Producer guidance must not include ${JSON.stringify(phrase)}`,
   );
 }
 

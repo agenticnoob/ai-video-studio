@@ -519,7 +519,7 @@ git commit -m "docs: extract agent producer finalization guidance"
 - Modify: `scripts/smoke/architecture/agent-producer-architecture-smoke.mjs:400-412`
 - Modify: `scripts/smoke/architecture/agent-producer-web-removal-smoke.mjs:137-145`
 
-- [ ] **Step 1: Add the word-budget and route guard before rewriting**
+- [x] **Step 1: Add the word-budget and route guard before rewriting**
 
 Add:
 
@@ -548,7 +548,7 @@ Keep only these entrypoint assertions: frontmatter, single-entrypoint wording,
 commands, core boundaries, and completion summary. Detailed tokens remain
 protected by Tasks 1-4.
 
-- [ ] **Step 2: Run RED and verify the current word count fails**
+- [x] **Step 2: Run RED and verify the current word count fails**
 
 Run:
 
@@ -561,7 +561,7 @@ Expected: FAIL with
 count variance is acceptable only if earlier extraction edits changed
 whitespace; the count must remain greater than 500).
 
-- [ ] **Step 3: Replace `SKILL.md` with the compact router**
+- [x] **Step 3: Replace `SKILL.md` with the compact router**
 
 Use this complete target shape:
 
@@ -629,7 +629,7 @@ reviewed stills and revisions, MP4/ffprobe and cover results, validation
 commands, known issues, and the next bounded step.
 ```
 
-- [ ] **Step 4: Scan the active skill bundle instead of only the router**
+- [x] **Step 4: Scan the active skill bundle instead of only the router**
 
 In the architecture and Web-removal smokes, define:
 
@@ -649,7 +649,7 @@ Run the existing legacy/F5/generated-visual forbidden phrases and frozen
 recipe-block checks against `producerGuidance`. Do not concatenate the bundle
 inside `skill-alignment-smoke`; its positive assertions stay file-scoped.
 
-- [ ] **Step 5: Run GREEN**
+- [x] **Step 5: Run GREEN**
 
 Run:
 
@@ -664,7 +664,7 @@ git diff --check
 
 Expected: all smokes and `git diff --check` PASS; `wc -w` reports 500 or fewer.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add .agents/skills/ai-video-studio-agent-producer/SKILL.md \

@@ -134,8 +134,21 @@ for (const sourcePath of ["src/lib/storyboard-plan-schema.ts", "src/lib/template
   assert(!source.includes("PlannerRecipe"), `${sourcePath} must not expose planner manifests`);
 }
 
-for (const sourcePath of [
+const producerGuidancePaths = [
   ".agents/skills/ai-video-studio-agent-producer/SKILL.md",
+  ".agents/skills/ai-video-studio-agent-producer/references/full-video-workflow.md",
+  ".agents/skills/ai-video-studio-agent-producer/references/narration.md",
+  ".agents/skills/ai-video-studio-agent-producer/references/assets-evidence.md",
+  ".agents/skills/ai-video-studio-agent-producer/references/remotion-composition.md",
+  ".agents/skills/ai-video-studio-agent-producer/references/render-review-quality.md",
+];
+const producerGuidance = producerGuidancePaths.map(read).join("\n");
+assert(
+  !producerGuidance.includes("src/remotion/recipes/blocks"),
+  "Active Agent Producer guidance must not route future work to frozen recipe blocks",
+);
+
+for (const sourcePath of [
   "src/remotion/producer-samples/scaffold/README.md",
   "src/remotion/producer-samples/scaffold/SampleName/types.ts",
 ]) {

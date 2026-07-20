@@ -23,6 +23,17 @@ const assertIncludesWords = (source, needle, label) => {
   assertIncludes(normalizedSource, normalizedNeedle, label);
 };
 
+const assertInOrder = (source, needles, label) => {
+  let cursor = -1;
+  for (const needle of needles) {
+    const next = source.indexOf(needle, cursor + 1);
+    if (next <= cursor) {
+      fail(`${label} must place ${JSON.stringify(needle)} after the previous item.`);
+    }
+    cursor = next;
+  }
+};
+
 const assertNotIncludes = (source, needle, label) => {
   if (source.includes(needle)) {
     fail(`${label} must not include ${JSON.stringify(needle)}.`);
@@ -40,6 +51,8 @@ const assertMissing = (relativePath) => {
     fail(`${relativePath} must not exist.`);
   }
 };
+
+const wordCount = (source) => source.trim().split(/\s+/u).length;
 
 const frontmatterName = (source) => {
   const match = source.match(/^---\nname:\s*([^\n]+)\n/m);
@@ -81,9 +94,49 @@ const producerWorkflowReference = read(producerWorkflowReferencePath);
 const producerFinalizationReferencePath =
   ".agents/skills/ai-video-studio-agent-producer/references/render-review-quality.md";
 const producerFinalizationReference = read(producerFinalizationReferencePath);
+const producerReferencePaths = [
+  "references/full-video-workflow.md",
+  "references/narration.md",
+  "references/assets-evidence.md",
+  "references/remotion-composition.md",
+  "references/render-review-quality.md",
+];
+if (wordCount(producerSkill) > 500) {
+  fail(`Agent Producer SKILL.md exceeds the 500-word context budget: ${wordCount(producerSkill)}`);
+}
+for (const relativePath of producerReferencePaths) {
+  assertIncludes(producerSkill, relativePath, "Agent Producer task router");
+}
+assertNotIncludes(producerSkill, "@.agents/skills/", "Agent Producer task router");
 assertIncludes(producerSkill, "Production Chain", "Agent Producer skill");
-assertIncludes(producerSkill, "Skill Stack", "Agent Producer skill");
-assertIncludes(producerSkill, ".agents/skills/remotion-best-practices/", "Agent Producer skill");
+assertIncludes(producerSkill, "Task Routing", "Agent Producer skill");
+assertIncludes(producerSkill, "only supported video-production entrypoint", "Agent Producer skill");
+assertInOrder(
+  producerSkill,
+  [
+    "npm run producer:scaffold",
+    "npm run producer:assets",
+    "npm run producer:preflight",
+    "npm run producer:validate",
+    "npm run producer:stills",
+    "npm run producer:render",
+    "npm run producer:quality",
+  ],
+  "Agent Producer production chain",
+);
+for (const required of [
+  "code and existing assets only",
+  "VoxCPM only for new narration",
+  "dedicated Remotion composition",
+  "completed and frozen compositions read-only",
+  "Agent judgment owns",
+  "Generated media and private voice files stay ignored",
+  "Finish with composition/artifact paths",
+  "known issues",
+  "next bounded step",
+]) {
+  assertIncludesWords(producerSkill, required, "Agent Producer skill");
+}
 assertIncludes(
   producerNarrationReference,
   "../voxcpm-expression/VOXCPM_EXPRESSION.md",
@@ -99,25 +152,6 @@ assertIncludesWords(
   "trimmed and concatenated",
   "Agent Producer narration reference",
 );
-for (const required of [
-  "npm run producer:scaffold",
-  "npm run producer:assets",
-  "npm run producer:preflight",
-  "npm run producer:validate",
-  "npm run producer:stills",
-  "npm run producer:render",
-  "npm run producer:quality",
-  "strict maintained manifest",
-  "frozen-reference",
-  "existing finished samples are read-only references",
-  "only supported video-production entrypoint",
-  "docs/AGENT_PRODUCER_ONLY_ROADMAP.md",
-  "code and existing assets only",
-  "Remotion `<Still>`",
-  "VoxCPM is the only supported narration provider",
-  "docker compose run --rm producer",
-])
-  assertIncludes(producerSkill, required, "Agent Producer skill");
 for (const required of [
   "audience and publishing surface",
   "duration and aspect ratio",
