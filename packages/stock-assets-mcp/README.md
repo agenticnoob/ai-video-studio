@@ -4,8 +4,8 @@ Private, local-only Node.js 20+ package for a stdio MCP stock-image server. The
 package is independently installable and is not part of the root npm dependency
 graph.
 
-Tasks 1–2 establish the startup boundary and strict public contracts. The MCP
-tools are not registered or implemented yet.
+Tasks 1–3 establish the startup boundary, strict public contracts, and the
+Pexels image provider. The MCP tools are not registered or implemented yet.
 
 ## Configuration
 
@@ -86,6 +86,30 @@ Provider orientation is normalized at the public boundary. Pexels maps
 `square -> square`. A data-only future contract records
 `square -> squarish` for Unsplash so that a later adapter will not change the
 public enum. No Unsplash runtime, adapter, branch, or tool exists in v1.
+
+## Pexels provider behavior
+
+The provider calls only the official photo endpoints:
+
+- `https://api.pexels.com/v1/search`
+- `https://api.pexels.com/v1/photos/:id`
+
+`PEXELS_API_KEY` is sent only in the API `Authorization` header. Search
+forwards the exact supported Pexels locale list shown above and the normalized
+`landscape`, `portrait`, or `square` orientation. Public results retain the
+source page, photographer, attribution, thumbnail, dimensions, and page
+metadata; adapter-only preview/original URLs remain private.
+
+Successful API responses update the process-local quota snapshot from
+`X-Ratelimit-Limit`, `X-Ratelimit-Remaining`, and `X-Ratelimit-Reset`.
+Successful searches are cached in memory for five minutes using the complete
+normalized input; get-by-ID results and errors are never cached.
+
+Timeouts and transient `5xx` responses receive at most two retries after
+deterministic 250 ms and 500 ms waits (three total attempts). `404`, `429`, and
+other `4xx` responses never retry. A numeric `Retry-After` hint is bounded to
+one hour. Malformed JSON or successful payloads fail closed without returning
+the upstream body, key, or Authorization value.
 
 ## Local commands
 
