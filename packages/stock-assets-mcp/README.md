@@ -4,10 +4,10 @@ Private, local-only Node.js 20+ package for a stdio MCP stock-image server. The
 package is independently installable and is not part of the root npm dependency
 graph.
 
-Tasks 1–4 establish the startup boundary, strict public contracts, Pexels image
-provider, and shared validated-image download primitive. The MCP tools are not
-registered or implemented yet; in particular, no preview handler or candidate
-store exists at this stage.
+Tasks 1–5 establish the startup boundary, strict public contracts, Pexels image
+provider, shared validated-image download primitive, and pure preview handler.
+The MCP tools are not registered with the server yet, and no candidate store
+exists at this stage.
 
 ## Configuration
 
@@ -31,9 +31,10 @@ or caller-selected path.
 
 ## Frozen public contracts
 
-The future tool names are `get_provider_status`, `search_images`,
-`preview_images`, and `acquire_image`. At this stage their strict Zod contracts
-exist, but the server still exposes zero tools.
+The future registered tool names are `get_provider_status`, `search_images`,
+`preview_images`, and `acquire_image`. Their strict Zod contracts exist and the
+pure `preview_images` handler is implemented, but the server still exposes zero
+tools.
 
 `get_provider_status` accepts only `{}`. `search_images` accepts:
 
@@ -53,7 +54,16 @@ exist, but the server still exposes zero tools.
 }
 ```
 
-`preview_images` accepts one to four unique decimal `imageIds`.
+`preview_images` accepts one to four unique decimal `imageIds`. It re-fetches
+every canonical provider record, downloads only the adapter-owned preview URL,
+and preserves caller order. Result content starts with serialized structured
+JSON at index 0, followed by one MCP image block per ID; structured metadata
+maps each ID to its exact content index, candidate, MIME, dimensions, and byte
+size. Preview downloads use the fixed 5 MiB limit and are non-durable: the
+handler returns no filesystem path, does not write preview bytes, and does not
+call a candidate store. If any member fails, the entire call returns one stable
+error without partial-success image content.
+
 `acquire_image` accepts only a canonical decimal `imageId` and optional
 descriptive `searchContext` (`query`, normalized `orientation`, and a
 1–500-character `selectionNote`). Unknown fields are rejected, including URL,
@@ -115,7 +125,7 @@ the upstream body, key, or Authorization value.
 
 ## Validated image downloads
 
-Preview and acquisition will share one bounded download primitive. It accepts
+Preview uses, and acquisition will use, one bounded download primitive. It accepts
 only HTTPS URLs on the exact `images.pexels.com` host, rejects userinfo and
 non-default ports, follows redirects manually, revalidates every target, and
 permits at most five redirect hops. Image-host requests never receive the
