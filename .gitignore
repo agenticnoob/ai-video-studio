@@ -63,6 +63,9 @@ public/generated/
 .superpowers/
 .claude/
 
+# Local Git worktrees for isolated implementation tasks.
+.worktrees/
+
 # User-owned reusable-asset inbox and atomic transaction staging.
 .producer-assets/
 
