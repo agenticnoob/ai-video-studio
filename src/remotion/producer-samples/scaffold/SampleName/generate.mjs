@@ -35,8 +35,10 @@ const sampleNameNarrationBeats = [
 
 const root = "src/remotion/SampleName";
 const slug = "sample-name";
-const voiceProfileId = "lyy" /* VOICE_PROFILE_ID */;
-const voiceMode = "high-fidelity-clone" /* VOICE_MODE */;
+// prettier-ignore
+const voiceProfileId = "lyy" /* VOICE_PROFILE_ID */
+// prettier-ignore
+const voiceMode = "high-fidelity-clone" /* VOICE_MODE */
 const voxcpmConfig = readProducerVoxcpmConfig();
 
 await runProducerAudioGeneration({

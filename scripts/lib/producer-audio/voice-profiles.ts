@@ -39,11 +39,7 @@ const requireBoolean = (value: unknown, label: string): boolean => {
   return value;
 };
 
-const requireClonePath = (
-  value: unknown,
-  label: string,
-  extension: ".wav" | ".txt",
-): string => {
+const requireClonePath = (value: unknown, label: string, extension: ".wav" | ".txt"): string => {
   const filePath = requireText(value, label);
   if (
     !filePath.startsWith("voices/clone/") ||

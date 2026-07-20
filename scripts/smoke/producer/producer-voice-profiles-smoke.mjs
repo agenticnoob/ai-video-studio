@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* global console */
 
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -13,10 +14,7 @@ assert(buildRoot, "PRODUCER_VOICE_PROFILES_BUILD_DIR is required.");
 
 const registryPath = "scripts/lib/producer-audio/voice-profiles.json";
 const runtimePath = path.join(buildRoot, "scripts/lib/producer-audio/voice-profiles.js");
-const manifestRuntimePath = path.join(
-  buildRoot,
-  "src/remotion/producer-samples/manifest.js",
-);
+const manifestRuntimePath = path.join(buildRoot, "src/remotion/producer-samples/manifest.js");
 const scaffoldManifestRuntimePath = path.join(
   buildRoot,
   "src/remotion/producer-samples/scaffold/SampleName/manifest.js",
@@ -76,10 +74,7 @@ const sciencePlan = runtime.createVoxcpmProducerRequestPlanForProfile({
   control: "冷静、清晰、自然解释，中速",
 });
 assert.equal(sciencePlan.mode, "controllable-clone");
-assert.equal(
-  sciencePlan.referenceAudioPath,
-  "voices/clone/science-explainer-young-male.wav",
-);
+assert.equal(sciencePlan.referenceAudioPath, "voices/clone/science-explainer-young-male.wav");
 assert.equal(sciencePlan.control, "冷静、清晰、自然解释，中速");
 
 const scienceHighFidelityPlan = runtime.createVoxcpmProducerRequestPlanForProfile({
@@ -116,7 +111,10 @@ for (const forbidden of [
   "voices/clone/science-explainer-young-male.wav",
   "voices/clone/science-explainer-young-male.txt",
 ]) {
-  assert(!scaffoldGenerator.includes(forbidden), `Future scaffold must not hard-code ${forbidden}.`);
+  assert(
+    !scaffoldGenerator.includes(forbidden),
+    `Future scaffold must not hard-code ${forbidden}.`,
+  );
 }
 assert(scaffoldGenerator.includes("createVoxcpmProducerRequestPlanForProfile"));
 
