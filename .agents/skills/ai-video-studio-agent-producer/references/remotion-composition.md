@@ -26,6 +26,17 @@ Select one explicit profile with `getProducerStyleProfile()`:
 --style-profile <profile-id>`. A profile constrains composition, motion,
 texture, media, captions, and sound; it does not generate scene structure.
 
+## Style Is Not A Storyboard
+
+Do not turn profile fixtures, cards, or diagram conventions into a repeated
+scene template. The style profile supplies palette, texture, motion character,
+media treatment, captions, and sound language; it does not decide what the
+viewer sees. Build each scene from its content-first visual intent. A paused
+frame must make the subject and action legible, and clarity wins whenever a
+profile convention obscures the news, mechanism, or consequence. Keep adjacent
+scenes distinct through primary silhouettes, spatial grammar, or shot language
+unless they are a deliberate A/B comparison.
+
 Current callable surfaces include `getProducerEffectPreset()`,
 `getProducerMediaEffectPreset()`, `fitProducerText()`,
 `getProducerTransitionPreset()`, `getProducerTransitionSeriesDuration()`,

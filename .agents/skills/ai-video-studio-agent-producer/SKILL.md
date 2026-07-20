@@ -28,6 +28,21 @@ npm run producer:render -- --composition <composition-id>
 npm run producer:quality -- --module <quality-module>
 ```
 
+## Creative Gates
+
+- Define a content-first visual intent for every beat before scene code. A
+  paused frame must communicate the subject, change, and consequence without
+  depending on its caption.
+- Give adjacent scenes distinct primary composition and shot language unless
+  repetition is an intentional comparison. Treat a style profile as a visual
+  constraint, never as a scene template; clarity wins over stylistic literalism.
+- Inspect every scene and every meaning-changing motion state before a long
+  render. Design covers as separate topic-specific compositions and review
+  both ratios at full size and thumbnail size.
+- Benchmark long renders and confirm export ownership first. For narrated
+  H.264/AAC output, cover codec/container tail with an explicit visual end hold
+  included in the final chapter; never loosen quality tolerance to hide drift.
+
 ## Task Routing
 
 Read only the matching reference; load another only when scope expands:
@@ -52,7 +67,8 @@ follow the composition reference's rule-specific route.
   video generation, remote render asset, fabricated screenshot, CSS animation,
   or CSS transition for render-critical motion.
 - Agent judgment owns research, narration structure, visual metaphor, asset
-  choice, scene composition, motion/sound design, and final audiovisual review.
+  choice, scene composition, motion/sound design, content-first visual review,
+  and final audiovisual review.
 - Generated media and private voice files stay ignored unless explicitly
   requested otherwise.
 

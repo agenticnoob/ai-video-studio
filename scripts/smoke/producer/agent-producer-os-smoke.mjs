@@ -70,6 +70,7 @@ const expectedMaintainedCompositionIds = [
   "DnsResolutionExplainer",
   "AiDailyNews20260717",
   "SuperintelligenceBeyondHumanCognition",
+  "AiDaily20260720",
 ];
 assert.equal(
   maintainedProducerSampleManifests.length,

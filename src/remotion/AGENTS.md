@@ -67,6 +67,17 @@ src/remotion/
   final acceptance video and Roadmap closure are complete.
 - Build topic data, narration, and scene order inside the dedicated
   composition.
+- Apply content-first visual review: record subject, action or change, shot
+  language, intended meaning, and distinct silhouette before scene code; make
+  paused frames self-explanatory and keep adjacent primary compositions
+  distinct unless comparison is intentional.
+- Treat style profiles as constraints, not storyboards. Inspect every scene and
+  meaning-changing early/middle/late state, review both cover ratios full-size
+  and as thumbnails with centered safe whitespace, and benchmark a
+  representative expensive scene before long renders.
+- When narrated H.264/AAC mux duration exceeds narration frames, add an
+  explicit visual end hold and include it in the final chapter; do not widen
+  quality tolerance to mask the mismatch.
 - Use `standalone-video/caption-types` for future Producer captions.
 - Treat finished compositions and historical recipe helpers as read-only.
 

@@ -84,6 +84,19 @@ All spacing derives from 4px.
 - Fixed-format video elements need explicit dimensions to prevent layout jumps.
 - Captions live outside the lower 96px of visual-heavy scenes.
 
+### Content-First Scene Grammar
+
+- Perform content-first visual review before implementation: record the subject,
+  action or change, shot language, intended meaning, and distinct silhouette.
+- A paused frame must communicate its event without asking the caption to act
+  as the picture.
+- Adjacent scenes use distinct primary composition unless repetition is a
+  deliberate comparison. Style profiles define production language, not a
+  storyboard template.
+- Review every scene and each meaning-changing early/middle/late state. Covers
+  use a topic-specific focal metaphor, centered safe whitespace, and separate
+  full-size plus thumbnail checks for 16:9 and 9:16.
+
 ## 5. Components
 
 ### Technical Video Scene

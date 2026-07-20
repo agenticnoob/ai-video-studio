@@ -56,7 +56,11 @@ composition declares a validated `styleProfileId` through the required
 `producer:scaffold --style-profile` flag, then runs
 `npm run smoke:producer-style-profile-sample-contract`. This records a
 constraint choice only; the composition still owns its topic-specific scene
-design. Phase 8 is complete. Phase 9A deterministic quality gates are
+design. Apply content-first visual review before treating a composition as
+ready: a paused frame must reveal the subject and action, adjacent scenes must
+not repeat one primary layout unless comparison is intentional, and
+meaning-changing motion needs early/middle/late stills. Profile conventions
+never outrank clarity. Phase 8 is complete. Phase 9A deterministic quality gates are
 complete. Every future composition owns a quality module and runs
 `producer:quality` after render for measured text/layout bounds, safe margins,
 evidence resolution, rendered-frame luma, artifact metadata/chapters, and Git

@@ -194,6 +194,53 @@ for (const required of [
   );
 }
 for (const required of [
+  "Content-First Visual Intent",
+  "subject, action or change, shot language, intended meaning, and distinct silhouette",
+  "paused frame",
+]) {
+  assertIncludesWords(
+    producerWorkflowReference,
+    required,
+    "Agent Producer content-first workflow reference",
+  );
+}
+for (const required of ["Style Is Not A Storyboard", "clarity wins", "adjacent scenes"]) {
+  assertIncludesWords(
+    producerRemotionReference,
+    required,
+    "Agent Producer composition clarity reference",
+  );
+}
+for (const required of [
+  "all-scene review",
+  "early, middle, and late",
+  "full-size and thumbnail",
+  "representative render benchmark",
+  "metadata and covers only",
+  "explicit visual end hold",
+  "Do not widen the quality tolerance",
+]) {
+  assertIncludesWords(
+    producerFinalizationReference,
+    required,
+    "Agent Producer creative review reference",
+  );
+}
+
+for (const [cliPath, expectedCount] of [
+  ["scripts/preflight-producer-assets.mjs", 1],
+  ["scripts/render-producer-review-frames.mjs", 3],
+  ["scripts/render-producer-sample.mjs", 1],
+  ["scripts/validate-producer-quality.mjs", 1],
+]) {
+  const actualCount = read(cliPath).split("--resolveJsonModule").length - 1;
+  if (actualCount !== expectedCount) {
+    fail(
+      `${cliPath} must configure JSON imports for every TypeScript compiler call; expected ${expectedCount}, found ${actualCount}.`,
+    );
+  }
+}
+for (const required of [
   ".agents/skills/remotion-best-practices/SKILL.md",
   "rules/video-layout.md",
   "rules/subtitles.md",
@@ -530,6 +577,7 @@ assertIncludes(
 assertIncludes(remotionSkill, "styleProfileId", "Remotion skill");
 assertIncludes(remotionSkill, "producer:quality", "Remotion skill");
 assertIncludes(remotionSkill, "does not score aesthetics", "Remotion skill");
+assertIncludesWords(remotionSkill, "content-first visual review", "Remotion skill");
 
 for (const skillName of ["ai-video-studio-agent-producer", "ai-video-studio-asset-library"]) {
   const skillDir = `.agents/skills/${skillName}`;
@@ -565,6 +613,28 @@ for (const docPath of [
   "docs/PRODUCER_ASSET_CONTRACT.md",
 ]) {
   assertIncludes(read(docPath), ".agents/skills/ai-video-studio-asset-library/", docPath);
+}
+
+for (const docPath of [
+  "README.md",
+  "AGENTS.md",
+  "docs/FINAL_PRODUCT_GOAL.md",
+  "docs/ITERATION_STATUS.md",
+  "docs/AGENT_PRODUCER_ONLY_ROADMAP.md",
+  "docs/DESIGN_SYSTEM.md",
+  "src/remotion/AGENTS.md",
+]) {
+  assertIncludesWords(read(docPath), "content-first visual review", docPath);
+}
+for (const docPath of [
+  "README.md",
+  "AGENTS.md",
+  "docs/FINAL_PRODUCT_GOAL.md",
+  "docs/ITERATION_STATUS.md",
+  "docs/AGENT_PRODUCER_ONLY_ROADMAP.md",
+  "src/remotion/AGENTS.md",
+]) {
+  assertIncludesWords(read(docPath), "explicit visual end hold", docPath);
 }
 
 const remotionAgents = read("src/remotion/AGENTS.md");

@@ -1,0 +1,8 @@
+{
+  "title": "AI 日报｜2026 年 7 月 20 日",
+  "description": "模型竞赛如何扩展为芯片、电力、容量、数据与内容溯源的一体化竞争。",
+  "fps": 30,
+  "chapters": [
+    {"name":"今日核心判断","durationInFrames":871},{"name":"Google Frozen v2","durationInFrames":1191},{"name":"NVIDIA 仿真 Agent","durationInFrames":1079},{"name":"Kimi 推理容量","durationInFrames":1217},{"name":"AI for Science","durationInFrames":1199},{"name":"欧盟透明度义务","durationInFrames":1343},{"name":"电力与数据中心","durationInFrames":1065},{"name":"趋势汇总","durationInFrames":729},{"name":"Agent 开发者清单","durationInFrames":909}
+  ]
+}

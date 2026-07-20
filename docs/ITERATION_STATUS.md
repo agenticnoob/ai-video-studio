@@ -1,6 +1,6 @@
 # Iteration Status
 
-Last updated: 2026-07-20
+Last updated: 2026-07-21
 
 ## Current Authority
 
@@ -101,6 +101,28 @@ This is future-only: existing completed/frozen source and generated artifacts
 remain unchanged. VoxCPM remains the only provider, no environment/config
 provider selector is introduced, Phase 9 and the Roadmap remain complete, and
 no Phase 10 starts.
+
+### Post-Roadmap: Content-First Creative Review Hardening (2026-07-21)
+
+The `AiDaily20260720` production exposed repeated scene grammar, style
+literalism that obscured meaning, insufficient motion-state still coverage, a
+title-card cover, premature long rendering, JSON compiler/metadata drift, and
+an AAC/container tail that exceeded the one-frame duration tolerance.
+The Agent Producer skill now requires content-first visual review: every beat
+records subject, action or change, shot language, intended meaning, and a
+distinct silhouette; paused frames must communicate the event; adjacent scenes
+remain visually distinct unless comparison is intentional; and style profiles
+remain constraints rather than storyboards.
+
+All scenes plus meaning-changing early/middle/late states are reviewed before a
+long render. Covers use a topic-specific focal metaphor, centered safe
+whitespace, and full-size/thumbnail inspection in both ratios. Long portrait
+work benchmarks a representative expensive scene and confirms export ownership
+before full rendering. JSON-importing TypeScript CLI wrappers now compile with
+`--resolveJsonModule`. Narrated muxes use an explicit visual end hold included
+in the last chapter rather than a wider tolerance. This is workflow hardening
+backed by one real production, not Phase 10, a new planner, or a change to
+completed/frozen compositions.
 
 The approved Agent-managed reusable asset library is complete as one bounded
 post-Roadmap v1 capability. Agent-only CLI operations manage standalone

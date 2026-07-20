@@ -30,6 +30,7 @@ await execFileAsync("npx", [
   "commonjs",
   "--moduleResolution",
   "node",
+  "--resolveJsonModule",
   "--skipLibCheck",
   "--esModuleInterop",
   "--noEmit",

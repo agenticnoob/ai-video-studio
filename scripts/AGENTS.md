@@ -47,6 +47,9 @@ references. Do not use them as future Producer scaffolds.
 - Probe `node_modules/remotion`, not removed Web dependencies.
 - Node smoke scripts should be deterministic and focused on one contract.
 - Temporary smoke build output belongs under `/tmp`.
+- When a public wrapper compiles a TypeScript module graph that imports JSON,
+  pass `--resolveJsonModule`; keep the requirement covered by architecture
+  smoke rather than relying on a workstation tsconfig side effect.
 - Keep package smoke names aligned with maintained script files.
 - Keep public Producer wrappers at the `scripts/` root; one-off helpers belong in `tools/`.
 - Direct VoxCPM runtime failures must fail closed without a provider fallback.

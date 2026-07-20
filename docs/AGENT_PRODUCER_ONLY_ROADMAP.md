@@ -52,6 +52,20 @@ complete.
 
 User audition status: accepted on 2026-07-19.
 
+Post-Roadmap creative-review note: the `AiDaily20260720` production hardened
+the completed workflow around content-first visual review. Every future beat
+records subject, action or change, shot language, intended meaning, and a
+distinct silhouette before scene implementation; paused frames must explain
+the event, adjacent scenes must not repeat one primary layout without an
+intentional comparison, and style profiles remain constraints rather than
+storyboards. All scenes and meaning-changing early/middle/late states are
+reviewed before long rendering. Covers require a topic-specific focal metaphor,
+centered safe whitespace, and full-size/thumbnail inspection in both ratios.
+Long work benchmarks a representative expensive scene and confirms export
+ownership first. Narrated muxes cover codec/container tail with an explicit
+visual end hold in the final chapter instead of widening quality tolerance.
+This adds no Phase 10 and changes no completed/frozen work.
+
 This roadmap defines the repository transition from a mixed Agent Producer,
 Web video product, and multi-provider TTS workspace into one focused local
 production system:
@@ -80,7 +94,7 @@ topic / supplied material
   -> primitive / block / runtime inventory
   -> dedicated Remotion composition
   -> asset and composition preflight
-  -> representative still review
+  -> content-first visual review of every scene and meaning-changing state
   -> MP4 render and ffprobe verification
   -> 16:9 and 9:16 covers
   -> publishing copy and promotion notes

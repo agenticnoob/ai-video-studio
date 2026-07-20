@@ -26,7 +26,7 @@ topic or supplied material
   -> primitive / block / runtime inventory
   -> dedicated Remotion composition
   -> asset and composition preflight
-  -> representative still review
+  -> content-first visual review of every scene and meaning-changing state
   -> local MP4 and ffprobe verification
   -> code-rendered Remotion Still covers
   -> publishing copy
@@ -100,6 +100,18 @@ codec checks, and artifact verification.
 The agent owns research, factual judgment, narration structure, visual
 metaphor, asset choice, scene composition, motion and sound design, visual
 review, revisions, and promotion decisions.
+
+Content-first visual review means every beat records its subject, action or
+change, shot language, intended meaning, and distinct silhouette before scene
+implementation. A paused frame must communicate the event without caption
+dependence; adjacent scenes need distinct primary grammar unless comparison is
+intentional. Style profiles constrain production language rather than provide
+storyboards. Every scene and meaning-changing early/middle/late state is
+reviewed before a long render, covers receive separate full-size/thumbnail
+review in both ratios, and long work is benchmarked after export ownership is
+confirmed. Narrated H.264/AAC work accounts for codec/container tail with an
+explicit visual end hold included in the last chapter; quality tolerance is
+not widened to conceal duration drift.
 
 Iteration authority tracks product capabilities and milestones, not the
 delivery state of an individual video production. A composition's render,

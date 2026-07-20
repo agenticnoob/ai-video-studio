@@ -158,7 +158,10 @@ Phase 8A added `getProducerStyleProfile()` with six profile ids:
 `editorial-tech`, `comic-anime`, `cinematic-3d`, `retro-terminal`,
 `documentary-media`, and `hand-drawn-explainer`. Each record constrains
 composition, motion, texture, media, Three.js, captions, and sound; it does not
-generate scenes or select a template. Six code-only pages in
+generate scenes or select a template. Content-first visual review still owns
+the topic-specific subject, action, shot language, meaning, and distinct scene
+silhouette; profile fixtures must never be copied into a repeated layout that
+obscures the content. Six code-only pages in
 `AgentProducerCapabilityShowcase` prove the inventory boundary. Run
 `npm run smoke:producer-style-profiles` before selection.
 Phase 8B style-profile sample contract is complete. New

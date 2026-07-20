@@ -1,6 +1,17 @@
 import type { FC } from "react";
 import { Composition, Folder, Still } from "remotion";
 import {
+  AI_DAILY20260720_COMPOSITION_ID,
+  AI_DAILY20260720_DURATION_IN_FRAMES,
+  AI_DAILY20260720_FPS,
+  AI_DAILY20260720_HEIGHT,
+  AI_DAILY20260720_WIDTH,
+  AiDaily20260720Cover16x9,
+  AiDaily20260720Cover9x16,
+  AiDaily20260720Video,
+} from "./AiDaily20260720";
+import { aiDaily20260720Scenes } from "./AiDaily20260720/data";
+import {
   AGENT_PRODUCER_MEDIA_SOUND_PROOF_COMPOSITION_ID,
   AGENT_PRODUCER_MEDIA_SOUND_PROOF_DURATION_IN_FRAMES,
   AGENT_PRODUCER_MEDIA_SOUND_PROOF_FPS,
@@ -250,6 +261,27 @@ export const RemotionRoot: FC = () => {
   return (
     <>
       <Folder name="Agent-Producer-Inventory">
+        <Composition
+          id={AI_DAILY20260720_COMPOSITION_ID}
+          component={AiDaily20260720Video}
+          defaultProps={{ scenes: aiDaily20260720Scenes }}
+          durationInFrames={AI_DAILY20260720_DURATION_IN_FRAMES}
+          fps={AI_DAILY20260720_FPS}
+          width={AI_DAILY20260720_WIDTH}
+          height={AI_DAILY20260720_HEIGHT}
+        />
+        <Still
+          id="AiDaily20260720Cover16x9"
+          component={AiDaily20260720Cover16x9}
+          width={1920}
+          height={1080}
+        />
+        <Still
+          id="AiDaily20260720Cover9x16"
+          component={AiDaily20260720Cover9x16}
+          width={1080}
+          height={1920}
+        />
         <Composition
           id={REMOTION_CAPABILITY_SHOWCASE_COMPOSITION_ID}
           component={RemotionCapabilityShowcase}

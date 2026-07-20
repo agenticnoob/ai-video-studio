@@ -96,6 +96,11 @@ repository contains `.codegraph/`.
   reads and visually classifies the batch, completes semantics, never asks for
   per-asset authorization/attribution facts, and invokes one atomic ingest per
   accepted item using the repository-wide user-authorization default.
+- The post-Roadmap content-first visual review contract requires per-beat
+  subject/action/shot/meaning intent, paused-frame comprehension, distinct
+  adjacent-scene grammar, all-scene still inspection, ratio-specific cover
+  review, and a representative benchmark before long renders. Style profiles
+  remain constraints, not storyboards; this starts no Phase 10.
 
 ## Chinese Science-Explainer Narration Default
 
@@ -150,6 +155,11 @@ retrofit of completed/frozen source or generated artifacts is introduced.
 ## Production Rules
 
 - Build a dedicated composition for each real topic.
+- Write a content-first visual intent for every beat before implementation:
+  subject, action or change, shot language, intended meaning, and distinct
+  silhouette. A paused frame must communicate the event without its caption.
+- Do not reuse one primary composition across adjacent scenes unless it is an
+  intentional comparison. A style profile never substitutes for shot design.
 - Inventory primitives, Producer blocks, and standalone runtime helpers before
   adding sample-local components.
 - Keep creative judgment with the agent; automate only deterministic production
@@ -165,7 +175,15 @@ retrofit of completed/frozen source or generated artifacts is introduced.
 - Attempt real capture for source-backed evidence. If capture is unavailable,
   record the reason outside the frame and use an honest code-rendered
   information graphic.
-- Render covers as Remotion `<Still>` compositions in 16:9 and 9:16.
+- Render covers as Remotion `<Still>` compositions in 16:9 and 9:16; use a
+  topic-specific focal metaphor, centered safe whitespace, and inspect both
+  ratios full-size and as thumbnails.
+- Review every scene plus early/middle/late states when motion changes meaning.
+  Benchmark the most expensive representative scene before a long final render
+  and confirm final-export ownership first.
+- For narrated H.264/AAC output, use an explicit visual end hold when needed to
+  cover codec/container tail and include it in the last chapter; never relax
+  the quality tolerance to hide duration drift.
 - Keep all render-critical motion frame-driven with Remotion APIs.
 - Keep generated/local artifacts out of source control unless explicitly
   requested.

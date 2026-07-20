@@ -1,0 +1,75 @@
+import type { AiDaily20260720SceneId } from "./types";
+
+export type AiDaily20260720NarrationBeat = {
+  readonly sceneId: AiDaily20260720SceneId;
+  readonly text: string;
+  readonly displayText: string;
+  readonly visualMode: "asset-led" | "code-led" | "hybrid";
+  readonly control: string;
+};
+
+export const aiDaily20260720NarrationBeats = [
+  {
+    sceneId: "open",
+    text: "AI 日报，二零二六年七月二十日。截至北京时间二十三点五十六分。今天没有新的旗舰模型发布，真正的主线，是人工智能竞争正在从模型参数，扩展成模型、专用芯片、电力、运行容量和内容溯源的一体化竞争。决定产品能不能扩张的，越来越不是榜单分数，而是每一个 Token 的成本、可用算力，以及合规架构。",
+    displayText: "模型 × 芯片 × 电力 × 容量 × 溯源",
+    visualMode: "code-led",
+    control: "年轻男声科技主播，清晰有判断力，中速开场",
+  },
+  {
+    sceneId: "google",
+    text: "先看 Google。据报道，Google 正开发代号 Frozen v2 的服务器芯片，尝试把 Gemini 的部分模型信息直接固化进硬件，而不是每次都从外部内存加载。项目独立于 TPU，最快可能在二零二八年部署。研发目标是按单位功耗计算，把 Token 服务效率提高到最新自研 AI 芯片的六到十倍。但它仍在设计阶段，具体固化多少模型信息、能否量产，都需要后续验证。方向很清楚：模型与硬件联合设计，换取更低延迟、功耗和 Token 成本；代价则是软硬件耦合更深，芯片周期可能追不上模型迭代。",
+    displayText: "Frozen v2：目标 6—10× Token / 功耗",
+    visualMode: "code-led",
+    control: "年轻男声技术解说，冷静精确，强调研发目标与不确定性",
+  },
+  {
+    sceneId: "nvidia",
+    text: "第二个信号来自 NVIDIA。Omniverse 库被加入 Agent Toolkit，开放 RTX 传感器模拟、GPU 物理模拟和 CAD 到 SimReady 等组件。Agent 可以检查三维场景、发现资产问题、添加碰撞、质量和摩擦属性，还能把普通 CAD 转成机器人训练所需的 OpenUSD 仿真资产。这意味着 Agent 不再只操作代码、文档和浏览器，也开始进入数字孪生、工业设计和机器人训练环境。软件执行器，正在变成能参与构建物理世界模型的运行主体。",
+    displayText: "Agent 进入仿真与物理世界",
+    visualMode: "code-led",
+    control: "年轻男声科技解说，节奏明快，带轻微兴奋感",
+  },
+  {
+    sceneId: "kimi",
+    text: "再看 Kimi K3。Moonshot AI 表示，发布后四十八小时内请求量远超预测，接近现有计算集群上限，因此暂停新的消费者订阅，并优先保障现有付费用户。K3 总参数量二点八万亿，重点面向编程和 Agent 长任务。这类任务需要多轮调用、工具执行和结果验证，单位用户消耗远高于普通聊天。它揭示了一个现实：模型权重可以开放，但要大规模、低价格、稳定地提供推理服务，仍然需要昂贵的 GPU、电力和调度系统。模型发布能力，不等于服务交付能力。",
+    displayText: "模型发布能力 ≠ 服务交付能力",
+    visualMode: "code-led",
+    control: "年轻男声商业科技解说，克制而有警示感，中速",
+  },
+  {
+    sceneId: "science",
+    text: "AI for Science 也在从演示走向闭环。Bristol Myers Squibb 将采购基于 NVIDIA Vera Rubin 的 DGX SuperPOD，用于药物靶点发现、候选筛选和临床开发。公司称，现有 AI 工具已把部分实验药物制备周期缩短约百分之二十到三十，但实际效果仍需药物管线验证。材料领域，英国 CuspAI 完成四点五亿美元 B 轮融资，并组织超过四十五家机构参与 AI Materials Foundry。竞争重点已经从模型能否提出假设，升级为能否把假设推进到仿真、合成路线和真实实验。",
+    displayText: "模型 → 仿真 → 实验",
+    visualMode: "code-led",
+    control: "年轻男声科普解说，稳健清楚，强调闭环",
+  },
+  {
+    sceneId: "regulation",
+    text: "政策方面，欧盟委员会发布人工智能法案第五十条透明度义务指南，相关义务从二零二六年八月二日开始适用。提供者需要告知用户正在与 AI 交互，并为 AI 生成或修改的文本、音频、图像和视频添加机器可读取的标记。部署企业还需要披露 Deepfake、未经人工审查的公共利益类 AI 文本、情绪识别和生物特征分类。行为准则可以自愿加入，但透明度要求本身是法律义务。工程上，水印、来源、人工编辑记录和生成链路，必须进入内容存储、导出和分发架构，而不只是界面上的一个标签。",
+    displayText: "AI 标记与披露进入基础架构",
+    visualMode: "code-led",
+    control: "年轻男声政策解说，严谨清晰，语速略慢",
+  },
+  {
+    sceneId: "power",
+    text: "资本正在给电力和土地重新定价。Hut 8 签署第二份十五年、价值九十八亿美元的 AI 数据中心租约，使得州 Beacon Point 一吉瓦园区全部完成商业化。新协议增加三百五十二兆瓦 IT 容量，该客户在园区的总容量达到七百零四兆瓦。基础租期合同总值达到一百九十六亿美元。拥有电力接入和可立即建设土地的旧矿企，正在转型为 AI 基础设施供应商。算力竞争，进一步变成电力、土地和交付时间的竞争。",
+    displayText: "1GW 园区：电力资产被长期锁定",
+    visualMode: "code-led",
+    control: "年轻男声财经科技解说，沉稳有力度，突出数字",
+  },
+  {
+    sceneId: "signals",
+    text: "把今天的信号放在一起：专用芯片追求效率，Kimi 暴露容量瓶颈，电力资产被长期锁定，制药和材料建立实验闭环，医疗并购争夺数据入口，欧盟则把内容标记变成法律义务。它们共同指向同一件事：AI 产品的上限，正由效率、容量、能源、数据和合规组成的完整系统决定。",
+    displayText: "AI 产品上限，由完整系统决定",
+    visualMode: "code-led",
+    control: "年轻男声总结解说，条理清晰，逐项递进",
+  },
+  {
+    sceneId: "close",
+    text: "对 Agent 开发者，行动清单有六项：算力预算和限流；跨模型、跨硬件路由；长任务恢复和重试；工具与内容来源记录；机器可读标记；以及仿真到真实执行的验证闭环。下一阶段的 Agent，不只会调用工具，还要在资源受限、过程可追溯、结果可验证的系统里持续运行。这就是今天的 AI 日报。",
+    displayText: "预算 · 路由 · 恢复 · 溯源 · 标记 · 验证",
+    visualMode: "code-led",
+    control: "年轻男声科技主播，坚定收束，结尾自然有余韵",
+  },
+] as const satisfies readonly AiDaily20260720NarrationBeat[];

@@ -24,7 +24,7 @@ topic or supplied material
   -> narration beats and VoxCPM
   -> primitive / block / runtime inventory
   -> dedicated Remotion composition
-  -> preflight and representative still review
+  -> preflight and content-first visual review of every scene
   -> local MP4 and metadata
   -> Remotion Still covers
   -> publishing copy
@@ -155,6 +155,12 @@ provider selector is added.
 
 - Use React, HTML, SVG, Canvas, Three.js, Remotion effects, and deterministic
   frame-driven motion.
+- Record each beat's subject, action or change, shot language, intended meaning,
+  and distinct silhouette before scene implementation. A paused frame must
+  communicate the event without depending on its caption.
+- Keep adjacent scenes visually distinct unless repetition is an intentional
+  comparison. Style profiles constrain production language; they are not
+  storyboard templates, and clarity wins over stylistic literalism.
 - Use local or localized images, videos, screenshots, SVG, audio, fonts,
   Lottie, Rive, GLB/glTF, textures, and user-supplied files.
 - Record every visible non-code asset in a `ProducerAssetManifest` and pass
@@ -169,7 +175,14 @@ provider selector is added.
   why and build an honest code-rendered information graphic.
 - Generate new narration with VoxCPM only.
 - Render 16:9 and 9:16 covers as Remotion `<Still>` compositions using code and
-  manifest-backed existing assets.
+  manifest-backed existing assets. Give each ratio a topic-specific focal
+  metaphor, centered safe whitespace, and full-size plus thumbnail review.
+- Keep narrated H.264/AAC duration deterministic: if codec/container tail
+  exceeds narration frames, add an explicit visual end hold to the composition
+  and final chapter instead of widening quality tolerance.
+- Inspect every scene and every meaning-changing early/middle/late state before
+  a long render. Benchmark a representative expensive scene and confirm who
+  owns final export before starting the full MP4.
 - Keep generated audio, captures, stills, covers, and MP4s local unless the
   user explicitly requests otherwise.
 
