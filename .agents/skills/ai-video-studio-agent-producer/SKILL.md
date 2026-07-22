@@ -38,7 +38,7 @@ npm run producer:quality -- --module <quality-module>
   constraint, never as a scene template; clarity wins over stylistic literalism.
 - Inspect every scene and every meaning-changing motion state before a long
   render. Design covers as separate topic-specific compositions and review
-  both ratios at full size and thumbnail size.
+  both required ratios, 4:3 and 3:4, at full size and thumbnail size.
 - Benchmark long renders and confirm export ownership first. For narrated
   H.264/AAC output, cover codec/container tail with an explicit visual end hold
   included in the final chapter; never loosen quality tolerance to hide drift.

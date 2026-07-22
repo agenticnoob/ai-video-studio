@@ -28,10 +28,12 @@ extends the mux, add an explicit visual end hold to the composition and include
 the same frames in the final publishing chapter, following the maintained
 Producer pattern. Do not widen the quality tolerance to conceal the mismatch.
 
-Render registered Remotion `<Still>` covers at 1920x1080 and 1080x1920. Inspect
-both full-size and thumbnail. A cover is a separate editorial composition, not
-a frame with a larger title: require one topic-specific focal metaphor,
-centered safe whitespace, clear hierarchy, and ratio-specific composition.
+Render exactly two registered Remotion `<Still>` covers: 4:3 at 1600x1200 and
+3:4 at 1200x1600. Inspect both full-size and thumbnail. A cover is a
+separate editorial composition, not a frame with a larger title: require one
+topic-specific focal metaphor, centered safe whitespace, clear hierarchy, and
+ratio-specific composition. Do not substitute 16:9 or 9:16 for future cover
+production; completed and frozen covers remain unchanged.
 
 For long portrait work, run a representative render benchmark on the most
 expensive scene or a bounded frame range before starting the full MP4. Confirm

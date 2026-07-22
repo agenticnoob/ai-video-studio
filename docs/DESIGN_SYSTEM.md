@@ -95,7 +95,7 @@ All spacing derives from 4px.
   storyboard template.
 - Review every scene and each meaning-changing early/middle/late state. Covers
   use a topic-specific focal metaphor, centered safe whitespace, and separate
-  full-size plus thumbnail checks for 16:9 and 9:16.
+  full-size plus thumbnail checks for 4:3 (1600x1200) and 3:4 (1200x1600).
 
 ## 5. Components
 

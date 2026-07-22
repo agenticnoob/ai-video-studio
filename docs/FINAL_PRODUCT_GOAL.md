@@ -76,7 +76,9 @@ licensed assets.
 
 When a real source capture fails or is unreadable, record the reason outside
 the frame and build an honest code-rendered information graphic. Covers are
-registered Remotion `<Still>` compositions rendered in 16:9 and 9:16.
+registered Remotion `<Still>` compositions rendered as exactly two future
+outputs: 4:3 at 1600x1200 and 3:4 at 1200x1600. Existing completed and frozen
+cover outputs remain unchanged.
 
 ## Frozen History
 

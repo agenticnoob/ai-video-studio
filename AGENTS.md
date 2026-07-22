@@ -175,9 +175,10 @@ retrofit of completed/frozen source or generated artifacts is introduced.
 - Attempt real capture for source-backed evidence. If capture is unavailable,
   record the reason outside the frame and use an honest code-rendered
   information graphic.
-- Render covers as Remotion `<Still>` compositions in 16:9 and 9:16; use a
-  topic-specific focal metaphor, centered safe whitespace, and inspect both
-  ratios full-size and as thumbnails.
+- Render exactly two future covers as Remotion `<Still>` compositions: 4:3 at
+  1600x1200 and 3:4 at 1200x1600; use a topic-specific focal metaphor,
+  centered safe whitespace, and inspect both ratios full-size and as
+  thumbnails. Existing completed and frozen covers remain unchanged.
 - Review every scene plus early/middle/late states when motion changes meaning.
   Benchmark the most expensive representative scene before a long final render
   and confirm final-export ownership first.
