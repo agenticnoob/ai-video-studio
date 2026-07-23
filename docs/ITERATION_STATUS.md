@@ -498,6 +498,44 @@ composition remains unchanged.
 
 ```bash
 npm run producer:scaffold -- --name <CompositionName> --slug <slug> --style-profile <profile-id> --voice-profile <voice-profile-id>
+```
+
+### Post-Roadmap: AiDaily20260721 (2026-07-21)
+
+`AiDaily20260721` is a composition-local maintained 12-scene 9:16 portrait AI
+daily news briefing. It uses the `hand-drawn-explainer` style profile and
+`science-explainer-young-male` in `high-fidelity-clone` mode. 12 real VoxCPM
+narration tracks were generated for a total of 14613 frames (487.1 seconds).
+All scenes use code-led hand-drawn information graphics. Seven representative
+review frames, two legacy-ratio 16:9/9:16 covers, and a 1080x1920 H.264/AAC
+local render exist. The composition has not passed its declared all-scene
+review plan or post-render `producer:quality`, so this is not a final delivery
+or a new iteration milestone.
+
+### Post-Roadmap: AiDaily20260722 (2026-07-22)
+
+`AiDaily20260722` is a registered composition-local 12-scene 9:16 portrait AI
+daily news briefing using `editorial-tech`. Its 12 real VoxCPM narration tracks
+use `science-explainer-young-male` in `controllable-clone` mode. A 1080x1920
+H.264/AAC local render, five representative scene stills, and both legacy
+16:9/9:16 plus current 4:3/3:4 cover outputs exist. The source does not yet own
+the strict maintained Producer manifest, asset manifest, validation module,
+publishing copy, or executable `ProducerQualityPlan`; it therefore remains an
+incomplete composition-local production rather than a maintained sample or
+final delivery.
+
+Composition-local generated narration, stills, covers, metadata, and MP4s stay
+ignored and uncommitted:
+
+- `src/remotion/AiDaily20260721/` - full composition source
+- `src/remotion/AiDaily20260722/` - current composition source
+- `src/remotion/Root.tsx` - composition registration
+- `public/generated/ai-daily-2026-07-21/audio/` and
+  `public/generated/ai-daily-2026-07-22/audio/` - local VoxCPM WAV tracks
+- `out/ai-daily-2026-07-21/` and `out/ai-daily-2026-07-22/` - local review and
+  render artifacts
+
+```bash
 npm run producer:assets -- --manifest <supply-plan-json>
 npm run producer:preflight -- --composition <composition-id>
 npm run producer:validate -- --module <validation-module>

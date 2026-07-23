@@ -1,6 +1,17 @@
 import type { FC } from "react";
 import { Composition, Folder, Still } from "remotion";
 import {
+  AI_DAILY20260722_COMPOSITION_ID,
+  AI_DAILY20260722_DURATION_IN_FRAMES,
+  AI_DAILY20260722_FPS,
+  AI_DAILY20260722_HEIGHT,
+  AI_DAILY20260722_WIDTH,
+  AiDaily20260722Cover16x9,
+  AiDaily20260722Cover9x16,
+  AiDaily20260722Video,
+} from "./AiDaily20260722";
+import { aiDaily20260722Scenes } from "./AiDaily20260722/data";
+import {
   AI_DAILY20260720_COMPOSITION_ID,
   AI_DAILY20260720_DURATION_IN_FRAMES,
   AI_DAILY20260720_FPS,
@@ -11,6 +22,17 @@ import {
   AiDaily20260720Video,
 } from "./AiDaily20260720";
 import { aiDaily20260720Scenes } from "./AiDaily20260720/data";
+import {
+  AI_DAILY20260721_COMPOSITION_ID,
+  AI_DAILY20260721_DURATION_IN_FRAMES,
+  AI_DAILY20260721_FPS,
+  AI_DAILY20260721_HEIGHT,
+  AI_DAILY20260721_WIDTH,
+  AiDaily20260721Cover16x9,
+  AiDaily20260721Cover9x16,
+  AiDaily20260721Video,
+} from "./AiDaily20260721";
+import { aiDaily20260721Scenes } from "./AiDaily20260721/data";
 import {
   AGENT_PRODUCER_MEDIA_SOUND_PROOF_COMPOSITION_ID,
   AGENT_PRODUCER_MEDIA_SOUND_PROOF_DURATION_IN_FRAMES,
@@ -281,6 +303,60 @@ export const RemotionRoot: FC = () => {
           component={AiDaily20260720Cover9x16}
           width={1080}
           height={1920}
+        />
+        <Composition
+          id={AI_DAILY20260721_COMPOSITION_ID}
+          component={AiDaily20260721Video}
+          defaultProps={{ scenes: aiDaily20260721Scenes }}
+          durationInFrames={AI_DAILY20260721_DURATION_IN_FRAMES}
+          fps={AI_DAILY20260721_FPS}
+          width={AI_DAILY20260721_WIDTH}
+          height={AI_DAILY20260721_HEIGHT}
+        />
+        <Still
+          id="AiDaily20260721Cover16x9"
+          component={AiDaily20260721Cover16x9}
+          width={1920}
+          height={1080}
+        />
+        <Still
+          id="AiDaily20260721Cover9x16"
+          component={AiDaily20260721Cover9x16}
+          width={1080}
+          height={1920}
+        />
+        <Composition
+          id={AI_DAILY20260722_COMPOSITION_ID}
+          component={AiDaily20260722Video}
+          defaultProps={{ scenes: aiDaily20260722Scenes }}
+          durationInFrames={AI_DAILY20260722_DURATION_IN_FRAMES}
+          fps={AI_DAILY20260722_FPS}
+          width={AI_DAILY20260722_WIDTH}
+          height={AI_DAILY20260722_HEIGHT}
+        />
+        <Still
+          id="AiDaily20260722Cover16x9"
+          component={AiDaily20260722Cover16x9}
+          width={1920}
+          height={1080}
+        />
+        <Still
+          id="AiDaily20260722Cover9x16"
+          component={AiDaily20260722Cover9x16}
+          width={1080}
+          height={1920}
+        />
+        <Still
+          id="AiDaily20260722Cover4x3"
+          component={AiDaily20260722Cover16x9}
+          width={1600}
+          height={1200}
+        />
+        <Still
+          id="AiDaily20260722Cover3x4"
+          component={AiDaily20260722Cover9x16}
+          width={1200}
+          height={1600}
         />
         <Composition
           id={REMOTION_CAPABILITY_SHOWCASE_COMPOSITION_ID}

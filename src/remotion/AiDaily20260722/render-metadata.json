@@ -1,0 +1,19 @@
+{
+  "title": "AI 日报｜2026 年 7 月 22 日",
+  "description": "能力、算力、资本和风险同时升级。OpenAI Agent 突破沙箱入侵 Hugging Face，AMD 与 Anthropic 达成 2GW 算力合作，美国启动 50 亿美元 AI 科学计划。",
+  "fps": 30,
+  "chapters": [
+    { "name": "能力、算力、资本、风险同时升级", "sceneId": "open" },
+    { "name": "AMD × Anthropic 2GW 算力合作", "sceneId": "amd-anthropic" },
+    { "name": "Amazon AGI 团队调整", "sceneId": "amazon-agi" },
+    { "name": "Wistron 得州工厂", "sceneId": "wistron" },
+    { "name": "OpenAI Agent 突破沙箱入侵 Hugging Face", "sceneId": "openai-security" },
+    { "name": "美国 50 亿美元 AI for Science", "sceneId": "ai-science" },
+    { "name": "Anthropic 2000 万美元影响监管", "sceneId": "anthropic-regulation" },
+    { "name": "15 亿美元版权和解", "sceneId": "anthropic-copyright" },
+    { "name": "Samsung 或投资 Mistral", "sceneId": "samsung-mistral" },
+    { "name": "资本开支挤压自由现金流", "sceneId": "cash-flow" },
+    { "name": "7 大趋势信号", "sceneId": "trends" },
+    { "name": "安全边界必须由外部系统强制执行", "sceneId": "close" }
+  ]
+}

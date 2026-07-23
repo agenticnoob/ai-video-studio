@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "compositionId": "AiDaily20260721",
+  "assets": [
+    {
+      "id": "open-audio",
+      "kind": "audio",
+      "sourcePath": "public/generated/ai-daily-2026-07-21/audio/open.wav",
+      "purpose": "Opening narration"
+    },
+    {
+      "id": "google-audio",
+      "kind": "audio",
+      "sourcePath": "public/generated/ai-daily-2026-07-21/audio/google.wav",
+      "purpose": "Google Gemini narration"
+    },
+    {
+      "id": "microsoft-audio",
+      "kind": "audio",
+      "sourcePath": "public/generated/ai-daily-2026-07-21/audio/microsoft.wav",
+      "purpose": "Microsoft Mistral narration"
+    },
+    {
+      "id": "alphabet-audio",
+      "kind": "audio",
+      "sourcePath": "public/generated/ai-daily-2026-07-21/audio/alphabet.wav",
+      "purpose": "Alphabet capex narration"
+    },
+    {
+      "id": "specialization-audio",
+      "kind": "audio",
+      "sourcePath": "public/generated/ai-daily-2026-07-21/audio/specialization.wav",
+      "purpose": "Model specialization narration"
+    },
+    {
+      "id": "agent-payments-audio",
+      "kind": "audio",
+      "sourcePath": "public/generated/ai-daily-2026-07-21/audio/agent-payments.wav",
+      "purpose": "Agent payments narration"
+    },
+    {
+      "id": "physical-ai-audio",
+      "kind": "audio",
+      "sourcePath": "public/generated/ai-daily-2026-07-21/audio/physical-ai.wav",
+      "purpose": "Physical AI narration"
+    },
+    {
+      "id": "eu-regulation-audio",
+      "kind": "audio",
+      "sourcePath": "public/generated/ai-daily-2026-07-21/audio/eu-regulation.wav",
+      "purpose": "EU regulation narration"
+    },
+    {
+      "id": "blackrock-audio",
+      "kind": "audio",
+      "sourcePath": "public/generated/ai-daily-2026-07-21/audio/blackrock.wav",
+      "purpose": "BlackRock data center narration"
+    },
+    {
+      "id": "iqe-audio",
+      "kind": "audio",
+      "sourcePath": "public/generated/ai-daily-2026-07-21/audio/iqe.wav",
+      "purpose": "IQE photonics narration"
+    },
+    {
+      "id": "trends-audio",
+      "kind": "audio",
+      "sourcePath": "public/generated/ai-daily-2026-07-21/audio/trends.wav",
+      "purpose": "Trends summary narration"
+    },
+    {
+      "id": "close-audio",
+      "kind": "audio",
+      "sourcePath": "public/generated/ai-daily-2026-07-21/audio/close.wav",
+      "purpose": "Closing narration"
+    }
+  ]
+}

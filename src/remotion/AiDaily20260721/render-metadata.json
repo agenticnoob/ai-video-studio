@@ -1,0 +1,27 @@
+{
+  "compositionId": "AiDaily20260721",
+  "slug": "ai-daily-2026-07-21",
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "durationInFrames": 14613,
+  "durationInSeconds": 487.1,
+  "codec": "h264",
+  "pixelFormat": "yuv420p",
+  "audioBitrate": "192k",
+  "crf": 22,
+  "chapters": [
+    "今日核心判断",
+    "Google Gemini 路线分化",
+    "Microsoft × Mistral 主权 AI",
+    "Alphabet 资本支出审视",
+    "模型专业化与路由",
+    "Agent 支付基础设施",
+    "物理 AI 进入客户现场",
+    "欧盟 AI 法案透明度",
+    "BlackRock 数据中心收购",
+    "光通信供应链",
+    "今日趋势汇总",
+    "Agent 开发者基础设施"
+  ]
+}
