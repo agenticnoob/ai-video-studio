@@ -115,6 +115,14 @@ confirmed. Narrated H.264/AAC work accounts for codec/container tail with an
 explicit visual end hold included in the last chapter; quality tolerance is
 not widened to conceal duration drift.
 
+For future scaffolds, this judgment is recorded in composition-local
+`visual-intent.ts` and must be explicitly approved before scene code.
+Mechanical validation enforces scene coverage, adjacent primary-composition
+and silhouette differences, plus a source boundary that permits only
+composition-local modules and Producer shared roots. Completed/frozen
+dedicated renderers are not implementation references and are opened only for
+an explicitly requested comparison or diagnosis.
+
 Iteration authority tracks product capabilities and milestones, not the
 delivery state of an individual video production. A composition's render,
 cover, audiovisual review, or quality state affects that production only; it

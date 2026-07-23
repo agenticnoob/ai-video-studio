@@ -68,6 +68,14 @@ tracking. The gate does not score aesthetics. Phase 9B final acceptance video
 `DnsResolutionExplainer` passed reviewed stills/covers, H.264/AAC render, and
 the post-render quality gate. Phase 9 is complete and the Roadmap is complete.
 
+Every future scaffold also owns `visual-intent.ts`. Replace and explicitly
+approve its per-beat subject, action, shot language, meaning, primary
+composition, silhouette, render mode, and capability selection before writing
+scene TSX. Do not open or copy dedicated composition renderers for
+implementation; reuse only Producer shared roots. Run
+`npm run smoke:producer-creative-contract`; `producer:validate` rejects draft
+intent, adjacent repeated grammar, and cross-composition imports.
+
 ## New project setup
 
 When in an empty folder or workspace with no existing Remotion project, scaffold one using:

@@ -39,6 +39,7 @@ export type ProducerSampleSourceFileKind =
   | "types"
   | "script"
   | "data"
+  | "visual-intent"
   | "audio-metadata"
   | "root-registration"
   | "smoke"
@@ -160,6 +161,10 @@ export type MaintainedProducerSampleManifest = ProducerSampleManifestBase & {
   };
   readonly validationModule: string;
   readonly qualityModule?: string;
+  readonly creativeContract?: {
+    readonly visualIntentModule: string;
+    readonly rendererSourcePath: string;
+  };
   readonly render: {
     readonly metadataPath: string;
     readonly cover16x9CompositionId: string;
@@ -186,6 +191,14 @@ export type VoiceProfiledQualityGatedMaintainedProducerSampleManifest = Omit<
     readonly voiceProfileId: ProducerVoiceProfileId;
   };
 };
+
+export type CreativelyGatedMaintainedProducerSampleManifest =
+  VoiceProfiledQualityGatedMaintainedProducerSampleManifest & {
+    readonly creativeContract: {
+      readonly visualIntentModule: string;
+      readonly rendererSourcePath: string;
+    };
+  };
 
 export type ProducerSampleManifest =
   | FrozenProducerSampleManifest
@@ -294,6 +307,21 @@ export const assertProducerSampleManifest = (manifest: ProducerSampleManifest): 
       throw new Error(`${manifest.compositionId} quality module must use a repository-local path.`);
     }
   }
+  if (manifest.creativeContract !== undefined) {
+    for (const [label, contractPath] of [
+      ["visual intent module", manifest.creativeContract.visualIntentModule],
+      ["renderer source", manifest.creativeContract.rendererSourcePath],
+    ] as const) {
+      requireText(contractPath, `${manifest.compositionId} ${label}`);
+      if (
+        /^https?:\/\//i.test(contractPath) ||
+        contractPath.startsWith("/") ||
+        contractPath.includes("..")
+      ) {
+        throw new Error(`${manifest.compositionId} ${label} must use a repository-local path.`);
+      }
+    }
+  }
   requireText(manifest.render.metadataPath, `${manifest.compositionId} render metadata path`);
   requireText(
     manifest.render.cover16x9CompositionId,
@@ -342,6 +370,9 @@ export const assertProducerSampleManifest = (manifest: ProducerSampleManifest): 
     ...(manifest.soundDesign ? [manifest.soundDesign.soundtrackModulePath] : []),
     manifest.validationModule,
     ...(manifest.qualityModule ? [manifest.qualityModule] : []),
+    ...(manifest.creativeContract
+      ? [manifest.creativeContract.visualIntentModule, manifest.creativeContract.rendererSourcePath]
+      : []),
     manifest.render.metadataPath,
     manifest.publishingCopyPath,
   ]) {
@@ -377,5 +408,27 @@ export const assertProducerSampleManifest = (manifest: ProducerSampleManifest): 
     )
   ) {
     throw new Error(`${manifest.compositionId} sourceFiles must include quality ownership.`);
+  }
+  if (
+    manifest.creativeContract &&
+    !manifest.sourceFiles.some(
+      (sourceFile) =>
+        sourceFile.kind === "visual-intent" &&
+        sourceFile.path === manifest.creativeContract?.visualIntentModule,
+    )
+  ) {
+    throw new Error(`${manifest.compositionId} sourceFiles must include visual-intent ownership.`);
+  }
+  if (
+    manifest.creativeContract &&
+    !manifest.sourceFiles.some(
+      (sourceFile) =>
+        sourceFile.kind === "renderer" &&
+        sourceFile.path === manifest.creativeContract?.rendererSourcePath,
+    )
+  ) {
+    throw new Error(
+      `${manifest.compositionId} sourceFiles must include creative renderer ownership.`,
+    );
   }
 };

@@ -124,6 +124,22 @@ in the last chapter rather than a wider tolerance. This is workflow hardening
 backed by one real production, not Phase 10, a new planner, or a change to
 completed/frozen compositions.
 
+### Post-Roadmap: Enforceable Creative Contract (2026-07-23)
+
+Future scaffolds now own a fail-closed `visual-intent.ts` with per-beat
+subject, visible action, shot language, intended meaning, primary composition,
+silhouette, render mode, selected capabilities, and explicit review status.
+The renderer scaffold no longer supplies a reusable centered-title scene and
+cannot preview until its explicit scene shells are replaced.
+
+`producer:validate` now rejects missing or draft intent, scene/intent drift,
+unapproved adjacent repeated primary composition or silhouette, and renderer
+imports from another dedicated composition. Only composition-local modules and
+Producer shared roots are reusable implementation inputs. The focused
+`smoke:producer-creative-contract` protects the contract. Existing maintained
+and frozen compositions remain backward-compatible and unchanged; this is
+post-Roadmap workflow hardening, not Phase 10.
+
 The approved Agent-managed reusable asset library is complete as one bounded
 post-Roadmap v1 capability. Agent-only CLI operations manage standalone
 SVG/PNG/JPEG/WebP records, deterministic catalog/report views, ignored inbox

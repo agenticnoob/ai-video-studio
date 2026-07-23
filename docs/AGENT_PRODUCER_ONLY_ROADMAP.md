@@ -66,6 +66,18 @@ ownership first. Narrated muxes cover codec/container tail with an explicit
 visual end hold in the final chapter instead of widening quality tolerance.
 This adds no Phase 10 and changes no completed/frozen work.
 
+Post-Roadmap enforceable creative-contract note: every future scaffold owns a
+composition-local `visual-intent.ts`. Its beat order must match the narration,
+each beat must pass approval before implementation, and adjacent beats may
+reuse one primary composition or silhouette only when both explicitly declare
+an intentional comparison. The manifest records the exact intent module and
+renderer entrypoint; validation loads that module, traverses the local renderer
+import graph, and rejects references to another dedicated composition. The
+default scaffold contains fail-closed scene shells rather than a reusable title
+card. `smoke:producer-creative-contract` enforces this boundary. This is a
+post-Roadmap workflow hardening, not Phase 10, and does not retrofit completed
+or frozen work.
+
 This roadmap defines the repository transition from a mixed Agent Producer,
 Web video product, and multi-provider TTS workspace into one focused local
 production system:
@@ -91,7 +103,8 @@ topic / supplied material
   -> research and existing-asset collection
   -> narration beats
   -> direct VoxCPM generation and caption timing
-  -> primitive / block / runtime inventory
+  -> approved composition-local visual intent for every beat
+  -> primitive / block / effect / transition / runtime inventory
   -> dedicated Remotion composition
   -> asset and composition preflight
   -> content-first visual review of every scene and meaning-changing state

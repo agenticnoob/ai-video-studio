@@ -10,8 +10,9 @@ Visual production uses code and existing assets only.
 The implementation sequence is defined by
 `docs/AGENT_PRODUCER_ONLY_ROADMAP.md`.
 
-Use this gate after a dedicated composition has passed still and MP4 review.
-Promotion is evidence-based reuse extraction, not productization.
+Use this gate after a dedicated composition has passed its composition-local
+`visual-intent.ts` contract, still review, and MP4 review. Promotion is
+evidence-based reuse extraction, not productization.
 
 ## Decisions
 
@@ -51,6 +52,8 @@ A promotion candidate records:
 6. Will another Producer task know when to choose it?
 7. For Lottie/Rive or sound assets, did deterministic render and asset/audio
    preflight pass with provenance and license metadata?
+8. Did extraction preserve the rule that future renderers compose reusable
+   units locally instead of importing this finished dedicated composition?
 
 Any “no” keeps the candidate sample-local.
 

@@ -1,4 +1,4 @@
-import type { VoiceProfiledQualityGatedMaintainedProducerSampleManifest } from "../../manifest";
+import type { CreativelyGatedMaintainedProducerSampleManifest } from "../../manifest";
 
 export const sampleNameManifest = {
   sampleStatus: "maintained",
@@ -28,6 +28,10 @@ export const sampleNameManifest = {
   },
   validationModule: "src/remotion/SampleName/validation.ts",
   qualityModule: "src/remotion/SampleName/quality.ts",
+  creativeContract: {
+    visualIntentModule: "src/remotion/SampleName/visual-intent.ts",
+    rendererSourcePath: "src/remotion/SampleName/SampleName.tsx",
+  },
   render: {
     metadataPath: "src/remotion/SampleName/render-metadata.json",
     cover16x9CompositionId: "SampleNameCover16x9",
@@ -44,6 +48,7 @@ export const sampleNameManifest = {
     { path: "src/remotion/SampleName/types.ts", kind: "types" },
     { path: "src/remotion/SampleName/script.ts", kind: "script" },
     { path: "src/remotion/SampleName/data.ts", kind: "data" },
+    { path: "src/remotion/SampleName/visual-intent.ts", kind: "visual-intent" },
     { path: "src/remotion/SampleName/audio.generated.ts", kind: "audio-metadata" },
     { path: "src/remotion/SampleName/manifest.ts", kind: "manifest" },
     { path: "src/remotion/SampleName/assets.manifest.json", kind: "asset-manifest" },
@@ -59,4 +64,4 @@ export const sampleNameManifest = {
     "Generated narration, review frames, covers, metadata, and MP4 stay local-only.",
     "Register the video and both cover Stills in Root before declaring the sample complete.",
   ],
-} as const satisfies VoiceProfiledQualityGatedMaintainedProducerSampleManifest;
+} as const satisfies CreativelyGatedMaintainedProducerSampleManifest;

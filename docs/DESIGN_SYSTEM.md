@@ -88,11 +88,15 @@ All spacing derives from 4px.
 
 - Perform content-first visual review before implementation: record the subject,
   action or change, shot language, intended meaning, and distinct silhouette.
+- Future compositions record and approve those decisions per narration beat in
+  composition-local `visual-intent.ts`; its order must match narration, and
+  validation rejects draft or placeholder intent before rendering.
 - A paused frame must communicate its event without asking the caption to act
   as the picture.
 - Adjacent scenes use distinct primary composition unless repetition is a
-  deliberate comparison. Style profiles define production language, not a
-  storyboard template.
+  deliberate comparison declared by both beats. The renderer import graph must
+  remain composition-local rather than borrowing a finished dedicated scene.
+  Style profiles define production language, not a storyboard template.
 - Review every scene and each meaning-changing early/middle/late state. Covers
   use a topic-specific focal metaphor, centered safe whitespace, and separate
   full-size plus thumbnail checks for 4:3 (1600x1200) and 3:4 (1200x1600).

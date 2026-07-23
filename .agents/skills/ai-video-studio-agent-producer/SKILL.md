@@ -32,7 +32,8 @@ npm run producer:quality -- --module <quality-module>
 
 - Define a content-first visual intent for every beat before scene code. A
   paused frame must communicate the subject, change, and consequence without
-  depending on its caption.
+  depending on its caption. Future scaffolds record the approved contract in
+  `visual-intent.ts`; draft intent fails validation.
 - Give adjacent scenes distinct primary composition and shot language unless
   repetition is an intentional comparison. Treat a style profile as a visual
   constraint, never as a scene template; clarity wins over stylistic literalism.
@@ -42,6 +43,10 @@ npm run producer:quality -- --module <quality-module>
 - Benchmark long renders and confirm export ownership first. For narrated
   H.264/AAC output, cover codec/container tail with an explicit visual end hold
   included in the final chapter; never loosen quality tolerance to hide drift.
+- Inventory shared primitives, blocks, effects, and capability APIs only. Do
+  not open or copy dedicated completed/frozen composition renderers as
+  implementation references unless the user explicitly requests comparison or
+  diagnosis.
 
 ## Task Routing
 

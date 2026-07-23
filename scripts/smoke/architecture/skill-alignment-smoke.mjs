@@ -199,6 +199,8 @@ for (const required of [
   "Content-First Visual Intent",
   "subject, action or change, shot language, intended meaning, and distinct silhouette",
   "paused frame",
+  "visual-intent.ts",
+  "Do not open or copy dedicated composition renderers",
 ]) {
   assertIncludesWords(
     producerWorkflowReference,
@@ -206,7 +208,12 @@ for (const required of [
     "Agent Producer content-first workflow reference",
   );
 }
-for (const required of ["Style Is Not A Storyboard", "clarity wins", "adjacent scenes"]) {
+for (const required of [
+  "Style Is Not A Storyboard",
+  "clarity wins",
+  "adjacent scenes",
+  "smoke:producer-creative-contract",
+]) {
   assertIncludesWords(
     producerRemotionReference,
     required,
@@ -580,6 +587,9 @@ assertIncludes(remotionSkill, "styleProfileId", "Remotion skill");
 assertIncludes(remotionSkill, "producer:quality", "Remotion skill");
 assertIncludes(remotionSkill, "does not score aesthetics", "Remotion skill");
 assertIncludesWords(remotionSkill, "content-first visual review", "Remotion skill");
+assertIncludes(remotionSkill, "visual-intent.ts", "Remotion skill");
+assertIncludes(remotionSkill, "smoke:producer-creative-contract", "Remotion skill");
+assertIncludes(producerSkill, "visual-intent.ts", "Agent Producer skill");
 
 for (const skillName of ["ai-video-studio-agent-producer", "ai-video-studio-asset-library"]) {
   const skillDir = `.agents/skills/${skillName}`;
@@ -627,6 +637,21 @@ for (const docPath of [
   "src/remotion/AGENTS.md",
 ]) {
   assertIncludesWords(read(docPath), "content-first visual review", docPath);
+}
+for (const docPath of [
+  "README.md",
+  "AGENTS.md",
+  "docs/FINAL_PRODUCT_GOAL.md",
+  "docs/ITERATION_STATUS.md",
+  "docs/AGENT_PRODUCER_ONLY_ROADMAP.md",
+  "docs/DESIGN_SYSTEM.md",
+  "docs/REMOTION_COMPONENT_LIBRARY.md",
+  "docs/REMOTION_PRIMITIVES.md",
+  "docs/EXTERNAL_REMOTION_REFERENCES.md",
+  "docs/PRODUCER_PROMOTION_GATE.md",
+  "src/remotion/AGENTS.md",
+]) {
+  assertIncludes(read(docPath), "visual-intent.ts", docPath);
 }
 for (const docPath of [
   "README.md",

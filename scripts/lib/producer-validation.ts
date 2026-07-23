@@ -8,6 +8,11 @@ import {
   assertProducerAssetManifest,
   type ProducerAssetManifest,
 } from "../../src/remotion/producer-samples/asset-manifest";
+import {
+  validateProducerSourceGraph,
+  validateProducerVisualIntents,
+  type ProducerVisualIntent,
+} from "../../src/remotion/producer-samples/creative-contract";
 
 export type ProducerValidationInput = {
   readonly compositionId: string;
@@ -19,6 +24,11 @@ export type ProducerValidationInput = {
   readonly scenePaddingFrames: number;
   readonly artifactPaths: readonly string[];
   readonly registeredCompositionIds: readonly string[];
+  readonly visualIntentSource?: {
+    readonly path: string;
+    readonly intents: readonly ProducerVisualIntent[];
+  };
+  readonly readRendererSource?: (path: string) => Promise<string | undefined>;
   readonly isIgnoredPath: (path: string) => Promise<boolean>;
 };
 
@@ -148,6 +158,29 @@ export const validateProducerSample = async (input: ProducerValidationInput): Pr
         if (!input.registeredCompositionIds.includes(registrationId)) {
           throw new Error(`${registrationId} is missing Remotion registration.`);
         }
+      }
+      if (input.manifest.creativeContract) {
+        if (!input.visualIntentSource) {
+          throw new Error(`${input.compositionId} must provide visualIntentSource for validation.`);
+        }
+        if (input.visualIntentSource.path !== input.manifest.creativeContract.visualIntentModule) {
+          throw new Error(
+            `${input.compositionId} visualIntentSource path does not match its creative contract.`,
+          );
+        }
+        if (!input.readRendererSource) {
+          throw new Error(`${input.compositionId} must provide readRendererSource for validation.`);
+        }
+        validateProducerVisualIntents({
+          compositionId: input.compositionId,
+          sceneIds: input.scenes.map((scene) => scene.id),
+          intents: input.visualIntentSource.intents,
+        });
+        await validateProducerSourceGraph({
+          compositionId: input.compositionId,
+          rendererPath: input.manifest.creativeContract.rendererSourcePath,
+          readSource: input.readRendererSource,
+        });
       }
     }
   }

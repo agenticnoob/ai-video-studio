@@ -61,6 +61,7 @@ const lowerCamelName = `${name[0].toLowerCase()}${name.slice(1)}`;
 const constantName = name.replace(/([a-z0-9])([A-Z])/g, "$1_$2").toUpperCase();
 const replaceTokens = (source) =>
   source
+    .replaceAll("sampleName:", "__PRODUCER_MANIFEST_DISPLAY_FIELD__:")
     .replaceAll("SAMPLE_NAME", constantName)
     .replaceAll("SampleName", name)
     .replaceAll("sampleName", lowerCamelName)
@@ -71,7 +72,9 @@ const replaceTokens = (source) =>
     .replaceAll('"../../../standalone-video', '"../standalone-video')
     .replaceAll('"../../../../../scripts', '"../../../scripts')
     .replaceAll('"../../manifest"', '"../producer-samples/manifest"')
-    .replaceAll('"../../asset-manifest"', '"../producer-samples/asset-manifest"');
+    .replaceAll('"../../asset-manifest"', '"../producer-samples/asset-manifest"')
+    .replaceAll('"../../creative-contract"', '"../producer-samples/creative-contract"')
+    .replaceAll("__PRODUCER_MANIFEST_DISPLAY_FIELD__", "sampleName");
 
 await mkdir(destinationRoot, { recursive: true });
 for (const filename of await readdir(templateRoot)) {

@@ -19,6 +19,14 @@ record exists. A paused frame must reveal the event or mechanism without using
 the caption as the picture. Adjacent scenes must not share the same primary
 layout unless the repetition is an intentional comparison.
 
+For every future scaffold, replace the draft entries in `visual-intent.ts`,
+select concrete shared or composition-local capabilities, review the plan, and
+set `reviewStatus: "approved"` before scene implementation. Do not open or copy
+dedicated composition renderers from completed, maintained, or frozen videos
+as implementation references. Search shared inventories and APIs instead;
+inspect an old renderer only when the user explicitly requests comparison or
+diagnosis.
+
 ## Stages
 
 1. Define narration beats, write the content-first visual intent, and classify

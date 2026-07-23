@@ -18,7 +18,6 @@ export type SampleNameSceneId = "open" | "proof" | "close";
 
 export type SampleNameScene = StandaloneTimedScene & {
   readonly id: SampleNameSceneId;
-  readonly headline: string;
   readonly narration: string;
   readonly audioFile: string;
   readonly captions: SegmentCaptions;

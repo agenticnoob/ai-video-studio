@@ -215,12 +215,28 @@ try {
   const generatedAssetSupply = read(path.join(destination, "assets.supply.json"));
   const generatedAssetManifest = read(path.join(destination, "assets.manifest.json"));
   assert(generatedManifest.includes('compositionId: "PhaseFourFixture"'));
+  assert(generatedManifest.includes('sampleName: "PhaseFourFixture"'));
+  assert(!generatedManifest.includes("phaseFourFixture:"));
   assert(generatedManifest.includes('slug: "phase-four-fixture"'));
   assert(generatedManifest.includes('styleProfileId: "retro-terminal"'));
   assert(generatedManifest.includes('voiceProfileId: "science-explainer-young-male"'));
   assert(generatedManifest.includes('mode: "controllable-clone"'));
   assert(generatedManifest.includes('qualityModule: "src/remotion/PhaseFourFixture/quality.ts"'));
-  assert(generatedManifest.includes("QualityGatedMaintainedProducerSampleManifest"));
+  assert(generatedManifest.includes("CreativelyGatedMaintainedProducerSampleManifest"));
+  assert(
+    generatedManifest.includes(
+      'visualIntentModule: "src/remotion/PhaseFourFixture/visual-intent.ts"',
+    ),
+  );
+  assert(
+    existsSync(path.join(destination, "visual-intent.ts")),
+    "Future scaffold must copy its visual-intent contract.",
+  );
+  const generatedVisualIntent = read(path.join(destination, "visual-intent.ts"));
+  assert(
+    generatedVisualIntent.includes('from "../producer-samples/creative-contract"'),
+    "Generated visual intent must resolve the Producer creative-contract module.",
+  );
   assert(!generatedManifest.includes("STYLE_PROFILE_ID"));
   assert(generatedManifest.includes('from "../producer-samples/manifest"'));
   assert(generatedVideo.includes('from "../standalone-video"'));

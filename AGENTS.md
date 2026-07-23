@@ -155,6 +155,11 @@ retrofit of completed/frozen source or generated artifacts is introduced.
 ## Production Rules
 
 - Build a dedicated composition for each real topic.
+- Replace and approve the future scaffold's `visual-intent.ts` before scene
+  code. Reuse only composition-local code and Producer shared roots; do not
+  open or copy completed/frozen dedicated composition renderers as
+  implementation references unless comparison or diagnosis is explicitly in
+  scope.
 - Write a content-first visual intent for every beat before implementation:
   subject, action or change, shot language, intended meaning, and distinct
   silhouette. A paused frame must communicate the event without its caption.
@@ -221,6 +226,7 @@ npm run smoke:producer-media-sound
 npm run smoke:producer-style-profiles
 npm run smoke:producer-style-profile-sample-contract
 npm run smoke:producer-quality-gates
+npm run smoke:producer-creative-contract
 npm run smoke:producer-final-acceptance
 npm run producer:validate -- --module <validation-module>
 npm run producer:stills -- --composition <composition-id>

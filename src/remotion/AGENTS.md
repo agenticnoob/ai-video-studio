@@ -71,6 +71,10 @@ src/remotion/
   language, intended meaning, and distinct silhouette before scene code; make
   paused frames self-explanatory and keep adjacent primary compositions
   distinct unless comparison is intentional.
+- Future scaffolds record this in `visual-intent.ts` and must approve every
+  beat before scene code. Reuse shared roots, not dedicated completed/frozen
+  renderer source; `producer:validate` rejects cross-composition imports and
+  adjacent repeated primary grammar.
 - Treat style profiles as constraints, not storyboards. Inspect every scene and
   meaning-changing early/middle/late state, review both cover ratios full-size
   and as thumbnails with centered safe whitespace, and benchmark a
@@ -99,5 +103,6 @@ npm run smoke:remotion-capabilities
 npm run smoke:producer-media-sound
 npm run smoke:producer-style-profile-sample-contract
 npm run smoke:producer-quality-gates
+npm run smoke:producer-creative-contract
 npm run producer:stills -- --composition <composition-id>
 ```

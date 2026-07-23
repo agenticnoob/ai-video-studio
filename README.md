@@ -153,6 +153,15 @@ provider selector is added.
 
 ## Production Rules
 
+Every future scaffold owns `visual-intent.ts`. Replace its draft per-beat
+subject, visible action, shot language, meaning, primary composition,
+silhouette, render mode, and selected capabilities before scene code, then
+explicitly approve the record. Future renderers may reuse composition-local
+code and Producer shared roots only; do not open or copy completed/frozen
+dedicated composition renderers as implementation references. Run
+`npm run smoke:producer-creative-contract` and `producer:validate` before
+stills.
+
 - Use React, HTML, SVG, Canvas, Three.js, Remotion effects, and deterministic
   frame-driven motion.
 - Record each beat's subject, action or change, shot language, intended meaning,

@@ -259,7 +259,10 @@ for (const manifest of producerSampleManifests) {
       `${manifest.compositionId}Cover16x9`,
       `${manifest.compositionId}Cover9x16`,
     ]) {
-      assert(rootSource.includes(marker), `${manifest.compositionId} must keep Root marker ${marker}.`);
+      assert(
+        rootSource.includes(marker),
+        `${manifest.compositionId} must keep Root marker ${marker}.`,
+      );
     }
   } else {
     assert(
@@ -285,6 +288,7 @@ const scaffoldFiles = [
   "src/remotion/producer-samples/scaffold/SampleName/types.ts",
   "src/remotion/producer-samples/scaffold/SampleName/script.ts",
   "src/remotion/producer-samples/scaffold/SampleName/data.ts",
+  "src/remotion/producer-samples/scaffold/SampleName/visual-intent.ts",
   "src/remotion/producer-samples/scaffold/SampleName/audio.generated.ts",
   "src/remotion/producer-samples/scaffold/SampleName/manifest.ts",
   "src/remotion/producer-samples/scaffold/SampleName/quality.ts",

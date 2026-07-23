@@ -18,6 +18,7 @@ supported Web route smoke surface.
 | Voice profiles | `lib/producer-audio/voice-profiles.json`, `lib/producer-audio/voice-profiles.ts` | VoxCPM-only explicit clone identity/mode/path registry; no fallback. |
 | VoxCPM container access | `producer-voxcpm.sh` | `ready`, direct `run`, and `status`; no app server. |
 | Producer validation | `lib/producer-validation.ts` | Hard-failure manifest/composition checks. |
+| Creative contract | `src/remotion/producer-samples/creative-contract.ts`, `smoke/producer/producer-creative-contract-smoke.mjs` | Future-only visual-intent and renderer-source boundary. |
 | Review frames | `lib/producer-review-frames.ts` | Deterministic frame planning. |
 | Sample scaffold | `producer-scaffold.mjs` | Creates the strict maintained future source skeleton. |
 | Asset supply | `lib/producer-assets/`, `producer-assets.mjs` | Localizes manual/URL media, checksums, probes, and normalizes. |
@@ -55,6 +56,9 @@ references. Do not use them as future Producer scaffolds.
 - Direct VoxCPM runtime failures must fail closed without a provider fallback.
 - Keep private voices and generated media out of source control.
 - Treat registry entries marked `frozen-reference` as discovery metadata only.
+- Require future scaffold `visual-intent.ts` approval and keep renderer imports
+  composition-local or inside Producer shared roots; never use a dedicated
+  completed/frozen renderer as implementation source.
 - Keep `ProducerAssetManifest` output deterministic and free of private source paths.
 - Keep the stock-candidate integration fixture fully local and deterministic;
   mocked receipt/image bytes and all generated media must stay under

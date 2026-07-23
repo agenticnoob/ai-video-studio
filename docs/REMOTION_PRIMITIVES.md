@@ -55,15 +55,18 @@ Every maintained primitive should:
 
 For each narration beat:
 
-1. name the intended visual claim or metaphor
+1. approve the beat's subject, action, shot language, meaning, composition, and
+   silhouette in composition-local `visual-intent.ts`
 2. search the primitive catalog and Producer blocks
-3. choose the smallest existing unit that fits
-4. combine primitives in a sample-local scene when necessary
+3. choose the smallest existing unit that fits the approved intent
+4. combine primitives in a composition-local scene when necessary
 5. create a new primitive only when the responsibility is reusable beyond the
    current topic
 
 Do not force a primitive into a beat merely because it exists. Do not make all
-scenes look like equal-weight dashboard cards.
+scenes look like equal-weight dashboard cards. A primitive may be reused, but
+a future renderer must not import a finished dedicated composition as its scene
+implementation.
 
 ## Motion Rules
 

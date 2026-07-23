@@ -3,7 +3,7 @@
 Create a maintained Agent Producer sample with:
 
 ```bash
-npm run producer:scaffold -- --name <SampleName> --slug <sample-slug> --style-profile <profile-id>
+npm run producer:scaffold -- --name <SampleName> --slug <sample-slug> --style-profile <profile-id> --voice-profile <voice-profile-id>
 ```
 
 The command copies `SampleName/` to `src/remotion/<SampleName>/`, replaces all
@@ -12,6 +12,14 @@ dedicated folder. Select the profile through Agent Producer judgment before
 scene implementation. The profile constrains the production language; it does
 not generate the topic-specific scene structure.
 
+The scaffold is intentionally not a visual template. Before writing scene TSX,
+replace every draft entry in `visual-intent.ts` with the real beat subject,
+visible action, shot language, intended meaning, primary composition,
+silhouette, render mode, and selected capabilities. Mark an intent `approved`
+only after that content-first plan has been reviewed. The generated renderer
+fails closed until its explicit scene shells are replaced; do not copy a
+completed or frozen composition renderer to fill them.
+
 The committed sample folder should contain:
 
 - `index.ts`
@@ -19,6 +27,7 @@ The committed sample folder should contain:
 - `types.ts`
 - `script.ts`
 - `data.ts`
+- `visual-intent.ts`
 - `audio.generated.ts` or another committed metadata file when the sample needs generated narration metadata
 - `generate.mjs` using the shared `scripts/lib/producer-audio/` functions
 - `validation.ts` exporting `producerValidationInput`

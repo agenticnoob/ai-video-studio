@@ -43,9 +43,16 @@ Current callable surfaces include `getProducerEffectPreset()`,
 `cinematic-film-burn`, `ProducerLocalVideo`, `ProducerAnimatedImage`,
 `ProducerLottie`, `ProducerMotionTreatment`, and `ProducerSoundtrack`.
 Inspect `AgentProducerCapabilityShowcase` before adding a new abstraction.
+Use showcase pages only to verify callable APIs and rendering behavior; never
+copy their page composition as a scene layout. New renderers may import only
+composition-local modules and Producer shared roots. `producer:validate`
+rejects dedicated-composition imports, draft or missing `visual-intent.ts`
+entries, scene/intent drift, and repeated adjacent primary composition or
+silhouette without an explicit comparison.
 HTML-in-canvas requires `Config.setAllowHtmlInCanvasEnabled(true)` and the
 Producer Chromium runtime.
 
+Run `npm run smoke:producer-creative-contract` for this boundary.
 Run `npm run smoke:remotion-capabilities`,
 `npm run smoke:producer-media-sound`,
 `npm run smoke:producer-style-profiles`, and

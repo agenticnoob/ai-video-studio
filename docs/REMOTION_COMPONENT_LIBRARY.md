@@ -89,6 +89,13 @@ Before writing a new visual component:
 5. choose sample-local TSX when no shared component fits
 6. extract reuse only after still/MP4 evidence
 
+Future scaffold scene work starts from its approved `visual-intent.ts`.
+Discovery is limited to the shared inventory and capability APIs above;
+completed/frozen dedicated composition renderers are not implementation
+references. `producer:validate` enforces the shared-root import boundary and
+rejects missing/draft intent or adjacent repeated primary grammar. Run
+`npm run smoke:producer-creative-contract` after changing this boundary.
+
 ## Completed Capability Set
 
 The completed Producer-only Roadmap owns these additions:

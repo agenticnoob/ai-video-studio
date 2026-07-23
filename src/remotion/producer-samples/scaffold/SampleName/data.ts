@@ -10,7 +10,7 @@ const audioBySceneId = new Map<SampleNameSceneId, (typeof sampleNameAudio)[numbe
   sampleNameAudio.map((track) => [track.sceneId, track]),
 );
 
-const scene = (sceneId: SampleNameSceneId, headline: string) => {
+const scene = (sceneId: SampleNameSceneId) => {
   const audio = audioBySceneId.get(sceneId);
 
   if (!audio) {
@@ -19,7 +19,6 @@ const scene = (sceneId: SampleNameSceneId, headline: string) => {
 
   return {
     id: sceneId,
-    headline,
     narration: audio.narration,
     audioFile: audio.audioFile,
     durationInFrames: audio.durationInFrames,
@@ -30,9 +29,5 @@ const scene = (sceneId: SampleNameSceneId, headline: string) => {
 export const sampleNameData = {
   contentFamily: SAMPLE_NAME_CONTENT_FAMILY,
   profileId: SAMPLE_NAME_PROFILE_ID,
-  scenes: [
-    scene("open", "Real topic promise"),
-    scene("proof", "Evidence beat"),
-    scene("close", "Reusable takeaway"),
-  ],
+  scenes: [scene("open"), scene("proof"), scene("close")],
 } satisfies SampleNameData;

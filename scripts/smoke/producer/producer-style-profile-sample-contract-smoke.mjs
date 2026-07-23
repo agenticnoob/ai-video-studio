@@ -70,7 +70,7 @@ assert(
   "Scaffold must replace the style-profile token.",
 );
 assert(
-  scaffoldManifestSource.includes("QualityGatedMaintainedProducerSampleManifest") &&
+  scaffoldManifestSource.includes("CreativelyGatedMaintainedProducerSampleManifest") &&
     scaffoldManifestSource.includes('styleProfileId: "editorial-tech" /* STYLE_PROFILE_ID */') &&
     scaffoldManifestSource.includes('qualityModule: "src/remotion/SampleName/quality.ts"'),
   "Scaffold manifest must require tokenized profile and quality-gate ownership.",
